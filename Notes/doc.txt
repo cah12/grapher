@@ -1,0 +1,21 @@
+Enum doc:
+
+/**
+ * <div style="border-bottom: 1px solid #7393B3; font-size: 20px">enum{@link ClassName.EnumName}</div>
+ * 
+ * enum description
+ * @name ClassName.EnumName
+ * @readonly
+ * @property {Number} flag1             This is flag 1.
+ * @property {Number} flag2             This is flag 2.
+ */
+
+ Extends doc:
+
+ <h4>Extends:<strong><i>{@link ClassName}</i></strong></h4>
+
+ modifications are commented with /*CAH*/
+
+
+
+ 

@@ -1,0 +1,7 @@
+.disabled {
+    /* This makes it not clickable */
+    /* pointer-events:none;  */
+    /* This grays it out to look disabled */
+    opacity:0.4;  
+}
+

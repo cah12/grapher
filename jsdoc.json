@@ -1,0 +1,42 @@
+{
+    "source": {
+        "include": [
+            "www/lib"
+        ],
+        "exclude": [
+            "www/lib/require.js",
+            "www/lib/regression.js",
+            "www/lib/desktop.ini",
+            "docs/tutorials/desktop.ini",
+            "www/lib/require2.js"
+        ],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs)"
+    },
+    "plugins": [
+        "plugins/markdown"
+    ],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true,
+        "logo": {
+            "url": "./img/logoImg.png",
+            "width": "150px",
+            "height": "13px",
+            "link": "https://github.com/cah12/js-QWT.git"
+        },
+        "name": "js-QWT",
+        "footerText": "My awesome footer text Ha Ha",
+        "tabNames": {
+            "api": "API",
+            "tutorials": "Exercises"
+        }
+    },
+    "opts": {
+        "destination": "./docs/",
+        "tutorials": "./tutorials/",
+        "recurse": true,
+        "readme": "readme.md",
+        "template": "node_modules/tui-jsdoc-template"
+    }
+}

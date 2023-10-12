@@ -1,0 +1,45 @@
+cd C:\Users\anthony\Google Drive\qtcloud
+C:\Users\anthony\AppData\Local\GitHub\PortableGit_c7e0cbde92ba565cb218a521411d0e854079a28c\mingw32\libexec\git-core
+
+
+heroku buildpacks:set https://github.com/heroku/heroku-buildpack-nodejs#v170 -a asteroidsex2-project
+commands
+while the Command Prompt is pointing to the required directory
+1. git init
+2. git status
+3. git add . #add everything
+4. git commit -m "First commit"
+5. git status #ensure that all files are added
+6. heroku login
+7. heroku create asteroidsex2-project
+8. git remote
+9. git push heroku master
+
+url should be https://asteroidsex2-project.herokuapp.com 
+
+https://userauth-project.herokuapp.com
+
+repository: https://git.heroku.com/game-service.git
+
+heroku login   corwin_hope@yahoo.com 	CAHanthony12/
+
+///////////////////////////////////////////////////////////////////////////
+Creating a postgres database
+#5432 is the default port. To use a different port add -p portNumber
+1. psql -U postgres 
+#password is CAHanthony12
+2. create database mydb; # create a databsae name mydb
+3. create user bob with password 'mypass';
+4. \c mydb; #connect to mydb
+5. create schema friends;
+6. create table friends.test(firstname CHAR(15), lastname CHAR(20));
+7. select * from friends.test;
+8. \d friends.test;
+9. insert into friends.test values('Mike', 'Smith');
+10. select * from friends.test;
+
+11. drop database mydb; #removes the database
+
+set PGUSER=postgres set PGPASSWORD=CAHanthony12 heroku pg:push usersdb HEROKU_POSTGRESQL_MAGENTA --app userauth-project
+
+heroku config:get -a userauth-project

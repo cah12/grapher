@@ -1,0 +1,21 @@
+{
+  "name": "grapher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "doc": "jsdoc -c jsdoc.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jsdoc": "^3.6.7",
+    "tui-jsdoc-template": "^1.2.2"
+  },
+  "dependencies": {
+    "file-system-mongo": "^1.0.17",
+    "file-system-routes": "^1.0.8",
+    "mathsteps": "^0.2.0"
+  }
+}

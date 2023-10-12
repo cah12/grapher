@@ -1,0 +1,28 @@
+{
+    "tutorial_0": {
+        "title": "Set up"
+    },
+    "tutorial_1": {
+        "title": "Curve Plots (2D)",
+        "children": ["child_1", "child_2", "child_3"]
+    },
+    "tutorial_2": {
+        "title": "Spectrocurve and Spectrogram (3D)",
+        "children": ["child_4", "child_5"]
+    },
+    "child_1": {
+        "title": "Simple Plot"
+    },
+    "child_2": {
+        "title": "Simple Plot & Curve"
+    },
+    "child_3": {
+        "title": "Adding a toolbar"
+    },
+    "child_4": {
+        "title": "Spectrocurve"
+    },
+    "child_5": {
+        "title": "Spectrogram"
+    }
+}

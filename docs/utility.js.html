@@ -1,0 +1,2280 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: utility.js | js-QWT</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/cah12/js-QWT.git" rel="noopener noreferrer" target="_blank">
+                <img src="./img/logoImg.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">js-QWT</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Exercises</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Exercises</h3><ul><li><a href="tutorial-tutorial_0.html">Set up</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial_0_sub"></div></li><li><a href="tutorial-tutorial_1.html">Curve Plots (2D)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial_1_sub"></div></li><li><a href="tutorial-tutorial_2.html">Spectrocurve and Spectrogram (3D)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="tutorial_2_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="AbstractCanvas.html">AbstractCanvas</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AbstractCanvas_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="AbstractCanvas.html#getBorderRadius">getBorderRadius</a></li><li><a href="AbstractCanvas.html#setBackground">setBackground</a></li><li><a href="AbstractCanvas.html#setBackgroundColor">setBackgroundColor</a></li><li><a href="AbstractCanvas.html#setBorderRadius">setBorderRadius</a></li><li><a href="AbstractCanvas.html#setFrameStyle">setFrameStyle</a></li><li><a href="AbstractCanvas.html#setLineColor">setLineColor</a></li><li><a href="AbstractCanvas.html#setLineWidth">setLineWidth</a></li><li><a href="AbstractCanvas.html#setStyleSheet">setStyleSheet</a></li></ul></div></li><li><a href="AbstractLegend.html">AbstractLegend</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AbstractLegend_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="AbstractLegend.html#addItem">addItem</a></li><li><a href="AbstractLegend.html#clearLegend">clearLegend</a></li><li><a href="AbstractLegend.html#isEmpty">isEmpty</a></li><li><a href="AbstractLegend.html#legendDiv">legendDiv</a></li><li><a href="AbstractLegend.html#legendDivWidth">legendDivWidth</a></li><li><a href="AbstractLegend.html#maxWidth">maxWidth</a></li><li><a href="AbstractLegend.html#removeItem">removeItem</a></li><li><a href="AbstractLegend.html#rowNumberFromName">rowNumberFromName</a></li><li><a href="AbstractLegend.html#setLegendDiv">setLegendDiv</a></li><li><a href="AbstractLegend.html#setMaxWidth">setMaxWidth</a></li><li><a href="AbstractLegend.html#setPlot">setPlot</a></li><li><a href="AbstractLegend.html#toString">toString</a></li></ul></div></li><li><a href="AbstractScaleDraw.html">AbstractScaleDraw</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="AbstractScaleDraw_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="AbstractScaleDraw.html#.ScaleComponent">ScaleComponent</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="AbstractScaleDraw.html#decimalPlaces">decimalPlaces</a></li><li><a href="AbstractScaleDraw.html#draw">draw</a></li><li><a href="AbstractScaleDraw.html#enableComponent">enableComponent</a></li><li><a href="AbstractScaleDraw.html#hasComponent">hasComponent</a></li><li><a href="AbstractScaleDraw.html#label">label</a></li><li><a href="AbstractScaleDraw.html#longestLabel">longestLabel</a></li><li><a href="AbstractScaleDraw.html#maxTickLength">maxTickLength</a></li><li><a href="AbstractScaleDraw.html#penWidth">penWidth</a></li><li><a href="AbstractScaleDraw.html#precision">precision</a></li><li><a href="AbstractScaleDraw.html#scaleDiv">scaleDiv</a></li><li><a href="AbstractScaleDraw.html#scaleMap">scaleMap</a></li><li><a href="AbstractScaleDraw.html#setDecimalPlaces">setDecimalPlaces</a></li><li><a href="AbstractScaleDraw.html#setPenWidth">setPenWidth</a></li><li><a href="AbstractScaleDraw.html#setPrecision">setPrecision</a></li><li><a href="AbstractScaleDraw.html#setScaleDiv">setScaleDiv</a></li><li><a href="AbstractScaleDraw.html#setSpacing">setSpacing</a></li><li><a href="AbstractScaleDraw.html#setTickLength">setTickLength</a></li><li><a href="AbstractScaleDraw.html#setTransformation">setTransformation</a></li><li><a href="AbstractScaleDraw.html#spacing">spacing</a></li><li><a href="AbstractScaleDraw.html#tickLength">tickLength</a></li><li><a href="AbstractScaleDraw.html#toString">toString</a></li></ul></div></li><li><a href="ArraySeriesData.html">ArraySeriesData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ArraySeriesData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ArraySeriesData.html#mBoundingRect">mBoundingRect</a></li><li><a href="ArraySeriesData.html#sample">sample</a></li><li><a href="ArraySeriesData.html#samples">samples</a></li><li><a href="ArraySeriesData.html#setRectOfInterest">setRectOfInterest</a></li><li><a href="ArraySeriesData.html#setSamples">setSamples</a></li><li><a href="ArraySeriesData.html#size">size</a></li><li><a href="ArraySeriesData.html#toString">toString</a></li></ul></div></li><li><a href="ArrowSymbol.html">ArrowSymbol</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ArrowSymbol_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ArrowSymbol.html#boundingRect">boundingRect</a></li><li><a href="ArrowSymbol.html#brush">brush</a></li><li><a href="ArrowSymbol.html#drawGraphicSymbol">drawGraphicSymbol</a></li><li><a href="ArrowSymbol.html#drawSymbol">drawSymbol</a></li><li><a href="ArrowSymbol.html#drawSymbols">drawSymbols</a></li><li><a href="ArrowSymbol.html#path">path</a></li><li><a href="ArrowSymbol.html#pen">pen</a></li><li><a href="ArrowSymbol.html#pinPoint">pinPoint</a></li><li><a href="ArrowSymbol.html#renderSymbols">renderSymbols</a></li><li><a href="ArrowSymbol.html#rotation">rotation</a></li><li><a href="ArrowSymbol.html#setBrush">setBrush</a></li><li><a href="ArrowSymbol.html#setPath">setPath</a></li><li><a href="ArrowSymbol.html#setPen">setPen</a></li><li><a href="ArrowSymbol.html#setPinPoint">setPinPoint</a></li><li><a href="ArrowSymbol.html#setRotation">setRotation</a></li><li><a href="ArrowSymbol.html#setSize">setSize</a></li><li><a href="ArrowSymbol.html#setStyle">setStyle</a></li><li><a href="ArrowSymbol.html#size">size</a></li><li><a href="ArrowSymbol.html#style">style</a></li><li><a href="ArrowSymbol.html#toString">toString</a></li></ul></div></li><li><a href="Axis.html">Axis</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Axis_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Axis.html#.AxisId">AxisId</a></li></ul></div></li><li><a href="ColorMap.html">ColorMap</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ColorMap_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ColorMap.html#.Format">Format</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ColorMap.html#colorIndex">colorIndex</a></li><li><a href="ColorMap.html#colorTable">colorTable</a></li><li><a href="ColorMap.html#rgb">rgb</a></li><li><a href="ColorMap.html#setFormat">setFormat</a></li><li><a href="ColorMap.html#toString">toString</a></li></ul></div></li><li><a href="Curve.html">Curve</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Curve_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Curve.html#.CurveAttribute">CurveAttribute</a></li><li><a href="Curve.html#.CurveStyle">CurveStyle</a></li><li><a href="Curve.html#.LegendAttribute">LegendAttribute</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Curve.html#attach">attach</a></li><li><a href="Curve.html#baseline">baseline</a></li><li><a href="Curve.html#boundingRect">boundingRect</a></li><li><a href="Curve.html#brush">brush</a></li><li><a href="Curve.html#clearCanvas">clearCanvas</a></li><li><a href="Curve.html#closePolyline">closePolyline</a></li><li><a href="Curve.html#closestPoint">closestPoint</a></li><li><a href="Curve.html#curveAttributes">curveAttributes</a></li><li><a href="Curve.html#curveFitter">curveFitter</a></li><li><a href="Curve.html#delete">delete</a></li><li><a href="Curve.html#deleteArray">deleteArray</a></li><li><a href="Curve.html#detach">detach</a></li><li><a href="Curve.html#draw">draw</a></li><li><a href="Curve.html#drawCurve">drawCurve</a></li><li><a href="Curve.html#drawDots">drawDots</a></li><li><a href="Curve.html#drawLines">drawLines</a></li><li><a href="Curve.html#drawSeries">drawSeries</a></li><li><a href="Curve.html#drawSteps">drawSteps</a></li><li><a href="Curve.html#drawSticks">drawSticks</a></li><li><a href="Curve.html#drawSymbols">drawSymbols</a></li><li><a href="Curve.html#fillCurve">fillCurve</a></li><li><a href="Curve.html#getCanvas">getCanvas</a></li><li><a href="Curve.html#getCanvasRect">getCanvasRect</a></li><li><a href="Curve.html#getContext">getContext</a></li><li><a href="Curve.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="Curve.html#getZ">getZ</a></li><li><a href="Curve.html#hide">hide</a></li><li><a href="Curve.html#isVisible">isVisible</a></li><li><a href="Curve.html#itemChanged">itemChanged</a></li><li><a href="Curve.html#legendAttributes">legendAttributes</a></li><li><a href="Curve.html#legendChanged">legendChanged</a></li><li><a href="Curve.html#legendData">legendData</a></li><li><a href="Curve.html#legendIcon">legendIcon</a></li><li><a href="Curve.html#legendIconSize">legendIconSize</a></li><li><a href="Curve.html#maxXValue">maxXValue</a></li><li><a href="Curve.html#maxYValue">maxYValue</a></li><li><a href="Curve.html#minXValue">minXValue</a></li><li><a href="Curve.html#minYValue">minYValue</a></li><li><a href="Curve.html#orientation">orientation</a></li><li><a href="Curve.html#pen">pen</a></li><li><a href="Curve.html#plot">plot</a></li><li><a href="Curve.html#removePoint">removePoint</a></li><li><a href="Curve.html#setAxes">setAxes</a></li><li><a href="Curve.html#setBaseline">setBaseline</a></li><li><a href="Curve.html#setBrush">setBrush</a></li><li><a href="Curve.html#setCurveAttribute">setCurveAttribute</a></li><li><a href="Curve.html#setCurveFitter">setCurveFitter</a></li><li><a href="Curve.html#setItemAttribute">setItemAttribute</a></li><li><a href="Curve.html#setItemInterest">setItemInterest</a></li><li><a href="Curve.html#setLegendAttribute">setLegendAttribute</a></li><li><a href="Curve.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="Curve.html#setOrientation">setOrientation</a></li><li><a href="Curve.html#setPaintAttribute">setPaintAttribute</a></li><li><a href="Curve.html#setPen">setPen</a></li><li><a href="Curve.html#setSamples">setSamples</a></li><li><a href="Curve.html#setStyle">setStyle</a></li><li><a href="Curve.html#setSymbol">setSymbol</a></li><li><a href="Curve.html#setTitle">setTitle</a></li><li><a href="Curve.html#setVisible">setVisible</a></li><li><a href="Curve.html#setXAxis">setXAxis</a></li><li><a href="Curve.html#setYAxis">setYAxis</a></li><li><a href="Curve.html#setZ">setZ</a></li><li><a href="Curve.html#show">show</a></li><li><a href="Curve.html#style">style</a></li><li><a href="Curve.html#symbol">symbol</a></li><li><a href="Curve.html#testCurveAttribute">testCurveAttribute</a></li><li><a href="Curve.html#testItemAttribute">testItemAttribute</a></li><li><a href="Curve.html#testItemInterest">testItemInterest</a></li><li><a href="Curve.html#testLegendAttribute">testLegendAttribute</a></li><li><a href="Curve.html#testPaintAttribute">testPaintAttribute</a></li><li><a href="Curve.html#title">title</a></li><li><a href="Curve.html#toString">toString</a></li><li><a href="Curve.html#updateScaleDiv">updateScaleDiv</a></li><li><a href="Curve.html#xAxis">xAxis</a></li><li><a href="Curve.html#yAxis">yAxis</a></li></ul></div></li><li><a href="CurveFitter.html">CurveFitter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="CurveFitter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="CurveFitter.html#fitCurve">fitCurve</a></li></ul></div></li><li><a href="DotOnLineSymbol.html">DotOnLineSymbol</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="DotOnLineSymbol_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="DotOnLineSymbol.html#boundingRect">boundingRect</a></li><li><a href="DotOnLineSymbol.html#brush">brush</a></li><li><a href="DotOnLineSymbol.html#drawGraphicSymbol">drawGraphicSymbol</a></li><li><a href="DotOnLineSymbol.html#drawSymbol">drawSymbol</a></li><li><a href="DotOnLineSymbol.html#drawSymbols">drawSymbols</a></li><li><a href="DotOnLineSymbol.html#path">path</a></li><li><a href="DotOnLineSymbol.html#pen">pen</a></li><li><a href="DotOnLineSymbol.html#pinPoint">pinPoint</a></li><li><a href="DotOnLineSymbol.html#renderSymbols">renderSymbols</a></li><li><a href="DotOnLineSymbol.html#rotation">rotation</a></li><li><a href="DotOnLineSymbol.html#setBrush">setBrush</a></li><li><a href="DotOnLineSymbol.html#setPath">setPath</a></li><li><a href="DotOnLineSymbol.html#setPen">setPen</a></li><li><a href="DotOnLineSymbol.html#setPinPoint">setPinPoint</a></li><li><a href="DotOnLineSymbol.html#setRotation">setRotation</a></li><li><a href="DotOnLineSymbol.html#setSize">setSize</a></li><li><a href="DotOnLineSymbol.html#setStyle">setStyle</a></li><li><a href="DotOnLineSymbol.html#size">size</a></li><li><a href="DotOnLineSymbol.html#style">style</a></li><li><a href="DotOnLineSymbol.html#toString">toString</a></li></ul></div></li><li><a href="EnumBase.html">EnumBase</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EnumBase_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EnumBase.html#.enum">enum</a></li></ul></div></li><li><a href="Enumerator.html">Enumerator</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Enumerator_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Enumerator.html#.enum">enum</a></li><li><a href="Enumerator.html#.enumExist">enumExist</a></li><li><a href="Enumerator.html#.getDefaultEnumNampespace">getDefaultEnumNampespace</a></li><li><a href="Enumerator.html#.noThrowOnEnumRedefinition">noThrowOnEnumRedefinition</a></li><li><a href="Enumerator.html#.setDefaultEnumNampespace">setDefaultEnumNampespace</a></li></ul></div></li><li><a href="EvaluateExp.html">EvaluateExp</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EvaluateExp_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EvaluateExp.html#eval">eval</a></li><li><a href="EvaluateExp.html#getExpString">getExpString</a></li><li><a href="EvaluateExp.html#setExpString">setExpString</a></li></ul></div></li><li><a href="EventPattern.html">EventPattern</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventPattern_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="EventPattern.html#.KeyPatternCode">KeyPatternCode</a></li><li><a href="EventPattern.html#.MousePatternCode">MousePatternCode</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="EventPattern.html#initKeyPattern">initKeyPattern</a></li><li><a href="EventPattern.html#initMousePattern">initMousePattern</a></li><li><a href="EventPattern.html#key">key</a></li><li><a href="EventPattern.html#keyMatch">keyMatch</a></li><li><a href="EventPattern.html#keyPattern">keyPattern</a></li><li><a href="EventPattern.html#mouseMatch">mouseMatch</a></li><li><a href="EventPattern.html#mousePattern">mousePattern</a></li><li><a href="EventPattern.html#setKeyPattern">setKeyPattern</a></li><li><a href="EventPattern.html#setMousePattern">setMousePattern</a></li></ul></div></li><li><a href="Graphic.html">Graphic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Graphic_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Graphic.html#height">height</a></li><li><a href="Graphic.html#parent">parent</a></li><li><a href="Graphic.html#setHeight">setHeight</a></li><li><a href="Graphic.html#setParent">setParent</a></li><li><a href="Graphic.html#setWidth">setWidth</a></li><li><a href="Graphic.html#svg">svg</a></li><li><a href="Graphic.html#toString">toString</a></li><li><a href="Graphic.html#width">width</a></li></ul></div></li><li><a href="HObject.html">HObject</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="HObject_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="HObject.html#delete">delete</a></li><li><a href="HObject.html#deleteArray">deleteArray</a></li><li><a href="HObject.html#event">event</a></li><li><a href="HObject.html#eventFilter">eventFilter</a></li><li><a href="HObject.html#getElement">getElement</a></li><li><a href="HObject.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="HObject.html#installEventFilter">installEventFilter</a></li><li><a href="HObject.html#isEnabled">isEnabled</a></li><li><a href="HObject.html#mapToElement">mapToElement</a></li><li><a href="HObject.html#objectName">objectName</a></li><li><a href="HObject.html#removeEventFilter">removeEventFilter</a></li><li><a href="HObject.html#setElement">setElement</a></li><li><a href="HObject.html#setEnabled_1">setEnabled_1</a></li><li><a href="HObject.html#setMouseTracking">setMouseTracking</a></li><li><a href="HObject.html#setObjectName">setObjectName</a></li><li><a href="HObject.html#toString">toString</a></li></ul></div></li><li><a href="Interval.html">Interval</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Interval_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Interval.html#.BorderFlag">BorderFlag</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Interval.html#borderFlags">borderFlags</a></li><li><a href="Interval.html#contains">contains</a></li><li><a href="Interval.html#extend">extend</a></li><li><a href="Interval.html#invalidate">invalidate</a></li><li><a href="Interval.html#inverted">inverted</a></li><li><a href="Interval.html#isNull">isNull</a></li><li><a href="Interval.html#isValid">isValid</a></li><li><a href="Interval.html#limited">limited</a></li><li><a href="Interval.html#maxValue">maxValue</a></li><li><a href="Interval.html#minValue">minValue</a></li><li><a href="Interval.html#normalized">normalized</a></li><li><a href="Interval.html#setBorderFlags">setBorderFlags</a></li><li><a href="Interval.html#setInterval">setInterval</a></li><li><a href="Interval.html#setMaxValue">setMaxValue</a></li><li><a href="Interval.html#setMinValue">setMinValue</a></li><li><a href="Interval.html#symmetrize">symmetrize</a></li><li><a href="Interval.html#toString">toString</a></li><li><a href="Interval.html#width">width</a></li></ul></div></li><li><a href="Layout.html">Layout</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Layout_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Layout.html#getCentralDiv">getCentralDiv</a></li><li><a href="Layout.html#getFooterDiv">getFooterDiv</a></li><li><a href="Layout.html#getLegendDiv">getLegendDiv</a></li><li><a href="Layout.html#getPlotDiv">getPlotDiv</a></li><li><a href="Layout.html#getScaleDivElement">getScaleDivElement</a></li><li><a href="Layout.html#getTitleDiv">getTitleDiv</a></li><li><a href="Layout.html#isLegendDivVisible">isLegendDivVisible</a></li><li><a href="Layout.html#setPlot">setPlot</a></li><li><a href="Layout.html#toString">toString</a></li><li><a href="Layout.html#updateLayout">updateLayout</a></li></ul></div></li><li><a href="Legend.html">Legend</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Legend_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Legend.html#addItem">addItem</a></li><li><a href="Legend.html#clearLegend">clearLegend</a></li><li><a href="Legend.html#isEmpty">isEmpty</a></li><li><a href="Legend.html#legendDiv">legendDiv</a></li><li><a href="Legend.html#legendDivWidth">legendDivWidth</a></li><li><a href="Legend.html#maxWidth">maxWidth</a></li><li><a href="Legend.html#removeItem">removeItem</a></li><li><a href="Legend.html#rowNumberFromName">rowNumberFromName</a></li><li><a href="Legend.html#setLegendDiv">setLegendDiv</a></li><li><a href="Legend.html#setMaxWidth">setMaxWidth</a></li><li><a href="Legend.html#setPlot">setPlot</a></li><li><a href="Legend.html#toString">toString</a></li></ul></div></li><li><a href="LegendData.html">LegendData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LegendData_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LegendData.html#.Mode">Mode</a></li><li><a href="LegendData.html#.Role">Role</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LegendData.html#hasRole">hasRole</a></li><li><a href="LegendData.html#icon">icon</a></li><li><a href="LegendData.html#isValid">isValid</a></li><li><a href="LegendData.html#mode">mode</a></li><li><a href="LegendData.html#setValue">setValue</a></li><li><a href="LegendData.html#title">title</a></li><li><a href="LegendData.html#toString">toString</a></li><li><a href="LegendData.html#value">value</a></li></ul></div></li><li><a href="LinearColorMap.html">LinearColorMap</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LinearColorMap_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="LinearColorMap.html#.Mode">Mode</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="LinearColorMap.html#addColorStop">addColorStop</a></li><li><a href="LinearColorMap.html#color1">color1</a></li><li><a href="LinearColorMap.html#color2">color2</a></li><li><a href="LinearColorMap.html#colorIndex">colorIndex</a></li><li><a href="LinearColorMap.html#colorStops">colorStops</a></li><li><a href="LinearColorMap.html#colorTable">colorTable</a></li><li><a href="LinearColorMap.html#mode">mode</a></li><li><a href="LinearColorMap.html#rgb">rgb</a></li><li><a href="LinearColorMap.html#setColorInterval">setColorInterval</a></li><li><a href="LinearColorMap.html#setFormat">setFormat</a></li><li><a href="LinearColorMap.html#setMode">setMode</a></li><li><a href="LinearColorMap.html#toString">toString</a></li></ul></div></li><li><a href="LinearScaleEngine.html">LinearScaleEngine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LinearScaleEngine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="LinearScaleEngine.html#align">align</a></li><li><a href="LinearScaleEngine.html#attributes">attributes</a></li><li><a href="LinearScaleEngine.html#autoScale">autoScale</a></li><li><a href="LinearScaleEngine.html#base">base</a></li><li><a href="LinearScaleEngine.html#buildInterval">buildInterval</a></li><li><a href="LinearScaleEngine.html#buildMajorTicks">buildMajorTicks</a></li><li><a href="LinearScaleEngine.html#buildMinorTicks">buildMinorTicks</a></li><li><a href="LinearScaleEngine.html#buildTicks">buildTicks</a></li><li><a href="LinearScaleEngine.html#contains">contains</a></li><li><a href="LinearScaleEngine.html#divideInterval">divideInterval</a></li><li><a href="LinearScaleEngine.html#divideScale">divideScale</a></li><li><a href="LinearScaleEngine.html#lowerMargin">lowerMargin</a></li><li><a href="LinearScaleEngine.html#reference">reference</a></li><li><a href="LinearScaleEngine.html#setAttribute">setAttribute</a></li><li><a href="LinearScaleEngine.html#setAttributes">setAttributes</a></li><li><a href="LinearScaleEngine.html#setBase">setBase</a></li><li><a href="LinearScaleEngine.html#setMargins">setMargins</a></li><li><a href="LinearScaleEngine.html#setReference">setReference</a></li><li><a href="LinearScaleEngine.html#setTransformation">setTransformation</a></li><li><a href="LinearScaleEngine.html#strip">strip</a></li><li><a href="LinearScaleEngine.html#testAttribute">testAttribute</a></li><li><a href="LinearScaleEngine.html#toString">toString</a></li><li><a href="LinearScaleEngine.html#transformation">transformation</a></li><li><a href="LinearScaleEngine.html#upperMargin">upperMargin</a></li></ul></div></li><li><a href="LogScaleEngine.html">LogScaleEngine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LogScaleEngine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="LogScaleEngine.html#align">align</a></li><li><a href="LogScaleEngine.html#attributes">attributes</a></li><li><a href="LogScaleEngine.html#autoScale">autoScale</a></li><li><a href="LogScaleEngine.html#base">base</a></li><li><a href="LogScaleEngine.html#buildInterval">buildInterval</a></li><li><a href="LogScaleEngine.html#buildMajorTicks">buildMajorTicks</a></li><li><a href="LogScaleEngine.html#buildMinorTicks">buildMinorTicks</a></li><li><a href="LogScaleEngine.html#buildTicks">buildTicks</a></li><li><a href="LogScaleEngine.html#contains">contains</a></li><li><a href="LogScaleEngine.html#divideInterval">divideInterval</a></li><li><a href="LogScaleEngine.html#divideScale">divideScale</a></li><li><a href="LogScaleEngine.html#lowerMargin">lowerMargin</a></li><li><a href="LogScaleEngine.html#reference">reference</a></li><li><a href="LogScaleEngine.html#setAttribute">setAttribute</a></li><li><a href="LogScaleEngine.html#setAttributes">setAttributes</a></li><li><a href="LogScaleEngine.html#setBase">setBase</a></li><li><a href="LogScaleEngine.html#setMargins">setMargins</a></li><li><a href="LogScaleEngine.html#setReference">setReference</a></li><li><a href="LogScaleEngine.html#setTransformation">setTransformation</a></li><li><a href="LogScaleEngine.html#strip">strip</a></li><li><a href="LogScaleEngine.html#testAttribute">testAttribute</a></li><li><a href="LogScaleEngine.html#toString">toString</a></li><li><a href="LogScaleEngine.html#transformation">transformation</a></li><li><a href="LogScaleEngine.html#upperMargin">upperMargin</a></li></ul></div></li><li><a href="LogTransform.html">LogTransform</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="LogTransform_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="LogTransform.html#bounded">bounded</a></li><li><a href="LogTransform.html#copy">copy</a></li><li><a href="LogTransform.html#invTransform">invTransform</a></li><li><a href="LogTransform.html#toString">toString</a></li><li><a href="LogTransform.html#transform">transform</a></li></ul></div></li><li><a href="Magnifier.html">Magnifier</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Magnifier_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Magnifier.html#delete">delete</a></li><li><a href="Magnifier.html#deleteArray">deleteArray</a></li><li><a href="Magnifier.html#event">event</a></li><li><a href="Magnifier.html#eventFilter">eventFilter</a></li><li><a href="Magnifier.html#getElement">getElement</a></li><li><a href="Magnifier.html#getMouseButton">getMouseButton</a></li><li><a href="Magnifier.html#getZoomInKey">getZoomInKey</a></li><li><a href="Magnifier.html#getZoomOutKey">getZoomOutKey</a></li><li><a href="Magnifier.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="Magnifier.html#installEventFilter">installEventFilter</a></li><li><a href="Magnifier.html#isAxisEnabled">isAxisEnabled</a></li><li><a href="Magnifier.html#isEnabled">isEnabled</a></li><li><a href="Magnifier.html#keyFactor">keyFactor</a></li><li><a href="Magnifier.html#mapToElement">mapToElement</a></li><li><a href="Magnifier.html#mouseFactor">mouseFactor</a></li><li><a href="Magnifier.html#objectName">objectName</a></li><li><a href="Magnifier.html#plot">plot</a></li><li><a href="Magnifier.html#removeEventFilter">removeEventFilter</a></li><li><a href="Magnifier.html#rescale">rescale</a></li><li><a href="Magnifier.html#setAxisEnabled">setAxisEnabled</a></li><li><a href="Magnifier.html#setElement">setElement</a></li><li><a href="Magnifier.html#setEnabled_1">setEnabled_1</a></li><li><a href="Magnifier.html#setKeyFactor">setKeyFactor</a></li><li><a href="Magnifier.html#setMouseButton">setMouseButton</a></li><li><a href="Magnifier.html#setMouseFactor">setMouseFactor</a></li><li><a href="Magnifier.html#setMouseTracking">setMouseTracking</a></li><li><a href="Magnifier.html#setObjectName">setObjectName</a></li><li><a href="Magnifier.html#setWheelFactor">setWheelFactor</a></li><li><a href="Magnifier.html#setWheelModifiers">setWheelModifiers</a></li><li><a href="Magnifier.html#setZoomInKey">setZoomInKey</a></li><li><a href="Magnifier.html#setZoomOutKey">setZoomOutKey</a></li><li><a href="Magnifier.html#toString">toString</a></li><li><a href="Magnifier.html#wheelFactor">wheelFactor</a></li><li><a href="Magnifier.html#wheelModifiers">wheelModifiers</a></li></ul></div></li><li><a href="MFile.html">MFile</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="MFile_sub"></div></li><li><a href="Misc.Brush.html">Brush</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Brush_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Brush.html#isEqual">isEqual</a></li><li><a href="Misc.Brush.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Font.html">Font</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Font_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Font.html#isEqual">isEqual</a></li><li><a href="Misc.Font.html#textSize">textSize</a></li><li><a href="Misc.Font.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Image.html">Image</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Image_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Image.html#copy">copy</a></li><li><a href="Misc.Image.html#data">data</a></li><li><a href="Misc.Image.html#height">height</a></li><li><a href="Misc.Image.html#imageData">imageData</a></li><li><a href="Misc.Image.html#isNull">isNull</a></li><li><a href="Misc.Image.html#pixel">pixel</a></li><li><a href="Misc.Image.html#scaleImageData">scaleImageData</a></li><li><a href="Misc.Image.html#setAlpha">setAlpha</a></li><li><a href="Misc.Image.html#setHeight">setHeight</a></li><li><a href="Misc.Image.html#setImageData">setImageData</a></li><li><a href="Misc.Image.html#setPixel">setPixel</a></li><li><a href="Misc.Image.html#setWidth">setWidth</a></li><li><a href="Misc.Image.html#size">size</a></li><li><a href="Misc.Image.html#width">width</a></li></ul></div></li><li><a href="Misc.Line.html">Line</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Line_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Line.html#length">length</a></li><li><a href="Misc.Line.html#p1">p1</a></li><li><a href="Misc.Line.html#p2">p2</a></li><li><a href="Misc.Line.html#x1">x1</a></li><li><a href="Misc.Line.html#x2">x2</a></li><li><a href="Misc.Line.html#y1">y1</a></li><li><a href="Misc.Line.html#y2">y2</a></li></ul></div></li><li><a href="Misc.MPath.html">MPath</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.MPath_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.MPath.html#addPathElement">addPathElement</a></li><li><a href="Misc.MPath.html#addPolygon">addPolygon</a></li><li><a href="Misc.MPath.html#addRect">addRect</a></li><li><a href="Misc.MPath.html#boundingRect">boundingRect</a></li><li><a href="Misc.MPath.html#cubicTo">cubicTo</a></li><li><a href="Misc.MPath.html#elementAt">elementAt</a></li><li><a href="Misc.MPath.html#elementCount">elementCount</a></li><li><a href="Misc.MPath.html#elements">elements</a></li><li><a href="Misc.MPath.html#isEmpty">isEmpty</a></li><li><a href="Misc.MPath.html#lineTo">lineTo</a></li><li><a href="Misc.MPath.html#moveTo">moveTo</a></li><li><a href="Misc.MPath.html#toString">toString</a></li></ul></div></li><li><a href="Misc.MPathElement.html">MPathElement</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.MPathElement_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.MPathElement.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Pen.html">Pen</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Pen_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Pen.html#isEqual">isEqual</a></li><li><a href="Misc.Pen.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Point.html">Point</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Point_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Point.html#interpolatedPoint">interpolatedPoint</a></li><li><a href="Misc.Point.html#isEqual">isEqual</a></li><li><a href="Misc.Point.html#logInterpolatedPoint">logInterpolatedPoint</a></li><li><a href="Misc.Point.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Polygon.html">Polygon</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Polygon_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Polygon.html#add">add</a></li><li><a href="Misc.Polygon.html#toString">toString</a></li></ul></div></li><li><a href="Misc.Rect.html">Rect</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Rect_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Rect.html#adjust">adjust</a></li><li><a href="Misc.Rect.html#adjusted">adjusted</a></li><li><a href="Misc.Rect.html#bottom">bottom</a></li><li><a href="Misc.Rect.html#bottomLeft">bottomLeft</a></li><li><a href="Misc.Rect.html#bottomRight">bottomRight</a></li><li><a href="Misc.Rect.html#center">center</a></li><li><a href="Misc.Rect.html#contains">contains</a></li><li><a href="Misc.Rect.html#copy">copy</a></li><li><a href="Misc.Rect.html#height">height</a></li><li><a href="Misc.Rect.html#intersected">intersected</a></li><li><a href="Misc.Rect.html#intersects">intersects</a></li><li><a href="Misc.Rect.html#isEmpty">isEmpty</a></li><li><a href="Misc.Rect.html#isEqual">isEqual</a></li><li><a href="Misc.Rect.html#isValid">isValid</a></li><li><a href="Misc.Rect.html#left">left</a></li><li><a href="Misc.Rect.html#leftBottom">leftBottom</a></li><li><a href="Misc.Rect.html#leftTop">leftTop</a></li><li><a href="Misc.Rect.html#moveBottomRight">moveBottomRight</a></li><li><a href="Misc.Rect.html#moveCenter">moveCenter</a></li><li><a href="Misc.Rect.html#moveTopLeft">moveTopLeft</a></li><li><a href="Misc.Rect.html#normalized">normalized</a></li><li><a href="Misc.Rect.html#right">right</a></li><li><a href="Misc.Rect.html#rightBottom">rightBottom</a></li><li><a href="Misc.Rect.html#rightTop">rightTop</a></li><li><a href="Misc.Rect.html#setBottom">setBottom</a></li><li><a href="Misc.Rect.html#setHeight">setHeight</a></li><li><a href="Misc.Rect.html#setLeft">setLeft</a></li><li><a href="Misc.Rect.html#setRect">setRect</a></li><li><a href="Misc.Rect.html#setRight">setRight</a></li><li><a href="Misc.Rect.html#setSize">setSize</a></li><li><a href="Misc.Rect.html#setTop">setTop</a></li><li><a href="Misc.Rect.html#setWidth">setWidth</a></li><li><a href="Misc.Rect.html#size">size</a></li><li><a href="Misc.Rect.html#top">top</a></li><li><a href="Misc.Rect.html#topLeft">topLeft</a></li><li><a href="Misc.Rect.html#topRight">topRight</a></li><li><a href="Misc.Rect.html#toRect">toRect</a></li><li><a href="Misc.Rect.html#toString">toString</a></li><li><a href="Misc.Rect.html#united">united</a></li><li><a href="Misc.Rect.html#width">width</a></li><li><a href="Misc.Rect.html#x">x</a></li><li><a href="Misc.Rect.html#y">y</a></li></ul></div></li><li><a href="Misc.Size.html">Size</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc.Size_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Misc.Size.html#boundedTo">boundedTo</a></li><li><a href="Misc.Size.html#copy">copy</a></li><li><a href="Misc.Size.html#expandedTo">expandedTo</a></li><li><a href="Misc.Size.html#isEmpty">isEmpty</a></li><li><a href="Misc.Size.html#isEqual">isEqual</a></li><li><a href="Misc.Size.html#isValid">isValid</a></li><li><a href="Misc.Size.html#toString">toString</a></li></ul></div></li><li><a href="NullTransform.html">NullTransform</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="NullTransform_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="NullTransform.html#bounded">bounded</a></li><li><a href="NullTransform.html#copy">copy</a></li><li><a href="NullTransform.html#invTransform">invTransform</a></li><li><a href="NullTransform.html#toString">toString</a></li><li><a href="NullTransform.html#transform">transform</a></li></ul></div></li><li><a href="PaintUtil.ContextPainter.html">ContextPainter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PaintUtil.ContextPainter_sub"></div></li><li><a href="PaintUtil.GraphicPainter.html">GraphicPainter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PaintUtil.GraphicPainter_sub"></div></li><li><a href="PaintUtil.Painter.html">Painter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PaintUtil.Painter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PaintUtil.Painter.html#brush">brush</a></li><li><a href="PaintUtil.Painter.html#canvasHeight">canvasHeight</a></li><li><a href="PaintUtil.Painter.html#canvasWidth">canvasWidth</a></li><li><a href="PaintUtil.Painter.html#context">context</a></li><li><a href="PaintUtil.Painter.html#drawCircle">drawCircle</a></li><li><a href="PaintUtil.Painter.html#drawEllipse">drawEllipse</a></li><li><a href="PaintUtil.Painter.html#drawImage">drawImage</a></li><li><a href="PaintUtil.Painter.html#drawLine">drawLine</a></li><li><a href="PaintUtil.Painter.html#drawPath">drawPath</a></li><li><a href="PaintUtil.Painter.html#drawPoint">drawPoint</a></li><li><a href="PaintUtil.Painter.html#drawPoints">drawPoints</a></li><li><a href="PaintUtil.Painter.html#drawPolygon">drawPolygon</a></li><li><a href="PaintUtil.Painter.html#drawPolyline">drawPolyline</a></li><li><a href="PaintUtil.Painter.html#drawRect">drawRect</a></li><li><a href="PaintUtil.Painter.html#drawRotatedText">drawRotatedText</a></li><li><a href="PaintUtil.Painter.html#drawText">drawText</a></li><li><a href="PaintUtil.Painter.html#drawVerticalText">drawVerticalText</a></li><li><a href="PaintUtil.Painter.html#fillRect">fillRect</a></li><li><a href="PaintUtil.Painter.html#font">font</a></li><li><a href="PaintUtil.Painter.html#isGraphicPainter">isGraphicPainter</a></li><li><a href="PaintUtil.Painter.html#pen">pen</a></li><li><a href="PaintUtil.Painter.html#restore">restore</a></li><li><a href="PaintUtil.Painter.html#rotate">rotate</a></li><li><a href="PaintUtil.Painter.html#save">save</a></li><li><a href="PaintUtil.Painter.html#scale">scale</a></li><li><a href="PaintUtil.Painter.html#setBrush">setBrush</a></li><li><a href="PaintUtil.Painter.html#setFont">setFont</a></li><li><a href="PaintUtil.Painter.html#setPen">setPen</a></li><li><a href="PaintUtil.Painter.html#textSize">textSize</a></li><li><a href="PaintUtil.Painter.html#toString">toString</a></li><li><a href="PaintUtil.Painter.html#transform">transform</a></li><li><a href="PaintUtil.Painter.html#translate">translate</a></li></ul></div></li><li><a href="Panner.html">Panner</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Panner_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Panner.html#cursor">cursor</a></li><li><a href="Panner.html#delete">delete</a></li><li><a href="Panner.html#deleteArray">deleteArray</a></li><li><a href="Panner.html#event">event</a></li><li><a href="Panner.html#eventFilter">eventFilter</a></li><li><a href="Panner.html#getElement">getElement</a></li><li><a href="Panner.html#getMouseButton">getMouseButton</a></li><li><a href="Panner.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="Panner.html#installEventFilter">installEventFilter</a></li><li><a href="Panner.html#isEnabled">isEnabled</a></li><li><a href="Panner.html#mapToElement">mapToElement</a></li><li><a href="Panner.html#objectName">objectName</a></li><li><a href="Panner.html#plot">plot</a></li><li><a href="Panner.html#removeEventFilter">removeEventFilter</a></li><li><a href="Panner.html#rescaleAndRedraw">rescaleAndRedraw</a></li><li><a href="Panner.html#setCursor">setCursor</a></li><li><a href="Panner.html#setElement">setElement</a></li><li><a href="Panner.html#setEnabled">setEnabled</a></li><li><a href="Panner.html#setEnabled_1">setEnabled_1</a></li><li><a href="Panner.html#setMouseButton">setMouseButton</a></li><li><a href="Panner.html#setMouseTracking">setMouseTracking</a></li><li><a href="Panner.html#setObjectName">setObjectName</a></li><li><a href="Panner.html#setOrientation">setOrientation</a></li><li><a href="Panner.html#toString">toString</a></li><li><a href="Panner.html#widgetMouseMoveEvent">widgetMouseMoveEvent</a></li><li><a href="Panner.html#widgetMousePressEvent">widgetMousePressEvent</a></li><li><a href="Panner.html#widgetMouseUpEvent">widgetMouseUpEvent</a></li></ul></div></li><li><a href="Picker.html">Picker</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Picker_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Picker.html#.DisplayMode">DisplayMode</a></li><li><a href="Picker.html#.RubberBand">RubberBand</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Picker.html#accept">accept</a></li><li><a href="Picker.html#adjustedPoints">adjustedPoints</a></li><li><a href="Picker.html#append">append</a></li><li><a href="Picker.html#begin">begin</a></li><li><a href="Picker.html#drawRubberBand">drawRubberBand</a></li><li><a href="Picker.html#drawTracker">drawTracker</a></li><li><a href="Picker.html#end">end</a></li><li><a href="Picker.html#eventFilter">eventFilter</a></li><li><a href="Picker.html#initKeyPattern">initKeyPattern</a></li><li><a href="Picker.html#initMousePattern">initMousePattern</a></li><li><a href="Picker.html#isActive">isActive</a></li><li><a href="Picker.html#isEnabled">isEnabled</a></li><li><a href="Picker.html#key">key</a></li><li><a href="Picker.html#keyMatch">keyMatch</a></li><li><a href="Picker.html#keyPattern">keyPattern</a></li><li><a href="Picker.html#mouseMatch">mouseMatch</a></li><li><a href="Picker.html#mousePattern">mousePattern</a></li><li><a href="Picker.html#move">move</a></li><li><a href="Picker.html#parentWidget">parentWidget</a></li><li><a href="Picker.html#pickArea">pickArea</a></li><li><a href="Picker.html#pickedPoints">pickedPoints</a></li><li><a href="Picker.html#remove">remove</a></li><li><a href="Picker.html#reset">reset</a></li><li><a href="Picker.html#rubberBand">rubberBand</a></li><li><a href="Picker.html#rubberBandOverlay">rubberBandOverlay</a></li><li><a href="Picker.html#rubberBandPen">rubberBandPen</a></li><li><a href="Picker.html#selection">selection</a></li><li><a href="Picker.html#setEnabled">setEnabled</a></li><li><a href="Picker.html#setKeyPattern">setKeyPattern</a></li><li><a href="Picker.html#setMousePattern">setMousePattern</a></li><li><a href="Picker.html#setMouseTracking">setMouseTracking</a></li><li><a href="Picker.html#setRubberBand">setRubberBand</a></li><li><a href="Picker.html#setRubberBandPen">setRubberBandPen</a></li><li><a href="Picker.html#setStateMachine">setStateMachine</a></li><li><a href="Picker.html#setTrackerFont">setTrackerFont</a></li><li><a href="Picker.html#setTrackerMode">setTrackerMode</a></li><li><a href="Picker.html#setTrackerPen">setTrackerPen</a></li><li><a href="Picker.html#stateMachine">stateMachine</a></li><li><a href="Picker.html#trackerFont">trackerFont</a></li><li><a href="Picker.html#trackerMode">trackerMode</a></li><li><a href="Picker.html#trackerOverlay">trackerOverlay</a></li><li><a href="Picker.html#trackerPen">trackerPen</a></li><li><a href="Picker.html#trackerPosition">trackerPosition</a></li><li><a href="Picker.html#trackerRect">trackerRect</a></li><li><a href="Picker.html#trackerText">trackerText</a></li><li><a href="Picker.html#transition">transition</a></li><li><a href="Picker.html#updateDisplay">updateDisplay</a></li><li><a href="Picker.html#widgetEnterEvent">widgetEnterEvent</a></li><li><a href="Picker.html#widgetKeyPressEvent">widgetKeyPressEvent</a></li><li><a href="Picker.html#widgetKeyReleaseEvent">widgetKeyReleaseEvent</a></li><li><a href="Picker.html#widgetLeaveEvent">widgetLeaveEvent</a></li><li><a href="Picker.html#widgetMouseDoubleClickEvent">widgetMouseDoubleClickEvent</a></li><li><a href="Picker.html#widgetMouseMoveEvent">widgetMouseMoveEvent</a></li><li><a href="Picker.html#widgetMousePressEvent">widgetMousePressEvent</a></li><li><a href="Picker.html#widgetMouseReleaseEvent">widgetMouseReleaseEvent</a></li><li><a href="Picker.html#widgetWheelEvent">widgetWheelEvent</a></li></ul></div></li><li><a href="PickerClickPointMachine.html">PickerClickPointMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerClickPointMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerClickPointMachine.html#reset">reset</a></li><li><a href="PickerClickPointMachine.html#selectionType">selectionType</a></li><li><a href="PickerClickPointMachine.html#setState">setState</a></li><li><a href="PickerClickPointMachine.html#state">state</a></li><li><a href="PickerClickPointMachine.html#toString">toString</a></li><li><a href="PickerClickPointMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerClickRectMachine.html">PickerClickRectMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerClickRectMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerClickRectMachine.html#reset">reset</a></li><li><a href="PickerClickRectMachine.html#selectionType">selectionType</a></li><li><a href="PickerClickRectMachine.html#setState">setState</a></li><li><a href="PickerClickRectMachine.html#state">state</a></li><li><a href="PickerClickRectMachine.html#toString">toString</a></li><li><a href="PickerClickRectMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerDragLineMachine.html">PickerDragLineMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerDragLineMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerDragLineMachine.html#reset">reset</a></li><li><a href="PickerDragLineMachine.html#selectionType">selectionType</a></li><li><a href="PickerDragLineMachine.html#setState">setState</a></li><li><a href="PickerDragLineMachine.html#state">state</a></li><li><a href="PickerDragLineMachine.html#toString">toString</a></li><li><a href="PickerDragLineMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerDragPointMachine.html">PickerDragPointMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerDragPointMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerDragPointMachine.html#reset">reset</a></li><li><a href="PickerDragPointMachine.html#selectionType">selectionType</a></li><li><a href="PickerDragPointMachine.html#setState">setState</a></li><li><a href="PickerDragPointMachine.html#state">state</a></li><li><a href="PickerDragPointMachine.html#toString">toString</a></li><li><a href="PickerDragPointMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerDragRectMachine.html">PickerDragRectMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerDragRectMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerDragRectMachine.html#reset">reset</a></li><li><a href="PickerDragRectMachine.html#selectionType">selectionType</a></li><li><a href="PickerDragRectMachine.html#setState">setState</a></li><li><a href="PickerDragRectMachine.html#state">state</a></li><li><a href="PickerDragRectMachine.html#toString">toString</a></li><li><a href="PickerDragRectMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerMachine.html">PickerMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerMachine_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PickerMachine.html#.SelectionType">SelectionType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerMachine.html#reset">reset</a></li><li><a href="PickerMachine.html#selectionType">selectionType</a></li><li><a href="PickerMachine.html#setState">setState</a></li><li><a href="PickerMachine.html#state">state</a></li><li><a href="PickerMachine.html#toString">toString</a></li><li><a href="PickerMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerPolygonMachine.html">PickerPolygonMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerPolygonMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerPolygonMachine.html#reset">reset</a></li><li><a href="PickerPolygonMachine.html#selectionType">selectionType</a></li><li><a href="PickerPolygonMachine.html#setState">setState</a></li><li><a href="PickerPolygonMachine.html#state">state</a></li><li><a href="PickerPolygonMachine.html#toString">toString</a></li><li><a href="PickerPolygonMachine.html#transition">transition</a></li></ul></div></li><li><a href="PickerTrackerMachine.html">PickerTrackerMachine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PickerTrackerMachine_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PickerTrackerMachine.html#reset">reset</a></li><li><a href="PickerTrackerMachine.html#selectionType">selectionType</a></li><li><a href="PickerTrackerMachine.html#setState">setState</a></li><li><a href="PickerTrackerMachine.html#state">state</a></li><li><a href="PickerTrackerMachine.html#toString">toString</a></li><li><a href="PickerTrackerMachine.html#transition">transition</a></li></ul></div></li><li><a href="Plot.html">Plot</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Plot_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Plot.html#attachItem">attachItem</a></li><li><a href="Plot.html#autoRefresh">autoRefresh</a></li><li><a href="Plot.html#autoReplot">autoReplot</a></li><li><a href="Plot.html#axisAutoScale">axisAutoScale</a></li><li><a href="Plot.html#axisDecimalPlaces">axisDecimalPlaces</a></li><li><a href="Plot.html#axisEnabled">axisEnabled</a></li><li><a href="Plot.html#axisInterval">axisInterval</a></li><li><a href="Plot.html#axisLabelFont">axisLabelFont</a></li><li><a href="Plot.html#axisMaxMajor">axisMaxMajor</a></li><li><a href="Plot.html#axisMaxMinor">axisMaxMinor</a></li><li><a href="Plot.html#axisPrecision">axisPrecision</a></li><li><a href="Plot.html#axisScaleDiv">axisScaleDiv</a></li><li><a href="Plot.html#axisScaleDraw">axisScaleDraw</a></li><li><a href="Plot.html#axisScaleEngine">axisScaleEngine</a></li><li><a href="Plot.html#axisTitle">axisTitle</a></li><li><a href="Plot.html#axisTitleFont">axisTitleFont</a></li><li><a href="Plot.html#axisValid">axisValid</a></li><li><a href="Plot.html#axisWidget">axisWidget</a></li><li><a href="Plot.html#borderRadius">borderRadius</a></li><li><a href="Plot.html#canvasMap">canvasMap</a></li><li><a href="Plot.html#cursor">cursor</a></li><li><a href="Plot.html#drawBackGround">drawBackGround</a></li><li><a href="Plot.html#drawFooter">drawFooter</a></li><li><a href="Plot.html#drawTitle">drawTitle</a></li><li><a href="Plot.html#enableAxis">enableAxis</a></li><li><a href="Plot.html#enableLegend">enableLegend</a></li><li><a href="Plot.html#findPlotCurve">findPlotCurve</a></li><li><a href="Plot.html#findPlotMarker">findPlotMarker</a></li><li><a href="Plot.html#footer">footer</a></li><li><a href="Plot.html#footerFont">footerFont</a></li><li><a href="Plot.html#getCentralWidget">getCentralWidget</a></li><li><a href="Plot.html#getFooterWidget">getFooterWidget</a></li><li><a href="Plot.html#getLayout">getLayout</a></li><li><a href="Plot.html#getTitleWidget">getTitleWidget</a></li><li><a href="Plot.html#hasPlotCurve">hasPlotCurve</a></li><li><a href="Plot.html#hasPlotSpectroCurve">hasPlotSpectroCurve</a></li><li><a href="Plot.html#hasPlotSpectrogram">hasPlotSpectrogram</a></li><li><a href="Plot.html#hasVisiblePlotCurve">hasVisiblePlotCurve</a></li><li><a href="Plot.html#hasVisiblePlotSpectroCurve">hasVisiblePlotSpectroCurve</a></li><li><a href="Plot.html#hasVisiblePlotSpectrogram">hasVisiblePlotSpectrogram</a></li><li><a href="Plot.html#hideFooter">hideFooter</a></li><li><a href="Plot.html#hideTitle">hideTitle</a></li><li><a href="Plot.html#insertLegend">insertLegend</a></li><li><a href="Plot.html#invTransform">invTransform</a></li><li><a href="Plot.html#isCursorSet">isCursorSet</a></li><li><a href="Plot.html#isLegendEnabled">isLegendEnabled</a></li><li><a href="Plot.html#itemList">itemList</a></li><li><a href="Plot.html#legend">legend</a></li><li><a href="Plot.html#legendFont">legendFont</a></li><li><a href="Plot.html#plotBackground">plotBackground</a></li><li><a href="Plot.html#plotItemStore">plotItemStore</a></li><li><a href="Plot.html#replot">replot</a></li><li><a href="Plot.html#setAutoReplot">setAutoReplot</a></li><li><a href="Plot.html#setAxisAutoScale">setAxisAutoScale</a></li><li><a href="Plot.html#setAxisDecimalPlaces">setAxisDecimalPlaces</a></li><li><a href="Plot.html#setAxisLabelFont">setAxisLabelFont</a></li><li><a href="Plot.html#setAxisMaxMajor">setAxisMaxMajor</a></li><li><a href="Plot.html#setAxisMaxMinor">setAxisMaxMinor</a></li><li><a href="Plot.html#setAxisPrecision">setAxisPrecision</a></li><li><a href="Plot.html#setAxisScale">setAxisScale</a></li><li><a href="Plot.html#setAxisScaleDiv">setAxisScaleDiv</a></li><li><a href="Plot.html#setAxisScaleEngine">setAxisScaleEngine</a></li><li><a href="Plot.html#setAxisTitle">setAxisTitle</a></li><li><a href="Plot.html#setAxisTitleFont">setAxisTitleFont</a></li><li><a href="Plot.html#setBorderRadius">setBorderRadius</a></li><li><a href="Plot.html#setCursor">setCursor</a></li><li><a href="Plot.html#setDefaultCursor">setDefaultCursor</a></li><li><a href="Plot.html#setFooter">setFooter</a></li><li><a href="Plot.html#setFooterFont">setFooterFont</a></li><li><a href="Plot.html#setLegendFont">setLegendFont</a></li><li><a href="Plot.html#setPlotBackground">setPlotBackground</a></li><li><a href="Plot.html#setTitle">setTitle</a></li><li><a href="Plot.html#setTitleFont">setTitleFont</a></li><li><a href="Plot.html#showFooter">showFooter</a></li><li><a href="Plot.html#showTitle">showTitle</a></li><li><a href="Plot.html#title">title</a></li><li><a href="Plot.html#titleFont">titleFont</a></li><li><a href="Plot.html#transform">transform</a></li><li><a href="Plot.html#unsetCursor">unsetCursor</a></li><li><a href="Plot.html#updateAxes">updateAxes</a></li><li><a href="Plot.html#updateLegend">updateLegend</a></li></ul></div></li><li><a href="PlotCanvas.html">PlotCanvas</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotCanvas_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotCanvas.html#getBorderRadius">getBorderRadius</a></li><li><a href="PlotCanvas.html#setBackground">setBackground</a></li><li><a href="PlotCanvas.html#setBackgroundColor">setBackgroundColor</a></li><li><a href="PlotCanvas.html#setBorderRadius">setBorderRadius</a></li><li><a href="PlotCanvas.html#setFrameStyle">setFrameStyle</a></li><li><a href="PlotCanvas.html#setLineColor">setLineColor</a></li><li><a href="PlotCanvas.html#setLineWidth">setLineWidth</a></li><li><a href="PlotCanvas.html#setStyleSheet">setStyleSheet</a></li></ul></div></li><li><a href="PlotContainerCanvas.html">PlotContainerCanvas</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotContainerCanvas_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotContainerCanvas.html#getBorderRadius">getBorderRadius</a></li><li><a href="PlotContainerCanvas.html#setBackground">setBackground</a></li><li><a href="PlotContainerCanvas.html#setBackgroundColor">setBackgroundColor</a></li><li><a href="PlotContainerCanvas.html#setBorderRadius">setBorderRadius</a></li><li><a href="PlotContainerCanvas.html#setFrameStyle">setFrameStyle</a></li><li><a href="PlotContainerCanvas.html#setLineColor">setLineColor</a></li><li><a href="PlotContainerCanvas.html#setLineWidth">setLineWidth</a></li><li><a href="PlotContainerCanvas.html#setStyleSheet">setStyleSheet</a></li></ul></div></li><li><a href="PlotGrid.html">PlotGrid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotGrid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotGrid.html#attach">attach</a></li><li><a href="PlotGrid.html#boundingRect">boundingRect</a></li><li><a href="PlotGrid.html#clearCanvas">clearCanvas</a></li><li><a href="PlotGrid.html#delete">delete</a></li><li><a href="PlotGrid.html#deleteArray">deleteArray</a></li><li><a href="PlotGrid.html#detach">detach</a></li><li><a href="PlotGrid.html#draw">draw</a></li><li><a href="PlotGrid.html#enableX">enableX</a></li><li><a href="PlotGrid.html#enableXMin">enableXMin</a></li><li><a href="PlotGrid.html#enableY">enableY</a></li><li><a href="PlotGrid.html#enableYMin">enableYMin</a></li><li><a href="PlotGrid.html#getCanvas">getCanvas</a></li><li><a href="PlotGrid.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotGrid.html#getContext">getContext</a></li><li><a href="PlotGrid.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotGrid.html#getZ">getZ</a></li><li><a href="PlotGrid.html#hide">hide</a></li><li><a href="PlotGrid.html#isVisible">isVisible</a></li><li><a href="PlotGrid.html#itemChanged">itemChanged</a></li><li><a href="PlotGrid.html#legendChanged">legendChanged</a></li><li><a href="PlotGrid.html#legendData">legendData</a></li><li><a href="PlotGrid.html#legendIcon">legendIcon</a></li><li><a href="PlotGrid.html#legendIconSize">legendIconSize</a></li><li><a href="PlotGrid.html#majorPen">majorPen</a></li><li><a href="PlotGrid.html#minorPen">minorPen</a></li><li><a href="PlotGrid.html#plot">plot</a></li><li><a href="PlotGrid.html#setAxes">setAxes</a></li><li><a href="PlotGrid.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotGrid.html#setItemInterest">setItemInterest</a></li><li><a href="PlotGrid.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotGrid.html#setMajorPen">setMajorPen</a></li><li><a href="PlotGrid.html#setMinorPen">setMinorPen</a></li><li><a href="PlotGrid.html#setTitle">setTitle</a></li><li><a href="PlotGrid.html#setVisible">setVisible</a></li><li><a href="PlotGrid.html#setXAxis">setXAxis</a></li><li><a href="PlotGrid.html#setXDiv">setXDiv</a></li><li><a href="PlotGrid.html#setYAxis">setYAxis</a></li><li><a href="PlotGrid.html#setYDiv">setYDiv</a></li><li><a href="PlotGrid.html#setZ">setZ</a></li><li><a href="PlotGrid.html#show">show</a></li><li><a href="PlotGrid.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotGrid.html#testItemInterest">testItemInterest</a></li><li><a href="PlotGrid.html#title">title</a></li><li><a href="PlotGrid.html#toString">toString</a></li><li><a href="PlotGrid.html#updateScaleDiv">updateScaleDiv</a></li><li><a href="PlotGrid.html#xAxis">xAxis</a></li><li><a href="PlotGrid.html#xDiv">xDiv</a></li><li><a href="PlotGrid.html#xEnabled">xEnabled</a></li><li><a href="PlotGrid.html#xMinEnabled">xMinEnabled</a></li><li><a href="PlotGrid.html#yAxis">yAxis</a></li><li><a href="PlotGrid.html#yDiv">yDiv</a></li><li><a href="PlotGrid.html#yEnabled">yEnabled</a></li><li><a href="PlotGrid.html#yMinEnabled">yMinEnabled</a></li></ul></div></li><li><a href="PlotItem.html">PlotItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotItem_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PlotItem.html#.ItemAttribute">ItemAttribute</a></li><li><a href="PlotItem.html#.ItemInterest">ItemInterest</a></li><li><a href="PlotItem.html#.RttiValues">RttiValues</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotItem.html#attach">attach</a></li><li><a href="PlotItem.html#boundingRect">boundingRect</a></li><li><a href="PlotItem.html#clearCanvas">clearCanvas</a></li><li><a href="PlotItem.html#delete">delete</a></li><li><a href="PlotItem.html#deleteArray">deleteArray</a></li><li><a href="PlotItem.html#detach">detach</a></li><li><a href="PlotItem.html#draw">draw</a></li><li><a href="PlotItem.html#getCanvas">getCanvas</a></li><li><a href="PlotItem.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotItem.html#getContext">getContext</a></li><li><a href="PlotItem.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotItem.html#getZ">getZ</a></li><li><a href="PlotItem.html#hide">hide</a></li><li><a href="PlotItem.html#isVisible">isVisible</a></li><li><a href="PlotItem.html#itemChanged">itemChanged</a></li><li><a href="PlotItem.html#legendChanged">legendChanged</a></li><li><a href="PlotItem.html#legendData">legendData</a></li><li><a href="PlotItem.html#legendIcon">legendIcon</a></li><li><a href="PlotItem.html#legendIconSize">legendIconSize</a></li><li><a href="PlotItem.html#plot">plot</a></li><li><a href="PlotItem.html#setAxes">setAxes</a></li><li><a href="PlotItem.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotItem.html#setItemInterest">setItemInterest</a></li><li><a href="PlotItem.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotItem.html#setTitle">setTitle</a></li><li><a href="PlotItem.html#setVisible">setVisible</a></li><li><a href="PlotItem.html#setXAxis">setXAxis</a></li><li><a href="PlotItem.html#setYAxis">setYAxis</a></li><li><a href="PlotItem.html#setZ">setZ</a></li><li><a href="PlotItem.html#show">show</a></li><li><a href="PlotItem.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotItem.html#testItemInterest">testItemInterest</a></li><li><a href="PlotItem.html#title">title</a></li><li><a href="PlotItem.html#toString">toString</a></li><li><a href="PlotItem.html#xAxis">xAxis</a></li><li><a href="PlotItem.html#yAxis">yAxis</a></li></ul></div></li><li><a href="PlotMarker.html">PlotMarker</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotMarker_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PlotMarker.html#.LineStyle">LineStyle</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotMarker.html#attach">attach</a></li><li><a href="PlotMarker.html#boundingRect">boundingRect</a></li><li><a href="PlotMarker.html#clearCanvas">clearCanvas</a></li><li><a href="PlotMarker.html#delete">delete</a></li><li><a href="PlotMarker.html#deleteArray">deleteArray</a></li><li><a href="PlotMarker.html#detach">detach</a></li><li><a href="PlotMarker.html#draw">draw</a></li><li><a href="PlotMarker.html#drawLabel">drawLabel</a></li><li><a href="PlotMarker.html#drawLines">drawLines</a></li><li><a href="PlotMarker.html#getCanvas">getCanvas</a></li><li><a href="PlotMarker.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotMarker.html#getContext">getContext</a></li><li><a href="PlotMarker.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotMarker.html#getZ">getZ</a></li><li><a href="PlotMarker.html#hide">hide</a></li><li><a href="PlotMarker.html#isVisible">isVisible</a></li><li><a href="PlotMarker.html#itemChanged">itemChanged</a></li><li><a href="PlotMarker.html#label">label</a></li><li><a href="PlotMarker.html#labelAlignment">labelAlignment</a></li><li><a href="PlotMarker.html#labelFont">labelFont</a></li><li><a href="PlotMarker.html#labelOrientation">labelOrientation</a></li><li><a href="PlotMarker.html#legendChanged">legendChanged</a></li><li><a href="PlotMarker.html#legendData">legendData</a></li><li><a href="PlotMarker.html#legendIcon">legendIcon</a></li><li><a href="PlotMarker.html#legendIconSize">legendIconSize</a></li><li><a href="PlotMarker.html#linePen">linePen</a></li><li><a href="PlotMarker.html#lineStyle">lineStyle</a></li><li><a href="PlotMarker.html#plot">plot</a></li><li><a href="PlotMarker.html#setAxes">setAxes</a></li><li><a href="PlotMarker.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotMarker.html#setItemInterest">setItemInterest</a></li><li><a href="PlotMarker.html#setLabel">setLabel</a></li><li><a href="PlotMarker.html#setLabelAlignment">setLabelAlignment</a></li><li><a href="PlotMarker.html#setLabelFont">setLabelFont</a></li><li><a href="PlotMarker.html#setLabelOrientation">setLabelOrientation</a></li><li><a href="PlotMarker.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotMarker.html#setLinePen">setLinePen</a></li><li><a href="PlotMarker.html#setLineStyle">setLineStyle</a></li><li><a href="PlotMarker.html#setSpacing">setSpacing</a></li><li><a href="PlotMarker.html#setSymbol">setSymbol</a></li><li><a href="PlotMarker.html#setTitle">setTitle</a></li><li><a href="PlotMarker.html#setValue">setValue</a></li><li><a href="PlotMarker.html#setVisible">setVisible</a></li><li><a href="PlotMarker.html#setXAxis">setXAxis</a></li><li><a href="PlotMarker.html#setXValue">setXValue</a></li><li><a href="PlotMarker.html#setYAxis">setYAxis</a></li><li><a href="PlotMarker.html#setYValue">setYValue</a></li><li><a href="PlotMarker.html#setZ">setZ</a></li><li><a href="PlotMarker.html#show">show</a></li><li><a href="PlotMarker.html#spacing">spacing</a></li><li><a href="PlotMarker.html#symbol">symbol</a></li><li><a href="PlotMarker.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotMarker.html#testItemInterest">testItemInterest</a></li><li><a href="PlotMarker.html#title">title</a></li><li><a href="PlotMarker.html#toString">toString</a></li><li><a href="PlotMarker.html#value">value</a></li><li><a href="PlotMarker.html#xAxis">xAxis</a></li><li><a href="PlotMarker.html#xValue">xValue</a></li><li><a href="PlotMarker.html#yAxis">yAxis</a></li><li><a href="PlotMarker.html#yValue">yValue</a></li></ul></div></li><li><a href="PlotPicker.html">PlotPicker</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotPicker_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotPicker.html#accept">accept</a></li><li><a href="PlotPicker.html#adjustedPoints">adjustedPoints</a></li><li><a href="PlotPicker.html#append">append</a></li><li><a href="PlotPicker.html#begin">begin</a></li><li><a href="PlotPicker.html#canvas">canvas</a></li><li><a href="PlotPicker.html#drawRubberBand">drawRubberBand</a></li><li><a href="PlotPicker.html#drawTracker">drawTracker</a></li><li><a href="PlotPicker.html#end">end</a></li><li><a href="PlotPicker.html#eventFilter">eventFilter</a></li><li><a href="PlotPicker.html#initKeyPattern">initKeyPattern</a></li><li><a href="PlotPicker.html#initMousePattern">initMousePattern</a></li><li><a href="PlotPicker.html#isActive">isActive</a></li><li><a href="PlotPicker.html#isEnabled">isEnabled</a></li><li><a href="PlotPicker.html#key">key</a></li><li><a href="PlotPicker.html#keyMatch">keyMatch</a></li><li><a href="PlotPicker.html#keyPattern">keyPattern</a></li><li><a href="PlotPicker.html#mouseMatch">mouseMatch</a></li><li><a href="PlotPicker.html#mousePattern">mousePattern</a></li><li><a href="PlotPicker.html#move">move</a></li><li><a href="PlotPicker.html#parentWidget">parentWidget</a></li><li><a href="PlotPicker.html#pickArea">pickArea</a></li><li><a href="PlotPicker.html#pickedPoints">pickedPoints</a></li><li><a href="PlotPicker.html#plot">plot</a></li><li><a href="PlotPicker.html#remove">remove</a></li><li><a href="PlotPicker.html#reset">reset</a></li><li><a href="PlotPicker.html#rubberBand">rubberBand</a></li><li><a href="PlotPicker.html#rubberBandOverlay">rubberBandOverlay</a></li><li><a href="PlotPicker.html#rubberBandPen">rubberBandPen</a></li><li><a href="PlotPicker.html#scaleRect">scaleRect</a></li><li><a href="PlotPicker.html#selection">selection</a></li><li><a href="PlotPicker.html#setAxis">setAxis</a></li><li><a href="PlotPicker.html#setEnabled">setEnabled</a></li><li><a href="PlotPicker.html#setKeyPattern">setKeyPattern</a></li><li><a href="PlotPicker.html#setMousePattern">setMousePattern</a></li><li><a href="PlotPicker.html#setMouseTracking">setMouseTracking</a></li><li><a href="PlotPicker.html#setRubberBand">setRubberBand</a></li><li><a href="PlotPicker.html#setRubberBandPen">setRubberBandPen</a></li><li><a href="PlotPicker.html#setStateMachine">setStateMachine</a></li><li><a href="PlotPicker.html#setTrackerFont">setTrackerFont</a></li><li><a href="PlotPicker.html#setTrackerMode">setTrackerMode</a></li><li><a href="PlotPicker.html#setTrackerPen">setTrackerPen</a></li><li><a href="PlotPicker.html#stateMachine">stateMachine</a></li><li><a href="PlotPicker.html#trackerFont">trackerFont</a></li><li><a href="PlotPicker.html#trackerMode">trackerMode</a></li><li><a href="PlotPicker.html#trackerOverlay">trackerOverlay</a></li><li><a href="PlotPicker.html#trackerPen">trackerPen</a></li><li><a href="PlotPicker.html#trackerPosition">trackerPosition</a></li><li><a href="PlotPicker.html#trackerRect">trackerRect</a></li><li><a href="PlotPicker.html#trackerText">trackerText</a></li><li><a href="PlotPicker.html#transition">transition</a></li><li><a href="PlotPicker.html#updateDisplay">updateDisplay</a></li><li><a href="PlotPicker.html#widgetEnterEvent">widgetEnterEvent</a></li><li><a href="PlotPicker.html#widgetKeyPressEvent">widgetKeyPressEvent</a></li><li><a href="PlotPicker.html#widgetKeyReleaseEvent">widgetKeyReleaseEvent</a></li><li><a href="PlotPicker.html#widgetLeaveEvent">widgetLeaveEvent</a></li><li><a href="PlotPicker.html#widgetMouseDoubleClickEvent">widgetMouseDoubleClickEvent</a></li><li><a href="PlotPicker.html#widgetMouseMoveEvent">widgetMouseMoveEvent</a></li><li><a href="PlotPicker.html#widgetMousePressEvent">widgetMousePressEvent</a></li><li><a href="PlotPicker.html#widgetMouseReleaseEvent">widgetMouseReleaseEvent</a></li><li><a href="PlotPicker.html#widgetWheelEvent">widgetWheelEvent</a></li><li><a href="PlotPicker.html#xAxis">xAxis</a></li><li><a href="PlotPicker.html#yAxis">yAxis</a></li></ul></div></li><li><a href="PlotRasterItem.html">PlotRasterItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotRasterItem_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PlotRasterItem.html#.CachePolicy">CachePolicy</a></li><li><a href="PlotRasterItem.html#.PaintAttribute">PaintAttribute</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotRasterItem.html#alpha">alpha</a></li><li><a href="PlotRasterItem.html#attach">attach</a></li><li><a href="PlotRasterItem.html#boundingRect">boundingRect</a></li><li><a href="PlotRasterItem.html#cachePolicy">cachePolicy</a></li><li><a href="PlotRasterItem.html#clearCanvas">clearCanvas</a></li><li><a href="PlotRasterItem.html#delete">delete</a></li><li><a href="PlotRasterItem.html#deleteArray">deleteArray</a></li><li><a href="PlotRasterItem.html#detach">detach</a></li><li><a href="PlotRasterItem.html#draw">draw</a></li><li><a href="PlotRasterItem.html#getCanvas">getCanvas</a></li><li><a href="PlotRasterItem.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotRasterItem.html#getContext">getContext</a></li><li><a href="PlotRasterItem.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotRasterItem.html#getZ">getZ</a></li><li><a href="PlotRasterItem.html#hide">hide</a></li><li><a href="PlotRasterItem.html#imageMap">imageMap</a></li><li><a href="PlotRasterItem.html#interval">interval</a></li><li><a href="PlotRasterItem.html#invalidateCache">invalidateCache</a></li><li><a href="PlotRasterItem.html#isVisible">isVisible</a></li><li><a href="PlotRasterItem.html#itemChanged">itemChanged</a></li><li><a href="PlotRasterItem.html#legendChanged">legendChanged</a></li><li><a href="PlotRasterItem.html#legendData">legendData</a></li><li><a href="PlotRasterItem.html#legendIcon">legendIcon</a></li><li><a href="PlotRasterItem.html#legendIconSize">legendIconSize</a></li><li><a href="PlotRasterItem.html#pixelSize">pixelSize</a></li><li><a href="PlotRasterItem.html#plot">plot</a></li><li><a href="PlotRasterItem.html#setAlpha">setAlpha</a></li><li><a href="PlotRasterItem.html#setAxes">setAxes</a></li><li><a href="PlotRasterItem.html#setCachePolicy">setCachePolicy</a></li><li><a href="PlotRasterItem.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotRasterItem.html#setItemInterest">setItemInterest</a></li><li><a href="PlotRasterItem.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotRasterItem.html#setPaintAttribute">setPaintAttribute</a></li><li><a href="PlotRasterItem.html#setPixelSize">setPixelSize</a></li><li><a href="PlotRasterItem.html#setTitle">setTitle</a></li><li><a href="PlotRasterItem.html#setVisible">setVisible</a></li><li><a href="PlotRasterItem.html#setXAxis">setXAxis</a></li><li><a href="PlotRasterItem.html#setYAxis">setYAxis</a></li><li><a href="PlotRasterItem.html#setZ">setZ</a></li><li><a href="PlotRasterItem.html#show">show</a></li><li><a href="PlotRasterItem.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotRasterItem.html#testItemInterest">testItemInterest</a></li><li><a href="PlotRasterItem.html#testPaintAttribute">testPaintAttribute</a></li><li><a href="PlotRasterItem.html#title">title</a></li><li><a href="PlotRasterItem.html#toString">toString</a></li><li><a href="PlotRasterItem.html#xAxis">xAxis</a></li><li><a href="PlotRasterItem.html#yAxis">yAxis</a></li></ul></div></li><li><a href="PlotSeriesItem.html">PlotSeriesItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotSeriesItem_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotSeriesItem.html#attach">attach</a></li><li><a href="PlotSeriesItem.html#boundingRect">boundingRect</a></li><li><a href="PlotSeriesItem.html#clearCanvas">clearCanvas</a></li><li><a href="PlotSeriesItem.html#delete">delete</a></li><li><a href="PlotSeriesItem.html#deleteArray">deleteArray</a></li><li><a href="PlotSeriesItem.html#detach">detach</a></li><li><a href="PlotSeriesItem.html#draw">draw</a></li><li><a href="PlotSeriesItem.html#getCanvas">getCanvas</a></li><li><a href="PlotSeriesItem.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotSeriesItem.html#getContext">getContext</a></li><li><a href="PlotSeriesItem.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotSeriesItem.html#getZ">getZ</a></li><li><a href="PlotSeriesItem.html#hide">hide</a></li><li><a href="PlotSeriesItem.html#isVisible">isVisible</a></li><li><a href="PlotSeriesItem.html#itemChanged">itemChanged</a></li><li><a href="PlotSeriesItem.html#legendChanged">legendChanged</a></li><li><a href="PlotSeriesItem.html#legendData">legendData</a></li><li><a href="PlotSeriesItem.html#legendIcon">legendIcon</a></li><li><a href="PlotSeriesItem.html#legendIconSize">legendIconSize</a></li><li><a href="PlotSeriesItem.html#orientation">orientation</a></li><li><a href="PlotSeriesItem.html#plot">plot</a></li><li><a href="PlotSeriesItem.html#setAxes">setAxes</a></li><li><a href="PlotSeriesItem.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotSeriesItem.html#setItemInterest">setItemInterest</a></li><li><a href="PlotSeriesItem.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotSeriesItem.html#setOrientation">setOrientation</a></li><li><a href="PlotSeriesItem.html#setTitle">setTitle</a></li><li><a href="PlotSeriesItem.html#setVisible">setVisible</a></li><li><a href="PlotSeriesItem.html#setXAxis">setXAxis</a></li><li><a href="PlotSeriesItem.html#setYAxis">setYAxis</a></li><li><a href="PlotSeriesItem.html#setZ">setZ</a></li><li><a href="PlotSeriesItem.html#show">show</a></li><li><a href="PlotSeriesItem.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotSeriesItem.html#testItemInterest">testItemInterest</a></li><li><a href="PlotSeriesItem.html#title">title</a></li><li><a href="PlotSeriesItem.html#toString">toString</a></li><li><a href="PlotSeriesItem.html#updateScaleDiv">updateScaleDiv</a></li><li><a href="PlotSeriesItem.html#xAxis">xAxis</a></li><li><a href="PlotSeriesItem.html#yAxis">yAxis</a></li></ul></div></li><li><a href="PlotShapeItem.html">PlotShapeItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotShapeItem_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotShapeItem.html#boundingRect">boundingRect</a></li><li><a href="PlotShapeItem.html#brush">brush</a></li><li><a href="PlotShapeItem.html#draw">draw</a></li><li><a href="PlotShapeItem.html#pen">pen</a></li><li><a href="PlotShapeItem.html#setBrush">setBrush</a></li><li><a href="PlotShapeItem.html#setPen">setPen</a></li><li><a href="PlotShapeItem.html#setPolygon">setPolygon</a></li><li><a href="PlotShapeItem.html#setRect">setRect</a></li><li><a href="PlotShapeItem.html#setShape">setShape</a></li><li><a href="PlotShapeItem.html#toString">toString</a></li></ul></div></li><li><a href="PlotSpectrogram.html">PlotSpectrogram</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotSpectrogram_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PlotSpectrogram.html#.DisplayMode">DisplayMode</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotSpectrogram.html#calculateContourLevels">calculateContourLevels</a></li><li><a href="PlotSpectrogram.html#colorMap">colorMap</a></li><li><a href="PlotSpectrogram.html#contourLevels">contourLevels</a></li><li><a href="PlotSpectrogram.html#contourPen">contourPen</a></li><li><a href="PlotSpectrogram.html#data">data</a></li><li><a href="PlotSpectrogram.html#defaultContourPen">defaultContourPen</a></li><li><a href="PlotSpectrogram.html#draw">draw</a></li><li><a href="PlotSpectrogram.html#interval">interval</a></li><li><a href="PlotSpectrogram.html#numberOfContourPlanes">numberOfContourPlanes</a></li><li><a href="PlotSpectrogram.html#renderContourLines">renderContourLines</a></li><li><a href="PlotSpectrogram.html#renderImage">renderImage</a></li><li><a href="PlotSpectrogram.html#renderTile">renderTile</a></li><li><a href="PlotSpectrogram.html#setColorMap">setColorMap</a></li><li><a href="PlotSpectrogram.html#setContourLevels">setContourLevels</a></li><li><a href="PlotSpectrogram.html#setData">setData</a></li><li><a href="PlotSpectrogram.html#setDefaultContourPen">setDefaultContourPen</a></li><li><a href="PlotSpectrogram.html#setDisplayMode">setDisplayMode</a></li><li><a href="PlotSpectrogram.html#testDisplayMode">testDisplayMode</a></li></ul></div></li><li><a href="PlotZoneItem.html">PlotZoneItem</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotZoneItem_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotZoneItem.html#attach">attach</a></li><li><a href="PlotZoneItem.html#boundingRect">boundingRect</a></li><li><a href="PlotZoneItem.html#brush">brush</a></li><li><a href="PlotZoneItem.html#clearCanvas">clearCanvas</a></li><li><a href="PlotZoneItem.html#delete">delete</a></li><li><a href="PlotZoneItem.html#deleteArray">deleteArray</a></li><li><a href="PlotZoneItem.html#detach">detach</a></li><li><a href="PlotZoneItem.html#draw">draw</a></li><li><a href="PlotZoneItem.html#getCanvas">getCanvas</a></li><li><a href="PlotZoneItem.html#getCanvasRect">getCanvasRect</a></li><li><a href="PlotZoneItem.html#getContext">getContext</a></li><li><a href="PlotZoneItem.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="PlotZoneItem.html#getZ">getZ</a></li><li><a href="PlotZoneItem.html#hide">hide</a></li><li><a href="PlotZoneItem.html#interval">interval</a></li><li><a href="PlotZoneItem.html#isVisible">isVisible</a></li><li><a href="PlotZoneItem.html#itemChanged">itemChanged</a></li><li><a href="PlotZoneItem.html#legendChanged">legendChanged</a></li><li><a href="PlotZoneItem.html#legendData">legendData</a></li><li><a href="PlotZoneItem.html#legendIcon">legendIcon</a></li><li><a href="PlotZoneItem.html#legendIconSize">legendIconSize</a></li><li><a href="PlotZoneItem.html#orientation">orientation</a></li><li><a href="PlotZoneItem.html#pen">pen</a></li><li><a href="PlotZoneItem.html#plot">plot</a></li><li><a href="PlotZoneItem.html#setAxes">setAxes</a></li><li><a href="PlotZoneItem.html#setBrush">setBrush</a></li><li><a href="PlotZoneItem.html#setInterval">setInterval</a></li><li><a href="PlotZoneItem.html#setItemAttribute">setItemAttribute</a></li><li><a href="PlotZoneItem.html#setItemInterest">setItemInterest</a></li><li><a href="PlotZoneItem.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="PlotZoneItem.html#setOrientation">setOrientation</a></li><li><a href="PlotZoneItem.html#setPen">setPen</a></li><li><a href="PlotZoneItem.html#setTitle">setTitle</a></li><li><a href="PlotZoneItem.html#setVisible">setVisible</a></li><li><a href="PlotZoneItem.html#setXAxis">setXAxis</a></li><li><a href="PlotZoneItem.html#setYAxis">setYAxis</a></li><li><a href="PlotZoneItem.html#setZ">setZ</a></li><li><a href="PlotZoneItem.html#show">show</a></li><li><a href="PlotZoneItem.html#testItemAttribute">testItemAttribute</a></li><li><a href="PlotZoneItem.html#testItemInterest">testItemInterest</a></li><li><a href="PlotZoneItem.html#title">title</a></li><li><a href="PlotZoneItem.html#toString">toString</a></li><li><a href="PlotZoneItem.html#xAxis">xAxis</a></li><li><a href="PlotZoneItem.html#yAxis">yAxis</a></li></ul></div></li><li><a href="PlotZoomer.html">PlotZoomer</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PlotZoomer_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PlotZoomer.html#accept">accept</a></li><li><a href="PlotZoomer.html#adjustedPoints">adjustedPoints</a></li><li><a href="PlotZoomer.html#append">append</a></li><li><a href="PlotZoomer.html#begin">begin</a></li><li><a href="PlotZoomer.html#canvas">canvas</a></li><li><a href="PlotZoomer.html#drawRubberBand">drawRubberBand</a></li><li><a href="PlotZoomer.html#drawTracker">drawTracker</a></li><li><a href="PlotZoomer.html#end">end</a></li><li><a href="PlotZoomer.html#eventFilter">eventFilter</a></li><li><a href="PlotZoomer.html#initKeyPattern">initKeyPattern</a></li><li><a href="PlotZoomer.html#initMousePattern">initMousePattern</a></li><li><a href="PlotZoomer.html#isActive">isActive</a></li><li><a href="PlotZoomer.html#isEnabled">isEnabled</a></li><li><a href="PlotZoomer.html#key">key</a></li><li><a href="PlotZoomer.html#keyMatch">keyMatch</a></li><li><a href="PlotZoomer.html#keyPattern">keyPattern</a></li><li><a href="PlotZoomer.html#maxStackDepth">maxStackDepth</a></li><li><a href="PlotZoomer.html#minZoomSize">minZoomSize</a></li><li><a href="PlotZoomer.html#mouseMatch">mouseMatch</a></li><li><a href="PlotZoomer.html#mousePattern">mousePattern</a></li><li><a href="PlotZoomer.html#move">move</a></li><li><a href="PlotZoomer.html#moveBy">moveBy</a></li><li><a href="PlotZoomer.html#moveTo">moveTo</a></li><li><a href="PlotZoomer.html#parentWidget">parentWidget</a></li><li><a href="PlotZoomer.html#pickArea">pickArea</a></li><li><a href="PlotZoomer.html#pickedPoints">pickedPoints</a></li><li><a href="PlotZoomer.html#plot">plot</a></li><li><a href="PlotZoomer.html#remove">remove</a></li><li><a href="PlotZoomer.html#rescale">rescale</a></li><li><a href="PlotZoomer.html#reset">reset</a></li><li><a href="PlotZoomer.html#rubberBand">rubberBand</a></li><li><a href="PlotZoomer.html#rubberBandOverlay">rubberBandOverlay</a></li><li><a href="PlotZoomer.html#rubberBandPen">rubberBandPen</a></li><li><a href="PlotZoomer.html#scaleRect">scaleRect</a></li><li><a href="PlotZoomer.html#selection">selection</a></li><li><a href="PlotZoomer.html#setAxis">setAxis</a></li><li><a href="PlotZoomer.html#setEnabled">setEnabled</a></li><li><a href="PlotZoomer.html#setKeyPattern">setKeyPattern</a></li><li><a href="PlotZoomer.html#setMaxStackDepth">setMaxStackDepth</a></li><li><a href="PlotZoomer.html#setMousePattern">setMousePattern</a></li><li><a href="PlotZoomer.html#setMouseTracking">setMouseTracking</a></li><li><a href="PlotZoomer.html#setRubberBand">setRubberBand</a></li><li><a href="PlotZoomer.html#setRubberBandPen">setRubberBandPen</a></li><li><a href="PlotZoomer.html#setStateMachine">setStateMachine</a></li><li><a href="PlotZoomer.html#setTrackerFont">setTrackerFont</a></li><li><a href="PlotZoomer.html#setTrackerMode">setTrackerMode</a></li><li><a href="PlotZoomer.html#setTrackerPen">setTrackerPen</a></li><li><a href="PlotZoomer.html#setZoomBase">setZoomBase</a></li><li><a href="PlotZoomer.html#setZoomStack">setZoomStack</a></li><li><a href="PlotZoomer.html#stateMachine">stateMachine</a></li><li><a href="PlotZoomer.html#trackerFont">trackerFont</a></li><li><a href="PlotZoomer.html#trackerMode">trackerMode</a></li><li><a href="PlotZoomer.html#trackerOverlay">trackerOverlay</a></li><li><a href="PlotZoomer.html#trackerPen">trackerPen</a></li><li><a href="PlotZoomer.html#trackerPosition">trackerPosition</a></li><li><a href="PlotZoomer.html#trackerRect">trackerRect</a></li><li><a href="PlotZoomer.html#trackerText">trackerText</a></li><li><a href="PlotZoomer.html#transition">transition</a></li><li><a href="PlotZoomer.html#updateDisplay">updateDisplay</a></li><li><a href="PlotZoomer.html#widgetEnterEvent">widgetEnterEvent</a></li><li><a href="PlotZoomer.html#widgetKeyPressEvent">widgetKeyPressEvent</a></li><li><a href="PlotZoomer.html#widgetKeyReleaseEvent">widgetKeyReleaseEvent</a></li><li><a href="PlotZoomer.html#widgetLeaveEvent">widgetLeaveEvent</a></li><li><a href="PlotZoomer.html#widgetMouseDoubleClickEvent">widgetMouseDoubleClickEvent</a></li><li><a href="PlotZoomer.html#widgetMouseMoveEvent">widgetMouseMoveEvent</a></li><li><a href="PlotZoomer.html#widgetMousePressEvent">widgetMousePressEvent</a></li><li><a href="PlotZoomer.html#widgetMouseReleaseEvent">widgetMouseReleaseEvent</a></li><li><a href="PlotZoomer.html#widgetWheelEvent">widgetWheelEvent</a></li><li><a href="PlotZoomer.html#xAxis">xAxis</a></li><li><a href="PlotZoomer.html#yAxis">yAxis</a></li><li><a href="PlotZoomer.html#zoom">zoom</a></li><li><a href="PlotZoomer.html#zoomBase">zoomBase</a></li><li><a href="PlotZoomer.html#zoomRect">zoomRect</a></li><li><a href="PlotZoomer.html#zoomRectIndex">zoomRectIndex</a></li><li><a href="PlotZoomer.html#zoomStack">zoomStack</a></li></ul></div></li><li><a href="Point3D.html">Point3D</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Point3D_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Point3D.html#isNull">isNull</a></li><li><a href="Point3D.html#setPoint3D">setPoint3D</a></li><li><a href="Point3D.html#setX">setX</a></li><li><a href="Point3D.html#setY">setY</a></li><li><a href="Point3D.html#setZ">setZ</a></li><li><a href="Point3D.html#toPoint">toPoint</a></li><li><a href="Point3D.html#toString">toString</a></li><li><a href="Point3D.html#x">x</a></li><li><a href="Point3D.html#y">y</a></li><li><a href="Point3D.html#z">z</a></li></ul></div></li><li><a href="Point3DSeriesData.html">Point3DSeriesData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Point3DSeriesData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Point3DSeriesData.html#boundingRect">boundingRect</a></li><li><a href="Point3DSeriesData.html#mBoundingRect">mBoundingRect</a></li><li><a href="Point3DSeriesData.html#sample">sample</a></li><li><a href="Point3DSeriesData.html#samples">samples</a></li><li><a href="Point3DSeriesData.html#setRectOfInterest">setRectOfInterest</a></li><li><a href="Point3DSeriesData.html#setSamples">setSamples</a></li><li><a href="Point3DSeriesData.html#size">size</a></li><li><a href="Point3DSeriesData.html#toString">toString</a></li></ul></div></li><li><a href="PointMapper.html">PointMapper</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PointMapper_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PointMapper.html#.TransformationFlag">TransformationFlag</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PointMapper.html#boundingRect">boundingRect</a></li><li><a href="PointMapper.html#flags">flags</a></li><li><a href="PointMapper.html#setBoundingRect">setBoundingRect</a></li><li><a href="PointMapper.html#setFlag">setFlag</a></li><li><a href="PointMapper.html#setFlags">setFlags</a></li><li><a href="PointMapper.html#testFlag">testFlag</a></li><li><a href="PointMapper.html#toPointsF">toPointsF</a></li><li><a href="PointMapper.html#toPolygonF">toPolygonF</a></li><li><a href="PointMapper.html#toString">toString</a></li></ul></div></li><li><a href="PointSeriesData.html">PointSeriesData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PointSeriesData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PointSeriesData.html#boundingRect">boundingRect</a></li><li><a href="PointSeriesData.html#mBoundingRect">mBoundingRect</a></li><li><a href="PointSeriesData.html#sample">sample</a></li><li><a href="PointSeriesData.html#samples">samples</a></li><li><a href="PointSeriesData.html#setRectOfInterest">setRectOfInterest</a></li><li><a href="PointSeriesData.html#setSamples">setSamples</a></li><li><a href="PointSeriesData.html#size">size</a></li><li><a href="PointSeriesData.html#toString">toString</a></li></ul></div></li><li><a href="PowerTransform.html">PowerTransform</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PowerTransform_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="PowerTransform.html#bounded">bounded</a></li><li><a href="PowerTransform.html#copy">copy</a></li><li><a href="PowerTransform.html#invTransform">invTransform</a></li><li><a href="PowerTransform.html#toString">toString</a></li><li><a href="PowerTransform.html#transform">transform</a></li></ul></div></li><li><a href="RasterData.html">RasterData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RasterData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="RasterData.html#contourLinesData">contourLinesData</a></li><li><a href="RasterData.html#interval">interval</a></li><li><a href="RasterData.html#setInterval">setInterval</a></li></ul></div></li><li><a href="RotatableSymbol.html">RotatableSymbol</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="RotatableSymbol_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="RotatableSymbol.html#boundingRect">boundingRect</a></li><li><a href="RotatableSymbol.html#brush">brush</a></li><li><a href="RotatableSymbol.html#drawGraphicSymbol">drawGraphicSymbol</a></li><li><a href="RotatableSymbol.html#drawSymbol">drawSymbol</a></li><li><a href="RotatableSymbol.html#drawSymbols">drawSymbols</a></li><li><a href="RotatableSymbol.html#path">path</a></li><li><a href="RotatableSymbol.html#pen">pen</a></li><li><a href="RotatableSymbol.html#pinPoint">pinPoint</a></li><li><a href="RotatableSymbol.html#renderSymbols">renderSymbols</a></li><li><a href="RotatableSymbol.html#rotation">rotation</a></li><li><a href="RotatableSymbol.html#setBrush">setBrush</a></li><li><a href="RotatableSymbol.html#setPath">setPath</a></li><li><a href="RotatableSymbol.html#setPen">setPen</a></li><li><a href="RotatableSymbol.html#setPinPoint">setPinPoint</a></li><li><a href="RotatableSymbol.html#setRotation">setRotation</a></li><li><a href="RotatableSymbol.html#setSize">setSize</a></li><li><a href="RotatableSymbol.html#setStyle">setStyle</a></li><li><a href="RotatableSymbol.html#size">size</a></li><li><a href="RotatableSymbol.html#style">style</a></li><li><a href="RotatableSymbol.html#toString">toString</a></li></ul></div></li><li><a href="ScaleArithmetic.html">ScaleArithmetic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleArithmetic_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleArithmetic.html#.ceilEps">ceilEps</a></li><li><a href="ScaleArithmetic.html#.divideEps">divideEps</a></li><li><a href="ScaleArithmetic.html#.divideInterval">divideInterval</a></li><li><a href="ScaleArithmetic.html#.floorEps">floorEps</a></li></ul></div></li><li><a href="ScaleDiv.html">ScaleDiv</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleDiv_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScaleDiv.html#.TickType">TickType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleDiv.html#bounded">bounded</a></li><li><a href="ScaleDiv.html#contains">contains</a></li><li><a href="ScaleDiv.html#interval">interval</a></li><li><a href="ScaleDiv.html#invert">invert</a></li><li><a href="ScaleDiv.html#inverted">inverted</a></li><li><a href="ScaleDiv.html#isEmpty">isEmpty</a></li><li><a href="ScaleDiv.html#isIncreasing">isIncreasing</a></li><li><a href="ScaleDiv.html#lowerBound">lowerBound</a></li><li><a href="ScaleDiv.html#range">range</a></li><li><a href="ScaleDiv.html#setInterval">setInterval</a></li><li><a href="ScaleDiv.html#setLowerBound">setLowerBound</a></li><li><a href="ScaleDiv.html#setTicks">setTicks</a></li><li><a href="ScaleDiv.html#setUpperBound">setUpperBound</a></li><li><a href="ScaleDiv.html#ticks">ticks</a></li><li><a href="ScaleDiv.html#toString">toString</a></li><li><a href="ScaleDiv.html#upperBound">upperBound</a></li></ul></div></li><li><a href="ScaleDraw.html">ScaleDraw</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleDraw_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScaleDraw.html#.Alignment">Alignment</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleDraw.html#alignment">alignment</a></li><li><a href="ScaleDraw.html#decimalPlaces">decimalPlaces</a></li><li><a href="ScaleDraw.html#draw">draw</a></li><li><a href="ScaleDraw.html#drawBackbone">drawBackbone</a></li><li><a href="ScaleDraw.html#drawLabel">drawLabel</a></li><li><a href="ScaleDraw.html#drawTick">drawTick</a></li><li><a href="ScaleDraw.html#enableComponent">enableComponent</a></li><li><a href="ScaleDraw.html#getBorderDistHint">getBorderDistHint</a></li><li><a href="ScaleDraw.html#hasComponent">hasComponent</a></li><li><a href="ScaleDraw.html#label">label</a></li><li><a href="ScaleDraw.html#labelPosition">labelPosition</a></li><li><a href="ScaleDraw.html#longestLabel">longestLabel</a></li><li><a href="ScaleDraw.html#maxTickLength">maxTickLength</a></li><li><a href="ScaleDraw.html#orientation">orientation</a></li><li><a href="ScaleDraw.html#penWidth">penWidth</a></li><li><a href="ScaleDraw.html#precision">precision</a></li><li><a href="ScaleDraw.html#scaleDiv">scaleDiv</a></li><li><a href="ScaleDraw.html#scaleMap">scaleMap</a></li><li><a href="ScaleDraw.html#setAlignment">setAlignment</a></li><li><a href="ScaleDraw.html#setDecimalPlaces">setDecimalPlaces</a></li><li><a href="ScaleDraw.html#setPenWidth">setPenWidth</a></li><li><a href="ScaleDraw.html#setPrecision">setPrecision</a></li><li><a href="ScaleDraw.html#setScaleDiv">setScaleDiv</a></li><li><a href="ScaleDraw.html#setSpacing">setSpacing</a></li><li><a href="ScaleDraw.html#setTickLength">setTickLength</a></li><li><a href="ScaleDraw.html#setTransformation">setTransformation</a></li><li><a href="ScaleDraw.html#spacing">spacing</a></li><li><a href="ScaleDraw.html#tickLength">tickLength</a></li><li><a href="ScaleDraw.html#toString">toString</a></li></ul></div></li><li><a href="ScaleEngine.html">ScaleEngine</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleEngine_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ScaleEngine.html#.Attributes">Attributes</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleEngine.html#attributes">attributes</a></li><li><a href="ScaleEngine.html#base">base</a></li><li><a href="ScaleEngine.html#buildInterval">buildInterval</a></li><li><a href="ScaleEngine.html#contains">contains</a></li><li><a href="ScaleEngine.html#divideInterval">divideInterval</a></li><li><a href="ScaleEngine.html#divideScale">divideScale</a></li><li><a href="ScaleEngine.html#lowerMargin">lowerMargin</a></li><li><a href="ScaleEngine.html#reference">reference</a></li><li><a href="ScaleEngine.html#setAttribute">setAttribute</a></li><li><a href="ScaleEngine.html#setAttributes">setAttributes</a></li><li><a href="ScaleEngine.html#setBase">setBase</a></li><li><a href="ScaleEngine.html#setMargins">setMargins</a></li><li><a href="ScaleEngine.html#setReference">setReference</a></li><li><a href="ScaleEngine.html#setTransformation">setTransformation</a></li><li><a href="ScaleEngine.html#strip">strip</a></li><li><a href="ScaleEngine.html#testAttribute">testAttribute</a></li><li><a href="ScaleEngine.html#toString">toString</a></li><li><a href="ScaleEngine.html#transformation">transformation</a></li><li><a href="ScaleEngine.html#upperMargin">upperMargin</a></li></ul></div></li><li><a href="ScaleMap.html">ScaleMap</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleMap_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleMap.html#.invTransform">invTransform</a></li><li><a href="ScaleMap.html#.invTransform_Rect">invTransform_Rect</a></li><li><a href="ScaleMap.html#.transform">transform</a></li><li><a href="ScaleMap.html#.transform_Rect">transform_Rect</a></li><li><a href="ScaleMap.html#.transformPath">transformPath</a></li><li><a href="ScaleMap.html#copy">copy</a></li><li><a href="ScaleMap.html#invTransform">invTransform</a></li><li><a href="ScaleMap.html#isInverting">isInverting</a></li><li><a href="ScaleMap.html#p1">p1</a></li><li><a href="ScaleMap.html#p2">p2</a></li><li><a href="ScaleMap.html#s1">s1</a></li><li><a href="ScaleMap.html#s2">s2</a></li><li><a href="ScaleMap.html#setPaintInterval">setPaintInterval</a></li><li><a href="ScaleMap.html#setScaleInterval">setScaleInterval</a></li><li><a href="ScaleMap.html#setTransformation">setTransformation</a></li><li><a href="ScaleMap.html#toString">toString</a></li><li><a href="ScaleMap.html#transform">transform</a></li><li><a href="ScaleMap.html#transformation">transformation</a></li></ul></div></li><li><a href="ScaleWidget.html">ScaleWidget</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ScaleWidget_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ScaleWidget.html#alignment">alignment</a></li><li><a href="ScaleWidget.html#contentsRect">contentsRect</a></li><li><a href="ScaleWidget.html#delete">delete</a></li><li><a href="ScaleWidget.html#deleteArray">deleteArray</a></li><li><a href="ScaleWidget.html#draw">draw</a></li><li><a href="ScaleWidget.html#drawTitle">drawTitle</a></li><li><a href="ScaleWidget.html#event">event</a></li><li><a href="ScaleWidget.html#eventFilter">eventFilter</a></li><li><a href="ScaleWidget.html#font">font</a></li><li><a href="ScaleWidget.html#getBorderDistHint">getBorderDistHint</a></li><li><a href="ScaleWidget.html#getCanvas">getCanvas</a></li><li><a href="ScaleWidget.html#getContext">getContext</a></li><li><a href="ScaleWidget.html#getElement">getElement</a></li><li><a href="ScaleWidget.html#getZ">getZ</a></li><li><a href="ScaleWidget.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="ScaleWidget.html#height">height</a></li><li><a href="ScaleWidget.html#hide">hide</a></li><li><a href="ScaleWidget.html#installEventFilter">installEventFilter</a></li><li><a href="ScaleWidget.html#isEnabled">isEnabled</a></li><li><a href="ScaleWidget.html#isVisible">isVisible</a></li><li><a href="ScaleWidget.html#labelFont">labelFont</a></li><li><a href="ScaleWidget.html#labelWidth">labelWidth</a></li><li><a href="ScaleWidget.html#mapToElement">mapToElement</a></li><li><a href="ScaleWidget.html#objectName">objectName</a></li><li><a href="ScaleWidget.html#removeEventFilter">removeEventFilter</a></li><li><a href="ScaleWidget.html#scaleChange">scaleChange</a></li><li><a href="ScaleWidget.html#scaleDraw">scaleDraw</a></li><li><a href="ScaleWidget.html#setAlignment">setAlignment</a></li><li><a href="ScaleWidget.html#setBorderDist">setBorderDist</a></li><li><a href="ScaleWidget.html#setCanvasParent">setCanvasParent</a></li><li><a href="ScaleWidget.html#setElement">setElement</a></li><li><a href="ScaleWidget.html#setEnabled_1">setEnabled_1</a></li><li><a href="ScaleWidget.html#setFont">setFont</a></li><li><a href="ScaleWidget.html#setLabelFont">setLabelFont</a></li><li><a href="ScaleWidget.html#setMouseTracking">setMouseTracking</a></li><li><a href="ScaleWidget.html#setObjectName">setObjectName</a></li><li><a href="ScaleWidget.html#setScaleDiv">setScaleDiv</a></li><li><a href="ScaleWidget.html#setScaleDraw">setScaleDraw</a></li><li><a href="ScaleWidget.html#setTitle">setTitle</a></li><li><a href="ScaleWidget.html#setTitleFont">setTitleFont</a></li><li><a href="ScaleWidget.html#setTransformation">setTransformation</a></li><li><a href="ScaleWidget.html#setVisible">setVisible</a></li><li><a href="ScaleWidget.html#setZ">setZ</a></li><li><a href="ScaleWidget.html#show">show</a></li><li><a href="ScaleWidget.html#title">title</a></li><li><a href="ScaleWidget.html#titleFont">titleFont</a></li><li><a href="ScaleWidget.html#toString">toString</a></li><li><a href="ScaleWidget.html#width">width</a></li></ul></div></li><li><a href="SeriesData.html">SeriesData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SeriesData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SeriesData.html#.mBoundingRectPoint">mBoundingRectPoint</a></li><li><a href="SeriesData.html#mBoundingRect">mBoundingRect</a></li><li><a href="SeriesData.html#setRectOfInterest">setRectOfInterest</a></li><li><a href="SeriesData.html#toString">toString</a></li></ul></div></li><li><a href="SpectroCurve.html">SpectroCurve</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SpectroCurve_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SpectroCurve.html#attach">attach</a></li><li><a href="SpectroCurve.html#boundingRect">boundingRect</a></li><li><a href="SpectroCurve.html#clearCanvas">clearCanvas</a></li><li><a href="SpectroCurve.html#color1">color1</a></li><li><a href="SpectroCurve.html#color2">color2</a></li><li><a href="SpectroCurve.html#colorMap">colorMap</a></li><li><a href="SpectroCurve.html#colorRange">colorRange</a></li><li><a href="SpectroCurve.html#delete">delete</a></li><li><a href="SpectroCurve.html#deleteArray">deleteArray</a></li><li><a href="SpectroCurve.html#detach">detach</a></li><li><a href="SpectroCurve.html#draw">draw</a></li><li><a href="SpectroCurve.html#drawDots">drawDots</a></li><li><a href="SpectroCurve.html#drawSeries">drawSeries</a></li><li><a href="SpectroCurve.html#getCanvas">getCanvas</a></li><li><a href="SpectroCurve.html#getCanvasRect">getCanvasRect</a></li><li><a href="SpectroCurve.html#getContext">getContext</a></li><li><a href="SpectroCurve.html#getLegendIconSize">getLegendIconSize</a></li><li><a href="SpectroCurve.html#getZ">getZ</a></li><li><a href="SpectroCurve.html#hide">hide</a></li><li><a href="SpectroCurve.html#isVisible">isVisible</a></li><li><a href="SpectroCurve.html#itemChanged">itemChanged</a></li><li><a href="SpectroCurve.html#legendChanged">legendChanged</a></li><li><a href="SpectroCurve.html#legendData">legendData</a></li><li><a href="SpectroCurve.html#legendIcon">legendIcon</a></li><li><a href="SpectroCurve.html#legendIconSize">legendIconSize</a></li><li><a href="SpectroCurve.html#orientation">orientation</a></li><li><a href="SpectroCurve.html#penWidth">penWidth</a></li><li><a href="SpectroCurve.html#plot">plot</a></li><li><a href="SpectroCurve.html#setAxes">setAxes</a></li><li><a href="SpectroCurve.html#setColorInterval">setColorInterval</a></li><li><a href="SpectroCurve.html#setColorMap">setColorMap</a></li><li><a href="SpectroCurve.html#setColorRange">setColorRange</a></li><li><a href="SpectroCurve.html#setItemAttribute">setItemAttribute</a></li><li><a href="SpectroCurve.html#setItemInterest">setItemInterest</a></li><li><a href="SpectroCurve.html#setLegendIconSize">setLegendIconSize</a></li><li><a href="SpectroCurve.html#setOrientation">setOrientation</a></li><li><a href="SpectroCurve.html#setPenWidth">setPenWidth</a></li><li><a href="SpectroCurve.html#setSamples">setSamples</a></li><li><a href="SpectroCurve.html#setTitle">setTitle</a></li><li><a href="SpectroCurve.html#setVisible">setVisible</a></li><li><a href="SpectroCurve.html#setXAxis">setXAxis</a></li><li><a href="SpectroCurve.html#setYAxis">setYAxis</a></li><li><a href="SpectroCurve.html#setZ">setZ</a></li><li><a href="SpectroCurve.html#show">show</a></li><li><a href="SpectroCurve.html#testItemAttribute">testItemAttribute</a></li><li><a href="SpectroCurve.html#testItemInterest">testItemInterest</a></li><li><a href="SpectroCurve.html#title">title</a></li><li><a href="SpectroCurve.html#toString">toString</a></li><li><a href="SpectroCurve.html#updateScaleDiv">updateScaleDiv</a></li><li><a href="SpectroCurve.html#xAxis">xAxis</a></li><li><a href="SpectroCurve.html#yAxis">yAxis</a></li></ul></div></li><li><a href="SplineCurveFitter.html">SplineCurveFitter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SplineCurveFitter_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SplineCurveFitter.html#.FitMode">FitMode</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SplineCurveFitter.html#fitCurve">fitCurve</a></li><li><a href="SplineCurveFitter.html#fitMode">fitMode</a></li><li><a href="SplineCurveFitter.html#setFitMode">setFitMode</a></li><li><a href="SplineCurveFitter.html#setSpline">setSpline</a></li><li><a href="SplineCurveFitter.html#setSplineSize">setSplineSize</a></li><li><a href="SplineCurveFitter.html#spline">spline</a></li><li><a href="SplineCurveFitter.html#splineSize">splineSize</a></li></ul></div></li><li><a href="Symbol2.html">Symbol2</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Symbol2_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Symbol2.html#.Style">Style</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Symbol2.html#boundingRect">boundingRect</a></li><li><a href="Symbol2.html#brush">brush</a></li><li><a href="Symbol2.html#drawGraphicSymbol">drawGraphicSymbol</a></li><li><a href="Symbol2.html#drawSymbol">drawSymbol</a></li><li><a href="Symbol2.html#drawSymbols">drawSymbols</a></li><li><a href="Symbol2.html#path">path</a></li><li><a href="Symbol2.html#pen">pen</a></li><li><a href="Symbol2.html#pinPoint">pinPoint</a></li><li><a href="Symbol2.html#renderSymbols">renderSymbols</a></li><li><a href="Symbol2.html#setBrush">setBrush</a></li><li><a href="Symbol2.html#setPath">setPath</a></li><li><a href="Symbol2.html#setPen">setPen</a></li><li><a href="Symbol2.html#setPinPoint">setPinPoint</a></li><li><a href="Symbol2.html#setSize">setSize</a></li><li><a href="Symbol2.html#setStyle">setStyle</a></li><li><a href="Symbol2.html#size">size</a></li><li><a href="Symbol2.html#style">style</a></li><li><a href="Symbol2.html#toString">toString</a></li></ul></div></li><li><a href="SyntheticPointData.html">SyntheticPointData</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SyntheticPointData_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="SyntheticPointData.html#mBoundingRect">mBoundingRect</a></li><li><a href="SyntheticPointData.html#setRectOfInterest">setRectOfInterest</a></li><li><a href="SyntheticPointData.html#toString">toString</a></li></ul></div></li><li><a href="Transform.html">Transform</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Transform_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Transform.html#bounded">bounded</a></li><li><a href="Transform.html#copy">copy</a></li><li><a href="Transform.html#invTransform">invTransform</a></li><li><a href="Transform.html#toString">toString</a></li><li><a href="Transform.html#transform">transform</a></li></ul></div></li><li><a href="UpLoad.html">UpLoad</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="UpLoad_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="UpLoad.html#reset">reset</a></li><li><a href="UpLoad.html#setInputElement">setInputElement</a></li></ul></div></li><li><a href="Utility.html">Utility</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Utility_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Utility.html#.addSymbol">addSymbol</a></li><li><a href="Utility.html#.adjustForDecimalPlaces">adjustForDecimalPlaces</a></li><li><a href="Utility.html#.alert">alert</a></li><li><a href="Utility.html#.alertYesNo">alertYesNo</a></li><li><a href="Utility.html#.bicubicInterpolate">bicubicInterpolate</a></li><li><a href="Utility.html#.bilinearInterpolate">bilinearInterpolate</a></li><li><a href="Utility.html#.button">button</a></li><li><a href="Utility.html#.colorList">colorList</a></li><li><a href="Utility.html#.colorNameToHex">colorNameToHex</a></li><li><a href="Utility.html#.containsKeyword">containsKeyword</a></li><li><a href="Utility.html#.countDecimalPlaces">countDecimalPlaces</a></li><li><a href="Utility.html#.curveRenameDlg">curveRenameDlg</a></li><li><a href="Utility.html#.enableComponent">enableComponent</a></li><li><a href="Utility.html#.enableIntegrate">enableIntegrate</a></li><li><a href="Utility.html#.findIndepVar">findIndepVar</a></li><li><a href="Utility.html#.generateCurveName">generateCurveName</a></li><li><a href="Utility.html#.HTMLToRGB">HTMLToRGB</a></li><li><a href="Utility.html#.invert">invert</a></li><li><a href="Utility.html#.isAlpha">isAlpha</a></li><li><a href="Utility.html#.linearEquationFromPoints">linearEquationFromPoints</a></li><li><a href="Utility.html#.logBaseAdjust">logBaseAdjust</a></li><li><a href="Utility.html#.m3FuzzyCompare">m3FuzzyCompare</a></li><li><a href="Utility.html#.majorGridLines">majorGridLines</a></li><li><a href="Utility.html#.makeAbstract">makeAbstract</a></li><li><a href="Utility.html#.makePoints">makePoints</a></li><li><a href="Utility.html#.makeSamples">makeSamples</a></li><li><a href="Utility.html#.mFuzzyCompare">mFuzzyCompare</a></li><li><a href="Utility.html#.minorGridLines">minorGridLines</a></li><li><a href="Utility.html#.modifiers">modifiers</a></li><li><a href="Utility.html#.mRgb">mRgb</a></li><li><a href="Utility.html#.mRgba">mRgba</a></li><li><a href="Utility.html#.pointsFromXYObjectArray">pointsFromXYObjectArray</a></li><li><a href="Utility.html#.pointsToXYObjectArray">pointsToXYObjectArray</a></li><li><a href="Utility.html#.prompt">prompt</a></li><li><a href="Utility.html#.purgeKewords">purgeKewords</a></li><li><a href="Utility.html#.qBound">qBound</a></li><li><a href="Utility.html#.randomColor">randomColor</a></li><li><a href="Utility.html#.removeCurveBrush">removeCurveBrush</a></li><li><a href="Utility.html#.RGB2HTML">RGB2HTML</a></li><li><a href="Utility.html#.setAutoScale">setAutoScale</a></li><li><a href="Utility.html#.setCurveBrush">setCurveBrush</a></li><li><a href="Utility.html#.setLegendAttribute">setLegendAttribute</a></li><li><a href="Utility.html#.setSymbolPenWidth">setSymbolPenWidth</a></li><li><a href="Utility.html#.setSymbolSize">setSymbolSize</a></li><li><a href="Utility.html#.setTickLength">setTickLength</a></li><li><a href="Utility.html#.sqr">sqr</a></li><li><a href="Utility.html#.toArrays">toArrays</a></li><li><a href="Utility.html#.toPrecision">toPrecision</a></li><li><a href="Utility.html#.updateLegendIconSize">updateLegendIconSize</a></li></ul></div></li><li><a href="WeedingCurveFitter.html">WeedingCurveFitter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WeedingCurveFitter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WeedingCurveFitter.html#chunkSize">chunkSize</a></li><li><a href="WeedingCurveFitter.html#fitCurve">fitCurve</a></li><li><a href="WeedingCurveFitter.html#setChunkSize">setChunkSize</a></li><li><a href="WeedingCurveFitter.html#setTolerance">setTolerance</a></li><li><a href="WeedingCurveFitter.html#tolerance">tolerance</a></li></ul></div></li><li><a href="Widget.html">Widget</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Widget_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Widget.html#contentsRect">contentsRect</a></li><li><a href="Widget.html#delete">delete</a></li><li><a href="Widget.html#deleteArray">deleteArray</a></li><li><a href="Widget.html#event">event</a></li><li><a href="Widget.html#eventFilter">eventFilter</a></li><li><a href="Widget.html#font">font</a></li><li><a href="Widget.html#getCanvas">getCanvas</a></li><li><a href="Widget.html#getContext">getContext</a></li><li><a href="Widget.html#getElement">getElement</a></li><li><a href="Widget.html#getZ">getZ</a></li><li><a href="Widget.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="Widget.html#height">height</a></li><li><a href="Widget.html#hide">hide</a></li><li><a href="Widget.html#installEventFilter">installEventFilter</a></li><li><a href="Widget.html#isEnabled">isEnabled</a></li><li><a href="Widget.html#isVisible">isVisible</a></li><li><a href="Widget.html#mapToElement">mapToElement</a></li><li><a href="Widget.html#objectName">objectName</a></li><li><a href="Widget.html#removeEventFilter">removeEventFilter</a></li><li><a href="Widget.html#setCanvasParent">setCanvasParent</a></li><li><a href="Widget.html#setElement">setElement</a></li><li><a href="Widget.html#setEnabled_1">setEnabled_1</a></li><li><a href="Widget.html#setFont">setFont</a></li><li><a href="Widget.html#setMouseTracking">setMouseTracking</a></li><li><a href="Widget.html#setObjectName">setObjectName</a></li><li><a href="Widget.html#setVisible">setVisible</a></li><li><a href="Widget.html#setZ">setZ</a></li><li><a href="Widget.html#show">show</a></li><li><a href="Widget.html#toString">toString</a></li><li><a href="Widget.html#width">width</a></li></ul></div></li><li><a href="WidgetOverlay.html">WidgetOverlay</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="WidgetOverlay_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="WidgetOverlay.html#contentsRect">contentsRect</a></li><li><a href="WidgetOverlay.html#delete">delete</a></li><li><a href="WidgetOverlay.html#deleteArray">deleteArray</a></li><li><a href="WidgetOverlay.html#drawOverlay">drawOverlay</a></li><li><a href="WidgetOverlay.html#event">event</a></li><li><a href="WidgetOverlay.html#eventFilter">eventFilter</a></li><li><a href="WidgetOverlay.html#font">font</a></li><li><a href="WidgetOverlay.html#getCanvas">getCanvas</a></li><li><a href="WidgetOverlay.html#getContext">getContext</a></li><li><a href="WidgetOverlay.html#getElement">getElement</a></li><li><a href="WidgetOverlay.html#getZ">getZ</a></li><li><a href="WidgetOverlay.html#hasMouseTracking">hasMouseTracking</a></li><li><a href="WidgetOverlay.html#height">height</a></li><li><a href="WidgetOverlay.html#hide">hide</a></li><li><a href="WidgetOverlay.html#installEventFilter">installEventFilter</a></li><li><a href="WidgetOverlay.html#isEnabled">isEnabled</a></li><li><a href="WidgetOverlay.html#isVisible">isVisible</a></li><li><a href="WidgetOverlay.html#mapToElement">mapToElement</a></li><li><a href="WidgetOverlay.html#objectName">objectName</a></li><li><a href="WidgetOverlay.html#removeEventFilter">removeEventFilter</a></li><li><a href="WidgetOverlay.html#setCanvasParent">setCanvasParent</a></li><li><a href="WidgetOverlay.html#setElement">setElement</a></li><li><a href="WidgetOverlay.html#setEnabled_1">setEnabled_1</a></li><li><a href="WidgetOverlay.html#setFont">setFont</a></li><li><a href="WidgetOverlay.html#setMouseTracking">setMouseTracking</a></li><li><a href="WidgetOverlay.html#setObjectName">setObjectName</a></li><li><a href="WidgetOverlay.html#setVisible">setVisible</a></li><li><a href="WidgetOverlay.html#setZ">setZ</a></li><li><a href="WidgetOverlay.html#show">show</a></li><li><a href="WidgetOverlay.html#toString">toString</a></li><li><a href="WidgetOverlay.html#updateOverlay">updateOverlay</a></li><li><a href="WidgetOverlay.html#width">width</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="Misc.html">Misc</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Misc_sub"></div></li><li><a href="PaintUtil.html">PaintUtil</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PaintUtil_sub"></div></li><li><a href="Static.html">Static</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Static_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Static.html#.AltModifier">AltModifier</a></li><li><a href="Static.html#.ControlModifier">ControlModifier</a></li><li><a href="Static.html#.NoModifier">NoModifier</a></li><li><a href="Static.html#.ShiftModifier">ShiftModifier</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Static.html#.bind">bind</a></li><li><a href="Static.html#.isMobile">isMobile</a></li><li><a href="Static.html#.trigger">trigger</a></li><li><a href="Static.html#.unbind">unbind</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3><a href="global.html">Global</a></h3></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+
+var Cancel = 0;
+var No = 1;
+var Yes = 2;
+
+class AlertDlg {
+  constructor() {
+    var dlg = $(
+      '&lt;div class="modal fade" id="alert_Modal" role="dialog">\
+		&lt;div id="dlg" class="modal-dialog">\
+		&lt;!-- Modal content-->\
+		&lt;div class="modal-content">\
+		&lt;div class="modal-header">\
+		&lt;!--button type="button" class="close" data-dismiss="modal">&amp;times;&lt;/button-->\
+		&lt;h4 class="modal-title">&lt;b>Alert&lt;/b>&lt;/h4>\
+		&lt;/div>\
+		&lt;div class="modal-body">\
+		&lt;p id="msg">&lt;/p>\
+		&lt;/div>\
+		&lt;div id="alertDlgFooter1" class="modal-footer">\
+		&lt;button type="button" class="btn btn-default" data-dismiss="modal">Ok&lt;/button>\
+		&lt;/div>\
+		&lt;div id="alertDlgFooter2" class="modal-footer">\
+		&lt;button id="yes" type="button" class="btn btn-default">Yes&lt;/button>\
+		&lt;button id="no" type="button" class="btn btn-default">No&lt;/button>\
+		&lt;button id="cancel" type="button" class="btn btn-default">Cancel&lt;/button>\
+		&lt;/div>\
+		&lt;/div>\
+		&lt;/div>\
+		&lt;/div>'
+    );
+
+    //console.log(dlg)
+    $("body").append(dlg);
+
+    dlg.css("z-index", 1000000000); //ensure dialog is not covered
+
+    this.alert = function (msg, type) {
+      $("body").append(dlg);
+      $("#alertDlgFooter2").hide();
+      $("#alertDlgFooter1").show();
+      $("#msg").text(msg);
+      if (type == "small") {
+        $("#dlg").addClass("modal-sm");
+      } else {
+        $("#dlg").removeClass("modal-sm");
+      }
+      dlg.modal({
+        backdrop: "static",
+      });
+      //dlg.modal();
+    };
+
+    var self = this;
+
+    this.alertYesNo = function (msg, cb, type) {
+      $("body").append(dlg);
+      //$(".close").hide()
+      $("#alert_Modal").modal("hide");
+      this.alertYesCb = cb;
+      $("#alertDlgFooter1").hide();
+      $("#alertDlgFooter2").show();
+      $("#msg").text(msg);
+      if (type == "small") {
+        $("#dlg").addClass("modal-sm");
+      } else {
+        $("#dlg").removeClass("modal-sm");
+      }
+      /* dlg.modal({
+					backdrop: "static"
+				}); */
+      //dlg.modal();
+      $("#alert_Modal").modal("show");
+    };
+
+    $("#yes").click(function () {
+      //$(".close").click();
+      $("#alert_Modal").modal("hide");
+      self.alertYesCb(Yes);
+    });
+
+    $("#no").click(function () {
+      //$(".close").click();
+      $("#alert_Modal").modal("hide");
+      self.alertYesCb(No);
+    });
+
+    $("#cancel").click(function () {
+      // $(".close").click();
+      $("#alert_Modal").modal("hide");
+      self.alertYesCb(Cancel);
+    });
+
+    dlg.on("hidden.bs.modal", function () {
+      dlg.detach();
+    });
+
+    dlg.detach();
+  }
+}
+
+class PromptDlg {
+  constructor() {
+    var prompt_dlg = $(
+      '&lt;div class="modal fade" id="promptModal" role="dialog">\
+		&lt;div id="prompt_dlg" class="modal-dialog">\
+		&lt;!-- Modal content-->\
+		&lt;div class="modal-content">\
+		&lt;div class="modal-header">\
+		&lt;button type="button" class="close" data-dismiss="modal">&lt;/button>\
+		&lt;h4 class="modal-title" id="prompt_title">Alert&lt;/h4>\
+		&lt;/div>\
+		&lt;div class="modal-body">\
+		&lt;input id="prompt_msg" style="width:100%" autofocus />\
+		&lt;/div>\
+		&lt;div class="modal-footer">\
+		&lt;button type="button" class="btn btn-default" data-dismiss="modal">Cancel&lt;/button>\
+		&lt;button id="prompt_ok" type="button" class="btn btn-default">Ok&lt;/button>\
+		&lt;/div>\
+		&lt;/div>\
+		&lt;/div>\
+		&lt;/div>'
+    );
+
+    //console.log(dlg)
+    $("body").append(prompt_dlg);
+
+    var self = this;
+
+    this.prompt = function (title, defaultMsg, cb, type) {
+      $("body").append(prompt_dlg);
+      if (type == "small") {
+        $("#prompt_dlg").addClass("modal-sm");
+      }
+      $("#prompt_title").text(title);
+      $("#prompt_msg").val(defaultMsg);
+      $("#prompt_msg").select();
+      this.cb = cb;
+      prompt_dlg.modal({
+        backdrop: "static",
+      });
+    };
+
+    prompt_dlg.on("hidden.bs.modal", function () {
+      prompt_dlg.detach();
+    });
+
+    $("#prompt_ok").on("click", function () {
+      if (self.cb($("#prompt_msg").val())) {
+        $(".close").click();
+        //prompt_dlg.detach();
+      } else {
+        $("#prompt_msg").select();
+      }
+    });
+
+    prompt_dlg.detach();
+  }
+}
+
+/**
+ * @classdesc A class of static utility methods. You can derive from this class and add your own utility methods. See the eample below.
+ * @example
+ * class MyUtility extends Utility{
+ * 	static myUtilityMethod(...){
+ * 		...
+ * 	}
+ * }
+ */
+class Utility {
+  /**
+   * Get the number of decimal places in the number.
+   * @param {number} value The number whose decimal places is to be determined.
+   * @returns {number} A positive integer representing the number of decimal places.
+   */
+  static countDecimalPlaces(value) {
+    let text = value.toString();
+    // verify if number 0.000005 is represented as "5e-6"
+    if (text.indexOf("e-") > -1) {
+      let [base, trail] = text.split("e-");
+      let deg = parseInt(trail, 10);
+      return deg;
+    }
+    // count decimals for number in representation like "0.123456"
+    if (Math.floor(value) !== value) {
+      return value.toString().split(".")[1].length || 0;
+    }
+    return 0;
+  }
+
+  //Helper
+  static BicubicInterpolation(values, x, y) {
+    function TERP(t, a, b, c, d) {
+      return (
+        0.5 *
+          (c -
+            a +
+            (2.0 * a - 5.0 * b + 4.0 * c - d + (3.0 * (b - c) + d - a) * t) *
+              t) *
+          t +
+        b
+      );
+    }
+    var i0, i1, i2, i3;
+
+    i0 = TERP(x, values[0][0], values[1][0], values[2][0], values[3][0]);
+    i1 = TERP(x, values[0][1], values[1][1], values[2][1], values[3][1]);
+    i2 = TERP(x, values[0][2], values[1][2], values[2][2], values[3][2]);
+    i3 = TERP(x, values[0][3], values[1][3], values[2][3], values[3][3]);
+    return TERP(y, i0, i1, i2, i3);
+  }
+
+  /**
+   * Compute the z - coordinate
+   * @param {Array&lt;object>} data Array of object (e.g. {x:2, y:-10, z:144}) representing a 3D point.
+   * @param {Number} x x - coordinate
+   * @param {Number} y y - coordinate
+   * @returns {Number} z- coordinate (Bi-cubic interpolation)
+   */
+  static bicubicInterpolate(data, x, y) {
+    var numberOfColumns = data.length;
+    var numberOfRows = data[0].length;
+    var rightColumn;
+    var bottomRow;
+
+    var colSpacing =
+      (data[data.length - 1][0].x - data[0][0].x) / (data.length - 1);
+
+    var colIndex = Math.floor((x - data[0][0].x) / colSpacing);
+
+    for (var i = colIndex; i &lt; numberOfColumns; i++) {
+      if (data[i][0].x > x) {
+        rightColumn = i; //data[i][0].x;
+
+        break;
+      }
+    }
+    if (rightColumn == undefined) rightColumn = numberOfColumns - 1; //data[numberOfColumns-1][0].x;
+
+    var col0 = data[0];
+
+    var rowSpacing = (col0[col0.length - 1].y - col0[0].y) / (col0.length - 1);
+
+    var rowIndex = Math.floor((y - col0[0].y) / rowSpacing);
+    for (var i = rowIndex; i &lt; numberOfRows; i++) {
+      if (col0[i].y > y) {
+        bottomRow = i; //col0[i].y;
+
+        break;
+      }
+    }
+    if (bottomRow == undefined) bottomRow = numberOfRows - 1; //col0[numberOfRows-1].y;
+
+    if (x > data[rightColumn][0].x || x &lt; data[0][0].x) {
+      throw "x out of range";
+    }
+
+    if (y > data[0][bottomRow].y || y &lt; data[0][0].y) {
+      throw "y out of range";
+    }
+
+    var leftBoundary = rightColumn - 2;
+    var topBoundary = bottomRow - 2;
+
+    if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow + 1 &lt; numberOfRows
+    ) {
+      //inner case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 2].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 2].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary &lt; 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow + 1 &lt; numberOfRows
+    ) {
+      //left boundary case
+      var p0 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 2].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary &lt; 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow &lt; numberOfRows
+    ) {
+      //top boundary case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 >= numberOfColumns &amp;&amp;
+      bottomRow + 1 &lt; numberOfRows
+    ) {
+      //right boundary case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 2].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow + 1 >= numberOfRows
+    ) {
+      //bottom boundary case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 2].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 2].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary &lt; 0 &amp;&amp;
+      topBoundary &lt; 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow &lt; numberOfRows
+    ) {
+      //left + top boundary case
+      var p0 = [
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary &lt; 0 &amp;&amp;
+      rightColumn + 1 >= numberOfColumns &amp;&amp;
+      bottomRow &lt; numberOfRows
+    ) {
+      //right + top boundary case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow + 1].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow + 1].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      var p3 = [
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow + 1].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary &lt; 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 &lt; numberOfColumns &amp;&amp;
+      bottomRow + 1 >= numberOfRows
+    ) {
+      //left + bottom boundary case
+      var p0 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow].z,
+      ];
+
+      var p3 = [
+        data[rightColumn + 1][bottomRow - 2].z,
+        data[rightColumn + 1][bottomRow - 1].z,
+        data[rightColumn + 1][bottomRow].z,
+        data[rightColumn + 1][bottomRow].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    } else if (
+      leftBoundary >= 0 &amp;&amp;
+      topBoundary >= 0 &amp;&amp;
+      rightColumn + 1 >= numberOfColumns &amp;&amp;
+      bottomRow + 1 >= numberOfRows
+    ) {
+      //right + bottom boundary case
+      var p0 = [
+        data[rightColumn - 2][bottomRow - 2].z,
+        data[rightColumn - 2][bottomRow - 1].z,
+        data[rightColumn - 2][bottomRow].z,
+        data[rightColumn - 2][bottomRow].z,
+      ];
+
+      var p1 = [
+        data[rightColumn - 1][bottomRow - 2].z,
+        data[rightColumn - 1][bottomRow - 1].z,
+        data[rightColumn - 1][bottomRow].z,
+        data[rightColumn - 1][bottomRow].z,
+      ];
+
+      var p2 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow].z,
+      ];
+
+      var p3 = [
+        data[rightColumn][bottomRow - 2].z,
+        data[rightColumn][bottomRow - 1].z,
+        data[rightColumn][bottomRow].z,
+        data[rightColumn][bottomRow].z,
+      ];
+
+      return Utility.BicubicInterpolation(
+        [p0, p1, p2, p3],
+        (x - data[rightColumn - 1][0].x) /
+          (data[rightColumn][0].x - data[rightColumn - 1][0].x),
+        (y - col0[bottomRow - 1].y) /
+          (col0[bottomRow].y - col0[bottomRow - 1].y)
+      );
+    }
+    return undefined;
+  }
+
+  //Helper
+  static BilinearInterpolation(q11, q12, q21, q22, x1, x2, y1, y2, x, y) {
+    /*  var x2x1, y2y1, x2x, y2y, yy1, xx1;
+		x2x1 = x2 - x1;
+		y2y1 = y2 - y1;
+		x2x = x2 - x;
+		y2y = y2 - y;
+		yy1 = y - y1;
+		xx1 = x - x1; 
+		  return 1.0 / (x2x1 * y2y1) * (
+			q11 * x2x * y2y +
+			q21 * xx1 * y2y +
+			q12 * x2x * yy1 +
+			q22 * xx1 * yy1
+		);  */
+
+    return (
+      (1.0 / ((x2 - x1) * (y2 - y1))) *
+      (q11 * (x2 - x) * (y2 - y) +
+        q21 * (x - x1) * (y2 - y) +
+        q12 * (x2 - x) * (y - y1) +
+        q22 * (x - x1) * (y - y1))
+    );
+  }
+
+  /**
+   * Compute the z - coordinate
+   * @param {Array&lt;Array&lt;Number>>} data Array of object (e.g. {x:2, y:-10, z:144}) representing a 3D point.
+   * @param {Number} x x - coordinate
+   * @param {Number} y y - coordinate
+   * @returns {Number} z- coordinate (Bi-linear interpolation)
+   */
+  static bilinearInterpolate(data, x, y) {
+    var numberOfColumns = data.length;
+    var numberOfRows = data[0].length;
+    var rightColumn;
+    var bottomRow;
+
+    var colSpacing =
+      (data[data.length - 1][0].x - data[0][0].x) / (data.length - 1);
+
+    var colIndex = Math.floor((x - data[0][0].x) / colSpacing);
+    //console.log(colIndex);
+
+    for (var i = colIndex; i &lt; numberOfColumns; i++) {
+      if (data[i][0].x > x) {
+        rightColumn = i; //data[i][0].x;
+
+        break;
+      }
+    }
+    if (rightColumn == undefined) rightColumn = numberOfColumns - 1;
+
+    var col0 = data[0];
+
+    var rowSpacing = (col0[col0.length - 1].y - col0[0].y) / (col0.length - 1);
+
+    var rowIndex = Math.floor((y - col0[0].y) / rowSpacing);
+
+    for (var i = rowIndex; i &lt; numberOfRows; i++) {
+      if (col0[i].y > y) {
+        bottomRow = i; //col0[i].y;
+
+        break;
+      }
+    }
+    if (bottomRow == undefined) bottomRow = numberOfRows - 1;
+
+    if (x > data[rightColumn][0].x || x &lt; data[0][0].x) {
+      throw "x out of range";
+    }
+
+    if (y > data[0][bottomRow].y || y &lt; data[0][0].y) {
+      throw "y out of range";
+    }
+
+    var leftBoundary = rightColumn - 1;
+    var topBoundary = bottomRow - 1;
+
+    var x1, y1, x2, y2, q11, q12, q21, q22;
+
+    x1 = data[leftBoundary][0].x;
+    x2 = data[rightColumn][0].x;
+    y1 = data[0][bottomRow].y;
+    y2 = data[0][topBoundary].y;
+
+    q11 = data[leftBoundary][bottomRow].z;
+    q12 = data[leftBoundary][topBoundary].z;
+    q21 = data[rightColumn][bottomRow].z;
+    q22 = data[rightColumn][topBoundary].z;
+
+    return Utility.BilinearInterpolation(
+      q11,
+      q12,
+      q21,
+      q22,
+      x1,
+      x2,
+      y1,
+      y2,
+      x,
+      y
+    );
+  }
+
+  /**
+   * Generate a unique curve name
+   * @param {Plot} plot Plot to which a curve with the generated name will be attached
+   * @param {String} [prefix] Prefix of name. The default is "curve_".
+   * @returns {string} unique curve name
+   */
+  static generateCurveName(plot, prefix) {
+    let suffix = 1;
+    let preFix = prefix || "curve_";
+    let curveName = preFix.concat(suffix);
+    while (plot.findPlotCurve(curveName)) curveName = preFix.concat(++suffix);
+    return curveName;
+  }
+
+  /**
+   * Check a key press event for modifier (ALT, SHIFT, CTRL) key press.
+   *
+   * Modifiers are represented by the constants:
+   * - {@link Static.NoModifier}
+   * - {@link Static.AltModifier}
+   * - {@link Static.ControlModifier}
+   * - {@link Static.ShiftModifier}
+   *
+   * To check if an event is associated with ALT modifier, for example, use: `modifiers(event) &amp; Static.AltModifier`
+   * @param {Event} event Key Event
+   * @returns {number} Number identifying any modifier combinations.
+   */
+  static modifiers(event) {
+    var _modifiers = Static.NoModifier;
+    if (event.altKey &amp;&amp; event.ctrlKey &amp;&amp; event.shiftKey)
+      return (
+        _modifiers |
+        Static.AltModifier |
+        Static.ControlModifier |
+        Static.ShiftModifier
+      );
+    if (event.altKey &amp;&amp; event.ctrlKey)
+      return _modifiers | Static.AltModifier | Static.ControlModifier;
+    if (event.altKey &amp;&amp; event.shiftKey)
+      return _modifiers | Static.AltModifier | Static.ShiftModifier;
+    if (event.ctrlKey &amp;&amp; event.shiftKey)
+      return _modifiers | Static.ControlModifier | Static.ShiftModifier;
+    if (event.altKey) return _modifiers | Static.AltModifier;
+    if (event.ctrlKey) return _modifiers | Static.ControlModifier;
+    if (event.shiftKey) return _modifiers | Static.ShiftModifier;
+    return _modifiers;
+  }
+
+  /**
+   * Check a mouse event for button press
+   * @param {Event} event
+   * @returns {number} Constant identifying mouse button pressed. (NoButton=-1: No mouse button pressed, LeftButton=0: Left mouse button pressed, MidButton=1: Middle mouse button pressed, RightButton=2: Right mouse button pressed)
+   */
+  static button(event) {
+    if (event == null) return false;
+    return event.button;
+  }
+
+  /**
+   * Get a list of predefined colors
+   * @returns {Array&lt;String>}
+   */
+  static colorList() {
+    return ["black", "red", "green", "blue", "yellow", "brown"];
+  }
+
+  /**
+   * Convert an array of array of numbers ([[-10, 50], [41, 89], ...]) to an array
+   * of Misc.Point ([new Mic.Point(-10, 50), new Mic.Point(41, 89), ...])
+   *
+   * @param {Array&lt;Array&lt;Number>>} arrayOfTwoMemberArrays
+   * @returns {Array&lt;Misc.Point>}
+   */
+  static makePoints(arrayOfTwoMemberArrays) {
+    return arrayOfTwoMemberArrays.map(function (arrayOfTwoMembers) {
+      return new Misc.Point(
+        parseFloat(arrayOfTwoMembers[0]),
+        parseFloat(arrayOfTwoMembers[1])
+      );
+    });
+  }
+
+  // /**
+  //  * Build an object containing data that can be use for a spectrocure.
+  //  *
+  //  *
+  //  *
+  //  * The points property holds a array of object (e.g.: {x:2, y:-10, z:12}) that represent a 3D point.
+  //  *
+  //  * zMin and zMax properties hold the minimum and maximum z value respectively.
+  //  * @param {Array&lt;Array&lt;Number>>} arrayOfThreeMemberArrays Array of array of numbers ([[-10, 50, 87], [41, 89, -150], ...])
+  //  * @returns {object} spectrocure data object. See example below.
+  //  * @example
+  //  * {
+  //  *    points: [{x:2, y:-10, z:12}, {x:2, y:-10, z:12}, ...],
+  //  *    zMin: 2,
+  //  *    zMax: 30
+  //  * }
+  //  */
+  // static makeSpectrocurvePoints1(arrayOfThreeMemberArrays) {
+  //   //console.log(arr)
+  //   var res = [];
+  //   var minZ = Number.MAX_VALUE;
+  //   var maxZ = Number.MIN_VALUE;
+  //   arrayOfThreeMemberArrays.forEach(function (arrayOfThreeMembers) {
+  //     var zVal = parseFloat(arrayOfThreeMembers[2]);
+  //     if (zVal &lt; minZ) minZ = arrayOfThreeMembers[2];
+  //     if (zVal > maxZ) maxZ = arrayOfThreeMembers[2];
+  //     res.push({
+  //       x: parseFloat(arrayOfThreeMembers[0]),
+  //       y: parseFloat(arrayOfThreeMembers[1]),
+  //       z: zVal,
+  //     });
+  //   });
+  //   return { points: res, zMin: minZ, zMax: maxZ };
+  // }
+
+  /**
+   * Construct an array of xy object (e.g.: [{x:2, y:15}, {x:-22, y:125}, ...]) from an array of Misc.Point
+   * @param {Array&lt;Misc.Point>} points List of points
+   * @returns {Array&lt;object>} Array of 2D objects
+   */
+  static pointsToXYObjectArray(points) {
+    return points.map(function (pt) {
+      return {
+        x: pt.x,
+        y: pt.y,
+      };
+    });
+  }
+
+  /**
+   * Construct an array of Misc.Point (e.g.: [ new Misc.Point(2, 15), new Misc.Point(-22, 125), ...]) from an array of 2D xy object
+   * @param {Array&lt;object>} XYpoints List of xy objects
+   * @returns {Array&lt;Misc.Point>} Array of 2D points
+   */
+  static pointsFromXYObjectArray(XYpoints) {
+    return XYpoints.map(function (pt) {
+      return new Misc.Point(pt.x, pt.y);
+    });
+  }
+
+  /**
+   * Construct a linear equation of the form `mx + c` from 2 known points in a xy coordinate system.
+   * @param {Misc.Point} p1 First point
+   * @param {Misc.Point} p2 Second point
+   * @returns {String} equation (e.g. "-15 x + 34")
+   */
+  static linearEquationFromPoints(p1, p2) {
+    var m = (p2.y - p1.y) / (p2.x - p1.x);
+    var c = -m * p1.x + p1.y;
+    var fn = m.toString();
+    fn += "x+";
+    fn += c.toString();
+    return fn;
+  }
+
+  /**
+   * Build an object containing data that can be use for a curve, spectrocure or spectrogram.
+   *
+   * The points property holds a array of object that describes a 2D ({x:2, y:-10}) or 3D ({x:2, y:-10, z:12}) point.
+   *
+   * dataType property holds a string that gives a hint. Possible types are "curve" (for 2D), "spectrocurve" or "spectrogram" (for 3D). The hint is provided by making it the first line in the file. If no hint is provided, dataType property is set to null and toArrays() will try to determine if the csv content is for 2D or 3D spectrocurve or 3D spectrogram.
+   *
+   * zMin and zMax properties hold the minimum and maximum z value respectively.
+   * @param {String} csvContent A string containing the csv content read from a file. (e.g.: "2, 4\n3, 9\n, ..." representing csv that describes 2D or "2, 4, -10\n3, 9, 12\n, ..." representing csv that describes 3D)
+   * @returns {object} data object. See example below.
+   * @example
+   * For 2D data
+   * {
+   *    points: [{x:2, y:-10}, {x:2, y:-10}, ...],
+   *    dataType: "curve", // or null
+   *    zMin: 2,
+   *    zMax: 30
+   * }
+   *
+   * For 3D data
+   * {
+   *    points: [{x:2, y:-10, z:12}, {x:2, y:-10, z:12}, ...],
+   *    dataType: "spectrocurve", //or "spectrogram" or null
+   *    zMin: 2,
+   *    zMax: 30
+   * }
+   */
+  static toArrays(csvContent) {
+    var _minZ = Number.MAX_VALUE;
+    var _maxZ = Number.MIN_VALUE;
+    var type = null;
+    var arr = csvContent.split("\n");
+    var keyword = arr[0].toLowerCase();
+    if (keyword.includes("curve")) {
+      type = "curve";
+    } else if (keyword.includes("spectrocurve")) {
+      type = "spectrocurve";
+    } else if (keyword.includes("spectrogram")) {
+      type = "spectrogram";
+    }
+    var result = [];
+    for (var i = 0; i &lt; arr.length; ++i) {
+      var pt = arr[i].split(",");
+      if (isNaN(parseFloat(pt))) {
+        continue;
+      }
+      pt = pt.map(function (item) {
+        return parseFloat(item);
+      });
+      if (pt.length == 3) {
+        //3d data
+        result.push({ x: pt[0], y: pt[1], z: pt[2] });
+        if (result[result.length - 1].z &lt; _minZ)
+          _minZ = result[result.length - 1].z;
+        if (result[result.length - 1].z > _maxZ)
+          _maxZ = result[result.length - 1].z;
+      } else {
+        result.push(pt);
+      }
+    }
+    return { array: result, dataType: type, minZ: _minZ, maxZ: _maxZ };
+  }
+
+  /**
+   * Toggles auto scale for all axes on and off
+   *
+   * Triggers the "rescaled" event. (Static.trigger("rescaled", auto);)
+   * @param {Plot} plot The plot
+   * @param {Boolean} auto On / Off
+   */
+  static setAutoScale(plot, auto) {
+    plot.setAxisAutoScale(Axis.AxisId.xBottom, auto);
+    plot.setAxisAutoScale(Axis.AxisId.yLeft, auto);
+    plot.setAxisAutoScale(Axis.AxisId.xTop, auto);
+    plot.setAxisAutoScale(Axis.AxisId.yRight, auto);
+    Static.trigger("rescaled", auto);
+  }
+
+  /**
+   * Toggles the major gridlines for both x and Y on and off
+   *
+   * Triggers the "majorGridLines" event. (Static.trigger("majorGridLines", [grid, on]);)
+   * @param {PlotGrid} grid
+   * @param {Boolean} on On / Off
+   *
+   */
+  static majorGridLines(grid, on) {
+    grid.enableX(on);
+    grid.enableY(on);
+    Static.trigger("majorGridLines", [grid, on]);
+  }
+
+  /**
+   * Toggles the minor gridlines for both x and Y on and off
+   *
+   * Triggers the "majorGridLines" event. (Static.trigger("minorGridLines", [grid, on]);)
+   * @param {PlotGrid} grid
+   * @param {Boolean} on On / Off
+   *
+   */
+  static minorGridLines(grid, on) {
+    grid.enableXMin(on);
+    grid.enableYMin(on);
+    Static.trigger("minorGridLines", [grid, on]);
+  }
+
+  /**
+   * Generates a random color
+   *
+   * @param {Number} brightness The desired brightness. Six levels of brightness from 0 to 5, 0 being the darkest
+   * @returns {String} rgb color (e.g.: "rgb(255, 0, 0)")
+   */
+  static randomColor(brightness = 0) {
+    // Six levels of brightness from 0 to 5, 0 being the darkest
+    if (brightness > 5) brightness = 5;
+    if (brightness &lt; 0) brightness = 0;
+    var rgb = [Math.random() * 256, Math.random() * 256, Math.random() * 256];
+    var mix = [brightness * 51, brightness * 51, brightness * 51]; //51 => 255/5
+    var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(
+      function (x) {
+        return Math.round(x / 2.0);
+      }
+    );
+    return "rgb(" + mixedrgb.join(",") + ")";
+  }
+
+  /**
+   * Display a color picker that allows the user to select a brush color. The color chosen is use to build a bush that is assigned to the curve.
+   * @param {Curve} curve The curve
+   * @param {Function} successCb A callback that is executed when a color change is selected.
+   */
+  static setCurveBrush(curve, successCb) {
+    var colorSelector = $('&lt;input type="color" style="opacity:0;">');
+    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) return;
+    if (curve.brush().color == Static.NoBrush)
+      colorSelector.val(Utility.colorNameToHex("rgb(255, 255, 254)"));
+    else colorSelector.val(Utility.colorNameToHex(curve.brush().color));
+    colorSelector.change(function () {
+      var brush = curve.brush();
+      brush.color = $(this).val();
+      curve.setBrush(brush);
+      if (successCb !== undefined) {
+        successCb(curve);
+      }
+      $(this).remove();
+    });
+    colorSelector.trigger("click");
+  }
+
+  /**
+   * Sets a brush color to Static.NoBrush
+   * @param {Curve} curve The curve
+   */
+  static removeCurveBrush(curve) {
+    var brush = curve.brush();
+    brush.color = Static.NoBrush;
+    curve.setBrush(brush);
+  }
+
+  /**
+   * Set the pen width of a curve symbol.
+   *
+   * This method triggers the "symbolAttributeChanged" event (Static.trigger("symbolAttributeChanged", curve))
+   * @param {Curve} curve The curve
+   * @param {Number} width Pen width
+   */
+  static setSymbolPenWidth(curve, width) {
+    var sym = curve.symbol();
+    if (!sym) {
+      return;
+    }
+    var pen = sym.pen();
+    pen.width = width;
+    //sym.setPen(pen)
+    //curve.setSymbol(sym) //reset the symbol so that the legend size is recalculated
+    curve.plot().autoRefresh();
+
+    Utility.updateLegendIconSize(curve); //recalculate legend icon size
+    curve.plot().updateLegend(curve);
+    //curve.itemChanged();
+    //curve.legendChanged();
+    Static.trigger("symbolAttributeChanged", curve);
+  }
+
+  /**
+   * Recalculates legend icon size
+   * @param {Curve} curve The curve
+   */
+  static updateLegendIconSize(curve) {
+    var sz = curve.getLegendIconSize();
+    if (curve.symbol()) {
+      sz = curve.symbol().boundingRect().size();
+      //sz.width += 2; // margin
+      //sz.height += 3; // margin
+    }
+
+    if (
+      curve.symbol() &amp;&amp;
+      curve.testLegendAttribute(Curve.LegendAttribute.LegendShowSymbol)
+    ) {
+      if (curve.testLegendAttribute(Curve.LegendAttribute.LegendShowLine)) {
+        // Avoid, that the line is completely covered by the symbol
+
+        var w = Math.ceil(1.5 * sz.width);
+
+        if (w % 2) w++;
+
+        sz.width = Math.max(40, w);
+      }
+      curve.setLegendIconSize(sz);
+    } else if (
+      curve.testLegendAttribute(Curve.LegendAttribute.LegendShowLine)
+    ) {
+      sz.width = 40;
+      curve.setLegendIconSize(sz);
+    }
+  }
+
+  /**
+   * Sets the curve symbol size
+   *
+   * This method triggers the "symbolAttributeChanged" event (Static.trigger("symbolAttributeChanged", curve))
+   * @param {Curve} curve The curve
+   * @param {Misc.Size} value New size
+   *
+   */
+  static setSymbolSize(curve, value) {
+    //console.log(value)
+    var sym = curve.symbol();
+    if (!sym) return;
+    var sz = sym.size();
+    sz.width = value;
+    sz.height = value;
+    sym.setSize(sz);
+    curve.plot().autoRefresh();
+    Utility.updateLegendIconSize(curve); //recalculate legend icon size
+    //curve.itemChanged();
+    //curve.legendChanged();
+    curve.plot().updateLegend(curve);
+    Static.trigger("symbolAttributeChanged", curve);
+  }
+
+  /**
+   * Add a new symbol of a given style to the curve
+   *
+   * This method triggers the "symbolAdded" event (Static.trigger("symbolAdded", curve))
+   * @param {Curve} curve The curve
+   * @param {Symbol2.Style} style New symbol style
+   *
+   */
+  static addSymbol(curve, style) {
+    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) return;
+    if (style == Symbol2.Style.NoSymbol) {
+      curve.setSymbol(null);
+      //return;
+    }
+    var sym = curve.symbol();
+    if (sym == null) {
+      sym = new Symbol2();
+      sym.setBrush(new Misc.Brush(Static.NoBrush));
+      sym.setSize(new Misc.Size(10, 10));
+      curve.setSymbol(sym);
+    }
+    //console.log(sym.size())
+    if (sym.size().width &lt;= 0) sym.setSize(new Misc.Size(10, 10));
+    sym.setStyle(style);
+    curve.itemChanged();
+    curve.legendChanged();
+    Static.trigger("symbolAdded", curve);
+  }
+
+  /**
+   * Displays a dialog that allows editing of a new title for the curve.
+   *
+   * Triggers the "curveRenamed" event. (Static.trigger("curveRenamed", auto);)
+   * @param {String} existingName Current curve title
+   *
+   * This method triggers the "curveRenamed" event (Static.trigger("curveRenamed", curve))
+   * @param {Plot} plot The plot
+   * @param {Function} successCb A callback that is executed when a new title is selected.
+   *
+   */
+  static curveRenameDlg(existingName, plot, successCb) {
+    Utility.prompt(
+      'Enter a new name for "' + existingName + '"',
+      existingName,
+      function (newName) {
+        if (existingName == newName) {
+          //User decided not change the name
+          Utility.alert("You did not change the name!");
+          return false;
+        }
+        var curve = plot.findPlotCurve(existingName);
+        if (!plot.findPlotCurve(newName)) {
+          //A curve with title "name" (i.e the new name chosen by user is not known to the app)
+          curve.setTitle(newName);
+          if (successCb !== undefined) successCb(newName, curve);
+          Static.trigger("curveRenamed", curve);
+          return true;
+        } else {
+          Utility.alert(newName + " already exist");
+          return false;
+        }
+      },
+      "small"
+    );
+  }
+
+  /**
+   * Sets how the curve (or any plot item) is represented on the legend.
+   * @param {Curve} curve The curve
+   * @param {String} attribute Attribute. Possible attributes are: "line", "symbol" or "lineAndSymbol".
+   * @param {Mis.Size} defaultIconSize Icon size
+   */
+  static setLegendAttribute(curve, attribute, defaultIconSize) {
+    //attribute = "line" or "symbol" or "lineAndSymbol"
+    if (attribute == "line") {
+      //LegendShowLine is dependent on defaultIconSize. Be sure icon size is set to defaultIconSize
+      //before setting LegendShowLine.
+      curve.setLegendIconSize(new Misc.Size(defaultIconSize));
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowSymbol, false);
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowLine, true);
+      return;
+    }
+    if (attribute == "symbol") {
+      //LegendShowSymbol is dependent on defaultIconSize. Be sure icon size is set to defaultIconSize
+      //before setting LegendShowSymbol.
+      curve.setLegendIconSize(new Misc.Size(defaultIconSize));
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowLine, false);
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowSymbol, true);
+      return;
+    }
+    if (attribute == "lineAndSymbol") {
+      //LegendShowSymbol is dependent on defaultIconSize. Be sure icon size is set to defaultIconSize
+      //before setting LegendShowSymbol.
+      curve.setLegendIconSize(new Misc.Size(defaultIconSize));
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowLine, true);
+      curve.setLegendAttribute(Curve.LegendAttribute.LegendShowSymbol, true);
+      return;
+    }
+    //defaultIconSize.width = defaultIconSize.height;//ensure the icon is square
+    //curve.setLegendIconSize(new Misc.Size(defaultIconSize))
+    curve.setLegendAttribute(Curve.LegendAttribute.LegendShowLine, false);
+    curve.setLegendAttribute(Curve.LegendAttribute.LegendShowSymbol, false);
+    //iconSize is dependent on attributes. be sure to clear any attributes
+    //before setting iconSize.
+  }
+
+  /*var Backbone = 0x01;
+	//! Ticks
+	var Ticks = 0x02;
+	//! Labels
+	var Labels = 0x04;*/
+
+  /**
+   * En/disable component(s)
+   *
+   * @param {Plot} plot The plot
+   * @param {AbstractScaleDraw.ScaleComponent} component The component to en/disable. Use | operator to en/disable more thn one component at a time. (e.g.: AbstractScaleDraw.ScaleComponent.Ticks | AbstractScaleDraw.ScaleComponent.Backbone)
+   * @param {Boolean} on true / false
+   */
+  static enableComponent(plot, component, on) {
+    var scaleDraw = null;
+    for (var axisId = 0; axisId &lt; Axis.AxisId.axisCnt; ++axisId) {
+      scaleDraw = plot.axisScaleDraw(axisId);
+      scaleDraw.enableComponent(component, on);
+    }
+    plot.autoRefresh();
+  }
+
+  /**
+   * Sets the tick lenght of scale ticks
+   * @param {Plot} plot The plot
+   * @param {String} length The new length ("small", "medium" or "large")
+   */
+  static setTickLength(plot, length) {
+    //length = "small", "medium" or "large"
+    var scaleDraw = null;
+    for (var axisId = 0; axisId &lt; Axis.AxisId.axisCnt; ++axisId) {
+      scaleDraw = plot.axisScaleDraw(axisId);
+      if (length == "small") {
+        scaleDraw.setTickLength(ScaleDiv.TickType.MajorTick, 6);
+        scaleDraw.setTickLength(ScaleDiv.TickType.MinorTick, 3);
+      } else if (length == "medium") {
+        scaleDraw.setTickLength(ScaleDiv.TickType.MajorTick, 8);
+        scaleDraw.setTickLength(ScaleDiv.TickType.MinorTick, 4);
+      } else if (length == "large") {
+        scaleDraw.setTickLength(ScaleDiv.TickType.MajorTick, 12);
+        scaleDraw.setTickLength(ScaleDiv.TickType.MinorTick, 6);
+      }
+    }
+    plot.autoRefresh();
+  }
+
+  /**
+   * Make data for a Curve or Spectrocurve
+   * @param {object} obj data required by  makeSamples()
+   *
+   * obj has the following properties:
+   * - fx - The function e.g. "x^2 + 2x + 1"
+   * - lowerX - lower x limit e.g.: -10
+   * - upperX - upper x limit e.g.: 10
+   * - lowerY - lower y limit e.g.: -10 (only valid for Spectrocurve)
+   * - upperY - upper y limit e.g.: -10 (only valid for Spectrocurve)
+   * - numOfSamples - Number of points
+   * - indepVar - The character representing the x independent variable. If this property is not provided, makeSamples() try to determine the independent variable.
+   * - indepVarY - The character representing the y independent variable.
+   * @returns {object | Array&lt;Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
+   */
+  static makeSamples(obj) {
+    var fx = obj.fx;
+    var lowerX = obj.lowerX;
+    var upperX = obj.upperX;
+    var lowerY;
+    var upperY;
+    var numOfSamples = obj.numOfSamples;
+    var indepVarIsDegree = obj.indepVarIsDegree;
+    var indepVar = obj.variable || Utility.findIndepVar(fx);
+    var indepVarY = obj.variableY; // || findIndepVarY(fx); TODO
+
+    if (typeof numOfSamples === "undefined") numOfSamples = 100;
+    if (indepVar !== "x") {
+      while (fx.indexOf(indepVar) != -1) fx = fx.replace(indepVar, "x");
+    }
+
+    if (obj.threeD &amp;&amp; indepVarY !== "y") {
+      while (fx.indexOf(indepVarY) != -1) fx = fx.replace(indepVarY, "y");
+
+      lowerY = obj.lowerY;
+      var upperY = obj.upperY;
+    }
+
+    if (obj.threeD) {
+      lowerY = obj.lowerY;
+      upperY = obj.upperY;
+    }
+
+    var samples = [];
+    //samples.push(Misc.Point(-10, -10))
+    var parser = new EvaluateExp(fx);
+
+    if (parser.error) {
+      Utility.alert(parser.errorMessage);
+      return null;
+    }
+
+    /* const node = math.parse(fx); // parse expression into a node tree
+		const code = node.compile();  */
+
+    var step = (upperX - lowerX) / (numOfSamples - 1);
+    var stepY;
+    if (obj.threeD) {
+      stepY = (upperY - lowerY) / (numOfSamples - 1);
+    }
+
+    var yVal;
+    var zVal;
+    var zMin = Number.MAX_VALUE;
+    var zMax = Number.MIN_VALUE;
+    for (var i = 0; i &lt;= numOfSamples - 1; ++i) {
+      var xVal = lowerX + i * step;
+
+      if (obj.threeD) {
+        yVal = lowerY + i * stepY;
+        zVal = parser.eval({ x: xVal, y: yVal });
+        if (zVal &lt; zMin) zMin = zVal;
+        if (zVal > zMax) zMax = zVal;
+      } else {
+        yVal = parser.eval({ x: xVal });
+      }
+      //var yVal = code.eval({x: xVal});
+
+      if (!isFinite(yVal)) {
+        if (Utility.errorResponse == Utility.warn) {
+          Utility.alert(
+            "f(" +
+              xVal +
+              '): yields infinity. Probably a "divide by zero" error. Try changing the limits or adjusting number of points.'
+          );
+          return null;
+        } else if (Utility.errorResponse == Utility.warnIgnore) {
+          Utility.alertYesNo(
+            "Error found!!! Do you want to silently ignore errors?",
+            function (answer) {
+              if (answer == Cancel) {
+                console.log("C");
+                return null;
+              }
+              if (answer == Yes) {
+                console.log("Y");
+
+                Utility.errorResponse = Utility.silentIgnore;
+                Utility.errorResponseChanged = true;
+                //obj.ok_fn(obj);
+
+                return null;
+              }
+              if (answer == No) {
+                console.log("N");
+                return null;
+              }
+              //return 1
+            }
+          );
+          samples = [];
+          break;
+        } else {
+          continue;
+        }
+      }
+      if (obj.threeD &amp;&amp; !isFinite(zVal)) {
+        if (Utility.errorResponse == Utility.warn) {
+          Utility.alert(
+            "f(" +
+              xVal +
+              "," +
+              yVal +
+              '): yields infinity. Probably a "divide by zero" error. Try changing the limits or adjusting number of points.'
+          );
+          return null;
+        } else if (Utility.errorResponse == Utility.warnIgnore) {
+          Utility.alertYesNo(
+            "Error found!!! Do you want to silently ignore errors?",
+            function (answer) {
+              if (answer == Cancel) {
+                console.log("C");
+                return null;
+              }
+              if (answer == Yes) {
+                console.log("Y");
+
+                Utility.errorResponse = Utility.silentIgnore;
+                Utility.errorResponseChanged = true;
+                //obj.ok_fn(obj);
+
+                return null;
+              }
+              if (answer == No) {
+                console.log("N");
+                return null;
+              }
+              //return 1
+            }
+          );
+          samples = [];
+          break;
+        } else {
+          continue;
+        }
+      }
+      if (parser.error) {
+        Utility.alert(parser.errorMessage);
+        return null;
+      }
+      if (obj.threeD) {
+        samples.push({ x: xVal, y: yVal, z: zVal });
+      } else {
+        samples.push(new Misc.Point(xVal, yVal));
+      }
+    }
+    if (Utility.errorResponseChanged) {
+      Utility.errorResponseChanged = false;
+      Utility.errorResponse = Utility.warnIgnore;
+    }
+    //console.log(samples)
+    if (obj.threeD) {
+      return { data: samples, zLimits: { min: zMin, max: zMax } };
+    }
+    return samples;
+  }
+
+  /**
+   * Make a class abstract. Abstract classes cannot be instantiated. See example.
+   * @param {object} obj The `this` value
+   * @param {Function} constructor The constructor
+   * @example
+   * class MyAbstractClass {
+   *    constructor() {
+   *      Utility.makeAbstract(this, MyAbstractClass);
+   *    }
+   * }
+   * new MyAbstractClass() //Throws an error
+   *
+   * class MyClass extends MyAbstractClass {
+   * }
+   * new MyClass() //Ok
+   *
+   */
+  static makeAbstract(obj, constructor) {
+    if (obj.constructor == constructor) {
+      throw new Error("Abstract classes can't be instantiated.");
+    }
+  }
+
+  /**
+   * Returns val bounded by min and max. This is equivalent to Math.max(min, Math.min(val, max)).
+   * @param {Number} min Minimum value
+   * @param {Number} val Value
+   * @param {Number} max Maximum value
+   * @returns {Number} Value
+   * @example
+   * let myValue = 10;
+     let minValue = 2;
+     let maxValue = 6;
+
+     let boundedValue = Utility.qBound(minValue, myValue, maxValue);
+     // boundedValue == 6
+   */
+  static qBound(min, val, max) {
+    return Math.max(min, Math.min(val, max));
+  }
+
+  /**
+   * Adjust the precision of a number.
+   *
+   * In most cases, round-off errors don’t matter: they have no significant impact on the results. However,
+   * it looks ugly when displaying output to a user. A solution is to limit the precision just below
+   * the actual precision of 16 digits in the displayed output:
+   * @param {number} value number to be adjusted.
+   * @param {number} numberOfDigits required precision.
+   * @returns {number} adjusted number.
+   */
+  static toPrecision(value, numberOfDigits) {
+    if (numberOfDigits &lt; 1) {
+      numberOfDigits = 1;
+    } else if (numberOfDigits > 16) {
+      numberOfDigits = 16;
+    }
+    //return math.format(value, {precision: numberOfDigits});
+    return value.toPrecision(numberOfDigits);
+  }
+
+  /**
+   * Adjust the decimal places of a number. See example.
+   * @param {number} number number to be adjusted.
+   * @param {number} places number of decimal places.
+   * @returns {number} adjusted number.
+   * @example
+   * adjustForDecimalPlaces(4.145214, 3) -> 4.145
+   */
+  static adjustForDecimalPlaces(number, places) {
+    if (places == undefined) places = 5;
+
+    // if (places > 300) places = 300;
+    var multiplier = Math.pow(10, places);
+    return Math.round(number * multiplier) / multiplier;
+  }
+
+  /**
+   * Compares the floating point value a and b and returns true if they are considered equal, otherwise false.
+   * @param {Number} a
+   * @param {Number} b
+   * @returns {Boolean} true if they are considered equal, otherwise false.
+   */
+  static mFuzzyCompare(a, b) {
+    var diff = Math.abs(a - b);
+    if (diff &lt; Static._eps) {
+      return true;
+    }
+    return false;
+    //return (Math.abs(a - b) * 1000000000000. &lt;= Math.min(Math.abs(a), Math.abs(b)));
+  }
+
+  /**
+   * Compares the floating point value value1 and value2 and returns true if they are considered equal, otherwise false.
+   * @param {Number} value1 Value
+   * @param {Number} value2 Value
+   * @param {Number} intervalSize Interval width
+   * @returns {Boolean} true if they are considered equal, otherwise false.
+   * @example
+   * //The following two checks will determine if the value is within the interval
+   * m3FuzzyCompare(value, interval.minValue(), interval.width())
+   * m3FuzzyCompare(value, interval.maxValue(), interval.width())
+   */
+  static m3FuzzyCompare(value1, value2, intervalSize) {
+    var eps = Math.abs(Static._eps * intervalSize);
+
+    if (value2 - value1 > eps) return -1;
+
+    if (value1 - value2 > eps) return 1;
+
+    return 0;
+  }
+
+  /**
+   * Build a RGB color string that represents the inverted color of the RGB color string received as argument.
+   * @param {String} rgb RGB color (e.g.: "rgb(255, 0, 0)")
+   * @returns {String} Inverted color
+   */
+  static invert(rgb) {
+    rgb = [].slice
+      .call(arguments)
+      .join(",")
+      .replace(/rgb\(|\)|rgba\(|\)|\s/gi, "")
+      .split(",");
+    for (var i = 0; i &lt; rgb.length; i++) rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
+    return "rgb(" + rgb.join(", ") + ")";
+  }
+
+  /**
+   * Generate a hex color string from the argument(s). See example for usage.
+   * @param {object|String|Number} red An object or string representing a RGB color or a number ([0-255]) representing the red component of the color.
+   * @param {Number} [green] A number ([0-255]) representing the green component of the color (Disregarded if red is not a number)
+   * @param {Number} [blue] A number ([0-255]) representing the blue component of the color (Disregarded if red is not a number)
+   * @returns {String} hex color string
+   * @example
+   * RGB2HTML({r:255, g:0, b:0}) -> "#ff0000"
+   * RGB2HTML("rgb(255, 0, 0)") -> "#ff0000"
+   * RGB2HTML(255, 0, 0) -> "#ff0000"
+   */
+  static RGB2HTML(red, green, blue) {
+    if (typeof red == "string") {
+      var str = red;
+      //console.log(red)
+      str = str.replace("rgb(", "");
+      red = parseInt(str);
+      str = str.replace(",", "");
+      str = str.replace(red, "");
+      green = parseInt(str);
+      str = str.replace(",", "");
+      str = str.replace(green, "");
+      blue = parseInt(str);
+    }
+    if (red.r !== undefined) {
+      var temp = red;
+      red = red.r;
+      green = temp.g;
+      blue = temp.b;
+    }
+    var decColor = 0x1000000 + blue + 0x100 * green + 0x10000 * red;
+    return "#" + decColor.toString(16).substr(1);
+  }
+
+  /**
+   * Get a hex color string from a color name.
+   * @param {String} colour color name
+   * @returns {String} hex color string
+   * @example
+   * colorNameToHex("aliceblue") -> "#f0f8ff"
+   */
+  static colorNameToHex(colour) {
+    var colours = {
+      aliceblue: "#f0f8ff",
+      antiquewhite: "#faebd7",
+      aqua: "#00ffff",
+      aquamarine: "#7fffd4",
+      azure: "#f0ffff",
+      beige: "#f5f5dc",
+      bisque: "#ffe4c4",
+      black: "#000000",
+      blanchedalmond: "#ffebcd",
+      blue: "#0000ff",
+      blueviolet: "#8a2be2",
+      brown: "#a52a2a",
+      burlywood: "#deb887",
+      cadetblue: "#5f9ea0",
+      chartreuse: "#7fff00",
+      chocolate: "#d2691e",
+      coral: "#ff7f50",
+      cornflowerblue: "#6495ed",
+      cornsilk: "#fff8dc",
+      crimson: "#dc143c",
+      cyan: "#00ffff",
+      darkblue: "#00008b",
+      darkcyan: "#008b8b",
+      darkgoldenrod: "#b8860b",
+      darkgray: "#a9a9a9",
+      darkgrey: "#a9a9a9",
+      darkgreen: "#006400",
+      darkkhaki: "#bdb76b",
+      darkmagenta: "#8b008b",
+      darkolivegreen: "#556b2f",
+      darkorange: "#ff8c00",
+      darkorchid: "#9932cc",
+      darkred: "#8b0000",
+      darksalmon: "#e9967a",
+      darkseagreen: "#8fbc8f",
+      darkslateblue: "#483d8b",
+      darkslategray: "#2f4f4f",
+      darkturquoise: "#00ced1",
+      darkviolet: "#9400d3",
+      deeppink: "#ff1493",
+      deepskyblue: "#00bfff",
+      dimgray: "#696969",
+      dodgerblue: "#1e90ff",
+      firebrick: "#b22222",
+      floralwhite: "#fffaf0",
+      forestgreen: "#228b22",
+      fuchsia: "#ff00ff",
+      gainsboro: "#dcdcdc",
+      ghostwhite: "#f8f8ff",
+      gold: "#ffd700",
+      goldenrod: "#daa520",
+      gray: "#808080",
+      grey: "#808080",
+      green: "#008000",
+      greenyellow: "#adff2f",
+      honeydew: "#f0fff0",
+      hotpink: "#ff69b4",
+      "indianred ": "#cd5c5c",
+      indigo: "#4b0082",
+      ivory: "#fffff0",
+      khaki: "#f0e68c",
+      lavender: "#e6e6fa",
+      lavenderblush: "#fff0f5",
+      lawngreen: "#7cfc00",
+      lemonchiffon: "#fffacd",
+      lightblue: "#add8e6",
+      lightcoral: "#f08080",
+      lightcyan: "#e0ffff",
+      lightgoldenrodyellow: "#fafad2",
+      lightgrey: "#d3d3d3",
+      lightgray: "#d3d3d3",
+      lightgreen: "#90ee90",
+      lightpink: "#ffb6c1",
+      lightsalmon: "#ffa07a",
+      lightseagreen: "#20b2aa",
+      lightskyblue: "#87cefa",
+      lightslategray: "#778899",
+      lightsteelblue: "#b0c4de",
+      lightyellow: "#ffffe0",
+      lime: "#00ff00",
+      limegreen: "#32cd32",
+      linen: "#faf0e6",
+      magenta: "#ff00ff",
+      maroon: "#800000",
+      mediumaquamarine: "#66cdaa",
+      mediumblue: "#0000cd",
+      mediumorchid: "#ba55d3",
+      mediumpurple: "#9370d8",
+      mediumseagreen: "#3cb371",
+      mediumslateblue: "#7b68ee",
+      mediumspringgreen: "#00fa9a",
+      mediumturquoise: "#48d1cc",
+      mediumvioletred: "#c71585",
+      midnightblue: "#191970",
+      mintcream: "#f5fffa",
+      mistyrose: "#ffe4e1",
+      moccasin: "#ffe4b5",
+      navajowhite: "#ffdead",
+      navy: "#000080",
+      oldlace: "#fdf5e6",
+      olive: "#808000",
+      olivedrab: "#6b8e23",
+      orange: "#ffa500",
+      orangered: "#ff4500",
+      orchid: "#da70d6",
+      palegoldenrod: "#eee8aa",
+      palegreen: "#98fb98",
+      paleturquoise: "#afeeee",
+      palevioletred: "#d87093",
+      papayawhip: "#ffefd5",
+      peachpuff: "#ffdab9",
+      peru: "#cd853f",
+      pink: "#ffc0cb",
+      plum: "#dda0dd",
+      powderblue: "#b0e0e6",
+      purple: "#800080",
+      rebeccapurple: "#663399",
+      red: "#ff0000",
+      rosybrown: "#bc8f8f",
+      royalblue: "#4169e1",
+      saddlebrown: "#8b4513",
+      salmon: "#fa8072",
+      sandybrown: "#f4a460",
+      seagreen: "#2e8b57",
+      seashell: "#fff5ee",
+      sienna: "#a0522d",
+      silver: "#c0c0c0",
+      skyblue: "#87ceeb",
+      slateblue: "#6a5acd",
+      slategray: "#708090",
+      snow: "#fffafa",
+      springgreen: "#00ff7f",
+      steelblue: "#4682b4",
+      tan: "#d2b48c",
+      teal: "#008080",
+      thistle: "#d8bfd8",
+      tomato: "#ff6347",
+      turquoise: "#40e0d0",
+      violet: "#ee82ee",
+      wheat: "#f5deb3",
+      white: "#ffffff",
+      whitesmoke: "#f5f5f5",
+      yellow: "#ffff00",
+      yellowgreen: "#9acd32",
+    };
+
+    if (typeof colour === "object")
+      return Utility.RGB2HTML(colour.r, colour.g, colour.b);
+
+    if (colour[0] == "r" &amp;&amp; colour[1] == "g" &amp;&amp; colour[2] == "b")
+      return Utility.RGB2HTML(colour);
+
+    if (colour[0] == "#") return colour;
+
+    if (typeof colours[colour.toLowerCase()] != "undefined")
+      return colours[colour.toLowerCase()];
+
+    return "#000000";
+  }
+
+  /**
+   * Displays a dialog box with a message.
+   * @param {string} msg The text to display in the dialog box
+   * @param {string} [type = "big"] To display a small dialog, use "small" for this argument.
+   *
+   * @example
+   * Utility.alert("No curves found", "small") //Display a small alert box with the message "No curves found".
+   */
+  static alert(msg, type) {
+    if (Utility.alertObj == undefined) {
+      Utility.alertObj = new AlertDlg();
+    }
+    Utility.alertObj.alert(msg, type);
+  }
+
+  /**
+	 * Displays a dialog box with a question and allow the user to cancel or answer Yes or No.
+	 * @param {string} msg The text(question) to display in the dialog box.
+	 * @param {Function} cb A callback, that takes one argument(an integer), that is called when the user clicks Yes, No or Cancel. See example below.
+	 * @param {string} [type = "big"] To display a small dialog, use "small" for this argument.
+	 * @example Utility.alertYesNo("Do you want to save the changes to the Grapher?", function(answer){
+		switch(answer){
+			case Cancel:
+				console.log('do Cancel stuff')
+				break;
+			case Yes:
+				console.log('do Yes stuff')
+				break;
+			case No:
+				console.log('do No stuff')
+				break;
+			default:
+				// code block
+		}
+		}); 
+	 */
+  static alertYesNo(msg, cb, type) {
+    if (Utility.alertObj == undefined) {
+      Utility.alertObj = new AlertDlg();
+    }
+    Utility.alertObj.alertYesNo(msg, cb, type);
+  }
+
+  /**
+	 * Displays a dialog box that prompts the visitor for input.
+	 * @param {string} msg The text to display in the dialog box
+	 * @param {string} defaultMsg The default input text
+	 * @param {Function} cb A callback, that takes one argument, that is called when the visitor clicks OK. See example below.
+	 * @param {string} [type = "big"] To display a small dialog, use "small" for this argument.
+	 * @example Utility.prompt("Enter a new name for", "AAAA", function(str){
+			console.log(str) //If the visitor clicks OK, the input is log to the console. 
+			return true
+			})
+	 */
+  static prompt(msg, defaultMsg, cb, type) {
+    if (Utility.promptObj == undefined) {
+      Utility.promptObj = new PromptDlg();
+    }
+    Utility.promptObj.prompt(msg, defaultMsg, cb, type);
+  }
+
+  /**
+   * Build a color string of the form "rgb(225, 0, 0)" from the form "#ff0000";
+   * @param {String} hex Hex color string
+   * @returns {String} Equivalent RGB color string
+   */
+  static HTMLToRGB(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result
+      ? Utility.mRgb(
+          parseInt(result[1], 16),
+          parseInt(result[2], 16),
+          parseInt(result[3], 16)
+        )
+      : null;
+  }
+
+  /**
+   * Build an object representing a RGB color
+   * @param {Number} red Integer between 0 and 255 representing the red color component
+   * @param {Number} green Integer between 0 and 255 representing the green color component
+   * @param {Number} blue Integer between 0 and 255 representing the blue color component
+   * @returns {object} An object of the form {r: 255, g:0, b:0}. The object has a toString() method that provides a string representation of the object. obj.toString() -> "rgb(255, 0, 0)"
+   */
+  static mRgb(red, green, blue) {
+    return {
+      r: red,
+      g: green,
+      b: blue,
+      toString: function () {
+        return "rgb(" + red + "," + green + "," + blue + ")";
+      },
+    };
+  }
+
+  /**
+   * Build an object representing a RGBA color
+   * @param {Number} red Integer between 0 and 255 representing the red color component
+   * @param {Number} green Integer between 0 and 255 representing the green color component
+   * @param {Number} blue Integer between 0 and 255 representing the blue color component
+   * @param {Number} alpha Integer between 0 and 255 representing the alpha color component
+   * @returns {object} An object of the form {r: 255, g:0, b:0, a:0}. The object has a toString() method that provides a string representation of the object. obj.toString() -> "rgb(255, 0, 0, 0)"
+   */
+  static mRgba(red, green, blue, alpha) {
+    return {
+      r: red,
+      g: green,
+      b: blue,
+      a: alpha,
+      toString: function () {
+        return "rgb(" + red + "," + green + "," + blue + "," + alpha + ")";
+      },
+    };
+  }
+
+  /**
+   * @param {String} ch Character
+   * @returns {number} Returns true if the character is a letter. otherwise returns false.
+   */
+  static isAlpha(ch) {
+    ch = ch.toLowerCase().charCodeAt(0);
+    return ch > 96 &amp;&amp; ch &lt; 122;
+  }
+
+  /**
+   * The expression parser of math.js has support for letting functions
+   * parse and evaluate arguments themselves, instead of calling them with
+   * evaluated arguments.
+   *
+   * By adding a property `raw` with value true to a function, the function
+   * will be invoked with unevaluated arguments, allowing the function
+   * to process the arguments in a customized way.
+   *
+   * enableIntegrate() sets up math.js to handle finite integration.
+   *
+   *
+   * Syntax:
+   *
+   *     integrate(integrand, variable, start, end)
+   *     integrate(integrand, variable, start, end, step)
+   *
+   * @example
+   * math.evaluate('integrate(2*x, x, 0, 2)') //integrate 2x with respect to x between the limit [0 - 2]
+   * math.evaluate('integrate(2*x, x, 0, 2, 0.01)') //integrate 2x with respect to x between the limit [0 - 2] in steps of 0.01
+   *
+   */
+  static enableIntegrate() {
+    if (math.integrate) return;
+    //integraeEnabled = true;
+
+    /**
+     * Calculate the numeric integration of a function
+     *
+     * @param {Function} f
+     * @param {number} start
+     * @param {number} end
+     * @param {number} [step=0.01]
+     * @inner
+     */
+    function integrate(f, start, end, volumeX, step) {
+      //Reset
+      Static.total_area = 0;
+      Static.total_volume = 0;
+      var _x = 0;
+      volumeX = volumeX || false;
+      var x = start;
+      var y = 0;
+      if (volumeX) {
+        if (step > Static._eps) {
+          for (x; x &lt; end; x += step) {
+            var _x = x + step;
+            if (_x > end) step = step - (_x - end);
+            y = f(x + step / 2);
+            Static.total_volume += y * step * y * Math.PI;
+          }
+        } else {
+          alert(
+            "The aplication is attempting to use too small a step in the trapezoidial rule."
+          );
+        }
+        return Static.total_volume;
+      }
+      if (step > Static._eps) {
+        for (x; x &lt; end; x += step) {
+          var _x = x + step;
+          if (_x > end) step = step - (_x - end);
+          y = f(x + step / 2);
+          Static.total_area += y * step;
+        }
+      } else {
+        alert(
+          "The aplication is attempted to use too small a step in the trapezoidial rule."
+        );
+      }
+
+      return Static.total_area;
+    }
+
+    /**
+     * A transformation for the integrate function. This transformation will be
+     * invoked when the function is used via the expression parser of math.js.
+     *
+     * Syntax:
+     *
+     *     integrate(integrand, variable, start, end)
+     *     integrate(integrand, variable, start, end, step)
+     *
+     * Usage:
+     *
+     *     math.evaluate('integrate(2*x, x, 0, 2)')
+     *     math.evaluate('integrate(2*x, x, 0, 2, 0.01)')
+     *
+     * @param {Array.&lt;math.expression.node.Node>} args
+     *            Expects the following arguments: [f, x, start, end, step]
+     * @param {object} math
+     * @param {object} [scope]
+     */
+    integrate.transform = function (args, math, scope) {
+      // determine the variable name
+      if (!args[1].isSymbolNode) {
+        throw new Error("Second argument must be a symbol");
+      }
+      const variable = args[1].name;
+
+      // evaluate start, end, and step
+      var start = args[2].compile().evaluate(scope);
+      var end = args[3].compile().evaluate(scope);
+      var volumeX = args[4] &amp;&amp; args[4].compile().evaluate(scope); // volumeX is optional
+      var step = args[5] &amp;&amp; args[5].compile().evaluate(scope); // step is optional
+
+      // create a new scope, linked to the provided scope. We use this new scope
+      // to apply the variable.
+      var fnScope = Object.create(scope);
+
+      // construct a function which evaluates the first parameter f after applying
+      // a value for parameter x.
+      var fnCode = args[0].compile();
+      var f = function (x) {
+        fnScope[variable] = x;
+        return fnCode.evaluate(fnScope);
+      };
+
+      // execute the integration
+      return integrate(f, start, end, volumeX, step);
+    };
+
+    // mark the transform function with a "rawArgs" property, so it will be called
+    // with uncompiled, unevaluated arguments.
+    integrate.transform.rawArgs = true;
+
+    // import the function into math.js. Raw functions must be imported in the
+    // math namespace, they can't be used via `eval(scope)`.
+    math.import({
+      integrate: integrate,
+    });
+  }
+
+  /**
+   * Build a string from `str` for which any keyword is replaced by `""`
+   * @param {*} str
+   * @returns {String} String with all keywords removed
+   */
+  static purgeKewords(str) {
+    var result = str;
+    for (var i = 0; i &lt; Static.keywords.length; ++i) {
+      while (result.indexOf(Static.keywords[i]) != -1)
+        result = result.replace(Static.keywords[i], "");
+    }
+    return result;
+  }
+
+  /**
+   * Search a expresion string for a independent variable.
+   *
+   * An idependent variable is any alpha character other than e.
+   * @param {String} fx Expression string
+   * @returns {String} Independent variable.
+   */
+  static findIndepVar(fx) {
+    //e = 2.718281828, thus 'e' is excluded from alphas
+    var alphas = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var i = 0;
+
+    var fnWithoutKeywords = Utility.purgeKewords(fx);
+
+    while (i &lt; fnWithoutKeywords.length) {
+      var c = fnWithoutKeywords.charAt(i);
+      var str = "";
+      while (alphas.indexOf(c) != -1 &amp;&amp; i &lt; fnWithoutKeywords.length) {
+        str += c;
+        ++i;
+        c = fnWithoutKeywords.charAt(i);
+      }
+      if (str.length === 1) {
+        return str;
+      }
+      ++i;
+    }
+    return undefined;
+  }
+
+  /**
+   * Check the expression string for a keyword
+   * @param {String} str String to search
+   * @returns {String} keyword or if no keyword is found, null.
+   */
+  static containsKeyword(str) {
+    for (var i = 0; i &lt; Static.keywords.length; i++) {
+      if (str.indexOf(Static.keywords[i]) == -1) continue;
+      return Static.keywords[i];
+    }
+    return null;
+  }
+
+  /**
+   * Build a Math.js valid expression string from `expStr` for which any occurrences of `logb(x)` is replaced by `log(x, b)` where b, the base, is an integer between 2 and 10.
+   * @example
+   * logBaseAdjust("4x^2 + log4(1.5x)") -> "4x^2 + log(1.5x, 4)"
+   * @param {String} expStr Expression string
+   * @returns {String} Modified expression string
+   */
+  static logBaseAdjust(expStr) {
+    var logBaseStr = [
+      "log2",
+      "log3",
+      "log4",
+      "log5",
+      "log6",
+      "log7",
+      "log8",
+      "log9",
+      "log10",
+    ];
+
+    //helper
+    function insertLogBase(expStr, logStr) {
+      var str = expStr;
+      //var resultStr = "";
+      if (expStr.includes(logStr)) {
+        var base = logStr.replace("log", "");
+        //console.log(base)
+        while (str.indexOf(logStr) !== -1) {
+          var i = str.indexOf(logStr) + logStr.length;
+          var leftPar = 0;
+          var rightPar = 0;
+          for (i; i &lt; str.length; ++i) {
+            if (str[i] == "(") leftPar++;
+            if (str[i] == ")") rightPar++;
+            if (leftPar == rightPar) {
+              str = str.insertAt(i, 0, "," + base);
+              str = str.replace(logStr, "log");
+              //console.log(str)
+              break;
+            }
+          }
+        }
+      }
+      return str;
+    }
+
+    for (var i = 0; i &lt; logBaseStr.length; i++) {
+      expStr = insertLogBase(expStr, logBaseStr[i]);
+    }
+    return expStr;
+  }
+
+  /**
+   * Get the square of the number
+   * @param {Number} value Number to square (value*value)
+   * @returns {number} Square of value (value*value)
+   */
+  static sqr(value) {
+    return Math.pow(value, 2);
+  }
+}
+Utility.warn = 0;
+Utility.warnIgnore = 1;
+Utility.silentIgnore = 2;
+Utility.errorResponseChanged = false;
+Utility.errorResponse = Utility.warn;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="./img/logoImg.png" style="width: 150px; height: 13px">
+    <div class="footer-text">My awesome footer text Ha Ha</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

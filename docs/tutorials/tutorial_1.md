@@ -1,0 +1,1 @@
+jsQwt can be used for plotting 2D curves. The examples listed above show how to quickly create various 2D plots.
