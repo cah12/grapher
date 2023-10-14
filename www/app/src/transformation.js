@@ -8,30 +8,49 @@ class Transformation {
     this.transform = function (curve, type, param1, param2) {
       const variable = curve.variable;
       const numOfPoints = curve.dataSize();
+      let lowerX = null;
+      let upperX = null;
       if (type == "Translate") {
         //console.log(curve.expandedFn, param1, param2);
-        let fn = curve.fn;
-        if (param1 !== 0) {
-          fn = fn.replaceAll("x", "(x+" + param1 * -1 + ")");
-          //fn = fn.replaceAll("+-", "-");
+        let { fn, parametricFnX, parametricFnY } = curve;
+        if (fn) {
+          if (param1 !== 0) {
+            fn = fn.replaceAll("x", "(x+" + param1 * -1 + ")");
+            //fn = fn.replaceAll("+-", "-");
+          }
+          if (param2 !== 0) {
+            fn = "(" + fn + ")+" + param2;
+          }
+          fn = math
+            .simplify(fn.replaceAll("+-", "-"), {}, { exactFractions: false })
+            .toString();
+          //Replace the whitespace delimiters stripped out by simplify()
+          fn = fn.replaceAll("mod", " mod ");
+          lowerX = curve.lowerX;
+          upperX = curve.upperX;
         }
-        if (param2 !== 0) {
-          fn = "(" + fn + ")+" + param2;
+        if (parametricFnX && parametricFnY) {
+          lowerX = curve.parametricLowerX;
+          upperX = curve.parametricUpperX;
+          parametricFnX = `${parametricFnX}+${param1}`;
+          parametricFnY = `${parametricFnY}+${param2}`;
         }
-        fn = math
-          .simplify(fn.replaceAll("+-", "-"), {}, { exactFractions: false })
-          .toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        fn = fn.replaceAll("mod", " mod ");
 
         const functionDlgData = {
           rtti: PlotItem.RttiValues.Rtti_PlotCurve,
           lowerLimit: curve.minXValue() + param1, //Number
           upperLimit: curve.maxXValue() + param1, //Number
+          lowerX,
+          upperX,
           threeD: false,
           title: Utility.generateCurveName(m_plot, "trans_"), //eq + domain[0], //String
           variable, //String
+          parametric_variable: curve.parametric_variable,
           fn: fn, //String
+          parametricFnX,
+          parametricFnY,
+          expandedParametricFnX: parametricFnX,
+          expandedParametricFnY: parametricFnY,
           expandedFn: fn, //String
           numOfPoints, //Number
           unboundedRange: false, //Boolean
@@ -65,24 +84,37 @@ class Transformation {
 
       if (type == "Scale") {
         //console.log(curve.expandedFn, param1, param2);
-        let fn = curve.fn;
+        let { fn, parametricFnX, parametricFnY } = curve;
+        if (fn) {
+          fn = math
+            .simplify("(" + fn + ")*" + param1, {}, { exactFractions: false })
+            .toString();
+          //Replace the whitespace delimiters stripped out by simplify()
+          fn = fn.replaceAll("mod", " mod ");
 
-        fn = math
-          .simplify("(" + fn + ")*" + param1, {}, { exactFractions: false })
-          .toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        fn = fn.replaceAll("mod", " mod ");
-
-        //console.log(fn);
+          //console.log(fn);
+        }
+        if (parametricFnX && parametricFnY) {
+          lowerX = curve.parametricLowerX;
+          upperX = curve.parametricUpperX;
+          parametricFnX = `(${parametricFnX})*${param1}`;
+          parametricFnY = `(${parametricFnY})*${param1}`;
+        }
 
         const functionDlgData = {
           rtti: PlotItem.RttiValues.Rtti_PlotCurve,
           lowerLimit: curve.minXValue(), //Number
           upperLimit: curve.maxXValue(), //Number
+          lowerX,
+          upperX,
           threeD: false,
           title: Utility.generateCurveName(m_plot, "trans_"), //eq + domain[0], //String
           variable, //String
           fn: fn, //String
+          parametricFnX,
+          parametricFnY,
+          expandedParametricFnX: parametricFnX,
+          expandedParametricFnY: parametricFnY,
           expandedFn: fn, //String
           numOfPoints, //Number
           unboundedRange: false, //Boolean
@@ -110,20 +142,34 @@ class Transformation {
 
       if (type == "Reflect x-axis") {
         //console.log(curve.expandedFn, param1, param2);
-
-        let fn = math
-          .simplify(`-(${curve.fn})`, {}, { exactFractions: false })
-          .toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        fn = fn.replaceAll("mod", " mod ");
+        let { fn, parametricFnX, parametricFnY } = curve;
+        if (fn) {
+          fn = math
+            .simplify(`-(${curve.fn})`, {}, { exactFractions: false })
+            .toString();
+          //Replace the whitespace delimiters stripped out by simplify()
+          fn = fn.replaceAll("mod", " mod ");
+        }
+        if (parametricFnX && parametricFnY) {
+          lowerX = curve.parametricLowerX;
+          upperX = curve.parametricUpperX;
+          //parametricFnX = `-(${parametricFnX})`;
+          parametricFnY = `-(${parametricFnY})`;
+        }
         const functionDlgData = {
           rtti: PlotItem.RttiValues.Rtti_PlotCurve,
           lowerLimit: curve.minXValue(), //Number
           upperLimit: curve.maxXValue(), //Number
+          lowerX,
+          upperX,
           threeD: false,
           title: Utility.generateCurveName(m_plot, "trans_"), //eq + domain[0], //String
           variable, //String
           fn: fn, //String
+          parametricFnX,
+          parametricFnY,
+          expandedParametricFnX: parametricFnX,
+          expandedParametricFnY: parametricFnY,
           expandedFn: fn, //String
           numOfPoints, //Number
           unboundedRange: false, //Boolean
@@ -151,25 +197,38 @@ class Transformation {
 
       if (type == "Reflect y-axis") {
         //console.log(curve.expandedFn, param1, param2);
-
-        let fn = curve.fn;
-        fn = math
-          .simplify(
-            fn.replaceAll(variable, `(-1*${variable})`),
-            {},
-            { exactFractions: false }
-          )
-          .toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        fn = fn.replaceAll("mod", " mod ");
+        let { fn, parametricFnX, parametricFnY } = curve;
+        if (fn) {
+          fn = math
+            .simplify(
+              fn.replaceAll(variable, `(-1*${variable})`),
+              {},
+              { exactFractions: false }
+            )
+            .toString();
+          //Replace the whitespace delimiters stripped out by simplify()
+          fn = fn.replaceAll("mod", " mod ");
+        }
+        if (parametricFnX && parametricFnY) {
+          lowerX = curve.parametricLowerX;
+          upperX = curve.parametricUpperX;
+          parametricFnX = `-(${parametricFnX})`;
+          //parametricFnY = `-(${parametricFnY})`;
+        }
         const functionDlgData = {
           rtti: PlotItem.RttiValues.Rtti_PlotCurve,
           lowerLimit: curve.maxXValue() * -1, //Number
           upperLimit: curve.minXValue() * -1, //Number
+          lowerX,
+          upperX,
           threeD: false,
           title: Utility.generateCurveName(m_plot, "trans_"), //eq + domain[0], //String
           variable, //String
           fn: fn, //String
+          parametricFnX,
+          parametricFnY,
+          expandedParametricFnX: parametricFnX,
+          expandedParametricFnY: parametricFnY,
           expandedFn: fn, //String
           numOfPoints, //Number
           unboundedRange: false, //Boolean

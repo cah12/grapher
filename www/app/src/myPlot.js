@@ -381,6 +381,13 @@ class MyPlot extends Plot {
         self._functionDlg.coeffs = functionDlgData.coeffs;
         self._functionDlg.expandedFn = functionDlgData.expandedFn;
         //_plot._functionDlg.fn = functionDlgData.fn;
+        self._functionDlg.expandedParametricFnX =
+          functionDlgData.expandedParametricFnX;
+        self._functionDlg.expandedParametricFnY =
+          functionDlgData.expandedParametricFnY;
+        self._functionDlg.parametricFnX = functionDlgData.parametricFnX;
+        self._functionDlg.parametricFnY = functionDlgData.parametricFnY;
+
         self._functionDlg.lowerLimit = functionDlgData.lowerLimit;
         self._functionDlg.numOfPoints = functionDlgData.numOfPoints;
         self._functionDlg.threeD = functionDlgData.threeD;
@@ -637,6 +644,7 @@ class MyPlot extends Plot {
           self._functionDlg.expandedFn
         );
       } else if (
+        !functionDlgData &&
         self._functionDlg.expandedParametricFnX &&
         self._functionDlg.expandedParametricFnY
       ) {
@@ -646,6 +654,24 @@ class MyPlot extends Plot {
         parametricFnY = initializeCoeff(
           self._functionDlg.expandedParametricFnY
         );
+      } else if (
+        functionDlgData &&
+        functionDlgData.expandedParametricFnX &&
+        functionDlgData.expandedParametricFnY
+      ) {
+        parametricFnX = initializeCoeff(functionDlgData.expandedParametricFnX);
+        parametricFnY = initializeCoeff(functionDlgData.expandedParametricFnY);
+      }
+
+      let m_lowerX = parseFloat(self._functionDlg.lowerLimit);
+      let m_upperX = parseFloat(self._functionDlg.upperLimit);
+      if (
+        functionDlgData &&
+        functionDlgData.expandedParametricFnX &&
+        functionDlgData.expandedParametricFnY
+      ) {
+        m_lowerX = functionDlgData.lowerX;
+        m_upperX = functionDlgData.upperX;
       }
 
       let makeSamplesData = {
@@ -654,8 +680,8 @@ class MyPlot extends Plot {
         parametricFnY,
         parametric_variable: self._functionDlg.parametric_variable,
         variable: self._functionDlg.variable,
-        lowerX: parseFloat(self._functionDlg.lowerLimit),
-        upperX: parseFloat(self._functionDlg.upperLimit),
+        lowerX: m_lowerX,
+        upperX: m_upperX,
         numOfSamples: self._functionDlg.numOfPoints,
         //ok_fn: self._functionDlg.ok,
         warnIgnoreCb: function () {
@@ -754,6 +780,11 @@ class MyPlot extends Plot {
           return;
         }
         newCurve = addCurve(title, samples, false, fn);
+        if (!newCurve.parametricLowerX) {
+          newCurve.parametricLowerX = m_lowerX;
+          newCurve.parametricUpperX = m_upperX;
+        }
+
         newCurve.turningPoints = makeSamplesData.turningPoints;
         newCurve.latex = self._functionDlg.latex;
         if (!newCurve) return;
@@ -1356,49 +1387,55 @@ class MyPlot extends Plot {
             //   decimalPlacesY
             // );
             const curve = curves[i];
+
             points = curve.turningPoints;
+            if (points && points.length) {
+              //alert(`"${curve.title()}" has 0 turning points.\n`);
+              //   continue;
+              // }
 
-            for (let n = 0; n < points.length; n++) {
-              const odd = m % 2;
-              m++;
-              const { spacing, align } = getArrowSymbolProperties();
-              const element = points[n];
-              const tpName = Utility.generateCurveName(self, "T");
-              const marker = new PlotMarker(tpName);
-              marker.toolTipValueName = "Turning point:";
-              marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
-              marker.setXAxis(curve.xAxis());
-              marker.setYAxis(curve.yAxis());
+              for (let n = 0; n < points.length; n++) {
+                const odd = m % 2;
+                m++;
+                const { spacing, align } = getArrowSymbolProperties();
+                const element = points[n];
+                const tpName = Utility.generateCurveName(self, "T");
+                const marker = new PlotMarker(tpName);
+                marker.toolTipValueName = "Turning point:";
+                marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+                marker.setXAxis(curve.xAxis());
+                marker.setYAxis(curve.yAxis());
 
-              // const sym = new Symbol2();
-              // sym.setBrush(new Misc.Brush(Static.NoBrush));
-              // sym.setSize(new Misc.Size(10, 10));
-              // sym.setStyle(Symbol2.Style.Ellipse);
-              // marker.setSymbol(sym);
+                // const sym = new Symbol2();
+                // sym.setBrush(new Misc.Brush(Static.NoBrush));
+                // sym.setSize(new Misc.Size(10, 10));
+                // sym.setStyle(Symbol2.Style.Ellipse);
+                // marker.setSymbol(sym);
 
-              marker.setSymbol(new PointMarkerSymbol());
+                marker.setSymbol(new PointMarkerSymbol());
 
-              marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-              marker.setLegendIconSize(new Misc.Size(10, 10));
+                marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+                marker.setLegendIconSize(new Misc.Size(10, 10));
 
-              marker.setValue(element);
-              marker.setLabel(tpName);
-              var m_symbol = marker.symbol();
-              m_symbol.setSize(new Misc.Size(10, 10));
-              marker.setLabelAlignment(align | Static.AlignBottom);
-              marker.setSpacing(spacing);
+                marker.setValue(element);
+                marker.setLabel(tpName);
+                var m_symbol = marker.symbol();
+                m_symbol.setSize(new Misc.Size(10, 10));
+                marker.setLabelAlignment(align | Static.AlignBottom);
+                marker.setSpacing(spacing);
 
-              marker.setLabelFont(
-                new Misc.Font({
-                  fontColor: "#0B00FC",
-                  name: "Times New Roman",
-                  style: "normal",
-                  th: 12,
-                  weight: "bold",
-                })
-              );
+                marker.setLabelFont(
+                  new Misc.Font({
+                    fontColor: "#0B00FC",
+                    name: "Times New Roman",
+                    style: "normal",
+                    th: 12,
+                    weight: "bold",
+                  })
+                );
 
-              marker.attach(self);
+                marker.attach(self);
+              }
             }
           }
 
@@ -1454,10 +1491,10 @@ class MyPlot extends Plot {
               marker.attach(self);
             }
           }
-          if (!points.length) {
+          if (!points || !points.length) {
             let pointType = "turning";
             if (operationType == "Inflection point") pointType = "inflection";
-            str += `${curves[i].title()} (0 ${pointType} point)\n`;
+            str += `${curves[i].title()} has 0 ${pointType} point\n`;
           }
         }
         if (str.length) alert(str);

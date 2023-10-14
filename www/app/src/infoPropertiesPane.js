@@ -563,8 +563,10 @@ class InfoPropertiesPane extends Pane {
         } else {
           var s = Utility.makeSamples({
             fx: null,
-            lowerX: curCurve.lowerX,
-            upperX: curCurve.upperX,
+            // lowerX: curCurve.lowerX,
+            // upperX: curCurve.upperX,
+            lowerX: curCurve.parametricLowerX,
+            upperX: curCurve.parametricUpperX,
             numOfSamples: curCurve.numOfSamples,
             parametricFnX,
             parametricFnY,
@@ -714,8 +716,10 @@ class InfoPropertiesPane extends Pane {
             } else {
               var s = Utility.makeSamples({
                 fx: null,
-                lowerX: curCurve.lowerX,
-                upperX: curCurve.upperX,
+                // lowerX: curCurve.lowerX,
+                // upperX: curCurve.upperX,
+                lowerX: curCurve.parametricLowerX,
+                upperX: curCurve.parametricUpperX,
                 numOfSamples: curCurve.numOfSamples,
                 parametricFnX,
                 parametricFnY,
