@@ -339,3 +339,82 @@ Static.rearrangeEquation = 2;
 Static.solveEquation = 3;
 
 ////////////////////////////////////////////////
+     
+const originalParse = math.parse;
+const originalSimplify = math.simplify;
+
+Static.isAlpha = function (ch) {
+  ch = ch.toLowerCase().charCodeAt(0);
+  return ch > 96 && ch < 122;
+};
+
+function reduceMultiplyByZero(str) {
+  //remove white space
+  str = str.replace(/\s/g, "");
+
+  //insert * between 0 followed by alpha eg 0x
+  if (str) {
+    let m_str = "";
+    for (let i = 1; i < str.length; i++) {
+      const c = str[i - 1];
+      m_str += c;
+      if (c === "0" && Static.isAlpha(str[i])) {
+        m_str += "*";
+      }
+    }
+    m_str += str[str.length - 1];
+    str = m_str;
+  }
+
+  let m_str = str.slice();
+  const node = originalParse(str);
+  if (node.type === "OperatorNode" && node.op === "*") {
+    const [leftArg, rightArg] = node.args;
+    if (leftArg.value && leftArg.value === 0) {
+      const stringToReplace = `${leftArg.value}*${rightArg.name}`;
+      m_str = m_str.replace(stringToReplace, "0");
+    }
+    //console.log(leftArg, rightArg);
+  }
+
+  node.forEach(function (node, path, parent) {
+    if (node.type === "OperatorNode" && node.op === "*") {
+      const [leftArg, rightArg] = node.args;
+      if (leftArg.value && leftArg.value === 0) {
+        const stringToReplace = `${leftArg.value}*${rightArg.name}`;
+        m_str = m_str.replace(stringToReplace, "0");
+      }
+      //console.log(leftArg, rightArg);
+    }
+    //console.log(node.toString());
+  });
+  return m_str;
+}
+
+const customParse = function (str) {
+  return originalParse(reduceMultiplyByZero(str));
+};
+
+const customSimplify = function (str, scope, options) {
+  return originalSimplify(reduceMultiplyByZero(str), scope, options);
+};
+
+math.parse = customParse;
+math.simplify = customSimplify;
+
+
+const originalDerivative = math.derivative;
+
+math.derivative = function(str, variable, options){
+  //math.simplify = originalSimplify;
+  let result = originalDerivative(str, variable, {simplify: false});
+  if(!options){
+    result = originalSimplify(result.toString());
+  }
+  else{
+    result = originalSimplify(result.toString(), {}, options);
+  }
+  //math.simplify = customSimplify;
+  return result;
+
+}

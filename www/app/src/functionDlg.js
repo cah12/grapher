@@ -648,6 +648,18 @@ class MFunctionDlg {
           //let fnDlgFunctionVal = Utility.latexToAscii(mf);
           let fnDlgFunctionVal = mf.getValue("ascii-math");
 
+          /* //insert * between 0 followed by alpha eg 0x
+          let m_fnDlgFunctionVal = "";
+          for (let i = 1; i < fnDlgFunctionVal.length; i++) {
+            const c = fnDlgFunctionVal[i-1];
+            m_fnDlgFunctionVal += c;
+            if(c==="0" && Utility.isAlpha(fnDlgFunctionVal[i])){
+              m_fnDlgFunctionVal += "*";
+            }            
+          }
+          m_fnDlgFunctionVal += fnDlgFunctionVal[fnDlgFunctionVal.length-1]; */
+          // fnDlgFunctionVal = m_fnDlgFunctionVal;
+
           if (!fnDlgFunctionVal) {
             return false;
           }

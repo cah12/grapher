@@ -38,7 +38,7 @@ class EvaluateExp {
       try {
         simplified = math.parse(expanded);
         if (!m_expStr.includes("log"))
-          simplified = math.simplify(simplified, {}, { exactFractions: false });
+          simplified = math.simplify(simplified.toString(), {}, { exactFractions: false });
       } catch (err) {
         // var charPos = parseInt(err.message.match(/(\d+)/)[0]);
         // alert("Invalid character in function: " + expanded[charPos - 1]);

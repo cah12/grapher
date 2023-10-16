@@ -2222,7 +2222,7 @@ class Utility {
     let unmodifiedOperand = null;
     let operand = "";
     let lBracket = 0;
-    for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
+    for (let i = indexOfKeyword + keyword.length-1; i < exp.length; i++) {
       if (exp[i] == "(") {
         operand += "(";
         lBracket++;
