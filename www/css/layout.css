@@ -510,3 +510,9 @@ input.noInputBorders {
   border-color: transparent transparent var(--tooltip-bg-color) transparent ;
 }
 
+
+.definesTableRowselected {
+  background-color: brown;
+  color: #FFF;
+  cursor: pointer;
+}

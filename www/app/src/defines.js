@@ -10,6 +10,13 @@ class DefinesDlg extends ModalDlg {
     super(options);
     const self = this;
 
+    function removeAllHighlight() {
+      const rows = self.selector("definesTable").find("TR");
+      for (let i = 0; i < rows.length; i++) {
+        const row = $(rows[i]).removeClass("definesTableRowselected");
+      }
+    }
+
     //Modal body code
     this.addRow([
       '<div class="col-md-1">Name:</div>',
@@ -25,7 +32,7 @@ class DefinesDlg extends ModalDlg {
     ]);
 
     this.addRow([
-      '<div class="col-md-12"><input id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
+      '<div class="col-md-12"><input tabindex="-1" id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
                           </input>\
                           </div>',
     ]);
@@ -50,11 +57,11 @@ class DefinesDlg extends ModalDlg {
     this.selector("ok").hide();
 
     this.addFooterElement(
-      '<button id="definesRemoveAll" type="button" class="btn btn-default" >Remove All</button>'
+      '<button tabindex="-1" id="definesRemoveAll" type="button" class="btn btn-default" >Remove All</button>'
     );
 
     this.addFooterElement(
-      '<button id="definesRemove" type="button" class="btn btn-default" >Remove</button>'
+      '<button tabindex="-1" id="definesRemove" type="button" class="btn btn-default" >Remove</button>'
     );
 
     this.addFooterElement(
@@ -62,17 +69,17 @@ class DefinesDlg extends ModalDlg {
     );
 
     this.addFooterElement(
-      '<select name="uploadDefinesType" id="uploadDefinesType" style="margin:4px"><option value="loadFromLocalFs">from Local System</option><option value="loadFromMongoFs">from Mongo System</option></select>'
+      '<select tabindex="-1" name="uploadDefinesType" id="uploadDefinesType" style="margin:4px"><option value="loadFromLocalFs">from Local System</option><option value="loadFromMongoFs">from Mongo System</option></select>'
     );
 
     this.addFooterElement(
       '<label>\
-      <input id="definesUpload" type="file" style="display: none;" name="files[]" multiple />\
+      <input tabindex="-1" id="definesUpload" type="file" style="display: none;" name="files[]" multiple />\
       </label>'
     );
 
     this.addFooterElement(
-      '<button id="definesUploadButton" type="button" class="btn btn-default">\
+      '<button tabindex="-1" id="definesUploadButton" type="button" class="btn btn-default">\
   Load\
   </button>'
     );
@@ -110,6 +117,7 @@ class DefinesDlg extends ModalDlg {
         $("#" + _name)[0].children[1].innerText = value;
         //self.closeDlg();
       } else {
+        removeAllHighlight();
         defines.define(name, value);
         self.selector("definesRemoveAll").attr("disabled", false);
         let id = name
@@ -118,7 +126,7 @@ class DefinesDlg extends ModalDlg {
           .replaceAll("'", "prime");
         //id = id.replace(")", "closePar");
         const m_row = $(
-          `<tr id= ${id} style="border: 1px solid black"><td style="border: 1px solid black"> ${name} </td><td>  ${value} </td></tr>`
+          `<tr id= ${id} class="definesTableRowselected clickable-row" style="border: 1px solid black"><td style="border: 1px solid black"> ${name} </td><td>  ${value} </td></tr>`
         );
         self.selector("definesTable").append(m_row);
       }
@@ -192,6 +200,8 @@ class DefinesDlg extends ModalDlg {
       ) {
         setRemoveButtonAttribute();
         self.selector("definesAdd").attr("disabled", false);
+        //888
+        //self.selector("definesAdd").focus();
       } else {
         self.selector("definesAdd").attr("disabled", true);
         self.selector("definesRemove").attr("disabled", true);
@@ -208,6 +218,8 @@ class DefinesDlg extends ModalDlg {
       ) {
         setRemoveButtonAttribute();
         self.selector("definesAdd").attr("disabled", false);
+        //888
+        //self.selector("definesAdd").focus();
       } else {
         self.selector("definesAdd").attr("disabled", true);
         self.selector("definesRemove").attr("disabled", true);
@@ -279,6 +291,25 @@ class DefinesDlg extends ModalDlg {
         }
       }
     };
+
+    self.selector("definesTable").on("click dblclick", function (e) {
+      removeAllHighlight();
+      const row = $(e.target).closest("tr");
+      row.addClass("definesTableRowselected");
+      const tds = $(row).find("TD");
+
+      self.selector("definesName").val($(tds[0]).html().replace(/\s/g, ""));
+      //self.selector("definesName").trigger("input");
+
+      self.selector("definesValue").val($(tds[1]).html().replace(/\s/g, ""));
+      self.selector("definesAdd").attr("disabled", true);
+      self.selector("definesRemove").attr("disabled", false);
+      self.selector("definesRemove").focus();
+
+      if (e.type === "dblclick") {
+        self.selector("definesRemove").click();
+      }
+    });
   }
 
   initializeDialog() {
@@ -444,7 +475,16 @@ class Defines {
                 m_x_replacement =
                   getFunctionDeclarationArgument(m_x_replacement);
                 def = def.replaceAll(m_x, "(" + m_x_replacement + ")");
-                res = res.replace(f + m_x_replacement + ")", def);
+                if (res[0] === f[0]) {
+                  res = res.replace(f + m_x_replacement + ")", def);
+                } else {
+                  res = res.replace(f + m_x_replacement + ")", "*" + def);
+                  res = res.replace("**", "*");
+                  res = res.replace("+*", "+");
+                  res = res.replace("-*", "-");
+                  res = res.replace("/*", "/");
+                }
+
                 m_res = res.slice();
                 startIndex = 0;
               }
@@ -467,12 +507,11 @@ class Defines {
       res = Utility.replaceKeywordMarkers(res);
       if (m_simplify) {
         try {
-          res = math
-            .simplify(res, {}, { exactFractions: false })
-            .toString()
-            .replace(/\s/g, "")
-            .replaceAll("+-", "-")
-            .replaceAll("-+", "-");
+          res = math.simplify(res, {}, { exactFractions: false }).toString();
+          res = res.replace(/\s/g, "");
+          res = res.replaceAll("+-", "-");
+          res = res.replaceAll("-+", "-");
+
           //Replace the whitespace delimiters stripped out by simplify()
           res = res.replaceAll("mod", " mod ");
           //counter++;

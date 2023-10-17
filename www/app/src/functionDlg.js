@@ -626,6 +626,9 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (closeDlg) {
+        let defineName = null;
+        let defineValue = null;
+
         self.expandedParametricFnX = null;
         self.expandedParametricFnY = null;
 
@@ -833,11 +836,19 @@ class MFunctionDlg {
               arr[0].indexOf("(") == -1 ||
               arr[0].indexOf(")") == -1
             ) {
+              let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
+              m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs);
+
+              let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
+              m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs);
+
+              fnDlgFunctionVal = `${m_lhs}=${m_rhs}`;
+
               //console.log("Implicit");
-              fnDlgFunctionVal = Utility.insertProductSign(
-                fnDlgFunctionVal,
-                plot.defines
-              );
+              // fnDlgFunctionVal = Utility.insertProductSign(
+              //   fnDlgFunctionVal,
+              //   plot.defines
+              // );
 
               var eq = nerdamer(fnDlgFunctionVal);
               var solution =
@@ -893,7 +904,10 @@ class MFunctionDlg {
                 return false;
               }
               //const val = doExpandDefinesAndAdjustLogBase(arr[1]);
-              $(window).trigger("defineAdded", [arr[0], arr[1]]);
+              //$(window).trigger("defineAdded", [arr[0], arr[1]]);
+              defineName = arr[0];
+              defineValue = arr[1];
+
               fnDlgFunctionVal = arr[1];
             } else {
               fnDlgFunctionVal = arr[1];
@@ -951,7 +965,9 @@ class MFunctionDlg {
                 .replace(dec, "(" + _derivative + ")")
                 .replace(/\s/g, "");
 
-              $(window).trigger("defineAdded", [arr[0], fnDlgFunctionVal]);
+              //$(window).trigger("defineAdded", [arr[0], fnDlgFunctionVal]);
+              defineName = arr[0];
+              defineValue = fnDlgFunctionVal;
               //console.log(456, fnDlgFunctionVal);
             }
           }
@@ -1303,7 +1319,8 @@ class MFunctionDlg {
             self.close();
           }
         } ///
-
+        if (defineName && defineValue)
+          $(window).trigger("defineAdded", [defineName, defineValue]);
         return true;
       };
 

@@ -339,7 +339,7 @@ Static.rearrangeEquation = 2;
 Static.solveEquation = 3;
 
 ////////////////////////////////////////////////
-     
+
 const originalParse = math.parse;
 const originalSimplify = math.simplify;
 
@@ -402,19 +402,16 @@ const customSimplify = function (str, scope, options) {
 math.parse = customParse;
 math.simplify = customSimplify;
 
-
 const originalDerivative = math.derivative;
 
-math.derivative = function(str, variable, options){
-  //math.simplify = originalSimplify;
-  let result = originalDerivative(str, variable, {simplify: false});
-  if(!options){
+math.derivative = function (str, variable, options) {
+  // math.simplify = originalSimplify;
+  let result = originalDerivative(str, variable, { simplify: false });
+  if (!options) {
     result = originalSimplify(result.toString());
-  }
-  else{
+  } /* else {
     result = originalSimplify(result.toString(), {}, options);
-  }
+  } */
   //math.simplify = customSimplify;
   return result;
-
-}
+};
