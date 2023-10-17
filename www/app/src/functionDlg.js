@@ -587,31 +587,31 @@ class MFunctionDlg {
         return order;
       }
 
-      function getDerivativeDeclaration(str) {
-        let ind = str.lastIndexOf("'(");
-        for (let index = ind - 1; index > 0; index--) {
-          if (str[index] == "'") ind--;
-          else break;
-        }
-        if (ind == -1) return null;
-        //const startIndex = str.indexOf("'") - 1;
-        let res = ""; //str[ind - 1] + "'";
-        for (let index = ind - 1; index < str.length; index++) {
-          res += str[index];
-          if (str[index] == "(") {
-            ind = index;
-            break;
-          }
-        }
-        let par = 1;
-        for (let i = ind + 1; i < str.length; i++) {
-          res += str[i];
-          if (str[i] == "(") par++;
-          if (str[i] == ")") par--;
-          if (par == 0) break;
-        }
-        return res;
-      }
+      // function getDerivativeDeclaration(str) {
+      //   let ind = str.lastIndexOf("'(");
+      //   for (let index = ind - 1; index > 0; index--) {
+      //     if (str[index] == "'") ind--;
+      //     else break;
+      //   }
+      //   if (ind == -1) return null;
+      //   //const startIndex = str.indexOf("'") - 1;
+      //   let res = ""; //str[ind - 1] + "'";
+      //   for (let index = ind - 1; index < str.length; index++) {
+      //     res += str[index];
+      //     if (str[index] == "(") {
+      //       ind = index;
+      //       break;
+      //     }
+      //   }
+      //   let par = 1;
+      //   for (let i = ind + 1; i < str.length; i++) {
+      //     res += str[i];
+      //     if (str[i] == "(") par++;
+      //     if (str[i] == ")") par--;
+      //     if (par == 0) break;
+      //   }
+      //   return res;
+      // }
 
       function doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal) {
         fnDlgFunctionVal = plot.defines.expandDefines(fnDlgFunctionVal);
@@ -838,9 +838,15 @@ class MFunctionDlg {
             ) {
               let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
               m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs);
+              if (!m_lhs) {
+                return;
+              }
 
               let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs);
+              if (!m_rhs) {
+                return;
+              }
 
               fnDlgFunctionVal = `${m_lhs}=${m_rhs}`;
 
@@ -903,8 +909,7 @@ class MFunctionDlg {
               if (errorType != Defines.DefineError.noError) {
                 return false;
               }
-              //const val = doExpandDefinesAndAdjustLogBase(arr[1]);
-              //$(window).trigger("defineAdded", [arr[0], arr[1]]);
+
               defineName = arr[0];
               defineValue = arr[1];
 
@@ -919,7 +924,7 @@ class MFunctionDlg {
             while (1 && n < 100) {
               n++;
 
-              let dec = getDerivativeDeclaration(fnDlgFunctionVal);
+              let dec = Utility.getDerivativeDeclaration(fnDlgFunctionVal);
               if (!dec) {
                 self.expandedFn =
                   self.fn =
@@ -934,6 +939,20 @@ class MFunctionDlg {
 
               let _fnDec = fnDec[0] + "(" + self.variable + ")";
               if (!plot.defines.hasDefine(_fnDec)) {
+                //try to find the derivative
+                /* const m_fnDec = _fnDec.replaceAll("'", "");
+
+                const m_exp = plot.defines.getDefine(m_fnDec);
+                if (m_exp) {
+                  let _derivative = m_exp;
+                  for (let index = 0; index < _derivativeOrder; index++) {
+                    _derivative = math
+                      .derivative(_derivative, self.variable)
+                      .toString();
+                    _derivative = _derivative.replaceAll(self.variable, arg);
+                  }
+                  $(window).trigger("defineAdded", [defineName, defineValue]);
+                } else { */
                 alert(
                   `Cannot find ${dec} before ${dec.replaceAll(
                     "'",
@@ -941,6 +960,7 @@ class MFunctionDlg {
                   )} is defined.`
                 );
                 return false;
+                //}
               }
               let exp = plot.defines.expandDefines(_fnDec);
               // let j = 0;
@@ -973,6 +993,9 @@ class MFunctionDlg {
           }
           if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
             self.expandedFn = doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal);
+            if (!self.expandedFn) {
+              return;
+            }
 
             // if (self.expandedFn.indexOf("'") !== -1) {
             if (self.expandedFn.charAt(1) === "'") {
@@ -999,9 +1022,15 @@ class MFunctionDlg {
             self.expandedParametricFnX = doExpandDefinesAndAdjustLogBase(
               arr[0]
             );
+            if (!self.expandedParametricFnX) {
+              return;
+            }
             self.expandedParametricFnY = doExpandDefinesAndAdjustLogBase(
               arr[1]
             );
+            if (!self.expandedParametricFnY) {
+              return;
+            }
           }
 
           if (!self.threeD) {
@@ -1319,8 +1348,17 @@ class MFunctionDlg {
             self.close();
           }
         } ///
-        if (defineName && defineValue)
-          $(window).trigger("defineAdded", [defineName, defineValue]);
+        if (
+          defineName &&
+          defineName.length &&
+          defineValue &&
+          defineValue.length
+        ) {
+          const define = plot.defines.getDefine(defineName);
+          if (!define) {
+            $(window).trigger("defineAdded", [defineName, defineValue]);
+          }
+        }
         return true;
       };
 

@@ -156,15 +156,31 @@ class DefinesDlg extends ModalDlg {
         return;
       }
       if (error.errorType == Defines.DefineError.contain) {
-        alert(
+        /* alert(
           'Define name,"' +
             name +
             '", contains, or is part of, the earlier define.'
-        );
-        self.selector("definesName").val("");
+        ); */
+        /* self.selector("definesName").val("");
         if (defines.definesSize()) {
           self.selector("definesRemoveAll").attr("disabled", false);
-        }
+        } */
+        //return;
+        Utility.alertYesNo(
+          `Are you sure yo want to redefine "${name}"`,
+          function (action) {
+            if (action == 0 || action == 1) {
+              self.selector("definesName").val("");
+              self.selector("definesValue").val("");
+              return;
+            } else {
+              var value = self.selector("definesValue").val();
+              self.doAdd(name, value);
+            }
+          },
+          "medium",
+          "redefine"
+        );
         return;
       }
       if (error.errorType == Defines.DefineError.keyword) {
@@ -418,6 +434,60 @@ class Defines {
 
     let counter = 0;
     function doExpandDefines(str) {
+      //handle function declarations
+      let m_str = str.slice();
+      let dec = Utility.getFunctionDeclaration(str);
+      while (dec) {
+        m_str = m_str.replace(dec, "");
+        if (dec) {
+          if (!m_defines.get(dec)) {
+            alert(`Attempt to use "${dec}" rejected because it is undefined.`);
+            return null;
+          }
+        }
+        dec = Utility.getFunctionDeclaration(m_str);
+      }
+
+      //handle derivativesdeclarations
+      m_str = str.slice();
+      dec = Utility.getDerivativeDeclaration(m_str);
+      let values = [];
+      let names = [];
+      while (dec) {
+        m_str = m_str.replace(dec, "");
+        if (dec) {
+          if (!m_defines.get(dec)) {
+            let _derivativeOrder = Utility.derivativeOrder(dec);
+            let fnDec = dec.replaceAll("'", "");
+            let _derivative = m_defines.get(fnDec);
+
+            if (_derivative) {
+              const variable = fnDec[fnDec.length - 2];
+              for (let index = 0; index < _derivativeOrder; index++) {
+                _derivative = math.derivative(_derivative, variable).toString();
+                //_derivative = _derivative.replaceAll(variable, arg);
+              }
+              _derivative = _derivative.replace(/\s/g, "");
+              names.push(dec);
+              values.push(_derivative);
+              //$(window).trigger("defineAdded", [dec, _derivative]);
+            } else {
+              alert(
+                `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+              );
+              return null;
+            }
+          } else {
+          }
+        }
+        dec = Utility.getDerivativeDeclaration(m_str);
+      }
+      if (names.length) {
+        for (let i = 0; i < names.length; i++) {
+          $(window).trigger("defineAdded", [names[i], values[i]]);
+        }
+      }
+
       var defined;
       var i;
       let startIndex = 0;
@@ -531,7 +601,7 @@ class Defines {
       str = doExpandDefines(str);
       //let prevExpanded = null;
       let n = 0;
-      while (str !== prevExpanded && n < 200) {
+      while (str && str !== prevExpanded && n < 200) {
         prevExpanded = str;
         str = doExpandDefines(str);
         n++;

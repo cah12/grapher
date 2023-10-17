@@ -19,13 +19,19 @@ class AlertDlg {
 		<p id="msg"></p>\
 		</div>\
 		<div id="alertDlgFooter1" class="modal-footer">\
-    <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" type="checkbox"/> Don\'t show again</label>\
+    <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
 		<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>\
 		</div>\
 		<div id="alertDlgFooter2" class="modal-footer">\
-		<button id="yes" type="button" class="btn btn-default">Yes</button>\
-		<button id="no" type="button" class="btn btn-default">No</button>\
-		<button id="cancel" type="button" class="btn btn-default">Cancel</button>\
+		<button id="yes" class="alertYes" type="button" class="btn btn-default">Yes</button>\
+		<button id="no" class="alertNo" type="button" class="btn btn-default">No</button>\
+		<button id="cancel" class="alertCancel" type="button" class="btn btn-default">Cancel</button>\
+    </div>\
+		<div id="alertDlgFooter3" class="modal-footer">\
+    <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
+		<button id="yes" class="alertYes" type="button" class="btn btn-default">Yes</button>\
+		<button id="no" class="alertNo" type="button" class="btn btn-default">No</button>\
+		<button id="cancel" class="alertCancel" type="button" class="btn btn-default">Cancel</button>\
 		</div>\
 		</div>\
 		</div>\
@@ -44,8 +50,9 @@ class AlertDlg {
     this.alert = function (msg, type, doNotShowOptionId) {
       if (doNotShowList.indexOf(doNotShowOptionId) != -1) return;
       $("body").append(dlg);
-      $("#doNotShow")[0].checked = false;
+      $(".alertDoNotShow")[0].checked = false;
       $("#alertDlgFooter2").hide();
+      $("#alertDlgFooter3").hide();
       $("#alertDlgFooter1").show();
       $("#msg").text(msg);
       if (type == "small") {
@@ -59,7 +66,7 @@ class AlertDlg {
         $("#doNotShowContainer").hide();
       }
 
-      $("#doNotShow").on("change", function () {
+      $(".alertDoNotShow").on("change", function () {
         if ($(this)[0].checked) {
           doNotShowList.push(doNotShowOptionId);
         } else {
@@ -77,7 +84,11 @@ class AlertDlg {
 
     var self = this;
 
-    this.alertYesNo = function (msg, cb, type) {
+    this.alertYesNo = function (msg, cb, type, doNotShowOptionId) {
+      if (doNotShowList.indexOf(doNotShowOptionId) != -1) {
+        cb(Yes);
+        return;
+      }
       $("body").append(dlg);
       //$(".close").hide()
       $("#alert_Modal").modal("hide");
@@ -90,26 +101,47 @@ class AlertDlg {
       } else {
         $("#dlg").removeClass("modal-sm");
       }
-      /* dlg.modal({
-					backdrop: "static"
-				}); */
+
+      if (doNotShowOptionId) {
+        $("#alertDlgFooter2").hide();
+        $("#alertDlgFooter3").show();
+        $("#doNotShowContainer").show();
+      } else {
+        $("#doNotShowContainer").hide();
+        $("#alertDlgFooter3").hide();
+      }
+
+      $(".alertDoNotShow").on("change", function () {
+        if ($(this)[0].checked) {
+          doNotShowList.push(doNotShowOptionId);
+        } else {
+          const n = doNotShowList.indexOf(doNotShowOptionId);
+          if (n != -1) {
+            doNotShowList.splice(n, 1);
+          }
+        }
+      });
+
+      dlg.modal({
+        backdrop: "static",
+      });
       //dlg.modal();
-      $("#alert_Modal").modal("show");
+      //$("#alert_Modal").modal("show");
     };
 
-    $("#yes").click(function () {
+    $(".alertYes").click(function () {
       //$(".close").click();
       $("#alert_Modal").modal("hide");
       self.alertYesCb(Yes);
     });
 
-    $("#no").click(function () {
+    $(".alertNo").click(function () {
       //$(".close").click();
       $("#alert_Modal").modal("hide");
       self.alertYesCb(No);
     });
 
-    $("#cancel").click(function () {
+    $(".alertCancel").click(function () {
       // $(".close").click();
       $("#alert_Modal").modal("hide");
       self.alertYesCb(Cancel);
@@ -2210,6 +2242,62 @@ class Utility {
     return null;
   } */
 
+  static derivativeOrder(name) {
+    let order = 0;
+    name = name.trim();
+    if (name.length < 4 || name.indexOf("(") == -1 || name.indexOf(")") == -1) {
+      return 0;
+    }
+    for (let i = 1; i < name.length; i++) {
+      if (name[i] !== "'") {
+        break;
+      }
+      order++;
+    }
+    return order;
+  }
+
+  static getDerivativeDeclaration(str) {
+    let ind = str.lastIndexOf("'(");
+    for (let index = ind - 1; index > 0; index--) {
+      if (str[index] == "'") ind--;
+      else break;
+    }
+    if (ind == -1) return null;
+    //const startIndex = str.indexOf("'") - 1;
+    let res = ""; //str[ind - 1] + "'";
+    for (let index = ind - 1; index < str.length; index++) {
+      res += str[index];
+      if (str[index] == "(") {
+        ind = index;
+        break;
+      }
+    }
+    let par = 1;
+    for (let i = ind + 1; i < str.length; i++) {
+      res += str[i];
+      if (str[i] == "(") par++;
+      if (str[i] == ")") par--;
+      if (par == 0) break;
+    }
+    return res;
+  }
+
+  static getFunctionDeclaration(str) {
+    //f(x)
+    for (let i = 3; i < str.length; i++) {
+      if (
+        str[i] === ")" &&
+        str[i - 2] === "(" &&
+        Utility.isAlpha(str[i - 1]) &&
+        Utility.isAlpha(str[i - 3])
+      ) {
+        return str.substring(i - 3, i + 1);
+      }
+    }
+    return null;
+  }
+
   /**
    *
    * @param {*} exp
@@ -2222,7 +2310,7 @@ class Utility {
     let unmodifiedOperand = null;
     let operand = "";
     let lBracket = 0;
-    for (let i = indexOfKeyword + keyword.length-1; i < exp.length; i++) {
+    for (let i = indexOfKeyword + keyword.length - 1; i < exp.length; i++) {
       if (exp[i] == "(") {
         operand += "(";
         lBracket++;
@@ -3324,11 +3412,11 @@ class Utility {
 		}
 		}); 
 	 */
-  static alertYesNo(msg, cb, type) {
+  static alertYesNo(msg, cb, type, doNotShowOptionId) {
     if (Utility.alertObj == undefined) {
       Utility.alertObj = new AlertDlg();
     }
-    Utility.alertObj.alertYesNo(msg, cb, type);
+    Utility.alertObj.alertYesNo(msg, cb, type, doNotShowOptionId);
   }
 
   /**
@@ -3936,6 +4024,7 @@ class Utility {
   }
 
   static insertProductSign(str, defines) {
+    if (!str) return null;
     if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
       return "";

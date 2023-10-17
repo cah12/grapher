@@ -405,6 +405,9 @@ math.simplify = customSimplify;
 const originalDerivative = math.derivative;
 
 math.derivative = function (str, variable, options) {
+  //console.log(456, str);
+  if (typeof str === "string") str = str.replaceAll("ln", "log");
+  //console.log(457, str);
   // math.simplify = originalSimplify;
   let result = originalDerivative(str, variable, { simplify: false });
   if (!options) {

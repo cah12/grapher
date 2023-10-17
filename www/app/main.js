@@ -781,4 +781,6 @@ require([
   //   `integrate(${fn} , ${variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
   // );
   //console.log("value:", value);
+
+  //console.log(Utility.getFunctionDeclaration("f(x)"));
 });
