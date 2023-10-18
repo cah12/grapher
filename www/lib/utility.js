@@ -2290,9 +2290,12 @@ class Utility {
         str[i] === ")" &&
         str[i - 2] === "(" &&
         Utility.isAlpha(str[i - 1]) &&
-        Utility.isAlpha(str[i - 3])
+        Utility.isAlpha(str[i - 3]) /* &&
+        i > 3 &&
+        !Utility.isAlpha(str[i - 4]) */
       ) {
-        return str.substring(i - 3, i + 1);
+        if (i == 3 || !Utility.isAlpha(str[i - 4]))
+          return str.substring(i - 3, i + 1);
       }
     }
     return null;

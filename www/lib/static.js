@@ -396,6 +396,7 @@ const customParse = function (str) {
 };
 
 const customSimplify = function (str, scope, options) {
+  if (typeof str !== "string") str = str.toString();
   return originalSimplify(reduceMultiplyByZero(str), scope, options);
 };
 
@@ -412,9 +413,6 @@ math.derivative = function (str, variable, options) {
   let result = originalDerivative(str, variable, { simplify: false });
   if (!options) {
     result = originalSimplify(result.toString());
-  } /* else {
-    result = originalSimplify(result.toString(), {}, options);
-  } */
-  //math.simplify = customSimplify;
+  }
   return result;
 };

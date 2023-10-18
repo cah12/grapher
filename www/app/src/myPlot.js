@@ -1540,7 +1540,11 @@ class MyPlot extends Plot {
             // });
             // Utility.logStep(Static.constructEquation, operationType);
             let simplifiedExp = math
-              .simplify(`(${curves[0].expandedFn})-(${curves[1].expandedFn})`)
+              .simplify(
+                `(${curves[0].expandedFn})-(${curves[1].expandedFn})`,
+                {},
+                { exactFractions: false }
+              )
               .toString();
             //Replace the whitespace delimiters stripped out by simplify()
             simplifiedExp = simplifiedExp.replaceAll("mod", " mod ");
@@ -1566,7 +1570,8 @@ class MyPlot extends Plot {
               );
 
               for (let i = 0; i < solution.length; i++) {
-                const val = math.evaluate(solution.at(i).valueOf());
+                //console.log(solution.at(i).toString());
+                const val = math.evaluate(solution.at(i).toString());
 
                 res.push({
                   x: val,

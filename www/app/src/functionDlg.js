@@ -836,13 +836,15 @@ class MFunctionDlg {
               arr[0].indexOf("(") == -1 ||
               arr[0].indexOf(")") == -1
             ) {
-              let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
+              //let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
+              let m_lhs = arr[0];
               m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs);
               if (!m_lhs) {
                 return;
               }
 
-              let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
+              //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
+              let m_rhs = arr[1];
               m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs);
               if (!m_rhs) {
                 return;
