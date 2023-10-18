@@ -613,8 +613,8 @@ class MFunctionDlg {
       //   return res;
       // }
 
-      function doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal) {
-        fnDlgFunctionVal = plot.defines.expandDefines(fnDlgFunctionVal);
+      function doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal, derive) {
+        fnDlgFunctionVal = plot.defines.expandDefines(fnDlgFunctionVal, derive);
         // let j = 0;
         // let prevExpanded = null;
         // while (fnDlgFunctionVal !== prevExpanded && j < 100) {
@@ -626,6 +626,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (closeDlg) {
+        let addDefine = true;
         let defineName = null;
         let defineValue = null;
 
@@ -922,6 +923,7 @@ class MFunctionDlg {
           }
 
           if (arr.length == 1) {
+            addDefine = false;
             let n = 0;
             while (1 && n < 100) {
               n++;
@@ -964,13 +966,13 @@ class MFunctionDlg {
                 return false;
                 //}
               }
-              let exp = plot.defines.expandDefines(_fnDec);
+              let exp = plot.defines.expandDefines(_fnDec, false);
               // let j = 0;
               // while (exp.indexOf("(" + self.variable + ")") != -1 && j < 100) {
               //   j++;
               //   exp = plot.defines.expandDefines(exp);
               // }
-              exp = plot.defines.expandDefines(exp);
+              exp = plot.defines.expandDefines(exp, false);
               let arg = fnDec.substring(1);
               // if (denom.length > 3)
               //   exp = math.simplify(exp + "/" + denom).toString();
@@ -994,7 +996,10 @@ class MFunctionDlg {
             }
           }
           if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-            self.expandedFn = doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal);
+            self.expandedFn = doExpandDefinesAndAdjustLogBase(
+              fnDlgFunctionVal,
+              false
+            );
             if (!self.expandedFn) {
               return;
             }
@@ -1350,17 +1355,26 @@ class MFunctionDlg {
             self.close();
           }
         } ///
+
         if (
           defineName &&
           defineName.length &&
           defineValue &&
           defineValue.length
         ) {
-          const define = plot.defines.getDefine(defineName);
-          if (!define) {
-            $(window).trigger("defineAdded", [defineName, defineValue]);
+          const n_last = defineName.length - 1;
+          if (
+            defineName[n_last] == ")" &&
+            defineName[n_last - 1] === self.variable &&
+            defineName[n_last - 2] == "("
+          ) {
+            const define = plot.defines.getDefine(defineName);
+            if (!define) {
+              $(window).trigger("defineAdded", [defineName, defineValue]);
+            }
           }
         }
+
         return true;
       };
 

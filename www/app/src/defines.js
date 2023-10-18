@@ -433,58 +433,67 @@ class Defines {
     }
 
     let counter = 0;
-    function doExpandDefines(str) {
+    function doExpandDefines(str, derive) {
       //handle function declarations
-      let m_str = str.slice();
-      let dec = Utility.getFunctionDeclaration(str);
-      while (dec) {
-        m_str = m_str.replace(dec, "");
-        if (dec) {
-          if (!m_defines.get(dec)) {
-            alert(`Attempt to use "${dec}" rejected because it is undefined.`);
-            return null;
-          }
-        }
-        dec = Utility.getFunctionDeclaration(m_str);
-      }
+      let m_str;
+      let dec;
 
-      //handle derivativesdeclarations
-      m_str = str.slice();
-      dec = Utility.getDerivativeDeclaration(m_str);
-      let values = [];
-      let names = [];
-      while (dec) {
-        m_str = m_str.replace(dec, "");
-        if (dec) {
-          if (!m_defines.get(dec)) {
-            let _derivativeOrder = Utility.derivativeOrder(dec);
-            let fnDec = dec.replaceAll("'", "");
-            let _derivative = m_defines.get(fnDec);
-
-            if (_derivative) {
-              const variable = fnDec[fnDec.length - 2];
-              for (let index = 0; index < _derivativeOrder; index++) {
-                _derivative = math.derivative(_derivative, variable).toString();
-                //_derivative = _derivative.replaceAll(variable, arg);
-              }
-              _derivative = _derivative.replace(/\s/g, "");
-              names.push(dec);
-              values.push(_derivative);
-              //$(window).trigger("defineAdded", [dec, _derivative]);
-            } else {
+      if (derive) {
+        m_str = str.slice();
+        dec = Utility.getFunctionDeclaration(str);
+        while (dec) {
+          m_str = m_str.replace(dec, "");
+          if (dec) {
+            if (!m_defines.get(dec)) {
               alert(
-                `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+                `Attempt to use "${dec}" rejected because it is undefined.`
               );
               return null;
             }
-          } else {
           }
+          dec = Utility.getFunctionDeclaration(m_str);
         }
+
+        //handle derivativesdeclarations
+        m_str = str.slice();
         dec = Utility.getDerivativeDeclaration(m_str);
-      }
-      if (names.length) {
-        for (let i = 0; i < names.length; i++) {
-          $(window).trigger("defineAdded", [names[i], values[i]]);
+        let values = [];
+        let names = [];
+        while (dec) {
+          m_str = m_str.replace(dec, "");
+          if (dec) {
+            if (!m_defines.get(dec)) {
+              let _derivativeOrder = Utility.derivativeOrder(dec);
+              let fnDec = dec.replaceAll("'", "");
+              let _derivative = m_defines.get(fnDec);
+
+              if (_derivative) {
+                const variable = fnDec[fnDec.length - 2];
+                for (let index = 0; index < _derivativeOrder; index++) {
+                  _derivative = math
+                    .derivative(_derivative, variable)
+                    .toString();
+                  //_derivative = _derivative.replaceAll(variable, arg);
+                }
+                _derivative = _derivative.replace(/\s/g, "");
+                names.push(dec);
+                values.push(_derivative);
+                //$(window).trigger("defineAdded", [dec, _derivative]);
+              } else {
+                alert(
+                  `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+                );
+                return null;
+              }
+            } else {
+            }
+          }
+          dec = Utility.getDerivativeDeclaration(m_str);
+        }
+        if (names.length) {
+          for (let i = 0; i < names.length; i++) {
+            $(window).trigger("defineAdded", [names[i], values[i]]);
+          }
         }
       }
 
@@ -596,14 +605,14 @@ class Defines {
       } //else return Utility.replaceKeywordMarkers(res);
     }
 
-    this.expandDefines = function (str) {
+    this.expandDefines = function (str, derive = true) {
       let prevExpanded = str;
-      str = doExpandDefines(str);
+      str = doExpandDefines(str, derive);
       //let prevExpanded = null;
       let n = 0;
       while (str && str !== prevExpanded && n < 200) {
         prevExpanded = str;
-        str = doExpandDefines(str);
+        str = doExpandDefines(str, derive);
         n++;
       }
       return Utility.insertProductSign(str);
