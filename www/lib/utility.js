@@ -2257,7 +2257,7 @@ class Utility {
     return order;
   }
 
-  static getDerivativeDeclaration(str) {
+  static getFullDerivativeDeclaration(str) {
     let ind = str.lastIndexOf("'(");
     for (let index = ind - 1; index > 0; index--) {
       if (str[index] == "'") ind--;
@@ -2283,23 +2283,21 @@ class Utility {
     return res;
   }
 
-  static getFunctionDeclaration(str) {
+  static getFunctionDeclaration = function (str) {
     //f(x)
     for (let i = 3; i < str.length; i++) {
       if (
         str[i] === ")" &&
         str[i - 2] === "(" &&
         Utility.isAlpha(str[i - 1]) &&
-        Utility.isAlpha(str[i - 3]) /* &&
-        i > 3 &&
-        !Utility.isAlpha(str[i - 4]) */
+        Utility.isAlpha(str[i - 3])
       ) {
         if (i == 3 || !Utility.isAlpha(str[i - 4]))
           return str.substring(i - 3, i + 1);
       }
     }
     return null;
-  }
+  };
 
   /**
    *
@@ -4440,7 +4438,7 @@ class Utility {
           obj = Utility.getOperand(
             result,
             prefix + "^" + operandOfExponent,
-            index - prefix.length
+            index - prefix.length + 1
           );
         } else {
           // obj = Utility.getOperand(result, "^", index);
@@ -4478,6 +4476,7 @@ class Utility {
 
     mf.getValue = function (format = "ascii-math") {
       const mf = this;
+      //mf._slotValue = "";
 
       const latex = mf.getValueTemp("latext");
       let result = latex
@@ -4518,11 +4517,16 @@ class Utility {
         .replace(/\\lbrace/g, "{")
         .replace(/\\rbrace/g, "}");
 
+      //console.log(457, result);
+
       result = exponentOnKeyword(result);
+      //console.log(456, result);
 
       if (Utility.missingClosingPar(result)) {
         result = result.replace(/\?/g, ")");
       }
+
+      //console.log(result);
 
       let index = result.indexOf("log");
       if (index !== -1) {
@@ -4566,6 +4570,8 @@ class Utility {
 
       //Add whitespace delimiters to mod (i.e modulus ooperator)
       result = result.replaceAll("mod", " mod ");
+
+      //console.log(result);
 
       return result;
     };

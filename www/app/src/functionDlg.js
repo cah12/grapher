@@ -613,8 +613,16 @@ class MFunctionDlg {
       //   return res;
       // }
 
-      function doExpandDefinesAndAdjustLogBase(fnDlgFunctionVal, derive) {
-        fnDlgFunctionVal = plot.defines.expandDefines(fnDlgFunctionVal, derive);
+      function doExpandDefinesAndAdjustLogBase(
+        fnDlgFunctionVal,
+        variable,
+        derive
+      ) {
+        fnDlgFunctionVal = plot.defines.expandDefines(
+          fnDlgFunctionVal,
+          variable,
+          derive
+        );
         // let j = 0;
         // let prevExpanded = null;
         // while (fnDlgFunctionVal !== prevExpanded && j < 100) {
@@ -626,7 +634,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (closeDlg) {
-        let addDefine = true;
+        let expanded = false;
         let defineName = null;
         let defineValue = null;
 
@@ -636,6 +644,40 @@ class MFunctionDlg {
         self.expandedFn = null;
         self.xIsDependentVariable = false;
         self.domainRangeRestriction = [];
+
+        function forceDefine(fn, dec) {
+          const arr = fn.split("=");
+          if (arr.length !== 2) {
+            return false; //failed to force definition
+          }
+
+          const expandedRHS = plot.defines.expandDefines(arr[1], self.variable);
+          fn = `${arr[0]}=${expandedRHS}`;
+
+          let res = null;
+          fn = fn.replaceAll(dec, "U");
+
+          var eq = nerdamer(fn);
+          var solution = eq.solveFor("U");
+          if (typeof solution === "array") {
+            res = solution[0].toString();
+          } else {
+            res = solution.toString();
+          }
+          nerdamer.flush();
+          if (res) {
+            res = res.replace("U", dec);
+            if (res.indexOf("U") !== -1) {
+              return false; //failed to force definition
+            }
+            $(window).trigger("defineAdded", [
+              dec,
+              math.simplify(res, {}, { exactFractions: false }).toString(),
+            ]);
+            return true;
+          }
+          return false;
+        }
         //console.log(456)
         if ($("#fnDlg_numberOfPoints").val() < 2) {
           $("#fnDlg_numberOfPoints").val(60);
@@ -839,14 +881,26 @@ class MFunctionDlg {
             ) {
               //let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
               let m_lhs = arr[0];
-              m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs);
+              const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
+              if (m_lhs_fnDec) {
+                if (!plot.defines.getDefine(m_lhs_fnDec)) {
+                  console.log(
+                    `${m_lhs_fnDec} is an undefined function. try to define it`
+                  );
+                  if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
+                    alert(`Tried but failed to define "${m_lhs_fnDec}".`);
+                    return;
+                  }
+                }
+              }
+              m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs, self.variable);
               if (!m_lhs) {
                 return;
               }
 
               //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               let m_rhs = arr[1];
-              m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs);
+              m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs, self.variable);
               if (!m_rhs) {
                 return;
               }
@@ -858,14 +912,20 @@ class MFunctionDlg {
               //   fnDlgFunctionVal,
               //   plot.defines
               // );
-
-              var eq = nerdamer(fnDlgFunctionVal);
-              var solution =
-                self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
-              //console.log(y[0].toString());
-              arr = [solution[0].toString()];
+              if (m_lhs.length == 1) {
+                arr = [m_rhs];
+              } else {
+                var eq = nerdamer(fnDlgFunctionVal);
+                var solution =
+                  self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
+                if (typeof solution === "array") {
+                  arr = [solution[0].toString()];
+                } else {
+                  arr = [solution.toString()];
+                }
+                nerdamer.flush();
+              }
               fnDlgFunctionVal = arr[0];
-              nerdamer.flush();
             }
           }
           if (arr.length == 2) {
@@ -913,113 +973,101 @@ class MFunctionDlg {
                 return false;
               }
 
-              defineName = arr[0];
-              defineValue = arr[1];
-
-              fnDlgFunctionVal = arr[1];
-            } else {
-              fnDlgFunctionVal = arr[1];
-            }
-          }
-
-          if (arr.length == 1) {
-            addDefine = false;
-            let n = 0;
-            while (1 && n < 100) {
-              n++;
-
-              let dec = Utility.getDerivativeDeclaration(fnDlgFunctionVal);
-              if (!dec) {
-                self.expandedFn =
-                  self.fn =
-                  fnDlgFunctionVal =
-                    Utility.insertProductSign(fnDlgFunctionVal, plot.defines);
-
-                break;
-              }
-              let _derivativeOrder = derivativeOrder(dec);
-              //dec = dec.replace("'", "");
-              let fnDec = dec.replaceAll("'", "");
-
-              let _fnDec = fnDec[0] + "(" + self.variable + ")";
-              if (!plot.defines.hasDefine(_fnDec)) {
-                //try to find the derivative
-                /* const m_fnDec = _fnDec.replaceAll("'", "");
-
-                const m_exp = plot.defines.getDefine(m_fnDec);
-                if (m_exp) {
-                  let _derivative = m_exp;
-                  for (let index = 0; index < _derivativeOrder; index++) {
-                    _derivative = math
-                      .derivative(_derivative, self.variable)
-                      .toString();
-                    _derivative = _derivative.replaceAll(self.variable, arg);
-                  }
-                  $(window).trigger("defineAdded", [defineName, defineValue]);
-                } else { */
-                alert(
-                  `Cannot find ${dec} before ${dec.replaceAll(
-                    "'",
-                    ""
-                  )} is defined.`
-                );
-                return false;
-                //}
-              }
-              let exp = plot.defines.expandDefines(_fnDec, false);
-              // let j = 0;
-              // while (exp.indexOf("(" + self.variable + ")") != -1 && j < 100) {
-              //   j++;
-              //   exp = plot.defines.expandDefines(exp);
-              // }
-              exp = plot.defines.expandDefines(exp, false);
-              let arg = fnDec.substring(1);
-              // if (denom.length > 3)
-              //   exp = math.simplify(exp + "/" + denom).toString();
-
-              let _derivative = exp;
-              for (let index = 0; index < _derivativeOrder; index++) {
-                _derivative = math
-                  .derivative(_derivative, self.variable)
-                  .toString();
-                _derivative = _derivative.replaceAll(self.variable, arg);
+              //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
+              fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
+                arr[1],
+                self.variable
+              );
+              if (!fnDlgFunctionVal) {
+                return;
               }
 
-              fnDlgFunctionVal = fnDlgFunctionVal
-                .replace(dec, "(" + _derivative + ")")
-                .replace(/\s/g, "");
-
-              //$(window).trigger("defineAdded", [arr[0], fnDlgFunctionVal]);
               defineName = arr[0];
               defineValue = fnDlgFunctionVal;
-              //console.log(456, fnDlgFunctionVal);
+            } else {
+              fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
+                arr[1],
+                self.variable
+              );
             }
           }
-          if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-            self.expandedFn = doExpandDefinesAndAdjustLogBase(
+
+          if (
+            arr.length == 1 &&
+            !Utility.isParametricFunction(fnDlgFunctionVal)
+          ) {
+            expanded = true;
+            let dec = Utility.getFullDerivativeDeclaration(
               fnDlgFunctionVal,
-              false
+              self.variable
             );
-            if (!self.expandedFn) {
-              return;
-            }
+            if (!dec) {
+              self.expandedFn =
+                self.fn =
+                fnDlgFunctionVal =
+                  plot.defines.expandDefines(
+                    fnDlgFunctionVal,
+                    self.variable,
+                    false
+                  );
+              // fnDlgFunctionVal =
+              //   Utility.insertProductSign(fnDlgFunctionVal, plot.defines);
+            } else {
+              /* while (dec) {
+                let f_of_x = plot.defines.getDerivativeDeclaration(
+                  dec,
+                  self.variable
+                );
 
-            // if (self.expandedFn.indexOf("'") !== -1) {
-            if (self.expandedFn.charAt(1) === "'") {
-              $(window).trigger("defineRemoved", arr[0]);
-              plot.defines.removeDefine(arr[0]);
+                if (plot.defines.getDefine(f_of_x))
+                  fnDlgFunctionVal = plot.defines.expandDefines(
+                    dec,
+                    self.variable,
+                    false
+                  );
+                else
+                  fnDlgFunctionVal = plot.defines.expandDefines(
+                    fnDlgFunctionVal,
+                    self.variable
+                  );
 
-              Utility.alert(
-                `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
+                dec = Utility.getFullDerivativeDeclaration(
+                  fnDlgFunctionVal,
+                  self.variable
+                );
+              } */
+
+              self.expandedFn = self.fn = plot.defines.expandDefines(
+                fnDlgFunctionVal,
+                self.variable
               );
-              return;
+            }
+          }
+
+          if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+            if (!expanded) {
+              self.expandedFn = doExpandDefinesAndAdjustLogBase(
+                fnDlgFunctionVal,
+                self.variable,
+                false
+              );
+              if (!self.expandedFn) {
+                return;
+              }
+
+              if (self.expandedFn.charAt(1) === "'") {
+                $(window).trigger("defineRemoved", arr[0]);
+                plot.defines.removeDefine(arr[0]);
+
+                Utility.alert(
+                  `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
+                );
+                return;
+              }
             }
           } else {
             //Parametric function
             self.expandedFn = null;
-            //fnDlgFunctionVal = fnDlgFunctionVal.substring(1);
-            //fnDlgFunctionVal = fnDlgFunctionVal.slice(0, -1);
-            // const arr = fnDlgFunctionVal.split(",");
             const obj = Utility.splitParametricFunction(fnDlgFunctionVal);
             if (!obj) {
               alert("Improperrly defined parametric function.");
@@ -1027,13 +1075,15 @@ class MFunctionDlg {
             }
             let arr = [obj.operand, obj.base];
             self.expandedParametricFnX = doExpandDefinesAndAdjustLogBase(
-              arr[0]
+              arr[0],
+              self.variable
             );
             if (!self.expandedParametricFnX) {
               return;
             }
             self.expandedParametricFnY = doExpandDefinesAndAdjustLogBase(
-              arr[1]
+              arr[1],
+              self.variable
             );
             if (!self.expandedParametricFnY) {
               return;
@@ -1132,7 +1182,7 @@ class MFunctionDlg {
 
             $("#fnDlg_lowerLimit")[0].value = self.lowerLimit = math.evaluate(
               replaceParameterWith_1(
-                plot.defines.expandDefines(self.lowerLimit)
+                plot.defines.expandDefines(self.lowerLimit, self.variable)
               )
             );
             if (self.lowerLimit == undefined) {
@@ -1179,7 +1229,7 @@ class MFunctionDlg {
               $("#fnDlg_upperLimit")[0].getValue("ascii-math");
             self.upperLimit = math.evaluate(
               replaceParameterWith_1(
-                plot.defines.expandDefines(self.upperLimit)
+                plot.defines.expandDefines(self.upperLimit, self.variable)
               )
             );
             if (!self.upperLimit) {

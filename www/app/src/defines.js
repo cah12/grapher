@@ -433,7 +433,7 @@ class Defines {
     }
 
     let counter = 0;
-    function doExpandDefines(str, derive) {
+    function doExpandDefines(str, variable, derive) {
       //handle function declarations
       let m_str;
       let dec;
@@ -456,11 +456,12 @@ class Defines {
 
         //handle derivativesdeclarations
         m_str = str.slice();
-        dec = Utility.getDerivativeDeclaration(m_str);
+        let full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+        dec = self.getDerivativeDeclaration(m_str, variable);
         let values = [];
         let names = [];
-        while (dec) {
-          m_str = m_str.replace(dec, "");
+        while (full_dec) {
+          m_str = m_str.replace(full_dec, "");
           if (dec) {
             if (!m_defines.get(dec)) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
@@ -486,9 +487,17 @@ class Defines {
                 return null;
               }
             } else {
+              full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+              if (full_dec) {
+                dec = self.getDerivativeDeclaration(m_str, variable);
+              }
+              continue;
             }
           }
-          dec = Utility.getDerivativeDeclaration(m_str);
+          full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+          if (full_dec) {
+            dec = self.getDerivativeDeclaration(m_str, variable);
+          }
         }
         if (names.length) {
           for (let i = 0; i < names.length; i++) {
@@ -562,6 +571,8 @@ class Defines {
                   res = res.replace("+*", "+");
                   res = res.replace("-*", "-");
                   res = res.replace("/*", "/");
+                  res = res.replace("(*(", "((");
+                  res = res.replace(")*)", "))");
                 }
 
                 m_res = res.slice();
@@ -605,14 +616,73 @@ class Defines {
       } //else return Utility.replaceKeywordMarkers(res);
     }
 
-    this.expandDefines = function (str, derive = true) {
+    /* this.getDerivativeDeclaration = function (str, variable) {
+      let ind = str.lastIndexOf("'(");
+      for (let index = ind - 1; index > 0; index--) {
+        if (str[index] == "'") ind--;
+        else break;
+      }
+      if (ind == -1) return null;
+      //const startIndex = str.indexOf("'") - 1;
+      let res = ""; //str[ind - 1] + "'";
+      for (let index = ind - 1; index < str.length; index++) {
+        res += str[index];
+        if (str[index] == "(") {
+          ind = index;
+          break;
+        }
+      }
+      let par = 1;
+      for (let i = ind + 1; i < str.length; i++) {
+        res += str[i];
+        if (str[i] == "(") par++;
+        if (str[i] == ")") par--;
+        if (par == 0) break;
+      }
+      return res;
+    }; */
+
+    this.getDerivativeDeclaration = function (str, variable) {
+      //let test = 0;
+      let ind = str.lastIndexOf("'(");
+      let index = ind - 1;
+      let res = null;
+      for (; index > -1; index--) {
+        if (str[index] == "'") continue;
+        else {
+          res = str.substring(index, ind + 2);
+          res = `${res}${variable})`;
+          break;
+        }
+      }
+      //console.log("test:" + test++);
+      return res;
+    };
+
+    /* this.getFunctionDeclaration = function (str) {
+      //f(x)
+      for (let i = 3; i < str.length; i++) {
+        if (
+          str[i] === ")" &&
+          str[i - 2] === "(" &&
+          Utility.isAlpha(str[i - 1]) &&
+          Utility.isAlpha(str[i - 3])
+        ) {
+          if (i == 3 || !Utility.isAlpha(str[i - 4]))
+            return str.substring(i - 3, i + 1);
+        }
+      }
+      return null;
+    }; */
+
+    this.expandDefines = function (str, variable, derive = true) {
       let prevExpanded = str;
-      str = doExpandDefines(str, derive);
+      str = doExpandDefines(str, variable, derive);
       //let prevExpanded = null;
       let n = 0;
       while (str && str !== prevExpanded && n < 200) {
         prevExpanded = str;
-        str = doExpandDefines(str, derive);
+        str = doExpandDefines(str, variable, derive);
         n++;
       }
       return Utility.insertProductSign(str);

@@ -699,7 +699,7 @@ class MyPlot extends Plot {
           self._functionDlg.variable
         );
       } catch (error) {
-        //discont = [];
+        discont = [];
       }
       //console.log(discont);
       // discont = discont.sort(function (a, b) {
@@ -769,7 +769,9 @@ class MyPlot extends Plot {
         makeSamplesData.discontinuity = discont;
         // makeSamplesData.xDecimalPlaces = xDecimalPlaces;
         // makeSamplesData.yDecimalPlaces = yDecimalPlaces;
-        const samples = Utility.makeSamples(makeSamplesData);
+
+        const samples = Utility.makeSamples(makeSamplesData); //////////////
+
         if (!samples) return;
         if (samples.length == 0) {
           Utility.alert(
