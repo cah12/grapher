@@ -2293,6 +2293,11 @@ class PlotPropertiesPane extends PropertiesPane {
       centralDivW = parseFloat(plot.getLayout().getCentralDiv().css("width"));
       centralDivH = parseFloat(plot.getLayout().getCentralDiv().css("height"));
 
+      const sb_visible = plot.rightSidebar.isSideBarVisible();
+      if (!checked && sb_visible) {
+        plot.rightSidebar.showSidebar(false);
+      }
+
       if (checked) {
         const plotItems = plot.itemList();
         for (let index = 0; index < plotItems.length; index++) {
@@ -2315,6 +2320,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.enableAxis(3, self.topAxisEnabled);
         doAdjust = false;
         //plot.rightSidebar.showSidebar(false);
+        //console.log(plot.rightSidebar);
         plotDiv.css("width", "77.9653%");
         plotDiv.css("height", "98%");
 
@@ -2330,6 +2336,9 @@ class PlotPropertiesPane extends PropertiesPane {
         if (L.length); //plot.rightSidebar.showSidebar(true);
       }
       Static.trigger("aspectRatioChanged", checked);
+      if (sb_visible) {
+        plot.rightSidebar.showSidebar(true);
+      }
     }
 
     $(window).resize(function () {

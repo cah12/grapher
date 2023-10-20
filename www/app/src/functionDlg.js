@@ -587,32 +587,6 @@ class MFunctionDlg {
         return order;
       }
 
-      // function getDerivativeDeclaration(str) {
-      //   let ind = str.lastIndexOf("'(");
-      //   for (let index = ind - 1; index > 0; index--) {
-      //     if (str[index] == "'") ind--;
-      //     else break;
-      //   }
-      //   if (ind == -1) return null;
-      //   //const startIndex = str.indexOf("'") - 1;
-      //   let res = ""; //str[ind - 1] + "'";
-      //   for (let index = ind - 1; index < str.length; index++) {
-      //     res += str[index];
-      //     if (str[index] == "(") {
-      //       ind = index;
-      //       break;
-      //     }
-      //   }
-      //   let par = 1;
-      //   for (let i = ind + 1; i < str.length; i++) {
-      //     res += str[i];
-      //     if (str[i] == "(") par++;
-      //     if (str[i] == ")") par--;
-      //     if (par == 0) break;
-      //   }
-      //   return res;
-      // }
-
       function doExpandDefinesAndAdjustLogBase(
         fnDlgFunctionVal,
         variable,
@@ -623,13 +597,7 @@ class MFunctionDlg {
           variable,
           derive
         );
-        // let j = 0;
-        // let prevExpanded = null;
-        // while (fnDlgFunctionVal !== prevExpanded && j < 100) {
-        //   j++;
-        //   prevExpanded = fnDlgFunctionVal;
-        //   fnDlgFunctionVal = plot.defines.expandDefines(fnDlgFunctionVal);
-        // }
+
         return Utility.logBaseAdjust(fnDlgFunctionVal);
       }
 
@@ -918,7 +886,7 @@ class MFunctionDlg {
                 var eq = nerdamer(fnDlgFunctionVal);
                 var solution =
                   self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
-                if (typeof solution === "array") {
+                if (typeof solution === "object") {
                   arr = [solution[0].toString()];
                 } else {
                   arr = [solution.toString()];

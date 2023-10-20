@@ -2038,6 +2038,9 @@ class Utility {
     if (!variable || fn.indexOf(variable) == -1) {
       return [];
     }
+    if (!samples || samples.length == 0) {
+      return [];
+    }
     //Replace the whitespace delimiters stripped out by simplify()
     fn = fn.replaceAll("mod", " mod ");
 
@@ -2052,6 +2055,7 @@ class Utility {
     let m_fn = fn;
     let result = [];
     let derivative = null;
+
     try {
       derivative = math.derivative(m_fn, variable);
     } catch (error) {
@@ -2156,6 +2160,9 @@ class Utility {
     let m_fn = fn;
     let result = [];
     let derivative = null;
+    if (!samples || samples.length == 0) {
+      return result;
+    }
     try {
       derivative = math.derivative(m_fn, variable);
     } catch (error) {
@@ -2283,7 +2290,7 @@ class Utility {
     return res;
   }
 
-  static getFunctionDeclaration = function (str) {
+  static getFunctionDeclaration(str) {
     //f(x)
     for (let i = 3; i < str.length; i++) {
       if (
@@ -2297,7 +2304,7 @@ class Utility {
       }
     }
     return null;
-  };
+  }
 
   /**
    *
