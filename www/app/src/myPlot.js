@@ -2497,9 +2497,11 @@ class MyPlot extends Plot {
     ));
 
     class GrapherEditor extends Editor {
-      constructor(options) {
+      constructor(plot, options) {
         super(options);
         const self = this;
+        this.plot = plot;
+        this.fileNameBeforeSave = null;
 
         //Associate save and saveas menu items with the editor
         options.fs.addSaveAndSaveAsMenuItems();
@@ -2509,7 +2511,11 @@ class MyPlot extends Plot {
         //If the editor has content from a known file (i.e self.currentFilename() returns a valid filename)
         //and an input is detected, we set the currentFileModified flag (i.e we call currentFileModified(true))
         Static.bind("replot", function () {
-          if (self.currentFilename()) self.currentFileModified(true);
+          //console.log(456, self.currentFilename());
+          if (self.currentFilename()) {
+            self.currentFileModified(true);
+            self.fileNameBeforeSave = self.currentFilename();
+          }
         });
       }
       getData() {
@@ -2517,17 +2523,80 @@ class MyPlot extends Plot {
       }
 
       setData(data, filename, ext, editorName) {
+        const self = this;
         if (
           ext === ".tbl" ||
           ext === ".txt" ||
           ext === ".plt" ||
           editorName == "Grapher"
         ) {
-          if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
-            self.file.setPlotData({ content: data, fileName: filename });
-          }
-          if (ext === ".plt") {
-            this.currentFilename(filename);
+          if (!self.currentFileModified()) {
+            if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
+              self.plot.file.setPlotData(
+                { content: data, fileName: filename },
+                true
+              );
+            }
+            if (ext === ".plt") {
+              self.currentFilename(filename);
+            }
+          } else {
+            /* const saveChg = confirm(
+              `Would you like to save the changes to ${this.currentFilename()}?`
+            );
+            if (!saveChg) {
+              if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
+                self.file.setPlotData(
+                  { content: data, fileName: filename },
+                  true
+                );
+              }
+              if (ext === ".plt") {
+                this.currentFilename(filename);
+              }
+            } */
+
+            Utility.alertYesNo(
+              `Would you like to save the changes to ${self.fileNameBeforeSave}?`,
+              function (answer) {
+                if (answer == Cancel) {
+                  // if (sideBarHidden) {
+                  //   _plot.rightSidebar.showSidebar(true);
+                  // }
+                  if (ext === ".plt") {
+                    self.currentFilename(self.fileNameBeforeSave);
+                    self.currentFileModified(true);
+                  }
+
+                  return;
+                }
+                if (answer == Yes) {
+                  if (ext === ".plt") {
+                    self.currentFilename(self.fileNameBeforeSave);
+                    self.currentFileModified(true);
+                  }
+                  return;
+                }
+                if (answer == No) {
+                  // if (sideBarHidden) {
+                  //   _plot.rightSidebar.showSidebar(true);
+                  // }
+
+                  if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
+                    self.plot.file.setPlotData(
+                      { content: data, fileName: filename },
+                      true
+                    );
+                  }
+                  if (ext === ".plt") {
+                    self.currentFilename(filename);
+                    self.currentFileModified(false);
+                  }
+
+                  return;
+                }
+              }
+            );
           }
         }
       }
@@ -2548,7 +2617,7 @@ class MyPlot extends Plot {
     options.fileExtensions = [".plt", ".tbl", ".txt"];
     //options.explorerDialogParentId = "plotDiv";
 
-    self.grapherEditor = new GrapherEditor(options);
+    self.grapherEditor = new GrapherEditor(self, options);
 
     //If not called and the buit-in notepad is enabled, notepad is assume to be the default editor
     options.fs.setDefaultEditor(self.grapherEditor);
@@ -2665,13 +2734,18 @@ class MyPlot extends Plot {
     // var x = nerdamer("solve(sin_r(x)=0,x)");
     // console.log(x.toString()); */
 
-    const tbDiv = this.tbar.html();
-    //console.log(tbDiv);
+    const tbDiv = this.tbar.html(); //display: inline-block;
+    tbDiv.attr("display", "inline-block");
+
     tbDiv.append(
       $(
-        '<span class="GrapherTitle" style="float:right; margin-right:4px"></span>'
+        '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:block;width:130px;float:right; margin:5px"></span>'
       )
     );
+
+    $(".GrapherTitle").mouseenter(function () {
+      $(this).attr("title", $(this).html());
+    });
 
     self.grapherEditor.initEditor();
   }

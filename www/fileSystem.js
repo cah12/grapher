@@ -189,7 +189,11 @@
       });
 
       $(`.${self.#classes.close}`).click(function () {
-        self.#editorClose();
+        const editorName = self.#classes.close
+          .replaceAll("_", " ")
+          .replace("Close", "");
+        if (currentEditor.getEditorData().name == editorName)
+          self.#editorClose();
       });
 
       $(`.${this.#classes.editorTitle}`).html(
@@ -200,6 +204,9 @@
     currentFilename(filename) {
       if (filename === undefined) return currentFilename;
       currentFilename = filename;
+      $(`.${this.#classes.editorTitle}`).html(
+        `${filename} - ${this.#m_data.name}`
+      );
     }
 
     currentFileModified(modified) {
@@ -898,6 +905,10 @@ sep:
             name: "Logout",
             title: "Logout for Mongo File System",
             fun: () => {
+              if (currentEditor && currentEditor.currentFileModified()) {
+                if (!confirm(`Changes you made may not be saved.`)) return;
+                else currentEditor.currentFilename("Untitled");
+              }
               self.logout();
             },
           },

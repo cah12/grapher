@@ -217,13 +217,14 @@ class MFile {
         let a = document.createElement("a");
         document.body.appendChild(a);
         a.style = "display: none";
-        //return function (data, fileName) {
+
         let json = JSON.stringify(data),
           blob = new Blob([json], { type: "octet/stream" }),
           url = window.URL.createObjectURL(blob);
         a.href = url;
         a.download = fileName;
         a.click();
+        document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         resolve(0);
       });
@@ -457,10 +458,10 @@ class MFile {
       Upload.reset($("#fileInput"));
     }
 
-    this.setPlotData = function (data) {
+    this.setPlotData = function (data, mongo = false) {
       //console.log(1000, data)
       //plt(data);
-      this.upload(data);
+      this.upload(data, mongo);
     };
 
     this.init = function (plot) {
@@ -480,7 +481,7 @@ class MFile {
 
     ///////////////////////////////////////////////////////////
 
-    this.upload = function (data) {
+    this.upload = function (data, mongo = false) {
       let extension = data.fileName.split(".")[1];
       //console.log(extension)
       if (
@@ -569,53 +570,61 @@ class MFile {
         list = list.concat(list3);
         list = list.concat(list4);
         if (list.length) {
-          Utility.alertYesNo(
-            "Do you want to save the changes to the Grapher?",
-            function (answer) {
-              if (answer == Cancel) {
-                Upload.reset($("#fileInput"));
-                if (sideBarHidden) {
-                  _plot.rightSidebar.showSidebar(true);
-
-                  //_plot.sidebar.setSidebarReDisplay(true);
-                }
-                return;
-              }
-              if (answer == Yes) {
-                function saveCb() {
+          if (!mongo) {
+            Utility.alertYesNo(
+              "Do you want to save the changes to the Grapher?",
+              function (answer) {
+                if (answer == Cancel) {
                   Upload.reset($("#fileInput"));
+                  if (sideBarHidden) {
+                    _plot.rightSidebar.showSidebar(true);
+
+                    //_plot.sidebar.setSidebarReDisplay(true);
+                  }
+                  return;
+                }
+                if (answer == Yes) {
+                  function saveCb() {
+                    Upload.reset($("#fileInput"));
+                    for (let i = 0; i < list.length; ++i) {
+                      list[i].detach();
+                      list[i].delete();
+                    }
+                    plt(data);
+                  }
+                  self.save(saveCb);
+                  // Upload.reset($("#fileInput"));
+                  // for (let i = 0; i < list.length; ++i) {
+                  //   list[i].detach();
+                  //   list[i].delete();
+                  // }
+                  // plt(data);
+
+                  return;
+                }
+                if (answer == No) {
                   for (let i = 0; i < list.length; ++i) {
                     list[i].detach();
                     list[i].delete();
                   }
                   plt(data);
-                }
-                self.save(saveCb);
-                // Upload.reset($("#fileInput"));
-                // for (let i = 0; i < list.length; ++i) {
-                //   list[i].detach();
-                //   list[i].delete();
-                // }
-                // plt(data);
+                  if (sideBarHidden) {
+                    _plot.rightSidebar.showSidebar(true);
 
-                return;
+                    //_plot.sidebar.setSidebarReDisplay(true);
+                  }
+
+                  return;
+                }
               }
-              if (answer == No) {
-                for (let i = 0; i < list.length; ++i) {
-                  list[i].detach();
-                  list[i].delete();
-                }
-                plt(data);
-                if (sideBarHidden) {
-                  _plot.rightSidebar.showSidebar(true);
-
-                  //_plot.sidebar.setSidebarReDisplay(true);
-                }
-
-                return;
-              }
+            );
+          } else {
+            for (let i = 0; i < list.length; ++i) {
+              list[i].detach();
+              list[i].delete();
             }
-          );
+            plt(data);
+          }
         } else {
           plt(data);
         }

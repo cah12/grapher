@@ -157,7 +157,7 @@ class MToolBar extends ToolBar {
 
     var fnListFile = [
       _plot.file.save,
-      /* _plot.curveSettings.curveSettingsDlg, */ /* _plot.settings().settingsDlg, */ functionFn,
+      functionFn,
       pointEntryFn,
       calculatorFn,
       definesFn,
@@ -177,18 +177,10 @@ class MToolBar extends ToolBar {
       },
       listElements: [
         {
-          text: "Save",
-          icon: "images/save.png",
-          tooltip: "Save the current graph.",
-        } /*,  {
-                    text: "Curve settings",
-                    icon: 'images/curveSettings.png',
-                    tooltip: "Launches the curve settings dialog."
-                } */ /* , {
-                    text: "Plot settings",
-                    icon: 'images/settings.png',
-                    tooltip: "Launches the plot settings dialog."
-                } */,
+          text: "Download",
+          icon: "images/download.png",
+          tooltip: "Download the current graph.",
+        },
         {
           text: "Curve Function",
           icon: "images/function.png",
