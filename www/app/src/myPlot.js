@@ -2414,7 +2414,7 @@ class MyPlot extends Plot {
       //zIndex: 2000,
       enableNotepad: true,
       //For Dev. Uncomment the following line.
-      //fsServerUrl: "http://localhost:5500", //only necessary for cross domain
+      fsServerUrl: "http://localhost:5500", //only necessary for cross domain
 
       listOfFileTypes: [
         {
@@ -2477,6 +2477,26 @@ class MyPlot extends Plot {
 
         $("#myText").on("input", () => {
           self.currentFileModified();
+        });
+
+        $(window).bind("connected", () => {
+          $("#fileInput").parent().prop("disabled", true);
+
+          $("#fileInput")
+            .parent()
+            .attr(
+              "title",
+              "Upload data files. (This function is not availabe while you are logged in to the momgo fileSystemServices."
+            );
+        });
+        $(window).bind("disconnected", () => {
+          $("#fileInput").parent().prop("disabled", false);
+          $("#fileInput")
+            .parent()
+            .attr(
+              "title",
+              "Upload data files. (This function is not availabe while logged in to the momgo fileSystemServices."
+            );
         });
       }
 

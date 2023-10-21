@@ -718,14 +718,17 @@ About Us
       var inp = $(
         "<input id=" +
           obj.innerHtmlId +
-          '  type="file" name="files[]" multiple />'
+          '  type="file" name="files[]" multiple style="display:none" />'
       );
-      var u = $('<button data-toggle="tooltip"></button>');
+      var u = $(
+        '<button data-toggle="tooltip"><img src="images/upload.png"></button>'
+      );
       inp.css("marginLeft", -8);
       inp.css("marginRight", -8);
       inp.css("marginTop", -3);
       inp.css("marginBottom", -3);
       u.append(inp);
+
       /*var u = $('<button data-toggle="tooltip">\
                   <input type="file" id="files" name="files[]" multiple />\
                   </button>')*/
@@ -737,17 +740,22 @@ About Us
       u.attr("title", obj.tooltip);
 
       tbDiv.append(u);
+
       buttonList.push(u);
 
       //A workaround to get the input file tag to work in some
       //IE browsers
       var click = false;
-      u.click(function () {
+      u.click(function (e) {
         if (!click) {
-          click = true;
           inp.trigger("click");
+          click = false;
           return false;
         }
+      });
+
+      inp.click(function (e) {
+        click = true;
       });
 
       return buttonList.length - 1;
