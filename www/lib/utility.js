@@ -4457,7 +4457,7 @@ class Utility {
         }
         let operand = obj.operand;
 
-        if (prefix.length > 1) {
+        if (prefix.length > 1 && Static.keywords.indexOf(prefix) !== -1) {
           const strToReplace = `${prefix}^${operandOfExponent}${operand}`;
           const replacementStr = `${prefix}${operand}^(${operandOfExponent})`;
           result = result.replace(strToReplace, replacementStr);

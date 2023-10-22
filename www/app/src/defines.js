@@ -1,7 +1,9 @@
 "include ['static', 'modalDlg']";
 
+///////////////////////////////////////////////////////
+
 class DefinesDlg extends ModalDlg {
-  constructor(defines, editor) {
+  constructor(defines, _editor) {
     const options = {
       title: "Defines",
       spaceRows: true,
@@ -9,6 +11,12 @@ class DefinesDlg extends ModalDlg {
     };
     super(options);
     const self = this;
+
+    let editor = _editor;
+
+    this.setEditor = function (_editor) {
+      editor = _editor;
+    };
 
     function removeAllHighlight() {
       const rows = self.selector("definesTable").find("TR");
@@ -79,16 +87,18 @@ class DefinesDlg extends ModalDlg {
     );
 
     this.addFooterElement(
-      '<button tabindex="-1" id="definesUploadButton" type="button" class="btn btn-default">\
+      '<button tabindex="-1" id="definesUploadButton" type="button" class="btn btn-default DefinesOpen">\
   Load\
   </button>'
     );
 
-    this.addHandler("definesUploadButton", "click", function () {
+    this.addHandler("definesUploadButton", "click", function (e) {
+      //console.log($(this).hasClass("DefinesOpen"));
       if (self.selector("uploadDefinesType").val() === "loadFromLocalFs") {
+        e.stopImmediatePropagation();
         self.selector("definesUpload").trigger("click");
       } else {
-        editor.openFile();
+        //editor.openFile();
       }
     });
 
@@ -820,20 +830,28 @@ class MDefines extends Defines {
 
     const dlg = new DefinesDlg(this, editor);
 
+    this.setEditor = function (editor) {
+      dlg.setEditor(editor);
+    };
+
+    this.getDlgModal = function () {
+      return dlg.dlgModal;
+    };
+
     this.defines = function () {
       dlg.showDlg();
     };
 
     $(window).bind("fileOpened", function (e, data, filename, ext, editorName) {
-      if (ext !== ".txt" && ext !== ".def") {
-        return;
-      }
-      if (editorName === self.plot.definesEditor.getEditorData().name) {
-        const result = self.processUploadData({
-          fileName: filename,
-          content: data,
-        });
-      }
+      // if (ext !== ".txt" && ext !== ".def") {
+      //   return;
+      // }
+      // if (editorName === self.plot.definesEditor.getEditorData().name) {
+      //   const result = self.processUploadData({
+      //     fileName: filename,
+      //     content: data,
+      //   });
+      // }
     });
 
     $(window).bind("defineAdded", function (e, name, value) {

@@ -128,6 +128,8 @@ class ModalDlg {
                           '
     );
 
+    this.dlgModal = dlg;
+
     $("body").append(dlg);
     if (hideCancelButton) $("#" + cancelId).remove();
 

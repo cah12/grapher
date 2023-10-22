@@ -2623,11 +2623,24 @@ class MyPlot extends Plot {
     }
 
     class DefinesEditor extends Editor {
-      constructor(options) {
+      constructor(plot, options) {
         super(options);
         const self = this;
+        this.m_plot = plot;
 
         options.fs.registerEditor({ name: "Defines", editor: self });
+      }
+
+      getData() {
+        return self.file.getPlotData(); //'[{"bottomScaleEngineType":"[LinearScaleEngine]","leftScaleEngineType":"[LinearScaleEngine]","topScaleEngineType":"[LinearScaleEngine]","rightScaleEngineType":"[LinearScaleEngine]","title":"Plot","titleFont":{"th":20,"name":"Arial","style":"normal","weight":"bold","fontColor":"black"},"footer":"Footer","footerFont":{"th":15,"name":"Arial","style":"normal","weight":"bold","fontColor":"black"},"axisTitleFont":{"th":14,"name":"Arial","style":"normal","weight":"normal","fontColor":"black"},"xBottomAxisTitle":"Bottom scale","xTopAxisTitle":"Top scale","yLeftAxisTitle":"Left scale","yRightAxisTitle":"Right scale","autoScale":true},{"rtti":5,"title":"curve_1","functionDlgData":{"rtti":5,"coeffs":[],"expandedFn":"x^2","fn":"x^2","lowerLimit":-10,"numOfPoints":100,"threeD":false,"title":"curve_1","unboundedRange":false,"upperLimit":10,"variable":"x"},"fn":"x^2","pen":{"color":"rgb(75,122,25)","width":1,"style":"solid"},"symbolType":-1,"style":0,"xAxis":2,"yAxis":0}]';
+      }
+
+      setData(data, filename, ext, editorName) {
+        console.log("setData", data);
+        this.m_plot.defines.processUploadData({
+          fileName: filename,
+          content: data,
+        });
       }
     }
 
@@ -2648,8 +2661,19 @@ class MyPlot extends Plot {
     definesOptions.fileExtensions = [".def", ".txt"];
     //options.explorerDialogParentId = "definesModal";
 
-    self.definesEditor = new DefinesEditor(definesOptions);
-    this.defines = new MDefines(this, self.definesEditor);
+    this.defines = new MDefines(this);
+
+    /*DefinesDlg is a subclass of ModalDlg. Thus, it is only attached to the DOM when it is visible. Since DefinesEditor is a subclass of Editor and Editor binds events during construction, we must ensure that DefinesDlg is visble before DefinesEditor instances are created.*/
+
+    const definesDlg = this.defines.getDlgModal();
+    $("body").append(definesDlg);
+    self.definesEditor = new DefinesEditor(self, definesOptions);
+    this.defines.setEditor(self.definesEditor);
+    definesDlg.detach();
+
+    //this.defines = new MDefines(this, self.definesEditor);
+
+    //console.log(this.defines.getDlg().selector("definesUploadButton"));
 
     //this.defines.setEditor(self.definesEditor);
 
