@@ -2636,11 +2636,12 @@ class MyPlot extends Plot {
       }
 
       setData(data, filename, ext, editorName) {
-        console.log("setData", data);
         this.m_plot.defines.processUploadData({
           fileName: filename,
           content: data,
         });
+        //Close the mongo file explorer
+        $("#saveDlgCancelX").click();
       }
     }
 
@@ -2665,11 +2666,14 @@ class MyPlot extends Plot {
 
     /*DefinesDlg is a subclass of ModalDlg. Thus, it is only attached to the DOM when it is visible. Since DefinesEditor is a subclass of Editor and Editor binds events during construction, we must ensure that DefinesDlg is visble before DefinesEditor instances are created.*/
 
-    const definesDlg = this.defines.getDlgModal();
-    $("body").append(definesDlg);
+    const definesDlg = this.defines.getDefinesDlg();
+    const definesDlgModal = definesDlg.getDlgModal();
+    $("body").append(definesDlgModal);
     self.definesEditor = new DefinesEditor(self, definesOptions);
     this.defines.setEditor(self.definesEditor);
-    definesDlg.detach();
+    definesDlgModal.detach();
+
+    //console.log(fileSystemServices);
 
     //this.defines = new MDefines(this, self.definesEditor);
 

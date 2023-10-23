@@ -138,7 +138,6 @@ class AbstractLegend {
     var margin = 8;
     var m_checkChangeFn = function (plotItem, check) {
       plotItem.setVisible(!check);
-      //if (!m_plot.autoReplot()) m_plot.replot();
       m_plot.autoRefresh();
     };
 

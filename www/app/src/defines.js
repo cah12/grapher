@@ -60,7 +60,12 @@ class DefinesDlg extends ModalDlg {
       </div>',
     ]);
 
+    console.log();
+
+    $(self.getDlgModal().find("BUTTON")[0]).addClass("DefinesClose");
+
     //Footer code
+    this.selector("cancel").addClass("DefinesClose");
     this.selector("cancel").text("Close");
     this.selector("ok").hide();
 
@@ -834,8 +839,8 @@ class MDefines extends Defines {
       dlg.setEditor(editor);
     };
 
-    this.getDlgModal = function () {
-      return dlg.dlgModal;
+    this.getDefinesDlg = function () {
+      return dlg;
     };
 
     this.defines = function () {
