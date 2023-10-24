@@ -697,8 +697,7 @@ class Rulers {
         if (this._curve) {
           w.setCurve(this._curve);
         }
-        //plot.setAutoReplot(doReplot);
-        //plot.autoRefresh();
+
         w.computeWatch();
       }
     };

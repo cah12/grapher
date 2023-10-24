@@ -196,8 +196,6 @@ class MyCurve extends Curve {
         self.setAxis = true;
         plot.setAxisScale(self.yAxis(), -60, 60);
       }
-      // plot.setAutoReplot(autoReplot);
-      // plot.autoRefresh();
     } else {
       super.drawCurve(painter, style, xMap, yMap, from, to);
     }

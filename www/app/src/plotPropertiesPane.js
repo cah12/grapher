@@ -732,7 +732,7 @@ class PlotPropertiesPane extends PropertiesPane {
       type: "select",
       selectorOptions: ["Implicit", "Do not swap axes", "Swap axes"],
     });
-    this.addProperty({
+    var aspectRatioChkBx = this.addProperty({
       name: "1:1 aspect ratio",
       id: "aspectRatio",
       parentId: "drawingSettings",
@@ -2287,7 +2287,19 @@ class PlotPropertiesPane extends PropertiesPane {
       plotItemMap.clear();
     }
 
+    Static.bind("visibilityChange", function (e, curve, on) {      
+      if(Static.aspectRatioOneToOne){
+        var doReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
+        aspectRatioChkBx.click();
+        aspectRatioChkBx.click();  
+        plot.setAutoReplot(doReplot);
+      }     
+    });
+
     function aspectRatio(checked) {
+      var doReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       //padding-top: 100%;
       Static.aspectRatioOneToOne = checked;
       centralDivW = parseFloat(plot.getLayout().getCentralDiv().css("width"));
@@ -2328,17 +2340,18 @@ class PlotPropertiesPane extends PropertiesPane {
           "height",
           parseFloat(plotDiv.css("height")) - plot.tbar.tbarHeight + "px"
         );
-        plot.autoRefresh();
-        let L = plot
-          .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
-          .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
-          .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
-        if (L.length); //plot.rightSidebar.showSidebar(true);
+        //plot.autoRefresh();
+        // let L = plot
+        //   .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
+        //   .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
+        //   .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
+        // if (L.length); //plot.rightSidebar.showSidebar(true);
       }
       Static.trigger("aspectRatioChanged", checked);
       if (sb_visible) {
         plot.rightSidebar.showSidebar(true);
       }
+      plot.setAutoReplot(doReplot);
     }
 
     $(window).resize(function () {
@@ -2359,6 +2372,8 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     Static.bind("aspectRatioChanged", function () {
+      var doReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       if (!Static.aspectRatioOneToOne) {
         if (plot.tbar.isButtonChecked(plot.tbar.auto))
           Utility.setAutoScale(plot, true);
@@ -2370,6 +2385,7 @@ class PlotPropertiesPane extends PropertiesPane {
         Utility.setAutoScale(plot, true);
         adjustScales();
       }
+      plot.setAutoReplot(doReplot);
     });
 
     Static.bind("autoScalingEnabled", function (e, auto) {

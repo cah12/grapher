@@ -100,7 +100,7 @@ class AddRemovePointPicker extends PlotPicker {
         return a.x - b.x;
       });
       curve.setSamples(samples);
-      plot.autoRefresh();
+      //plot.autoRefresh();
       Static.trigger("pointAdded", curve);
       //plot.cs.setLimits(); //set curveShapeItem limits to undefined
       Static.trigger("curveAdjusted");

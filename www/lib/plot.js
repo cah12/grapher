@@ -155,6 +155,7 @@ class Plot {
     this.autoRefresh = function () {
       if (m_autoReplot) {
         this.replot();
+
         //this.updateLayout
       }
     };

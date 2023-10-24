@@ -402,6 +402,8 @@ class PlotSpectrogram extends PlotRasterItem {
    * @see {@link PlotRasterItem#draw PlotRasterItem.draw()}
    */
   draw(xMap, yMap) {
+    var autoReplot = this.plot().autoReplot();
+    this.plot().setAutoReplot(false);
     var d_data = this.privateData();
     var canvasRect = this.getCanvasRect();
     var painter = new PaintUtil.Painter(this);
@@ -419,6 +421,7 @@ class PlotSpectrogram extends PlotRasterItem {
       }
       this.renderContourLines(painter, xMap, yMap, canvasRect);
     }
+    this.plot().setAutoReplot(autoReplot);
   }
 }
 

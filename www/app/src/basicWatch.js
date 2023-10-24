@@ -537,7 +537,7 @@ class WatchAreaBelowCurve extends Watch {
 
           if (!this._curve || !this._curve.plot()) return;
           this._curve.plot().setAutoReplot(autoReplot);
-          this._curve.plot().autoRefresh();
+          //this._curve.plot().autoRefresh();
           this._curve = 0;
           return;
         }
@@ -633,7 +633,7 @@ class WatchAreaBelowCurve extends Watch {
       }
       if (!this._curve || !this._curve.plot()) return;
       this._curve.plot().setAutoReplot(autoReplot);
-      this._curve.plot().autoRefresh();
+      //this._curve.plot().autoRefresh();
       this._curve = 0;
     };
   }

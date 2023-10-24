@@ -36,9 +36,14 @@ class EvaluateExp {
     function init() {
       var expanded = expandDefines(m_expStr).replaceAll("mod", " mod ");
       try {
-        simplified = math.parse(expanded);
-        if (!m_expStr.includes("log"))
-          simplified = math.simplify(simplified.toString(), {}, { exactFractions: false });
+        simplified = math.compile(expanded);
+        // if (!m_expStr.includes("log"))
+        //   simplified = math.simplify(
+        //     simplified.toString(),
+        //     {},
+        //     { exactFractions: false }
+        //   );
+        //simplified = math.compile(simplified);
       } catch (err) {
         // var charPos = parseInt(err.message.match(/(\d+)/)[0]);
         // alert("Invalid character in function: " + expanded[charPos - 1]);
@@ -83,9 +88,9 @@ class EvaluateExp {
     this.eval = function (obj) {
       this.error = false;
       try {
-        let val = simplified.evaluate(obj);
+        return simplified.evaluate(obj);
         //if (val.im) val = val.im;
-        return val;
+        //return val;
       } catch (err) {
         this.errorMessage = err.message;
         this.error = true;

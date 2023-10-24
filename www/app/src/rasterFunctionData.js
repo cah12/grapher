@@ -5,13 +5,20 @@ class RasterFunctionData extends RasterData {
   constructor(functionData) {
     super();
     var fn = functionData.fx;
-    fn = fn.replaceAll(functionData.variable, "_x");
-    fn = fn.replaceAll(functionData.variableY, "_y");
+    fn = fn
+      .replaceAll(functionData.variable, "_x")
+      .replaceAll(functionData.variableY, "_y");
 
-    this.parser = new EvaluateExp(fn);
-    if (this.parser.error) {
-      Utility.alert(this.parser.errorMessage);
-      return null;
+    // this.parser = new EvaluateExp(fn);
+    // if (this.parser.error) {
+    //   Utility.alert(this.parser.errorMessage);
+    //   return null;
+    // }
+
+    try {
+      this.code1 = math.compile(fn);
+    } catch (error) {
+      Utility.alert(error);
     }
 
     this.minX = functionData.minX;
@@ -33,6 +40,6 @@ class RasterFunctionData extends RasterData {
     if (y >= this.maxY) y = this.maxY;
     if (y < this.minY) y = this.minY;
 
-    return this.parser.eval({ _x: x, _y: y });
+    return this.code1.evaluate({ _x: x, _y: y });
   }
 }

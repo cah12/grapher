@@ -103,7 +103,7 @@ class Spectrogram extends PlotSpectrogram {
     Static.bind("magnifyingEnd", mgEnd);
 
     const mgStart = function () {
-      self.setPixelSize(new Misc.Size(3, 3));
+      self.setPixelSize(new Misc.Size(4, 4));
     };
 
     Static.bind("magnifyingStart", mgStart);

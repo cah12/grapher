@@ -334,8 +334,6 @@ class PlotItem {
         m_xAxis = axis;
         this.itemChanged();
       }
-      /*if(_plot)
-            _plot.autoRefresh()*/
     };
 
     //Helper

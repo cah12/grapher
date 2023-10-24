@@ -375,6 +375,8 @@ class MToolBar extends ToolBar {
       label: "&S-Bar",
       innerHtmlId: "sideBarCheckBoxId",
       cb: function (on) {
+        var doReplot = _plot.autoReplot();
+        _plot.setAutoReplot(false);
         if (
           _plot
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -392,6 +394,7 @@ class MToolBar extends ToolBar {
           //console.log(458, on)
         }
         if (!on) _plot.sidebar.setSidebarReDisplay(false);
+        _plot.setAutoReplot(doReplot);
       },
       tooltip: "Show/Hide sidbar",
       disabled: true,

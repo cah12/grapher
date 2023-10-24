@@ -149,7 +149,7 @@ class MyObject extends HObject {
         );
         //store the udo data before sample modification
         //const samples = this.samples.map((a) => Object.assign({}, a)); //store a copy of the samples
-        const samples = this.samples.map(function(e){
+        const samples = this.samples.map(function (e) {
           return new Misc.Point(e);
         });
         MyObject.undoStack.push({ curve, samples });
@@ -268,11 +268,11 @@ class MyObject extends HObject {
 
     Static.bind("itemAttached", function (e, plotItem, on) {
       if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
-        if(!on){
-          MyObject.undoStack = MyObject.undoStack.filter(function(e){
+        if (!on) {
+          MyObject.undoStack = MyObject.undoStack.filter(function (e) {
             return e.curve != plotItem;
           });
-          MyObject.redoStack = MyObject.undoStack.filter(function(e){
+          MyObject.redoStack = MyObject.undoStack.filter(function (e) {
             return e.curve != plotItem;
           });
         }
@@ -297,13 +297,12 @@ class MyObject extends HObject {
           //   .samples()
           //   .map((a) => Object.assign({}, a)); //store a copy of the samples
 
-            const samples = curve
+          const samples = curve
             .data()
-            .samples().map(function(e){
+            .samples()
+            .map(function (e) {
               return new Misc.Point(e);
             });
-
-            
 
           MyObject.redoStack.push({ curve, samples });
 
@@ -326,9 +325,10 @@ class MyObject extends HObject {
           //   .samples()
           //   .map((a) => Object.assign({}, a)); //store a copy of the samples
 
-            const samples = curve
+          const samples = curve
             .data()
-            .samples().map(function(e){
+            .samples()
+            .map(function (e) {
               return new Misc.Point(e);
             });
           MyObject.undoStack.push({ curve, samples });

@@ -80,8 +80,7 @@ class PlotGrid extends PlotItem {
     this.enableX = function (on) {
       if (xEnabled != on) {
         xEnabled = on;
-        //this.plot().autoRefresh()
-        //legendChanged();
+
         this.itemChanged();
         Static.trigger("itemChanged", [this, on]);
       }
@@ -102,8 +101,7 @@ class PlotGrid extends PlotItem {
     this.enableY = function (on) {
       if (yEnabled != on) {
         yEnabled = on;
-        //this.plot().autoRefresh()
-        //legendChanged();
+
         this.itemChanged();
         Static.trigger("itemChanged", [this, on]);
       }
@@ -124,9 +122,7 @@ class PlotGrid extends PlotItem {
     this.enableXMin = function (on) {
       if (xMinEnabled != on) {
         xMinEnabled = on;
-        //this.plot().autoRefresh()
 
-        //legendChanged();
         this.itemChanged();
       }
     };
@@ -147,9 +143,7 @@ class PlotGrid extends PlotItem {
     this.enableYMin = function (on) {
       if (yMinEnabled != on) {
         yMinEnabled = on;
-        //this.plot().autoRefresh()
 
-        //legendChanged();
         this.itemChanged();
       }
     };

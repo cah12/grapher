@@ -1051,9 +1051,6 @@ class MyPlot extends Plot {
                     m_translateY
                   );
                 }
-                // plot.setAutoReplot(doAutoReplot);
-                // plot.autoRefresh();
-                //}
               } else {
                 return false;
               }
@@ -2414,7 +2411,7 @@ class MyPlot extends Plot {
       //zIndex: 2000,
       enableNotepad: true,
       //For Dev. Uncomment the following line.
-      fsServerUrl: "http://localhost:5500", //only necessary for cross domain
+      //fsServerUrl: "http://localhost:5500", //only necessary for cross domain
 
       listOfFileTypes: [
         {
