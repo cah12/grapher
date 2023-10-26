@@ -323,8 +323,12 @@ Static.uniqueParameter = false;
 Static.animationDuration_Moderate = 4000;
 Static.animationDuration_Slow = Static.animationDuration_Moderate * 2;
 Static.animationDuration_Fast = Static.animationDuration_Moderate / 2;
-
 Static.animationDuration = Static.animationDuration_Moderate;
+
+
+Static.theoreticalPixelSize = 2; //default
+
+
 
 Static.dicontinuityUserSetting = false;
 

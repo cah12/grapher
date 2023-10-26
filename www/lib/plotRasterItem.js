@@ -205,7 +205,7 @@ class PlotRasterItem extends PlotItem {
     };
 
     //Hellper
-    this.compose = function compose(
+    this.compose = function (
       xMap,
       yMap,
       imageArea,

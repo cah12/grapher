@@ -90,20 +90,20 @@ class Spectrogram extends PlotSpectrogram {
     /* zoomer.setRubberBandPen( new Misc.Pen("darkBlue") );
 			zoomer.setTrackerPen( new Misc.Pen("darkBlue") ); */
 
-    //this.setPixelSize(new Misc.Size(2, 2));
+    this.setPixelSize(new Misc.Size(Static.theoreticalPixelSize, Static.theoreticalPixelSize));
 
     // Static.unbind("magnifyingEnd");
     // Static.unbind("magnifyingStart");
 
     const mgEnd = function () {
-      self.setPixelSize(new Misc.Size(1, 1));
+      self.setPixelSize(new Misc.Size(Static.theoreticalPixelSize, Static.theoreticalPixelSize));
       self.itemChanged();
     };
 
     Static.bind("magnifyingEnd", mgEnd);
 
     const mgStart = function () {
-      self.setPixelSize(new Misc.Size(4, 4));
+      self.setPixelSize(new Misc.Size(2*Static.theoreticalPixelSize, 2*Static.theoreticalPixelSize));
     };
 
     Static.bind("magnifyingStart", mgStart);

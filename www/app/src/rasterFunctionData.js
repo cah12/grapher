@@ -31,7 +31,9 @@ class RasterFunctionData extends RasterData {
       Static.ZAxis,
       new Interval(functionData.minZ, functionData.maxZ)
     );
-  }
+
+    this.map = new Map(); 
+   }
 
   value(x, y) {
     //prevent out-of-range
@@ -40,6 +42,12 @@ class RasterFunctionData extends RasterData {
     if (y >= this.maxY) y = this.maxY;
     if (y < this.minY) y = this.minY;
 
-    return this.code1.evaluate({ _x: x, _y: y });
+    this.map.set("_x", x)
+    this.map.set("_y", y)
+
+    
+    return this.code1.evaluate(this.map);
   }
 }
+//982
+//750

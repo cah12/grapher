@@ -176,9 +176,9 @@ Misc.Image = function (w, h /* , a */) {
   this.copy = function () {
     var res = new Misc.Image(this.width(), this.height());
     var imageDataCopy = new ImageData(
-      new Uint8ClampedArray(this.imageData().data),
-      this.imageData().width,
-      this.imageData().height
+      new Uint8ClampedArray(m_data.data),
+      m_data.width,
+      m_data.height
     );
     res.setImageData(imageDataCopy);
     return res;
@@ -217,12 +217,13 @@ Misc.Image = function (w, h /* , a */) {
     m_data.data[redAddress] = rgba.r;
     m_data.data[redAddress + 1] = rgba.g;
     m_data.data[redAddress + 2] = rgba.b;
-    m_data.data[redAddress + 3] = 255;
-    if (rgba.a) {
-      if (rgba.a > 255) rgba.a = 255;
-      if (rgba.a < 0) rgba.a = 0;
-      m_data.data[redAddress + 3] = rgba.a;
-    }
+    //m_data.data[redAddress + 3] = 255;
+    // if (rgba.a) {
+    //   if (rgba.a > 255) rgba.a = 255;
+    //   if (rgba.a < 0) rgba.a = 0;
+    //   m_data.data[redAddress + 3] = rgba.a;
+    // }
+    m_data.data[redAddress + 3] = rgba.a || 255;
   };
 
   this.setColorTable = function (ct) {

@@ -290,7 +290,7 @@ class PlotSpectrogram extends PlotRasterItem {
      *
      */
     this.renderTile = function (xMap, yMap, tile, image) {
-      //console.time();
+      console.time();
       var range = d_data.data.interval(Static.ZAxis);
       if (!range.isValid()) return;
 
@@ -301,22 +301,28 @@ class PlotSpectrogram extends PlotRasterItem {
       var incrementH = extraPixelH + 1;
 
       var y,
+        yy,
+        ty,
         x,
+        tx,
+        rgba,
+        xx,
         top = tile.top(), //+ extraPixelH,
         bottom = tile.bottom(),
         left = tile.left(), // + extraPixelW,
         right = tile.right();
 
       if (d_data.colorMap.format() == ColorMap.Format.RGB) {
+        //console.time();
         for (y = top; y < bottom; y += incrementH) {
-          var ty = yMap.invTransform(y);
+          ty = yMap.invTransform(y);
 
           for (x = left; x < right; x += incrementW) {
-            var tx = xMap.invTransform(x);
-            var rgba = d_data.colorMap.rgb(range, d_data.data.value(tx, ty));
+            tx = xMap.invTransform(x);
+            rgba = d_data.colorMap.rgb(range, d_data.data.value(tx, ty));
             rgba.a = this.alpha(); //the default alpha value of 255
-            for (var yy = extraPixelH; yy >= 0; --yy) {
-              for (var xx = extraPixelW; xx >= 0; --xx) {
+            for (yy = extraPixelH; yy >= 0; --yy) {
+              for (xx = extraPixelW; xx >= 0; --xx) {
                 image.setPixel(
                   x + xx - extraPixelW,
                   y + yy - extraPixelH,
@@ -326,6 +332,7 @@ class PlotSpectrogram extends PlotRasterItem {
             }
           }
         }
+        //console.timeEnd();
       } else if (d_data.colorMap.format() == ColorMap.Format.Indexed) {
         for (y = top; y < bottom; y += incrementH) {
           var ty = yMap.invTransform(y);
@@ -348,7 +355,7 @@ class PlotSpectrogram extends PlotRasterItem {
           }
         }
       }
-      //console.timeEnd();
+      console.timeEnd();
     };
 
     /**

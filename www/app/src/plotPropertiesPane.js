@@ -762,6 +762,22 @@ class PlotPropertiesPane extends PropertiesPane {
       //disabled: true,
     });
 
+    var theoreticalPixel = this.addProperty({
+      name: "Theoretical pixel",
+      id: "theoreticalPixel",
+      parentId: "drawingSettings",
+      type: "select",
+      selectorOptions: ["1 x 1 (1px)", "2 x 2 (4px)", "3 x 3 (9px)"],
+      title: "Theoretical pixel affects the plotting response of spectrograms. The smaller the theoretical pixel the slower the plotting.",
+      //disabled: true,
+    });
+
+    theoreticalPixel[0].selectedIndex = 1;
+
+    theoreticalPixel.change(function () {      
+      Static.theoreticalPixelSize = parseInt([$(this)[0].selectedIndex])+1;
+    });
+
     animationRate.change(function () {
       const animationRates = [
         Static.animationDuration_Moderate,
