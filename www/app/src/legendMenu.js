@@ -1,4 +1,4 @@
-"include ['static','contextMenu']";
+"include ['static']";
 
 "use strict";
 class LegendMenu {

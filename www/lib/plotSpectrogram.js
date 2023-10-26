@@ -290,7 +290,7 @@ class PlotSpectrogram extends PlotRasterItem {
      *
      */
     this.renderTile = function (xMap, yMap, tile, image) {
-      console.time();
+      //console.time();
       var range = d_data.data.interval(Static.ZAxis);
       if (!range.isValid()) return;
 
@@ -312,15 +312,17 @@ class PlotSpectrogram extends PlotRasterItem {
         left = tile.left(), // + extraPixelW,
         right = tile.right();
 
+      const alpha = this.alpha();
+
       if (d_data.colorMap.format() == ColorMap.Format.RGB) {
-        //console.time();
+        console.time();
         for (y = top; y < bottom; y += incrementH) {
           ty = yMap.invTransform(y);
 
           for (x = left; x < right; x += incrementW) {
             tx = xMap.invTransform(x);
             rgba = d_data.colorMap.rgb(range, d_data.data.value(tx, ty));
-            rgba.a = this.alpha(); //the default alpha value of 255
+            rgba.a = alpha; //the default alpha value of 255
             for (yy = extraPixelH; yy >= 0; --yy) {
               for (xx = extraPixelW; xx >= 0; --xx) {
                 image.setPixel(
@@ -342,7 +344,7 @@ class PlotSpectrogram extends PlotRasterItem {
             var rgba = image.pixel(
               d_data.colorMap.colorIndex(range, d_data.data.value(tx, ty))
             );
-            rgba.a = this.alpha(); //the default alpha value of 255
+            rgba.a = alpha; //the default alpha value of 255
             for (var yy = extraPixelH; yy >= 0; --yy) {
               for (var xx = extraPixelW; xx >= 0; --xx) {
                 image.setPixel(

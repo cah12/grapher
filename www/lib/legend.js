@@ -141,7 +141,7 @@ class AbstractLegend {
       m_plot.setAutoReplot(false);
       plotItem.setVisible(!check);
       m_plot.setAutoReplot(doReplot);
-      //m_plot.autoRefresh();
+      m_plot.autoRefresh();
     };
 
     if (typeof checkChangeFn !== "undefined") m_checkChangeFn = checkChangeFn;

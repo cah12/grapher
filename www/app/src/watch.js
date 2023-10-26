@@ -91,6 +91,7 @@ class Watch {
     this.setEnable = function (set) {
       _enable = set;
       Static.trigger("watchEnabled", [this, set]);
+      Static.trigger("invalidateWatch");
     };
     this.isEnable = function () {
       return _enable;

@@ -251,7 +251,9 @@ class PlotPropertiesPane extends PropertiesPane {
       const m_value = $("#fnDlg_function")[0].value;
       if ($("#fnDlg_function").val().length) {
         //console.log($("#fnDlg_function")[0].value);
+        $("html").addClass("wait");
         plot._functionDlg.doEnter(true);
+        $("html").removeClass("wait");
       }
       //$("#fnDlg_function")[0].value = m_value;
       $("#fnDlg_function")[0].executeCommand("selectAll");
@@ -768,14 +770,15 @@ class PlotPropertiesPane extends PropertiesPane {
       parentId: "drawingSettings",
       type: "select",
       selectorOptions: ["1 x 1 (1px)", "2 x 2 (4px)", "3 x 3 (9px)"],
-      title: "Theoretical pixel affects the plotting response of spectrograms. The smaller the theoretical pixel the slower the plotting.",
+      title:
+        "Theoretical pixel affects the plotting response of spectrograms. The smaller the theoretical pixel the slower the plotting.",
       //disabled: true,
     });
 
     theoreticalPixel[0].selectedIndex = 1;
 
-    theoreticalPixel.change(function () {      
-      Static.theoreticalPixelSize = parseInt([$(this)[0].selectedIndex])+1;
+    theoreticalPixel.change(function () {
+      Static.theoreticalPixelSize = parseInt([$(this)[0].selectedIndex]) + 1;
     });
 
     animationRate.change(function () {
@@ -2303,14 +2306,14 @@ class PlotPropertiesPane extends PropertiesPane {
       plotItemMap.clear();
     }
 
-    Static.bind("visibilityChange", function (e, curve, on) {      
-      if(Static.aspectRatioOneToOne){
+    Static.bind("visibilityChange", function (e, curve, on) {
+      if (Static.aspectRatioOneToOne) {
         var doReplot = plot.autoReplot();
         plot.setAutoReplot(false);
         aspectRatioChkBx.click();
-        aspectRatioChkBx.click();  
+        aspectRatioChkBx.click();
         plot.setAutoReplot(doReplot);
-      }     
+      }
     });
 
     function aspectRatio(checked) {

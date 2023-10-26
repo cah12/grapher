@@ -1,5 +1,4 @@
 @ECHO OFF
-cd "C:\Users\Anthony\Google Drive\MyGames\dev-projects\grapher\tools"
+cd "C:\Users\Anthony\Documents\grapherDev\grapher\tools"
 node dependsBuild.js
 REM pause
-

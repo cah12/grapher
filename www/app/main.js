@@ -39,7 +39,6 @@ require([
   "curveFitter",
   "spline",
   "panner",
-  //"contextMenu",
   "plotMarker",
   "curveClosestPoint",
   "curveSelector",
@@ -56,7 +55,8 @@ require([
   "plotZoneItem",
   "trash",
   "transformation",
-], function (/* mathsteps */) {
+], function () {
+  //console.log(456, test);
   ////////////
   //var plot = new Plot($("#plotDiv"), "Plot");
 

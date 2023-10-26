@@ -60,6 +60,7 @@ class Trash extends ModalDlg {
           trashCollection[i].attach(plot);
         }
       }
+      //plot.autoRefresh();
       trashCollection = modifiedCollection;
     });
 
