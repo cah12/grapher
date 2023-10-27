@@ -315,7 +315,6 @@ class PlotSpectrogram extends PlotRasterItem {
       const alpha = this.alpha();
 
       if (d_data.colorMap.format() == ColorMap.Format.RGB) {
-        console.time();
         for (y = top; y < bottom; y += incrementH) {
           ty = yMap.invTransform(y);
 
@@ -334,7 +333,6 @@ class PlotSpectrogram extends PlotRasterItem {
             }
           }
         }
-        //console.timeEnd();
       } else if (d_data.colorMap.format() == ColorMap.Format.Indexed) {
         for (y = top; y < bottom; y += incrementH) {
           var ty = yMap.invTransform(y);
@@ -357,7 +355,7 @@ class PlotSpectrogram extends PlotRasterItem {
           }
         }
       }
-      console.timeEnd();
+      //console.timeEnd();
     };
 
     /**

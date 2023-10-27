@@ -248,7 +248,7 @@ class CurvePropertiesPane extends PropertiesPane {
       fun: curvePenWidth2,
     });
 
-    this.addProperty({
+    let colorMap = this.addProperty({
       name: "Colormap",
       id: "colormap",
       type: "select",
@@ -438,6 +438,7 @@ class CurvePropertiesPane extends PropertiesPane {
         if (on) {
           //attached
           //plot.leftSidebar.showGridItem(0, true);
+          colorMap[0].selectedIndex = 0;
         } else {
           //detached
           if (
@@ -492,7 +493,8 @@ class CurvePropertiesPane extends PropertiesPane {
     }
 
     function zone() {
-      plot.zoneDlg.zoneCb(plot.findPlotCurve(curveSelectProp.val()));
+      //plot.zoneDlg.zoneCb(plot.findPlotCurve(curveSelectProp.val()));
+      plot.zoneDlg.zoneCb(plot);
     }
 
     function legendAttributes() {
@@ -1011,6 +1013,8 @@ class CurvePropertiesPane extends PropertiesPane {
         self.hide("curveFill");
         self.hide("baseline");
         self.hide("curvePen");
+        self.hide("swapAxes");
+        //self.hide("zone");
       } else {
         self.show("fitCurve");
         self.show("curveSymbol");
@@ -1020,6 +1024,8 @@ class CurvePropertiesPane extends PropertiesPane {
         self.show("curveFill");
         self.show("baseline");
         self.show("curvePen");
+        self.show("swapAxes");
+        //self.show("zone");
       }
       /* let penStyles = ["solid", "dot", "dash", "dashDot", "dashDotDot"];
             $("#penColor").val(Utility.colorNameToHex(curve.pen().color));

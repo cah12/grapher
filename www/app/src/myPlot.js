@@ -2624,6 +2624,7 @@ class MyPlot extends Plot {
         super(options);
         const self = this;
         this.m_plot = plot;
+        this.fs = options.fs;
 
         options.fs.registerEditor({ name: "Defines", editor: self });
       }
@@ -2638,7 +2639,7 @@ class MyPlot extends Plot {
           content: data,
         });
         //Close the mongo file explorer
-        $("#saveDlgCancelX").click();
+        this.fs.closeExplorerDlg();
       }
     }
 

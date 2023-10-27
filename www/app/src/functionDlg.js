@@ -186,9 +186,9 @@ class MFunctionDlg {
                 <!--/div>\
                 <br-->\
                 <div id="limits" class="row">\
-                <div class="col-sm-3">Lower limit(x):</div>\
+                <div class="col-sm-3">Lower limit(<span class="limit_x">x</span>):</div>\
                 <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_lowerLimit" value="-10.0"/></math-field></div>\
-                <div class="col-sm-3">Upper limit(x):</div>\
+                <div class="col-sm-3">Upper limit(<span class="limit_x">x</span>):</div>\
                 <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_upperLimit" style="width:100%" value="10.0"/></math-field></div>\
                 </div>\
                 <!--br-->\
@@ -272,6 +272,22 @@ class MFunctionDlg {
 
     $('input[name="math_mode"]').on("change", function () {
       Replacement.config.angles = $(this).val();
+    });
+
+    $("#fnDlg_variable").on("input", function () {
+      const mf = $("#fnDlg_function")[0];
+      let fnDlgFunctionVal = mf.getValue("ascii-math");
+      if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+        $(".limit_x").html($(this).val());
+      }
+    });
+
+    $("#fnDlg_parametric_variable").on("input", function () {
+      const mf = $("#fnDlg_function")[0];
+      let fnDlgFunctionVal = mf.getValue("ascii-math");
+      if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+        $(".limit_x").html($(this).val());
+      }
     });
 
     function uniqueChars(str) {
@@ -1429,6 +1445,13 @@ class MFunctionDlg {
         backdrop: "static",
       });
       $("#fnDlg_title").val(curveName);
+      const mf = $("#fnDlg_function")[0];
+      let fnDlgFunctionVal = mf.getValue("ascii-math");
+      if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+        $(".limit_x").html($("#fnDlg_parametric_variable").val());
+      } else {
+        $(".limit_x").html($("#fnDlg_variable").val());
+      }
     };
 
     m_dlg1.on("hidden.bs.modal", function () {

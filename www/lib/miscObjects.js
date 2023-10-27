@@ -64,7 +64,9 @@ Misc.Image = function (w, h /* , a */) {
     The color/alpha information is held in an array, and is stored in the data property of the ImageData object.
     */
   var m_data = null;
-  if (_w !== 0 && _h !== 0) m_data = m_ctx.createImageData(_w, _h);
+  if (_w !== 0 && _h !== 0) {
+    m_data = m_ctx.createImageData(_w, _h);
+  }
 
   /**
    *

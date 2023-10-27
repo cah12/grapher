@@ -2813,6 +2813,10 @@ sep:
       localStorage.removeItem("RememberMeToken");
     }
 
+    closeExplorerDlg() {
+      $("#saveDlgCancelX").click();
+    }
+
     #enableNotepad() {
       //<editorName>Open
       //<editorName>Close
