@@ -237,11 +237,11 @@ class MFunctionDlg {
                 </div>\
                 <div class="col-sm-12">\
                   <input type="radio" id="deg" name="math_mode" value="deg" checked>\
-                  <label for="deg">deg</label>\
-                  <input type="radio" id="rad" name="math_mode" value="rad">\
-                  <label for="rad">rad</label>\
-                  <input type="radio" id="grad" name="math_mode" value="grad">\
-                  <label for="grad">grad</label>\
+                Â  <label for="deg">deg</label>\
+                Â  <input type="radio" id="rad" name="math_mode" value="rad">\
+                Â  <label for="rad">rad</label>\
+                Â  <input type="radio" id="grad" name="math_mode" value="grad">\
+                Â  <label for="grad">grad</label>\
                 </div>\
                 <br>\
                 <br>\
@@ -1325,6 +1325,18 @@ class MFunctionDlg {
             self.unboundedRange = $("#fnDlg_unboundedRange")[0].checked;
           } else {
             //do 3d initialization
+            self.variableY = $("#fnDlg_variableY").val();
+            let m_uniqChars = uniqueChars(self.expandedFn).join("");
+            m_uniqChars = m_uniqChars
+              .replace(self.variableY, "")
+              .replace(self.variable, "");
+            if (m_uniqChars.length) {
+              if (m_uniqChars.length == 1)
+                alert(`Undefined symbol "${m_uniqChars}"`);
+              else alert(`Undefined symbols "${m_uniqChars}"`);
+              return;
+            }
+
             self.threeDType = $("#threeDType").val();
             if (self.threeDType === "spectrogram") {
               self.threeDInterpolationType = $("#interpolationType").val();
