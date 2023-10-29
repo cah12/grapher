@@ -40,9 +40,12 @@ class MyCurve extends Curve {
 
   //f(x) is horizontal and x is vertical
   swapAxes() {
-    const self = this;
-    let samples = self.data().samples();
     if (!this.axesSwapped) {
+      const self = this;
+      const plot = self.plot();
+      let autoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
+      let samples = self.data().samples();
       this.axesSwapped = true;
       samples = samples.map(function (pt) {
         let x = pt.x;
@@ -50,14 +53,27 @@ class MyCurve extends Curve {
         pt.y = x;
         return pt;
       });
+
+      for (let i = 5; i < 8; i++) {
+        plot.rv.watch(i).setEnable(false);
+        plot.tbar.hideDropdownItem("Watch", i);
+      }
       self.setSamples(samples);
-      self.plot().autoRefresh();
+      Static.trigger("invalidateWatch");
+      plot.rv.updateWatchesAndTable();
+      plot.setAutoReplot(autoReplot);
+      plot.rv.refresh();
     }
   }
 
   //x is horizontal and f(x) is vertical
   unSwapAxes() {
     if (!this.axesSwapped) return;
+
+    const plot = this.plot();
+    let autoReplot = plot.autoReplot();
+    plot.setAutoReplot(false);
+
     this.axesSwapped = false;
     const self = this;
     let samples = self.data().samples();
@@ -67,8 +83,16 @@ class MyCurve extends Curve {
       pt.y = x;
       return pt;
     });
+    for (let i = 5; i < 8; i++) {
+      plot.tbar.showDropdownItem("Watch", i);
+      if (plot.tbar.isDropdownItemChecked("Watch", i)) {
+        plot.rv.watch(i).setEnable(true);
+      }
+    }
     self.setSamples(samples);
-    self.plot().autoRefresh();
+    plot.rv.updateWatchesAndTable();
+    plot.setAutoReplot(autoReplot);
+    plot.rv.refresh();
   }
 
   drawCurve(painter, style, xMap, yMap, from, to) {
