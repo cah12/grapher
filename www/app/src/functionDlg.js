@@ -1216,7 +1216,7 @@ class MFunctionDlg {
                 plot.defines.expandDefines(self.upperLimit, self.variable)
               )
             );
-            if (!self.upperLimit) {
+            if (self.upperLimit == undefined) {
               Utility.alert("Please enter a valid upper(x) limit.");
               return false;
             }

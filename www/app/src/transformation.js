@@ -8,15 +8,34 @@ class Transformation {
     this.transform = function (curve, type, param1, param2) {
       const variable = curve.variable;
       const numOfPoints = curve.dataSize();
-      let lowerX = null;
-      let upperX = null;
+      let lowerX = curve.lowerX;
+      let upperX = curve.upperX;
       const doSwap = curve.axesSwapped;
 
+      const doAutoReplot = plot.autoReplot();
+
       if (type == "Translate") {
-        const doAutoReplot = plot.autoReplot();
         plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
+        if (!fn && !parametricFnX && !parametricFnY) {
+          console.log("No function");
+          const _curve = new MyCurve(
+            Utility.generateCurveName(m_plot, "trans_")
+          );
+          const samples = curve.data().samples();
+          let _samples = [];
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            _samples.push(new Misc.Point(pt.x + param1, pt.y + param2));
+          }
+
+          _curve.setSamples(_samples);
+          _curve.attach(m_plot);
+          plot.setAutoReplot(doAutoReplot);
+          plot.autoRefresh();
+          return;
+        }
         if (fn) {
           if (doSwap) {
             curve.unSwapAxes();
@@ -34,8 +53,8 @@ class Transformation {
             .toString();
           //Replace the whitespace delimiters stripped out by simplify()
           fn = fn.replaceAll("mod", " mod ");
-          lowerX = curve.lowerX;
-          upperX = curve.upperX;
+          // lowerX = curve.lowerX;
+          // upperX = curve.upperX;
         }
         if (parametricFnX && parametricFnY) {
           lowerX = curve.parametricLowerX;
@@ -99,6 +118,24 @@ class Transformation {
       if (type == "Scale") {
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
+        if (!fn && !parametricFnX && !parametricFnY) {
+          console.log("No function");
+          const _curve = new MyCurve(
+            Utility.generateCurveName(m_plot, "trans_")
+          );
+          const samples = curve.data().samples();
+          let _samples = [];
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            _samples.push(new Misc.Point(pt.x, pt.y * param1));
+          }
+
+          _curve.setSamples(_samples);
+          _curve.attach(m_plot);
+          plot.setAutoReplot(doAutoReplot);
+          plot.autoRefresh();
+          return;
+        }
         if (fn) {
           fn = math
             .simplify("(" + fn + ")*" + param1, {}, { exactFractions: false })
@@ -155,10 +192,27 @@ class Transformation {
       }
 
       if (type == "Reflect x-axis") {
-        const doAutoReplot = plot.autoReplot();
         plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
+        if (!fn && !parametricFnX && !parametricFnY) {
+          console.log("No function");
+          const _curve = new MyCurve(
+            Utility.generateCurveName(m_plot, "trans_")
+          );
+          const samples = curve.data().samples();
+          let _samples = [];
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            _samples.push(new Misc.Point(pt.x, -1 * pt.y));
+          }
+
+          _curve.setSamples(_samples);
+          _curve.attach(m_plot);
+          plot.setAutoReplot(doAutoReplot);
+          plot.autoRefresh();
+          return;
+        }
         if (fn) {
           if (doSwap) {
             curve.unSwapAxes();
@@ -221,10 +275,26 @@ class Transformation {
       }
 
       if (type == "Reflect y-axis") {
-        const doAutoReplot = plot.autoReplot();
         plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
+        if (!fn && !parametricFnX && !parametricFnY) {
+          console.log("No function");
+          const _curve = new MyCurve(
+            Utility.generateCurveName(m_plot, "trans_")
+          );
+          const samples = curve.data().samples();
+          let _samples = [];
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            _samples.push(new Misc.Point(-1 * pt.x, pt.y));
+          }
+          _curve.setSamples(_samples);
+          _curve.attach(m_plot);
+          plot.setAutoReplot(doAutoReplot);
+          plot.autoRefresh();
+          return;
+        }
         if (fn) {
           if (doSwap) {
             curve.unSwapAxes();
@@ -291,10 +361,27 @@ class Transformation {
       }
 
       if (type == "Reflect x and y-axis") {
-        const doAutoReplot = plot.autoReplot();
         plot.setAutoReplot(false);
         // console.log(curve.expandedFn, param1, param2);
-        let fn = `-(${curve.fn})`;
+        let { fn, parametricFnX, parametricFnY } = curve;
+        if (!fn && !parametricFnX && !parametricFnY) {
+          console.log("No function");
+          const _curve = new MyCurve(
+            Utility.generateCurveName(m_plot, "trans_")
+          );
+          const samples = curve.data().samples();
+          let _samples = [];
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            _samples.push(new Misc.Point(-1 * pt.x, -1 * pt.y));
+          }
+          _curve.setSamples(_samples);
+          _curve.attach(m_plot);
+          plot.setAutoReplot(doAutoReplot);
+          plot.autoRefresh();
+          return;
+        }
+        fn = `-(${curve.fn})`;
         if (doSwap) {
           curve.unSwapAxes();
         }
