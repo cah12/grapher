@@ -1372,6 +1372,9 @@ class MyPlot extends Plot {
         // let decimalPlacesX = curves[0]
         //   .plot()
         //   .axisDecimalPlaces(curves[0].xAxis());
+
+        const doAutoReplot = self.autoReplot();
+        self.setAutoReplot(false);
         let str = "";
         let m = 0;
         for (let i = 0; i < curves.length; i++) {
@@ -1386,13 +1389,22 @@ class MyPlot extends Plot {
             //   decimalPlacesY
             // );
             const curve = curves[i];
+            const doSwap = curve.axesSwapped;
 
             points = curve.turningPoints;
-            if (points && points.length) {
-              //alert(`"${curve.title()}" has 0 turning points.\n`);
-              //   continue;
-              // }
 
+            if (doSwap) {
+              //curve.unSwapAxes();
+              for (let i = 0; i < points.length; i++) {
+                const pt = points[i];
+                const temp = pt.x;
+                pt.x = pt.y;
+                pt.y = temp;
+                points[i] = pt;
+              }
+            }
+
+            if (points && points.length) {
               for (let n = 0; n < points.length; n++) {
                 const odd = m % 2;
                 m++;
@@ -1434,11 +1446,19 @@ class MyPlot extends Plot {
                 );
 
                 marker.attach(self);
+                if (doSwap) {
+                  //curve.swapAxes();
+                }
               }
             }
           }
 
           if (operationType == "Inflection point") {
+            const curve = curves[i];
+            const doSwap = curve.axesSwapped;
+            if (doSwap) {
+              curve.unSwapAxes();
+            }
             points = Utility.curveInflectionPoint(
               curves[i].expandedFn,
               curves[i].variable,
@@ -1446,8 +1466,27 @@ class MyPlot extends Plot {
               decimalPlacesX,
               decimalPlacesY
             );
+            if (doSwap) {
+              curve.swapAxes();
+              for (let i = 0; i < points.length; i++) {
+                const pt = points[i];
+                const temp = pt.x;
+                pt.x = pt.y;
+                pt.y = temp;
+                points[i] = pt;
+              }
+            }
 
-            const curve = curves[i];
+            //if (doSwap) {
+            //curve.unSwapAxes();
+            // for (let i = 0; i < points.length; i++) {
+            //   const pt = points[i];
+            //   const temp = pt.x;
+            //   pt.x = pt.y;
+            //   pt.y = temp;
+            //   points[i] = pt;
+            // }
+            //}
 
             for (let n = 0; n < points.length; n++) {
               const element = points[n];
@@ -1496,6 +1535,8 @@ class MyPlot extends Plot {
             str += `${curves[i].title()} has 0 ${pointType} point\n`;
           }
         }
+        self.setAutoReplot(doAutoReplot);
+        self.autoRefresh();
         if (str.length) alert(str);
       }
 
@@ -1506,6 +1547,10 @@ class MyPlot extends Plot {
             alert("Cannot find the intersection of a curve with itself.");
             return;
           }
+          // if (curves[1].axesSwapped || curves[0].axesSwapped) {
+          //   alert("One or more curves are swapped.\nYou cannot find intersectoin of swapped and unswapped functions.");
+          //   return;
+          // }
 
           if (curves[0].xAxis() !== curves[1].xAxis()) {
             alert(
@@ -1532,7 +1577,12 @@ class MyPlot extends Plot {
 
           let res = [];
 
-          if (curves[0].expandedFn && curves[1].expandedFn) {
+          if (
+            curves[0].expandedFn &&
+            curves[1].expandedFn &&
+            !curves[1].axesSwapped &&
+            !curves[0].axesSwapped
+          ) {
             // Utility.logStep(Static.operation, {
             //   equations: [curves[0].expandedFn, curves[1].expandedFn],
             //   variable: curves[0].variable,

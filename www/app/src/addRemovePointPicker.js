@@ -60,6 +60,8 @@ class AddRemovePointPicker extends PlotPicker {
 
     function enterPoint(p) {
       if (!m_activated) return;
+      const doAutoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       if (!curve) {
         //"Create curve"
         curve = new MyCurve(Utility.generateCurveName(plot));
@@ -89,6 +91,13 @@ class AddRemovePointPicker extends PlotPicker {
         Utility.setLegendAttribute(curve, attribute, curve.getLegendIconSize()); //attribute = "line" or "symbol" or "lineAndSymbol"
         curve.attach(plot);
       }
+      const doSwap = curve.axesSwapped;
+      if (doSwap) {
+        const temp = p.x;
+        p.x = pt.y;
+        p.y = temp;
+        //curve.unSwapAxes();
+      }
       let samples = curve.data().samples();
       if (!samples.containsPoint(p)) {
         samples.push(p);
@@ -106,6 +115,12 @@ class AddRemovePointPicker extends PlotPicker {
       Static.trigger("curveAdjusted");
       /* We have at least one point. Ensure remove button is enabled. */
       //$('#pointEntryDlg_remove').attr('disabled', false);
+
+      // if (doSwap) {
+      //   //curve.swapAxes();
+      // }
+      plot.setAutoReplot(doAutoReplot);
+      plot.autoRefresh();
     }
 
     var prevPoint = new Misc.Point(Number.MAX_VALUE, Number.MAX_VALUE);

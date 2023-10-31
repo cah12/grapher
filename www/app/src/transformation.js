@@ -10,17 +10,25 @@ class Transformation {
       const numOfPoints = curve.dataSize();
       let lowerX = null;
       let upperX = null;
+      const doSwap = curve.axesSwapped;
+
       if (type == "Translate") {
+        const doAutoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
         if (fn) {
+          if (doSwap) {
+            curve.unSwapAxes();
+          }
           if (param1 !== 0) {
-            fn = fn.replaceAll("x", "(x+" + param1 * -1 + ")");
+            fn = fn.replaceAll(variable, `(${variable}+  ${param1} * -1 )`);
             //fn = fn.replaceAll("+-", "-");
           }
           if (param2 !== 0) {
             fn = "(" + fn + ")+" + param2;
           }
+
           fn = math
             .simplify(fn.replaceAll("+-", "-"), {}, { exactFractions: false })
             .toString();
@@ -80,6 +88,12 @@ class Transformation {
         //   return e + param1;
         // });
         _curve.attach(m_plot);
+        if (doSwap) {
+          _curve.swapAxes();
+          curve.swapAxes();
+        }
+        plot.setAutoReplot(doAutoReplot);
+        plot.autoRefresh();
       }
 
       if (type == "Scale") {
@@ -141,9 +155,14 @@ class Transformation {
       }
 
       if (type == "Reflect x-axis") {
+        const doAutoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
         if (fn) {
+          if (doSwap) {
+            curve.unSwapAxes();
+          }
           fn = math
             .simplify(`-(${curve.fn})`, {}, { exactFractions: false })
             .toString();
@@ -193,12 +212,23 @@ class Transformation {
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
         _curve.attach(m_plot);
+        if (doSwap) {
+          _curve.swapAxes();
+          curve.swapAxes();
+        }
+        plot.setAutoReplot(doAutoReplot);
+        plot.autoRefresh();
       }
 
       if (type == "Reflect y-axis") {
+        const doAutoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
         //console.log(curve.expandedFn, param1, param2);
         let { fn, parametricFnX, parametricFnY } = curve;
         if (fn) {
+          if (doSwap) {
+            curve.unSwapAxes();
+          }
           fn = math
             .simplify(
               fn.replaceAll(variable, `(-1*${variable})`),
@@ -252,11 +282,22 @@ class Transformation {
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
         _curve.attach(m_plot);
+        if (doSwap) {
+          _curve.swapAxes();
+          curve.swapAxes();
+        }
+        plot.setAutoReplot(doAutoReplot);
+        plot.autoRefresh();
       }
 
       if (type == "Reflect x and y-axis") {
+        const doAutoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
         // console.log(curve.expandedFn, param1, param2);
         let fn = `-(${curve.fn})`;
+        if (doSwap) {
+          curve.unSwapAxes();
+        }
         fn = math
           .simplify(
             fn.replaceAll(variable, `(-1*${variable})`),
@@ -297,6 +338,12 @@ class Transformation {
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
         _curve.attach(m_plot);
+        if (doSwap) {
+          _curve.swapAxes();
+          curve.swapAxes();
+        }
+        plot.setAutoReplot(doAutoReplot);
+        plot.autoRefresh();
       }
     };
   }

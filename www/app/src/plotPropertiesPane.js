@@ -345,9 +345,16 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     function clearPointTable() {
+      // let mfs = $("#pointTableTable").find("math-field");
+      // console.log(mfs);
+
       let rows = $("#pointTableTable")[0].rows;
       while (rows.length > 2) {
-        $("#pointTableTable")[0].deleteRow(1);
+        $(rows[1]).remove();
+        //console.log(c[0].innerHTML, c[1].innerHTML);
+        // $(c[0].innerHTML).remove();
+        // $(c[1].innerHTML).remove();
+        //$("#pointTableTable")[0].deleteRow(1);
       }
       // rows = $("#pointTableTable")[0].rows;
       const inputs = $("#pointTableTable").find("math-field");

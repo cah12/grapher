@@ -1757,7 +1757,11 @@ class Utility {
     }
 
     if (obj.threeD && indepVarY !== "y") {
-      while (fx.indexOf(indepVarY) != -1) fx = fx.replace(indepVarY, "y");
+      let n = 0;
+      while (fx.indexOf(indepVarY) != -1 && n < 500) {
+        fx = fx.replace(indepVarY, "y");
+        n++;
+      }
 
       lowerY = obj.lowerY;
       var upperY = obj.upperY;
@@ -1959,8 +1963,19 @@ class Utility {
         for (let i = 0; i < points.length; i++) {
           samples.push(points[i]);
         }
+
         samples = samples.sort(function (a, b) {
           return a.x - b.x;
+        });
+
+        samples = samples.filter((item, index) => {
+          if (index > 0) {
+            return (
+              samples[index - 1].x !== samples[index].x &&
+              samples[index - 1].y !== samples[index].y
+            );
+          }
+          return true;
         });
       }
     }
@@ -2318,7 +2333,7 @@ class Utility {
     let unmodifiedOperand = null;
     let operand = "";
     let lBracket = 0;
-    for (let i = indexOfKeyword + keyword.length - 1; i < exp.length; i++) {
+    for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
       if (exp[i] == "(") {
         operand += "(";
         lBracket++;
@@ -2460,7 +2475,11 @@ class Utility {
 
     if (indepVar !== "x") {
       exp = Utility.purgeAndMarkKeywords(exp);
-      while (exp.indexOf(indepVar) != -1) exp = exp.replace(indepVar, "x");
+      let n = 0;
+      while (exp.indexOf(indepVar) != -1 && n < 500) {
+        exp = exp.replace(indepVar, "x");
+        n++;
+      }
       exp = Utility.replaceKeywordMarkers(exp);
     }
 

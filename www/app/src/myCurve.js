@@ -41,6 +41,7 @@ class MyCurve extends Curve {
   //f(x) is horizontal and x is vertical
   swapAxes() {
     if (!this.axesSwapped) {
+      //console.log(this.discontinuity);
       const self = this;
       const plot = self.plot();
       let autoReplot = plot.autoReplot();
@@ -122,9 +123,16 @@ class MyCurve extends Curve {
 
         for (let n = 0; n < self.discontinuity.length; n++) {
           for (let i = 0; i < samples.length; i++) {
-            if (samples[i].x > self.discontinuity[n]) {
-              indexBeforeDiscontinuity.push(i - 1);
-              break;
+            if (!self.axesSwapped) {
+              if (samples[i].x > self.discontinuity[n]) {
+                indexBeforeDiscontinuity.push(i - 1);
+                break;
+              }
+            } else {
+              if (samples[i].y > self.discontinuity[n]) {
+                indexBeforeDiscontinuity.push(i - 1);
+                break;
+              }
             }
           }
         }

@@ -703,11 +703,11 @@ class WatchVolumeOfRevolution extends Watch {
         if (this._curve.expandedFn) {
           var fn = this._curve.expandedFn;
           fn = Utility.logBaseAdjust(fn);
-          if (this._curve.variable != "x") {
+          /* if (this._curve.variable != "x") {
             while (fn.indexOf(this._curve.variable) != -1) {
               fn = fn.replace(this._curve.variable, "x");
             }
-          }
+          } */
           if (this._curve.coeffs) {
             for (var i = 0; i < this._curve.coeffs.length; ++i) {
               while (fn.indexOf(this._curve.coeffs[i]) != -1) {
