@@ -630,20 +630,26 @@ class MFunctionDlg {
         self.domainRangeRestriction = [];
 
         function forceDefine(fn, dec) {
+          fn = fn.replaceAll(dec, "U");
           const arr = fn.split("=");
           if (arr.length !== 2) {
             return false; //failed to force definition
           }
 
-          const expandedRHS = plot.defines.expandDefines(
-            arr[1].replaceAll(dec, "U"),
-            self.variable
-          );
-          const expandedLHS = plot.defines.expandDefines(
-            arr[0].replaceAll(dec, "U"),
-            self.variable
-          );
+          // fn = fn
+          //   .replaceAll("U", "*U")
+          //   .replaceAll("**", "*")
+          //   .replaceAll("-*", "-")
+          //   .replaceAll("+*", "+")
+          //   .replaceAll("/*", "/")
+          //   .replaceAll("=*", "=");
+
+          // if (fn[0] == "*") fn = fn.substring(1);
+
+          const expandedRHS = plot.defines.expandDefines(arr[1], self.variable);
+          const expandedLHS = plot.defines.expandDefines(arr[0], self.variable);
           fn = `${expandedLHS}=${expandedRHS}`;
+          fn = Utility.insertProductSign(fn, plot.defines);
 
           let res = null;
           //fn = fn.replaceAll(dec, "U");
