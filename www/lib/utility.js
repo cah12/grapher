@@ -1754,6 +1754,7 @@ class Utility {
       fx = Utility.purgeAndMarkKeywords(fx);
       while (fx.indexOf(indepVar) != -1) fx = fx.replace(indepVar, "x");
       fx = Utility.replaceKeywordMarkers(fx);
+      indepVar = "x";
     }
 
     if (obj.threeD && indepVarY !== "y") {
@@ -1956,9 +1957,15 @@ class Utility {
       return { data: samples, zLimits: { min: zMin, max: zMax } };
     }
     if (!obj.threeD) {
+      obj.inflectionPoints = Utility.curveInflectionPoint(
+        fx,
+        indepVar,
+        samples
+      );
       const points = Utility.curveTurningPoint(fx, indepVar, samples);
       //console.log("Add Turning points", points);
       obj.turningPoints = points; //return turning points to makeSamples() caller
+
       if (points.length) {
         for (let i = 0; i < points.length; i++) {
           samples.push(points[i]);

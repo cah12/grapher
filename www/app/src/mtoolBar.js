@@ -724,6 +724,8 @@ class MToolBar extends ToolBar {
 
     /////////////////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////
+
     //We add the help button last. This way it is always to the right
     this.addToolButton("link", {
       text: "&Help",

@@ -671,6 +671,28 @@ class Defines {
         }
       }
       //console.log("test:" + test++);
+      if (!variable && res) {
+        // const f = res.substring(0, res.indexOf("("));
+        // console.log(f);
+        let f = "";
+        let numOfPrimes = 0;
+        for (let i = ind; i >= 0; i--) {
+          if (str[i] == "'") {
+            numOfPrimes++;
+            continue;
+          }
+          f += str[i];
+          break;
+        }
+        for (let i = 0; i < numOfPrimes; i++) {
+          f += "'";
+        }
+        f += "(";
+        const keys = this.defineNames();
+        for (let i = 0; i < keys.length; i++) {
+          if (keys[i].indexOf(f) !== -1) return keys[i];
+        }
+      }
       return res;
     };
 

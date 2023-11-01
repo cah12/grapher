@@ -483,9 +483,11 @@ class MyPlot extends Plot {
             fnc[n - 1] !== "(" &&
             fnc[n - 1] !== "^"
           ) {
-            fnc = fnc.replace(coeffs[i], "*" + coeffs[i]);
-            n = fnc.indexOf(coeffs[i]);
+            //fnc = fnc.replace(coeffs[i], "*" + coeffs[i]);
+            fnc = fnc.replace(coeffs[i], "*" + "~");
+            n = fnc.indexOf(coeffs[i], n + 2);
           }
+          fnc = fnc.replaceAll("~", coeffs[i]);
         }
         m_fn = Utility.replaceKeywordMarkers(fnc);
         if (self._functionDlg.expandedFn) {
@@ -788,6 +790,7 @@ class MyPlot extends Plot {
         }
 
         newCurve.turningPoints = makeSamplesData.turningPoints;
+        newCurve.inflectionPoints = makeSamplesData.inflectionPoints;
         newCurve.latex = self._functionDlg.latex;
         if (!newCurve) return;
         if (samples.length == 1) {
@@ -959,16 +962,16 @@ class MyPlot extends Plot {
       }
 
       let variable = curves[0].variable;
-      if (!(operationType == "Join" || operationType == "Join and keep")) {
-        if (curves.length > 1 && operationType !== "Intersection") {
-          for (let i = 1; i < curves.length; i++) {
-            if (curves[i].variable !== variable) {
-              alert("Selected functions have different idependent vaiables.");
-              return;
-            }
-          }
-        }
-      }
+      // if (!(operationType == "Join" || operationType == "Join and keep")) {
+      //   if (curves.length > 1 && operationType !== "Intersection") {
+      //     for (let i = 1; i < curves.length; i++) {
+      //       if (curves[i].variable !== variable) {
+      //         alert("Selected functions have different idependent vaiables.");
+      //         return;
+      //       }
+      //     }
+      //   }
+      // }
 
       if (
         operationType == "Translate" ||
@@ -1381,28 +1384,9 @@ class MyPlot extends Plot {
           //const points = Utility.curveTurningPoint(curves[i]);//fn, variable, samples
           let points;
           if (operationType == "Turning point") {
-            // points = Utility.curveTurningPoint(
-            //   curves[i].expandedFn,
-            //   curves[i].variable,
-            //   curves[i].data().samples(),
-            //   decimalPlacesX,
-            //   decimalPlacesY
-            // );
             const curve = curves[i];
-            const doSwap = curve.axesSwapped;
 
             points = curve.turningPoints;
-
-            if (doSwap) {
-              //curve.unSwapAxes();
-              for (let i = 0; i < points.length; i++) {
-                const pt = points[i];
-                const temp = pt.x;
-                pt.x = pt.y;
-                pt.y = temp;
-                points[i] = pt;
-              }
-            }
 
             if (points && points.length) {
               for (let n = 0; n < points.length; n++) {
@@ -1416,12 +1400,6 @@ class MyPlot extends Plot {
                 marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
                 marker.setXAxis(curve.xAxis());
                 marker.setYAxis(curve.yAxis());
-
-                // const sym = new Symbol2();
-                // sym.setBrush(new Misc.Brush(Static.NoBrush));
-                // sym.setSize(new Misc.Size(10, 10));
-                // sym.setStyle(Symbol2.Style.Ellipse);
-                // marker.setSymbol(sym);
 
                 marker.setSymbol(new PointMarkerSymbol());
 
@@ -1446,47 +1424,13 @@ class MyPlot extends Plot {
                 );
 
                 marker.attach(self);
-                if (doSwap) {
-                  //curve.swapAxes();
-                }
               }
             }
           }
 
           if (operationType == "Inflection point") {
             const curve = curves[i];
-            const doSwap = curve.axesSwapped;
-            if (doSwap) {
-              curve.unSwapAxes();
-            }
-            points = Utility.curveInflectionPoint(
-              curves[i].expandedFn,
-              curves[i].variable,
-              curves[i].data().samples(),
-              decimalPlacesX,
-              decimalPlacesY
-            );
-            if (doSwap) {
-              curve.swapAxes();
-              for (let i = 0; i < points.length; i++) {
-                const pt = points[i];
-                const temp = pt.x;
-                pt.x = pt.y;
-                pt.y = temp;
-                points[i] = pt;
-              }
-            }
-
-            //if (doSwap) {
-            //curve.unSwapAxes();
-            // for (let i = 0; i < points.length; i++) {
-            //   const pt = points[i];
-            //   const temp = pt.x;
-            //   pt.x = pt.y;
-            //   pt.y = temp;
-            //   points[i] = pt;
-            // }
-            //}
+            points = curve.inflectionPoints;
 
             for (let n = 0; n < points.length; n++) {
               const element = points[n];
@@ -1496,12 +1440,6 @@ class MyPlot extends Plot {
               marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
               marker.setXAxis(curve.xAxis());
               marker.setYAxis(curve.yAxis());
-
-              // const sym = new Symbol2();
-              // sym.setBrush(new Misc.Brush(Static.NoBrush));
-              // sym.setSize(new Misc.Size(10, 10));
-              // sym.setStyle(Symbol2.Style.Ellipse);
-              // marker.setSymbol(sym);
 
               marker.setSymbol(new PointMarkerSymbol());
               marker.toolTipValueName = "Inflection point:";
@@ -1566,15 +1504,6 @@ class MyPlot extends Plot {
             return;
           }
 
-          // let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
-          // let precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
-          // let decimalPlacesY = curves[0]
-          //   .plot()
-          //   .axisDecimalPlaces(curves[0].yAxis());
-          // let decimalPlacesX = curves[0]
-          //   .plot()
-          //   .axisDecimalPlaces(curves[0].xAxis());
-
           let res = [];
 
           if (
@@ -1583,40 +1512,35 @@ class MyPlot extends Plot {
             !curves[1].axesSwapped &&
             !curves[0].axesSwapped
           ) {
-            // Utility.logStep(Static.operation, {
-            //   equations: [curves[0].expandedFn, curves[1].expandedFn],
-            //   variable: curves[0].variable,
-            // });
-            // Utility.logStep(Static.constructEquation, operationType);
+            let expandedFn1 = curves[0].expandedFn;
+            let expandedFn2 = curves[1].expandedFn;
+            if (curves[0].variable != curves[1].variable) {
+              expandedFn2 = expandedFn2.replaceAll(
+                curves[1].variable,
+                curves[0].variable
+              );
+            }
             let simplifiedExp = math
               .simplify(
-                `(${curves[0].expandedFn})-(${curves[1].expandedFn})`,
+                `(${expandedFn1})-(${expandedFn2})`,
                 {},
                 { exactFractions: false }
               )
               .toString();
             //Replace the whitespace delimiters stripped out by simplify()
             simplifiedExp = simplifiedExp.replaceAll("mod", " mod ");
-            //Utility.logStep(Static.rearrangeEquation, operationType);
             if (simplifiedExp.indexOf(curves[0].variable) == -1) {
               alert(`0 points of intersection:\n`);
               return;
             }
 
             nerdamer.flush();
-            var eq = nerdamer(
-              `(${curves[0].expandedFn})-(${curves[1].expandedFn})=0`
-            );
-            Static.expression = `(${curves[0].expandedFn})-(${curves[1].expandedFn})=0`;
-            //Utility.logStep(Static.solveEquation, operationType);
+            var eq = nerdamer(`(${expandedFn1})-(${expandedFn2})=0`);
+            Static.expression = `(${expandedFn1})-(${expandedFn2})=0`;
             var solution = eq.solveFor(curves[0].variable);
-            //Static.stepper.unload();
-            //console.log(solution[0].toString(), solution[1].toString());
+
             if (solution && solution.length < 20) {
-              const fn = curves[0].expandedFn.replaceAll(
-                curves[0].variable,
-                "Z"
-              );
+              const fn = expandedFn1.replaceAll(curves[0].variable, "Z");
 
               for (let i = 0; i < solution.length; i++) {
                 //console.log(solution.at(i).toString());
@@ -2831,13 +2755,22 @@ class MyPlot extends Plot {
     // console.log(x.toString()); */
 
     const tbDiv = this.tbar.html(); //display: inline-block;
-    tbDiv.attr("display", "inline-block");
+    //tbDiv.attr("display", "inline-block");
 
+    // tbDiv.append(
+    //   $(
+    //     '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:block;width:130px; margin:5px"></span>'
+    //   )
+    // );
+
+    // const last = $(tbDiv[0].lastChild);
     tbDiv.append(
       $(
-        '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:block;width:130px;float:right; margin:5px"></span>'
+        '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden; margin:5px; margin-left:20px"></span>'
       )
     );
+
+    // console.log(tbDiv[0].lastChild);
 
     $(".GrapherTitle").mouseenter(function () {
       $(this).attr("title", $(this).html());

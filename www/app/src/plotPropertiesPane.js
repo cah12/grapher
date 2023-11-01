@@ -53,6 +53,7 @@ class PlotPropertiesPane extends PropertiesPane {
             _inputs[1].value.replace(/\s/g, "").length
           ) {
             $("#pointTableTable").append(makePointTableRow());
+
             const lastRow = $("#pointTableTable").find("TR").last();
             const inp = lastRow.find("math-field").first()[0];
             //console.log(inp);
@@ -113,6 +114,17 @@ class PlotPropertiesPane extends PropertiesPane {
     t.parent().append(pointTable);
 
     $("#pointTableTable").append(makePointTableRow());
+
+    $("math-field")[0].addEventListener(
+      "keydown",
+      (ev) => {
+        if (ev.key === "\\") {
+          ev.preventDefault();
+          $("#fnDlg_function")[0].executeCommand(["insert", "\\backslash"]);
+        } else if (ev.key === "Escape") ev.preventDefault();
+      },
+      { capture: true }
+    );
 
     // $(".pointTableRow").on("input", function () {
     //   //console.log(parseFloat($(this).val()));

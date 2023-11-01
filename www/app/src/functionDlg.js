@@ -237,11 +237,11 @@ class MFunctionDlg {
                 </div>\
                 <div class="col-sm-12">\
                   <input type="radio" id="deg" name="math_mode" value="deg" checked>\
-                Â  <label for="deg">deg</label>\
-                Â  <input type="radio" id="rad" name="math_mode" value="rad">\
-                Â  <label for="rad">rad</label>\
-                Â  <input type="radio" id="grad" name="math_mode" value="grad">\
-                Â  <label for="grad">grad</label>\
+                  <label for="deg">deg</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                  <input type="radio" id="rad" name="math_mode" value="rad">\
+                  <label for="rad">rad</label>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                  <input type="radio" id="grad" name="math_mode" value="grad">\
+                  <label for="grad">grad</label>\
                 </div>\
                 <br>\
                 <br>\

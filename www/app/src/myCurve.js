@@ -54,6 +54,26 @@ class MyCurve extends Curve {
         pt.y = x;
         return pt;
       });
+      if (self.turningPoints.length) {
+        const points = self.turningPoints;
+        for (let i = 0; i < points.length; i++) {
+          const pt = points[i];
+          const temp = pt.x;
+          pt.x = pt.y;
+          pt.y = temp;
+          points[i] = pt;
+        }
+      }
+      if (self.inflectionPoints.length) {
+        const points = self.inflectionPoints;
+        for (let i = 0; i < points.length; i++) {
+          const pt = points[i];
+          const temp = pt.x;
+          pt.x = pt.y;
+          pt.y = temp;
+          points[i] = pt;
+        }
+      }
 
       for (let i = 5; i < 8; i++) {
         plot.rv.watch(i).setEnable(false);
@@ -84,6 +104,26 @@ class MyCurve extends Curve {
       pt.y = x;
       return pt;
     });
+    if (self.turningPoints.length) {
+      const points = self.turningPoints;
+      for (let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        const temp = pt.x;
+        pt.x = pt.y;
+        pt.y = temp;
+        points[i] = pt;
+      }
+    }
+    if (self.inflectionPoints.length) {
+      const points = self.inflectionPoints;
+      for (let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        const temp = pt.x;
+        pt.x = pt.y;
+        pt.y = temp;
+        points[i] = pt;
+      }
+    }
     for (let i = 5; i < 8; i++) {
       plot.tbar.showDropdownItem("Watch", i);
       if (plot.tbar.isDropdownItemChecked("Watch", i)) {
