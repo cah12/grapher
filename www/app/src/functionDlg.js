@@ -663,6 +663,15 @@ class MFunctionDlg {
           }
           nerdamer.flush();
           if (res) {
+            console.log(res);
+            if (res.indexOf(",") !== -1) {
+              const sltns = res.replaceAll(",", ", ");
+
+              res = res.split(",")[0];
+              alert(
+                `The solutions for the definition of "${dec}" are [ ${sltns} ].\nThe first solution, "${res}", is used.`
+              );
+            }
             res = res.replace("U", dec);
             if (res.indexOf("U") !== -1) {
               return false; //failed to force definition
@@ -890,6 +899,13 @@ class MFunctionDlg {
                   }
                   fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
                   arr = [m_lhs];
+                } else {
+                  if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
+                    alert(
+                      `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
+                    );
+                    return;
+                  }
                 }
               }
               if (fnDlgFunctionVal !== m_lhs) {
@@ -916,6 +932,12 @@ class MFunctionDlg {
               //   plot.defines
               // );
               if (arr.length == 2) {
+                if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
+                  alert(
+                    `The equation, ${arr[0]}=${arr[1]}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
+                  );
+                  return;
+                }
                 if (m_lhs.length == 1) {
                   arr = [m_rhs];
                 } else {
@@ -1082,14 +1104,16 @@ class MFunctionDlg {
             let arr = [obj.operand, obj.base];
             self.expandedParametricFnX = doExpandDefinesAndAdjustLogBase(
               arr[0],
-              self.variable
+              self.variable,
+              false
             );
             if (!self.expandedParametricFnX) {
               return;
             }
             self.expandedParametricFnY = doExpandDefinesAndAdjustLogBase(
               arr[1],
-              self.variable
+              self.variable,
+              false
             );
             if (!self.expandedParametricFnY) {
               return;

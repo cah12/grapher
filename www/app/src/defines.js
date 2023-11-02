@@ -882,7 +882,7 @@ class MDefines extends Defines {
     });
 
     $(window).bind("defineAdded", function (e, name, value) {
-      value = self.expandDefines(value);
+      value = self.expandDefines(value, null, false);
       dlg.doAdd(name, value);
     });
   }
