@@ -13,7 +13,7 @@ class DefinesDlg extends ModalDlg {
     const self = this;
     self.defines = defines;
 
-    self.showVirtualKeyboard = true;
+    self.showKeyboard = true;
 
     let editor = _editor;
 
@@ -45,7 +45,8 @@ class DefinesDlg extends ModalDlg {
     const mf = self.selector("definesValue")[0];
 
     $(mf).on("focusin", () => {
-      if (self.showVirtualKeyboard) {
+      if (self.showKeyboard) {
+        mathVirtualKeyboard.container = self.getDlgModal()[0];
         mathVirtualKeyboard.show();
         $(".modal-dialog").css("top", "63%");
         this.getDlgModal()[0].scrollBy(0, 1000);
@@ -54,7 +55,8 @@ class DefinesDlg extends ModalDlg {
     });
 
     $(mf).on("focusout", () => {
-      if (self.showVirtualKeyboard) {
+      if (self.showKeyboard) {
+        mathVirtualKeyboard.container = $("body")[0];
         mathVirtualKeyboard.hide();
         $(".modal-dialog").css("top", "0%");
       }
@@ -342,10 +344,9 @@ class DefinesDlg extends ModalDlg {
       defines.simplify($(this)[0].checked);
     });
 
-    this.addHandler("showVirtualKeyboard", "click", function () {
-      //defines.simplify($(this)[0].checked);
-      self.showVirtualKeyboard = $(this)[0].checked;
-    });
+    // this.addHandler("showVirtualKeyboard", "click", function () {
+    //   //self.showKeyboard = $(this)[0].checked;
+    // });
 
     this.defineDlgInit = function () {
       self.selector("definesAdd").attr("disabled", true);
@@ -392,10 +393,6 @@ class DefinesDlg extends ModalDlg {
     });
   }
 
-  beforeClose() {
-    mathVirtualKeyboard.container = $("body")[0];
-  }
-
   initializeDialog() {
     this.defineDlgInit();
   }
@@ -405,32 +402,7 @@ class Defines {
   constructor() {
     let self = this;
     let m_defines = new Map();
-    //let keywordMarkers = [];
     let m_simplify = true;
-
-    /* function replaceKeywordMarkers(str) {
-      for (var i = 0; i < keywordMarkers.length; ++i) {
-        while (str.indexOf(keywordMarkers[i].marker) != -1) {
-          str = str.replace(
-            keywordMarkers[i].marker,
-            keywordMarkers[i].keyword
-          );
-        }
-      }
-      keywordMarkers = [];
-      return str;
-    }
-
-    function purgeAndMarkKeywords(str) {
-      for (var i = 0; i < Static.keywords.length; ++i) {
-        while (str.indexOf(Static.keywords[i]) != -1) {
-          var _marker = "%" + keywordMarkers.length + "%";
-          str = str.replace(Static.keywords[i], _marker);
-          keywordMarkers.push({ marker: _marker, keyword: Static.keywords[i] });
-        }
-      }
-      return str;
-    } */
 
     function getParenthesizeDefine(name) {
       if (m_defines.has(name)) {
@@ -913,8 +885,6 @@ class MDefines extends Defines {
 
     this.defines = function () {
       dlg.showDlg();
-      if (this.getDefinesDlg().showVirtualKeyboard)
-        mathVirtualKeyboard.container = this.getDefinesDlg().getDlgModal()[0];
     };
 
     $(window).bind("fileOpened", function (e, data, filename, ext, editorName) {
