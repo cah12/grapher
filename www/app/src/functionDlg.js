@@ -187,23 +187,23 @@ class MFunctionDlg {
                 <br-->\
                 <div id="limits" class="row">\
                 <div class="col-sm-3">Lower limit(<span class="limit_x">x</span>):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_lowerLimit" value="-10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimit" style="width:100%" />-10.0</math-field></div>\
                 <div class="col-sm-3">Upper limit(<span class="limit_x">x</span>):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_upperLimit" style="width:100%" value="10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimit" style="width:100%" />10.0</math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="limitsY" class="row">\
                 <div class="col-sm-3">Lower limit(y):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_lowerLimitY" style="width:100%" value="-10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitY" style="width:100%" value="-10.0"/></math-field></div>\
                 <div class="col-sm-3">Upper limit(y):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_upperLimitY" style="width:100%" value="10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitY" style="width:100%" value="10.0"/></math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="limitsFxy" class="row">\
                 <div class="col-sm-3">Lower limit(f(xy)):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_lowerLimitFxy" style="width:100%" value="0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitFxy" style="width:100%" value="0"/></math-field></div>\
                 <div class="col-sm-3">Upper limit(f(xy)):</div>\
-                <div class="col-sm-3"><math-field style="font-size:1.2em;" id="fnDlg_upperLimitFxy" style="width:100%" value="10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitFxy" style="width:100%" value="10.0"/></math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="colorInterval" class="row">\
@@ -258,6 +258,17 @@ class MFunctionDlg {
     );
 
     $("body").append(m_dlg1);
+
+    // const mathFieldLimits = $(".math-field-limits")[0];
+    // mathFieldLimits.mathVirtualKeyboardPolicy = "manual";
+    // console.log(mathFieldLimits.mathVirtualKeyboardPolicy);
+    // //mathFieldLimits.mathVirtualKeyboardPolicy = "manual";
+    // mathFieldLimits.addEventListener("focusin", () =>
+    //   mathVirtualKeyboard.hide()
+    // );
+    // mathFieldLimits.addEventListener("focusout", () =>
+    //   mathVirtualKeyboard.hide()
+    // );
 
     Utility.extendGetValue($("#fnDlg_lowerLimit")[0]);
     Utility.extendGetValue($("#fnDlg_upperLimit")[0]);
@@ -471,7 +482,10 @@ class MFunctionDlg {
           $("#limitsFxy").hide();
           $("#unboundedContainer").show();
           $("#fx").html("f(x):");
-          $("#fnDlg_function").val("x^2");
+          //$("#fnDlg_function").val("x^2");
+          $("#fnDlg_function")[0].setValue(Utility.toLatex("x^2"), {
+            suppressChangeNotifications: true,
+          });
           $("#colorInterval").hide();
           $("#cont_parametric_variable").show();
           $("#cont_variable").show();
@@ -481,7 +495,10 @@ class MFunctionDlg {
           $("#limitsFxy").show();
           $("#unboundedContainer").hide();
           $("#fx").html("f(x,y):");
-          $("#fnDlg_function").val("x^2 + y^2");
+          //$("#fnDlg_function").val("x^2 + y^2");
+          $("#fnDlg_function")[0].setValue(Utility.toLatex("x^2 + y^2"), {
+            suppressChangeNotifications: true,
+          });
           $("#colorInterval").show();
           $("#cont_parametric_variable").hide();
           $("#cont_variable").hide();
@@ -696,27 +713,14 @@ class MFunctionDlg {
           );
 
           const mf = $("#fnDlg_function")[0];
+          //const mf = plot.plotPropertiesPane.mf;
 
           //let fnDlgFunctionVal = Utility.latexToAscii(mf);
           let fnDlgFunctionVal = mf.getValue("ascii-math");
 
-          /* //insert * between 0 followed by alpha eg 0x
-          let m_fnDlgFunctionVal = "";
-          for (let i = 1; i < fnDlgFunctionVal.length; i++) {
-            const c = fnDlgFunctionVal[i-1];
-            m_fnDlgFunctionVal += c;
-            if(c==="0" && Utility.isAlpha(fnDlgFunctionVal[i])){
-              m_fnDlgFunctionVal += "*";
-            }            
-          }
-          m_fnDlgFunctionVal += fnDlgFunctionVal[fnDlgFunctionVal.length-1]; */
-          // fnDlgFunctionVal = m_fnDlgFunctionVal;
-
           if (!fnDlgFunctionVal) {
             return false;
           }
-
-          //self.latex = mf.value;
 
           //y=x{-2<x<2}
           let domainRangeRestriction = fnDlgFunctionVal.substring(
@@ -758,8 +762,14 @@ class MFunctionDlg {
               );
               return false;
             }
-            $("#fnDlg_lowerLimit").val(domainRangeRestriction[0]);
-            $("#fnDlg_upperLimit").val(domainRangeRestriction[1]);
+            $("#fnDlg_lowerLimit")[0].setValue(
+              Utility.toLatex(domainRangeRestriction[0]),
+              { suppressChangeNotifications: true }
+            );
+            $("#fnDlg_upperLimit")[0].setValue(
+              Utility.toLatex(domainRangeRestriction[1]),
+              { suppressChangeNotifications: true }
+            );
             self.domainRangeRestriction = domainRangeRestriction;
           }
           let arr = fnDlgFunctionVal.split("=");
@@ -779,52 +789,14 @@ class MFunctionDlg {
             if (arr.length < 2) {
               lhs = "";
             }
-            /* try {
-              math.parse(arr[0]);
-            } catch (error) {
-              //let pos = parseInt(error.message.match(/(\d+)/)[0]) - 1;
-              let pos = Utility.mathjsErrorToPosition(error.message) - 1;
-              console.log(pos);
-              let mfValueCpy = mf.value.slice();
-              mfValueCpy = mfValueCpy.replace(/[\\\{\}]/g, "");
-              //mfValueCpy = mfValueCpy.replace(/\{/g, "");
-              //mfValueCpy = mfValueCpy.replace(/\}/g, "");
 
-              const diff = mf.value.length - mfValueCpy.length;
-
-              let ltxt = mf.value;
-              //console.log(ltxt, mfValueCpy);
-              ind = pos - diff < 0 ? 0 : pos - diff;
-
-              if (mfValueCpy.length == 1) {
-                dotAdded = true;
-                mf.value += ".";
-              }
-
-              //mf.style.color = "red";
-              mf.applyStyle({ color: "red" }, { range: [ind, ind + 1] });
-              if (dotAdded) {
-                mf.value = mf.value.substring(0, mf.value.length - 1);
-              }
-              dotAdded = false;
-              return;
-            } */
             try {
               let indexOf_ = arr[0].indexOf("_");
               if (indexOf_ !== -1) {
                 throw { message: `${indexOf_}` };
               }
-              // indexOf_ = arr[0].indexOf("~");
-              // if (indexOf_ !== -1) {
-              //   throw { message: `${indexOf_ + 2}` };
-              // }
               math.parse(arr[0]);
-              //const p = mf.computeEngine.parse(mf.value);
-              //console.log(mf.getValue("ascii-math"));
             } catch (error) {
-              //console.log(error.message);
-              // let pos = Utility.mathjsErrorToPosition(error.message) - 1;
-              // Utility.highLightErrorInMathField(mf, pos);
               Utility.displayErrorMessage(mf, error.message);
               return;
             }
@@ -833,42 +805,11 @@ class MFunctionDlg {
               try {
                 math.parse(arr[1]);
               } catch (error) {
-                //Utility.highLightErrorInMathField(mf, pos);
                 Utility.displayErrorMessage(mf, error.message);
-
-                /* console.log(pos);
-                let mfValueCpy = mf.value.slice();
-                mfValueCpy = mfValueCpy.replace(/\\/g, "");
-                mfValueCpy = mfValueCpy.replace(/\{/g, "");
-                mfValueCpy = mfValueCpy.replace(/\}/g, "");
-                const diff = mf.value.length - mfValueCpy.length;
-
-                // let ltxt = mf.value;
-                // console.log(ltxt);
-                ind = pos - diff < 0 ? 0 : pos - diff;
-                ind = ind + arr[0].length + 1;
-
-                // if (mfValueCpy.length == 1) {
-                //   dotAdded = true;
-                //   mf.value += ".";
-                // }
-
-                //mf.style.color = "red";
-                mf.applyStyle({ color: "red" }, { range: [ind, ind + 1] });
-                if (dotAdded) {
-                  mf.value = mf.value.substring(0, mf.value.length - 1);
-                }
-                dotAdded = false; */
                 return;
               }
             }
           }
-
-          // const restoreColor = mf.style.color;
-          // $("#fnDlg_function").on("change", function (e) {
-          //   mf.style.color = "none";
-          //   // mf.applyStyle({ color: "none" }, { range: [ind, ind + 1] });
-          // });
 
           if (self.variable == "y") {
             if (arr.length !== 2 && arr[0].length != 1) {
@@ -1204,13 +1145,9 @@ class MFunctionDlg {
           }
 
           try {
-            // console.log(
-            //   plot.defines.expandDefines($("#fnDlg_lowerLimit").val())
-            // );
-
             self.lowerLimit = $("#fnDlg_lowerLimit")[0].getValue("ascii-math");
 
-            $("#fnDlg_lowerLimit")[0].value = self.lowerLimit = math.evaluate(
+            self.lowerLimit = math.evaluate(
               replaceParameterWith_1(
                 plot.defines.expandDefines(self.lowerLimit, self.variable)
               )
@@ -1255,8 +1192,7 @@ class MFunctionDlg {
           }
 
           try {
-            $("#fnDlg_upperLimit")[0].value = self.upperLimit =
-              $("#fnDlg_upperLimit")[0].getValue("ascii-math");
+            self.upperLimit = $("#fnDlg_upperLimit")[0].getValue("ascii-math");
             self.upperLimit = math.evaluate(
               replaceParameterWith_1(
                 plot.defines.expandDefines(self.upperLimit, self.variable)
@@ -1388,7 +1324,7 @@ class MFunctionDlg {
               self.threeDInterpolationType = $("#interpolationType").val();
             }
             try {
-              $("#fnDlg_lowerLimitY")[0].value = self.lowerLimitY =
+              self.lowerLimitY =
                 $("#fnDlg_lowerLimitY")[0].getValue("ascii-math");
               self.lowerLimitY = math.evaluate(self.lowerLimitY);
             } catch (err) {
@@ -1396,7 +1332,7 @@ class MFunctionDlg {
               return false;
             }
             try {
-              $("#fnDlg_upperLimitY")[0].value = self.upperLimitY =
+              self.upperLimitY =
                 $("#fnDlg_upperLimitY")[0].getValue("ascii-math");
               self.upperLimitY = math.evaluate(self.upperLimitY);
             } catch (err) {
@@ -1404,18 +1340,18 @@ class MFunctionDlg {
               return false;
             }
             try {
-              $("#fnDlg_lowerLimitFxy")[0].value = self.lowerLimitFxy = $(
-                "#fnDlg_lowerLimitFxy"
-              )[0].getValue("ascii-math");
+              self.lowerLimitFxy = $("#fnDlg_lowerLimitFxy")[0].getValue(
+                "ascii-math"
+              );
               self.lowerLimitFxy = math.evaluate(self.lowerLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid lower(f(xy)) limit.");
               return false;
             }
             try {
-              $("#fnDlg_upperLimitFxy")[0].value = self.upperLimitFxy = $(
-                "#fnDlg_upperLimitFxy"
-              )[0].getValue("ascii-math");
+              self.upperLimitFxy = $("#fnDlg_upperLimitFxy")[0].getValue(
+                "ascii-math"
+              );
               self.upperLimitFxy = math.evaluate(self.upperLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid upper(f(xy)) limit.");
@@ -1539,23 +1475,5 @@ class MFunctionDlg {
     //         let edlg = new EquationEditor("equationEditor", options);
 
     //         console.log(edlg)
-
-    /* $(window).on(
-      "equationEdited",
-      function (e, asciiEquation, latexEquation, idOfTriggerElement) {
-        if (idOfTriggerElement == "equationEditor") {
-          console.log(
-            "Ascii:" + asciiEquation,
-            "\nLatex:" + latexEquation,
-            "\nTriggerElement:" + idOfTriggerElement
-          );
-          //$("#fnDlg_function").val(asciiEquation);
-          $("#fnDlg_function").val(latexEquation);
-          $("#fnDlg_function").trigger("input");
-        }
-      }
-    ); */
-
-    //jQuery("#equationEditor").click();
   }
 }

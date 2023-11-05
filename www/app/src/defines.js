@@ -11,6 +11,9 @@ class DefinesDlg extends ModalDlg {
     };
     super(options);
     const self = this;
+    self.defines = defines;
+
+    self.showVirtualKeyboard = true;
 
     let editor = _editor;
 
@@ -28,19 +31,42 @@ class DefinesDlg extends ModalDlg {
     //Modal body code
     this.addRow([
       '<div class="col-md-1">Name:</div>',
-      '<div class="col-md-5">\
+      '<div class="col-md-3">\
       <input id="definesName" type="text" style="width:100%">\
       </input>\
       </div>',
       '<div class="col-md-1">Value:</div>',
-      '<div class="col-md-5">\
-      <input id="definesValue" type="text" style="width:100%">\
-      </input>\
+      '<div class="col-md-7">\
+      <math-field class="math-field-limits" id="definesValue" style="width:100%;color:#000000; font-size:2rem; border: solid"  title="">\
+      </math-field>\
       </div>',
     ]);
 
+    const mf = self.selector("definesValue")[0];
+
+    $(mf).on("focusin", () => {
+      if (self.showVirtualKeyboard) {
+        mathVirtualKeyboard.show();
+        $(".modal-dialog").css("top", "63%");
+        this.getDlgModal()[0].scrollBy(0, 1000);
+        this.getDlgModal().css("overflow", "hidden");
+      }
+    });
+
+    $(mf).on("focusout", () => {
+      if (self.showVirtualKeyboard) {
+        mathVirtualKeyboard.hide();
+        $(".modal-dialog").css("top", "0%");
+      }
+    });
+
+    Utility.extendGetValue(mf);
+
     this.addRow([
-      '<div class="col-md-12"><input tabindex="-1" id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
+      `<div class="col-md-6"><input tabindex="-1" id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
+                          </input>\
+                          </div>`,
+      '<div class="col-md-6"><input tabindex="-1" id="showVirtualKeyboard" type="checkbox" checked> <label for="showVirtualKeyboard">Show virtual keyboard</label> \
                           </input>\
                           </div>',
     ]);
@@ -59,8 +85,6 @@ class DefinesDlg extends ModalDlg {
       </div>\
       </div>',
     ]);
-
-    console.log();
 
     $(self.getDlgModal().find("BUTTON")[0]).addClass("DefinesClose");
 
@@ -118,12 +142,17 @@ class DefinesDlg extends ModalDlg {
       }
     }
 
-    this.doAdd = function (name, value) {
+    this.doAdd = function (name, val) {
+      let { value, latexValue } = val;
       name = name.replace(/\s/g, "");
       value = value.replace(/\s/g, "");
+      if (value) {
+        val.value = value = value.replaceAll("mod", " mod ");
+      }
+
       var define = defines.getDefine(name);
       if (define) {
-        defines.define(name, value); //update
+        defines.define(name, val); //update
         let _name = name
           .replaceAll("(", "openPar")
           .replaceAll(")", "closePar")
@@ -133,7 +162,8 @@ class DefinesDlg extends ModalDlg {
         //self.closeDlg();
       } else {
         removeAllHighlight();
-        defines.define(name, value);
+
+        defines.define(name, val);
         self.selector("definesRemoveAll").attr("disabled", false);
         let id = name
           .replaceAll("(", "openPar")
@@ -146,7 +176,7 @@ class DefinesDlg extends ModalDlg {
         self.selector("definesTable").append(m_row);
       }
       self.selector("definesName").val("");
-      self.selector("definesValue").val("");
+      mf.setValue("", { suppressChangeNotifications: true });
       self.selector("definesName").focus();
       self.selector("definesAdd").attr("disabled", true);
       self.selector("definesRemove").attr("disabled", true);
@@ -186,11 +216,18 @@ class DefinesDlg extends ModalDlg {
           function (action) {
             if (action == 0 || action == 1) {
               self.selector("definesName").val("");
-              self.selector("definesValue").val("");
+              mf.setValue("", { suppressChangeNotifications: true });
               return;
             } else {
-              var value = self.selector("definesValue").val();
-              self.doAdd(name, value);
+              const value = math
+                .simplify(
+                  mf.getValue("ascii-math"),
+                  {},
+                  { exactFractions: true }
+                )
+                .toString();
+              const latexValue = mf.latexValue;
+              self.doAdd(name, { value, latexValue });
             }
           },
           "medium",
@@ -208,8 +245,11 @@ class DefinesDlg extends ModalDlg {
         }
         return;
       }
-      var value = self.selector("definesValue").val();
-      self.doAdd(name, value);
+      const value = math
+        .simplify(mf.getValue("ascii-math"), {}, { exactFractions: true })
+        .toString();
+      const latexValue = mf.latexValue;
+      self.doAdd(name, { value, latexValue });
     });
 
     this.addHandler("definesName", "input", function (e) {
@@ -217,17 +257,19 @@ class DefinesDlg extends ModalDlg {
         self.selector("definesName").val().length &&
         _.isString(self.selector("definesName").val())
       ) {
-        var define = defines.getDefine(self.selector("definesName").val());
-        if (define) self.selector("definesValue").val(define);
+        const define = defines.getDefineObj(self.selector("definesName").val());
+        //if (define) self.selector("definesValue").val(define);
+        if (define)
+          mf.setValue(define.latexValue, { suppressChangeNotifications: true });
       }
       if (!self.selector("definesName").val().length) {
-        self.selector("definesValue").val("");
+        mf.setValue("", { suppressChangeNotifications: true });
       }
       if (
         self.selector("definesName").val().length &&
         _.isString(self.selector("definesName").val()) &&
-        self.selector("definesValue").val().length &&
-        _.isString(self.selector("definesValue").val())
+        mf.getValue("ascii-math").length &&
+        _.isString(mf.getValue("ascii-math"))
       ) {
         setRemoveButtonAttribute();
         self.selector("definesAdd").attr("disabled", false);
@@ -243,9 +285,7 @@ class DefinesDlg extends ModalDlg {
     this.addHandler("definesValue", "input", function (e) {
       if (
         self.selector("definesName").val().length &&
-        _.isString(self.selector("definesName").val()) &&
-        self.selector("definesValue").val().length &&
-        _.isString(self.selector("definesValue").val())
+        _.isString(self.selector("definesName").val())
       ) {
         setRemoveButtonAttribute();
         self.selector("definesAdd").attr("disabled", false);
@@ -275,7 +315,7 @@ class DefinesDlg extends ModalDlg {
       }
       $(id).remove();
       self.selector("definesName").val("");
-      self.selector("definesValue").val("");
+      mf.setValue("", { suppressChangeNotifications: true });
       self.selector("definesName").focus();
       self.selector("definesRemove").attr("disabled", true);
       self.selector("definesAdd").attr("disabled", true);
@@ -291,6 +331,8 @@ class DefinesDlg extends ModalDlg {
         var id = "#" + _id;
         $(id).remove();
       });
+      self.selector("definesName").val("");
+      mf.setValue("", { suppressChangeNotifications: true });
       self.selector("definesRemoveAll").attr("disabled", true);
       self.selector("definesRemove").attr("disabled", true);
       defines.removeAllDefines();
@@ -298,6 +340,11 @@ class DefinesDlg extends ModalDlg {
 
     this.addHandler("simplify", "click", function () {
       defines.simplify($(this)[0].checked);
+    });
+
+    this.addHandler("showVirtualKeyboard", "click", function () {
+      //defines.simplify($(this)[0].checked);
+      self.showVirtualKeyboard = $(this)[0].checked;
     });
 
     this.defineDlgInit = function () {
@@ -328,11 +375,13 @@ class DefinesDlg extends ModalDlg {
       const row = $(e.target).closest("tr");
       row.addClass("definesTableRowselected");
       const tds = $(row).find("TD");
+      const name = $(tds[0]).html().replace(/\s/g, "");
+      self.selector("definesName").val(name);
+      const { latexValue } = self.defines.getDefineObj(name);
 
-      self.selector("definesName").val($(tds[0]).html().replace(/\s/g, ""));
-      //self.selector("definesName").trigger("input");
+      mf.setValue(latexValue, { suppressChangeNotifications: true });
 
-      self.selector("definesValue").val($(tds[1]).html().replace(/\s/g, ""));
+      //self.selector("definesValue").val($(tds[1]).html().replace(/\s/g, ""));
       self.selector("definesAdd").attr("disabled", true);
       self.selector("definesRemove").attr("disabled", false);
       self.selector("definesRemove").focus();
@@ -341,6 +390,10 @@ class DefinesDlg extends ModalDlg {
         self.selector("definesRemove").click();
       }
     });
+  }
+
+  beforeClose() {
+    mathVirtualKeyboard.container = $("body")[0];
   }
 
   initializeDialog() {
@@ -381,7 +434,7 @@ class Defines {
 
     function getParenthesizeDefine(name) {
       if (m_defines.has(name)) {
-        return "(" + m_defines.get(name) + ")";
+        return "(" + m_defines.get(name).value + ")";
       }
       console.warn('"' + name + '"' + " is not predefined!");
       return "";
@@ -410,25 +463,6 @@ class Defines {
     this.define = function (_name, _value) {
       m_defines.set(_name, _value);
     };
-
-    /* function derivativeOrder(name) {
-      let order = 0;
-      name = name.trim();
-      if (
-        name.length < 4 ||
-        name.indexOf("(") == -1 ||
-        name.indexOf(")") == -1
-      ) {
-        return 0;
-      }
-      for (let i = 1; i < name.length; i++) {
-        if (name[i] !== "'") {
-          break;
-        }
-        order++;
-      }
-      return order;
-    } */
 
     function getFunctionDeclarationArgument(str) {
       const ind = str.indexOf("(");
@@ -481,7 +515,7 @@ class Defines {
             if (!m_defines.get(dec)) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
               let fnDec = dec.replaceAll("'", "");
-              let _derivative = m_defines.get(fnDec);
+              let _derivative = m_defines.get(fnDec).value;
 
               if (_derivative) {
                 const variable = fnDec[fnDec.length - 2];
@@ -722,7 +756,7 @@ class Defines {
         str = doExpandDefines(str, variable, derive);
         n++;
       }
-      return Utility.insertProductSign(str);
+      return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };
 
     this.removeDefine = function (name) {
@@ -754,8 +788,20 @@ class Defines {
       return m_defines.has(name);
     };
 
-    this.getDefine = function (name) {
+    this.getDefineObj = function (name) {
       return m_defines.get(name);
+    };
+
+    this.getDefine = function (name) {
+      const val = m_defines.get(name);
+
+      if (val) {
+        let { value } = val;
+        if (value) {
+          return value.replaceAll("mod", " mod ");
+        }
+      }
+      return null;
     };
 
     this.processUploadData = function (data) {
@@ -867,6 +913,8 @@ class MDefines extends Defines {
 
     this.defines = function () {
       dlg.showDlg();
+      if (this.getDefinesDlg().showVirtualKeyboard)
+        mathVirtualKeyboard.container = this.getDefinesDlg().getDlgModal()[0];
     };
 
     $(window).bind("fileOpened", function (e, data, filename, ext, editorName) {
@@ -883,7 +931,9 @@ class MDefines extends Defines {
 
     $(window).bind("defineAdded", function (e, name, value) {
       value = self.expandDefines(value, null, false);
-      dlg.doAdd(name, value);
+      //value = Utility.logBaseAdjust(value);
+      let latexValue = Utility.toLatex(value);
+      dlg.doAdd(name, { value, latexValue });
     });
   }
 }

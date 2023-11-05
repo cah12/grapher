@@ -103,8 +103,8 @@ class PlotPropertiesPane extends PropertiesPane {
       '<tr>\
       <td colspan="2" style="margin:0px; padding:0px;">\
         <div style="font-size: 14px;">\
-        <math-field id="fnDlg_function" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="Enter a function" virtual-keyboard-mode="manual" title="" style="padding-left: 2px; padding-right: 2px; font-size: 20px; border-style: solid; border-width: 1px">x^2</math-field>\
-        &nbspTitle: <input id="fnDlg_title" style="margin:1px; width:30%; height:26px;" type="text" value="curve_1"/><button id="executeButton" style="float: right" title="Add the defined curve to the plot"><img src="images/execute.png" width="20" height="20"></button><button id="settingsButton" style="float: right" title="Curve definition settings"><img src="images/wrench.png" width="20" height="20"></button><button id="tableButton" style="float: right" title="Point table"><img src="images/table.png" width="20" height="20"></button>\
+        <math-field id="fnDlg_function" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="Enter a function" title="" style="width:100%; padding-left: 2px; padding-right: 2px; font-size: 20px; border-style: solid; border-width: 1px">x^2</math-field><div>\
+        &nbspTitle: <input id="fnDlg_title" style="margin:1px; width:30%; height:26px;" type="text" value="curve_1"/><button id="executeButton" style="float: right" title="Add the defined curve to the plot"><img src="images/execute.png" width="20" height="20"></button><button id="settingsButton" style="float: right" title="Curve definition settings"><img src="images/wrench.png" width="20" height="20"></button><button id="tableButton" style="float: right" title="Point table"><img src="images/table.png" width="20" height="20"></button></div>\
         </div>\
       </td>\
     </tr>'
@@ -243,6 +243,12 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     const mf = $("#fnDlg_function")[0];
+    this.mf = mf;
+
+    // mf.mathVirtualKeyboardPolicy = "manual";
+    // mf.addEventListener("focusin", () => mathVirtualKeyboard.show());
+    // mf.addEventListener("focusout", () => mathVirtualKeyboard.hide());
+
     Utility.extendGetValue(mf);
     //mf.setOptions({ smartSuperscript: false });
     $(mf).tooltip();
@@ -295,7 +301,7 @@ class PlotPropertiesPane extends PropertiesPane {
         }
         if (e.key === "Enter" || e.keyCode === 13) {
           $("#executeButton").click();
-          //$("#executeButton")[0].focus();
+          mathVirtualKeyboard.hide();
         }
       }
     });

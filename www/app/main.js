@@ -771,16 +771,35 @@ require([
 
   // console.log(456, math.parse(s));
 
-  const fn = "x^2";
-  const variable = "x";
-  const _rulerLeft = -10;
-  const _rulerRight = 10;
-  const step = 0.1;
+  // const fn = "x^2";
+  // const variable = "x";
+  // const _rulerLeft = -10;
+  // const _rulerRight = 10;
+  // const step = 0.1;
 
   // const value = math.evaluate(
   //   `integrate(${fn} , ${variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
   // );
   //console.log("value:", value);
 
-  //console.log(Utility.getFunctionDeclaration("f(x)"));
+  // console.log(
+  //   456,
+  //   getComputedStyle(document.documentElement).getPropertyValue("--part")
+  // );
+
+  ////////////////////////////////////////////////////////////////////////////////////
+
+  // customElements.define(
+  //   "show-hello",
+  //   class extends HTMLElement {
+  //     connectedCallback() {
+  //       const shadow = this.attachShadow({ mode: "open" });
+  //       shadow.innerHTML = `<p>
+  //       Hello, ${this.getAttribute("name")}
+  //     </p>`;
+  //     }
+  //   }
+  // );
+
+  //console.log(math.evaluate("6%4").toString());
 });

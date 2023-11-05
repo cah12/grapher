@@ -4368,6 +4368,17 @@ class Utility {
     return -1; //Invalid index
   }
 
+  static toLatex(str) {
+    let latexValue = str;
+    try {
+      let node = math.parse(str);
+      latexValue = node.toTex({ parenthesis: false, implicit: false });
+    } catch (error) {
+      //
+    }
+    return latexValue;
+  }
+
   static mathjsErrorToPosition(errorStr) {
     let arr = errorStr.match(/(char \d+)/);
     if (arr) {
@@ -4375,34 +4386,6 @@ class Utility {
     }
     return -1;
   }
-
-  // static errorCheck(mf) {
-  //   function doCheck(json) {
-  //     if (json[0] == "Error") {
-  //       return json;
-  //     }
-  //     for (let i = 0; i < json.length; i++) {
-  //       const e = json[i];
-  //       if (typeof e == "object") {
-  //         let res = doCheck(e);
-  //         if (res) {
-  //           return res;
-  //         }
-  //       }
-  //     }
-  //     return null;
-  //   }
-
-  //   let result = [];
-
-  //   if (mf.expression.isValid) {
-  //     return null;
-  //   }
-  //   const ce = mf.computeEngine;
-  //   const json = ce.parse(mf.value).json;
-
-  //   return doCheck(json);
-  // }
 
   static adjustLatexLogBaseDecimalPlaces(decimalPlaces) {
     Utility.logLatex = math.log.toTex;
@@ -4508,10 +4491,7 @@ class Utility {
     mf.getValueTemp = mf.getValue;
 
     mf.getValue = function (format = "ascii-math") {
-      const mf = this;
-      //mf._slotValue = "";
-
-      const latex = mf.getValueTemp("latext");
+      const latex = mf.getValueTemp("latex");
       let result = latex
         .replace(/\\times/g, "\\cdot")
         .replaceAll("{\\prime}", "primePlaceHolder")
@@ -4521,7 +4501,7 @@ class Utility {
       mf.value = result;
 
       result = mf.getValueTemp(format);
-      mf.value = latex;
+      mf.latexValue = latex;
 
       // const matches1 = result.match(
       //   /(\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)(?=mod)|.(?=mod))/
@@ -4602,238 +4582,15 @@ class Utility {
       }
 
       //Add whitespace delimiters to mod (i.e modulus ooperator)
-      result = result.replaceAll("mod", " mod ");
+      result = result.replaceAll("mod", "%");
 
       //console.log(result);
+
+      mf.value = latex;
 
       return result;
     };
   }
-
-  // static latexToAscii(mf) {
-  //   return mf.getValue("ascii-math");
-  // }
-
-  /* static latexToAscii1(mf, throwError = true) {
-    let mfValue = mf.value.replaceAll("\\left", "").replaceAll("\\right", "");
-
-    mf.value = mf.value.replaceAll("_{}", "");
-
-    let index = mf.value.indexOf("\\ln_");
-    if (index !== -1) {
-      Utility.displayErrorMessage(mf, `"ln" cannot have a subscript.`);
-      return null;
-    }
-
-    mf.value = mf.value.replaceAll("^{}", "");
-    let result = Utility.replaceLatex(mf.value);
-
-    index = result.indexOf("frac");
-    while (index !== -1) {
-      let obj = Utility.getOperand(result, "frac", index);
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand1 = obj.operand;
-
-      obj = Utility.getOperand(result, "frac" + operand1, index);
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand2 = obj.operand;
-      result = result.replace(
-        `frac${operand1}${operand2}`,
-        `${operand1}/${operand2}`
-      );
-      index = result.indexOf("frac");
-    }
-
-    index = result.indexOf("sqrt[");
-    while (index !== -1) {
-      const indexOfClosingSquareBracket = result.indexOf("]");
-      const root = result.substring(index + 5, indexOfClosingSquareBracket);
-
-      const obj = Utility.getOperand(result, "sqrt[" + root + "]", index);
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand = obj.operand;
-
-      result = result.replace(
-        `sqrt[${root}]${operand}`,
-        `nthRoot(${operand}, ${root})`
-      );
-      index = result.indexOf("sqrt[");
-    }
-
-    index = result.indexOf("^");
-    let bracketAdded = false;
-    while (index !== -1) {
-      const prefix = Utility.getExponentTokenPrefix(result, index);
-      let obj = Utility.getOperandOfExponentToken(result, index);
-      if (obj.operand.length > 1 && obj.operand[0] !== "(") {
-        result = result.replace(
-          `${prefix}^${obj.operand[0]}`,
-          `(${prefix}^${obj.operand[0]})`
-        );
-        bracketAdded = true;
-      }
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      const operandOfExponent = obj.operand;
-      if (throwError) {
-        try {
-          math.parse(operandOfExponent);
-        } catch (error) {
-          Utility.displayErrorMessage(mf, error.message);
-          return null;
-        }
-      }
-      obj = Utility.getOperand(
-        result,
-        prefix + "^" + operandOfExponent,
-        index - prefix.length
-      );
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand = obj.operand;
-
-      if (prefix.length > 1) {
-        const strToReplace = `${prefix}^${operandOfExponent}${operand}`;
-        const replacementStr = `${prefix}${operand}^(${operandOfExponent})`;
-        result = result.replace(strToReplace, replacementStr);
-        index = result.indexOf(
-          "^",
-          result.indexOf(operand, index) + operand.length + 2
-        );
-      } else {
-        if (bracketAdded) {
-          index = result.indexOf("^", index + 2);
-        } else {
-          index = result.indexOf("^", index + 1);
-        }
-        bracketAdded = false;
-      }
-    }
-
-    index = result.indexOf("()");
-    while (index !== -1) {
-      const s = mf.value.replace("()", "(?)");
-      $("#fnDlg_function")[0].setValue(s);
-      if (throwError) {
-        Utility.displayErrorMessage(
-          mf,
-          `operand expected at char ${index + 2}`
-        );
-        return null;
-      }
-      index = result.indexOf("()", index + 1);
-    }
-
-    index = result.indexOf("log");
-    while (index !== -1 && result[index + 3] !== "_") {
-      result = result.replace("log", "log_(10)");
-      index = result.indexOf("log", index + 3);
-    }
-
-    index = result.indexOf("log_(");
-    while (index !== -1) {
-      const n = result.indexOf(")", index);
-
-      const base = Utility.getLogBase(result, index); //log_12(8)
-
-      const obj = Utility.getOperand(result, `log_${base}`, index);
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand = obj.operand;
-
-      result = result.replace(
-        `log_${base}${operand}`,
-        `log(${operand},${base})`
-      );
-      index = result.indexOf("log_(");
-    }
-
-    index = result.indexOf("log_");
-    while (index !== -1) {
-      //const n = result.indexOf(")", index);
-      const base = result[index + 4]; //log_2(8)
-      const obj = Utility.getOperand(result, `log_${base}`, index);
-      if (obj.unmodifiedOperand) {
-        result = result.replace(obj.unmodifiedOperand, obj.operand);
-      }
-      let operand = obj.operand;
-
-      result = result.replace(
-        `log_${base}${operand}`,
-        `log(${operand},${base})`
-      );
-
-      index = result.indexOf("log_");
-    }
-
-    result = Utility.insertProductSignOnPi(result);
-
-    result = result.replace(/\(,\)/g, "_()");
-
-    if (result[0] == "'") {
-      Utility.displayErrorMessage(
-        mf,
-        `valid expressions cannot start with char prime`
-      );
-      return null;
-    }
-    if (result[result.length - 1] == "'") {
-      Utility.displayErrorMessage(
-        mf,
-        `valid expressions cannot end with char prime`
-      );
-      return null;
-    }
-    index = result.indexOf("'");
-    let pos = 0;
-    while (index !== -1 && result[index + 1]) {
-      for (let i = index + 1; i < result.length; i++) {
-        pos = i;
-        if (result[i] == "'") {
-          continue;
-        }
-        if (result[i] == "(") {
-          break;
-        }
-        Utility.displayErrorMessage(mf, `"(" expected after char ${i + 1}`);
-        return null;
-      }
-      index = result.indexOf("'", pos);
-    }
-
-    const arr = result.split("=");
-
-    for (let i = 0; i < arr.length; i++) {
-      index = arr[i].indexOf("{");
-      if (index !== -1) {
-        arr[i] = arr[i].substring(0, index);
-      }
-      //Ensure we have a expression that mathjs can parse
-      if (throwError && !Utility.isParametricFunction(arr[i])) {
-        try {
-          math.parse(arr[i]);
-        } catch (error) {
-          Utility.displayErrorMessage(mf, error.message);
-          return null;
-        }
-      }
-    }
-
-    if (Utility.missingClosingPar(result)) {
-      result = result.replace(/\?/g, ")");
-    }
-
-    return result;
-  } */
 
   static displayErrorMessage(mf, errorMessage) {
     if (errorMessage) {
