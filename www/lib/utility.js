@@ -4372,7 +4372,7 @@ class Utility {
     let latexValue = str;
     try {
       let node = math.parse(str);
-      latexValue = node.toTex({ parenthesis: false, implicit: false });
+      latexValue = node.toTex({ parenthesis: "auto", implicit: "hide" });
     } catch (error) {
       //
     }

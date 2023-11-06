@@ -721,6 +721,7 @@ class Defines {
     this.expandDefines = function (str, variable, derive = true) {
       let prevExpanded = str;
       str = doExpandDefines(str, variable, derive);
+      if (!str) return null;
       //let prevExpanded = null;
       let n = 0;
       while (str && str !== prevExpanded && n < 200) {
@@ -901,6 +902,7 @@ class MDefines extends Defines {
 
     $(window).bind("defineAdded", function (e, name, value) {
       value = self.expandDefines(value, null, false);
+      //console.log(value);
       //value = Utility.logBaseAdjust(value);
       let latexValue = Utility.toLatex(value);
       dlg.doAdd(name, { value, latexValue });

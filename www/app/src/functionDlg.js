@@ -680,7 +680,7 @@ class MFunctionDlg {
           }
           nerdamer.flush();
           if (res) {
-            console.log(res);
+            //console.log(res);
             if (res.indexOf(",") !== -1) {
               const sltns = res.replaceAll(",", ", ");
 
@@ -831,9 +831,9 @@ class MFunctionDlg {
               const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
               if (m_lhs_fnDec) {
                 if (!plot.defines.getDefine(m_lhs_fnDec)) {
-                  console.log(
-                    `${m_lhs_fnDec} is an undefined function. try to define it`
-                  );
+                  // console.log(
+                  //   `${m_lhs_fnDec} is an undefined function. try to define it`
+                  // );
                   if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
                     alert(`Tried but failed to define "${m_lhs_fnDec}".`);
                     return;
@@ -908,9 +908,7 @@ class MFunctionDlg {
                 );
                 return false;
               }
-              const errorType = plot.defines.validateDefineName(
-                arr[0]
-              ).errorType;
+              let errorType = plot.defines.validateDefineName(arr[0]).errorType;
               if (errorType == Defines.DefineError.start) {
                 alert(
                   'Define name,"' +
@@ -920,12 +918,15 @@ class MFunctionDlg {
                 return false;
               }
               if (errorType == Defines.DefineError.contain) {
-                alert(
-                  'Define name,"' +
-                    arr[0] +
-                    '", contains, or is part of, the earlier define.'
-                );
-                return false;
+                if (arr[1].indexOf("y") == -1) {
+                  alert(
+                    'Define name,"' +
+                      arr[0] +
+                      '", contains, or is part of, the earlier define.'
+                  );
+                  return false;
+                }
+                errorType = 0;
               }
               if (errorType == Defines.DefineError.keyword) {
                 alert(
@@ -941,6 +942,28 @@ class MFunctionDlg {
                 return false;
               }
 
+              ///////////////
+              let m_arr = fnDlgFunctionVal.split("=");
+              if (m_arr.length == 2 && m_arr[1].indexOf("y") !== -1) {
+                m_arr[0] = doExpandDefinesAndAdjustLogBase(
+                  m_arr[0],
+                  self.variable
+                );
+                var eq = nerdamer(`${m_arr[0]}=${m_arr[1]}`);
+                var solution =
+                  self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
+                if (typeof solution === "object") {
+                  arr[0] = "y";
+                  arr[1] = solution[0].toString();
+                } else {
+                  arr[0] = "y";
+                  arr[1] = solution.toString();
+                }
+                nerdamer.flush();
+
+                fnDlgFunctionVal = arr[1];
+              }
+              ////////////////
               //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
                 arr[1],
