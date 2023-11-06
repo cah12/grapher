@@ -344,9 +344,9 @@ class DefinesDlg extends ModalDlg {
       defines.simplify($(this)[0].checked);
     });
 
-    // this.addHandler("showVirtualKeyboard", "click", function () {
-    //   //self.showKeyboard = $(this)[0].checked;
-    // });
+    this.addHandler("showVirtualKeyboard", "click", function () {
+      self.showKeyboard = $(this)[0].checked;
+    });
 
     this.defineDlgInit = function () {
       self.selector("definesAdd").attr("disabled", true);
