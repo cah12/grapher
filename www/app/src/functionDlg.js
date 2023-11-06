@@ -826,8 +826,56 @@ class MFunctionDlg {
               arr[0].indexOf("(") == -1 ||
               arr[0].indexOf(")") == -1
             ) {
-              //let m_lhs = Utility.insertProductSign(arr[0], plot.defines);
+              ////////////////////////////////////////////////////////
               let m_lhs = arr[0];
+              let m_rhs = arr[1];
+              const m_rhs_fnDec = Utility.getFunctionDeclaration(m_rhs);
+              if (m_rhs_fnDec) {
+                if (!plot.defines.getDefine(m_rhs_fnDec)) {
+                  // console.log(
+                  //   `${m_lhs_fnDec} is an undefined function. try to define it`
+                  // );
+                  if (!forceDefine(fnDlgFunctionVal, m_rhs_fnDec)) {
+                    alert(`Tried but failed to define "${m_rhs_fnDec}".`);
+                    return;
+                  }
+
+                  fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(
+                    m_rhs_fnDec,
+                    "U"
+                  );
+
+                  // m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs, self.variable);
+                  // if (!m_lhs) {
+                  //   return;
+                  // }
+                  // m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs, self.variable);
+                  // if (!m_rhs) {
+                  //   return;
+                  // }
+                  // fnDlgFunctionVal = `y+${m_lhs}=${m_rhs}`;
+
+                  let eq = nerdamer(fnDlgFunctionVal);
+                  let solution = eq.solveFor("U");
+                  if (typeof solution === "object") {
+                    arr = [solution[0].toString()];
+                  } else {
+                    arr = [solution.toString()];
+                  }
+                  nerdamer.flush();
+
+                  fnDlgFunctionVal = arr[0];
+                } /* else {
+                  if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
+                    alert(
+                      `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
+                    );
+                    return;
+                  }
+                } */
+              }
+              ////////////////////////////////////////////////////////
+              m_lhs = arr[0];
               const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
               if (m_lhs_fnDec) {
                 if (!plot.defines.getDefine(m_lhs_fnDec)) {
@@ -857,7 +905,7 @@ class MFunctionDlg {
               }
 
               //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
-              let m_rhs = arr[1];
+              m_rhs = arr[1];
               if (arr.length == 2) {
                 m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs, self.variable);
                 if (!m_rhs) {

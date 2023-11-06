@@ -484,7 +484,7 @@ class Defines {
         while (full_dec) {
           m_str = m_str.replace(full_dec, "");
           if (dec) {
-            if (!m_defines.get(dec)) {
+            if (m_defines.get(dec) !== undefined) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
               let fnDec = dec.replaceAll("'", "");
               let _derivative = m_defines.get(fnDec).value;
@@ -508,6 +508,12 @@ class Defines {
                 return null;
               }
             } else {
+              if (m_str.length) {
+                alert(
+                  `Attempt to use "${dec}" failed because it is undefined.`
+                );
+                return null;
+              }
               full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
               if (full_dec) {
                 dec = self.getDerivativeDeclaration(m_str, variable);
@@ -631,8 +637,8 @@ class Defines {
         } catch (error) {
           //console.log(counter, res);
           Utility.alert(error, "small", "m_simplify");
-          throw "MathJs throwed an error.";
-          //return res;
+          //throw "MathJs throwed an error.";
+          return res;
         }
       } //else return Utility.replaceKeywordMarkers(res);
     }
