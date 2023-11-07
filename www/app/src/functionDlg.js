@@ -663,8 +663,16 @@ class MFunctionDlg {
 
           // if (fn[0] == "*") fn = fn.substring(1);
 
-          const expandedRHS = plot.defines.expandDefines(arr[1], self.variable);
-          const expandedLHS = plot.defines.expandDefines(arr[0], self.variable);
+          const expandedRHS = plot.defines.expandDefines(
+            arr[1],
+            self.variable,
+            false
+          );
+          const expandedLHS = plot.defines.expandDefines(
+            arr[0],
+            self.variable,
+            false
+          );
           fn = `${expandedLHS}=${expandedRHS}`;
           fn = Utility.insertProductSign(fn, plot.defines);
 
@@ -680,6 +688,7 @@ class MFunctionDlg {
           }
           nerdamer.flush();
           if (res) {
+            //res = `U=${res}`;
             //console.log(res);
             if (res.indexOf(",") !== -1) {
               const sltns = res.replaceAll(",", ", ");
@@ -778,6 +787,17 @@ class MFunctionDlg {
             fnDlgFunctionVal.indexOf("y") !== -1 &&
             self.variable !== "y"
           ) {
+            const lhs = plot.defines.expandDefines(
+              arr[0],
+              self.variable,
+              false
+            );
+            const rhs = plot.defines.expandDefines(
+              arr[1],
+              self.variable,
+              false
+            );
+            fnDlgFunctionVal = `${lhs}=${rhs}`;
             let eq = nerdamer(fnDlgFunctionVal);
             let solution = eq.solveFor("y");
             if (typeof solution === "object") {
@@ -865,31 +885,21 @@ class MFunctionDlg {
                     return;
                   }
 
-                  fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(
-                    m_rhs_fnDec,
-                    "U"
-                  );
+                  // fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(
+                  //   m_rhs_fnDec,
+                  //   "U"
+                  // );
 
-                  // m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs, self.variable);
-                  // if (!m_lhs) {
-                  //   return;
+                  // let eq = nerdamer(fnDlgFunctionVal);
+                  // let solution = eq.solveFor("U");
+                  // if (typeof solution === "object") {
+                  //   arr = [solution[0].toString()];
+                  // } else {
+                  //   arr = [solution.toString()];
                   // }
-                  // m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs, self.variable);
-                  // if (!m_rhs) {
-                  //   return;
-                  // }
-                  // fnDlgFunctionVal = `y+${m_lhs}=${m_rhs}`;
+                  // nerdamer.flush();
 
-                  let eq = nerdamer(fnDlgFunctionVal);
-                  let solution = eq.solveFor("U");
-                  if (typeof solution === "object") {
-                    arr = [solution[0].toString()];
-                  } else {
-                    arr = [solution.toString()];
-                  }
-                  nerdamer.flush();
-
-                  fnDlgFunctionVal = arr[0];
+                  // fnDlgFunctionVal = arr[0];
                 } /* else {
                   if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
                     alert(
@@ -917,6 +927,7 @@ class MFunctionDlg {
                   // console.log(
                   //   `${m_lhs_fnDec} is an undefined function. try to define it`
                   // );
+
                   if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
                     alert(`Tried but failed to define "${m_lhs_fnDec}".`);
                     return;
@@ -932,8 +943,12 @@ class MFunctionDlg {
                   }
                 }
               }
-              if (fnDlgFunctionVal !== m_lhs) {
-                m_lhs = doExpandDefinesAndAdjustLogBase(m_lhs, self.variable);
+              if (m_lhs !== "0" && fnDlgFunctionVal !== m_lhs) {
+                m_lhs = doExpandDefinesAndAdjustLogBase(
+                  m_lhs,
+                  self.variable,
+                  false
+                );
                 if (!m_lhs) {
                   return;
                 }
@@ -942,12 +957,17 @@ class MFunctionDlg {
               //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               m_rhs = arr[1];
               if (arr.length == 2) {
-                m_rhs = doExpandDefinesAndAdjustLogBase(m_rhs, self.variable);
-                if (!m_rhs) {
+                m_rhs = doExpandDefinesAndAdjustLogBase(
+                  m_rhs,
+                  self.variable,
+                  false
+                );
+                if (!m_rhs && m_lhs !== "0") {
                   return;
                 }
 
-                fnDlgFunctionVal = `${m_lhs}=${m_rhs}`;
+                fnDlgFunctionVal = `${m_lhs}=${m_rhs}+y`;
+                arr = fnDlgFunctionVal.split("=");
               }
 
               //console.log("Implicit");

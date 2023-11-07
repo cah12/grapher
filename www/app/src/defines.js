@@ -478,6 +478,7 @@ class Defines {
         //handle derivativesdeclarations
         m_str = str.slice();
         let full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+        // if (!m_defines.get(full_dec)) {
         dec = self.getDerivativeDeclaration(m_str, variable);
         let values = [];
         let names = [];
@@ -535,6 +536,7 @@ class Defines {
             $(window).trigger("defineAdded", [names[i], values[i]]);
           }
         }
+        //}
       }
 
       var defined;
