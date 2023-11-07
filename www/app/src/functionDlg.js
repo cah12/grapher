@@ -773,6 +773,21 @@ class MFunctionDlg {
             self.domainRangeRestriction = domainRangeRestriction;
           }
           let arr = fnDlgFunctionVal.split("=");
+          if (
+            arr.length == 2 &&
+            fnDlgFunctionVal.indexOf("y") !== -1 &&
+            self.variable !== "y"
+          ) {
+            let eq = nerdamer(fnDlgFunctionVal);
+            let solution = eq.solveFor("y");
+            if (typeof solution === "object") {
+              arr = ["y", solution[0].toString()];
+            } else {
+              arr = ["y", solution.toString()];
+            }
+            nerdamer.flush();
+            fnDlgFunctionVal = `y=${arr[1]}`;
+          }
 
           /* const mf = document.getElementById('formula');
           // Change the color and size of the first two characters of the mathfield
@@ -822,9 +837,10 @@ class MFunctionDlg {
           }
           if (arr.length == 2) {
             if (
-              arr[0].length != 4 ||
-              arr[0].indexOf("(") == -1 ||
-              arr[0].indexOf(")") == -1
+              1
+              //arr[0].length != 4 ||
+              //arr[0].indexOf("(") == -1 ||
+              //arr[0].indexOf(")") == -1
             ) {
               ////////////////////////////////////////////////////////
               let m_lhs = arr[0];
@@ -832,6 +848,15 @@ class MFunctionDlg {
               const m_rhs_fnDec = Utility.getFunctionDeclaration(m_rhs);
               if (m_rhs_fnDec) {
                 if (!plot.defines.getDefine(m_rhs_fnDec)) {
+                  if (
+                    self.variable !== "y" &&
+                    fnDlgFunctionVal.indexOf("y") !== -1
+                  ) {
+                    alert(
+                      `Cannot use "y" in this context. It is reserved for use as the independent variable.`
+                    );
+                    return;
+                  }
                   // console.log(
                   //   `${m_lhs_fnDec} is an undefined function. try to define it`
                   // );
@@ -879,6 +904,16 @@ class MFunctionDlg {
               const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
               if (m_lhs_fnDec) {
                 if (!plot.defines.getDefine(m_lhs_fnDec)) {
+                  if (
+                    self.variable !== "y" &&
+                    fnDlgFunctionVal.indexOf("y") !== -1
+                  ) {
+                    alert(
+                      `Cannot use "y" in this context. It is reserved for use as the independent variable.`
+                    );
+                    return;
+                  }
+
                   // console.log(
                   //   `${m_lhs_fnDec} is an undefined function. try to define it`
                   // );

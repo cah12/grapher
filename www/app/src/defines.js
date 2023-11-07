@@ -484,10 +484,14 @@ class Defines {
         while (full_dec) {
           m_str = m_str.replace(full_dec, "");
           if (dec) {
-            if (m_defines.get(dec) !== undefined) {
+            const val = m_defines.get(dec) || null;
+            console.log(val);
+            if (!m_defines.get(dec)) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
               let fnDec = dec.replaceAll("'", "");
-              let _derivative = m_defines.get(fnDec).value;
+              let _derivative = null;
+              if (m_defines.get(fnDec))
+                _derivative = m_defines.get(fnDec).value;
 
               if (_derivative) {
                 const variable = fnDec[fnDec.length - 2];
