@@ -635,6 +635,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (closeDlg) {
+        let forceDefined = false;
         let expanded = false;
         let defineName = null;
         let defineValue = null;
@@ -668,11 +669,13 @@ class MFunctionDlg {
             self.variable,
             false
           );
+          if (!expandedRHS) return null;
           const expandedLHS = plot.defines.expandDefines(
             arr[0],
             self.variable,
             false
           );
+          if (!expandedLHS) return null;
           fn = `${expandedLHS}=${expandedRHS}`;
           fn = Utility.insertProductSign(fn, plot.defines);
 
@@ -681,7 +684,7 @@ class MFunctionDlg {
 
           var eq = nerdamer(fn);
           var solution = eq.solveFor("U");
-          if (typeof solution === "array") {
+          if (typeof solution === "array" && solution[0]) {
             res = solution[0].toString();
           } else {
             res = solution.toString();
@@ -792,15 +795,27 @@ class MFunctionDlg {
               self.variable,
               false
             );
+            if (!lhs) {
+              alert(
+                `Failed to retrieve a valid define for expanding "${arr[0]}".`
+              );
+              return;
+            }
             const rhs = plot.defines.expandDefines(
               arr[1],
               self.variable,
               false
             );
+            if (!rhs) {
+              alert(
+                `Failed to retrieve a valid define for expanding "${arr[1]}".`
+              );
+              return;
+            }
             fnDlgFunctionVal = `${lhs}=${rhs}`;
             let eq = nerdamer(fnDlgFunctionVal);
             let solution = eq.solveFor("y");
-            if (typeof solution === "object") {
+            if (typeof solution === "object" && solution[0]) {
               arr = ["y", solution[0].toString()];
             } else {
               arr = ["y", solution.toString()];
@@ -884,6 +899,9 @@ class MFunctionDlg {
                     alert(`Tried but failed to define "${m_rhs_fnDec}".`);
                     return;
                   }
+                  forceDefined = true;
+                  fnDlgFunctionVal = m_rhs = m_rhs_fnDec;
+                  arr = [m_rhs];
 
                   // fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(
                   //   m_rhs_fnDec,
@@ -911,35 +929,40 @@ class MFunctionDlg {
               }
               ////////////////////////////////////////////////////////
               m_lhs = arr[0];
-              const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
-              if (m_lhs_fnDec) {
-                if (!plot.defines.getDefine(m_lhs_fnDec)) {
-                  if (
-                    self.variable !== "y" &&
-                    fnDlgFunctionVal.indexOf("y") !== -1
-                  ) {
-                    alert(
-                      `Cannot use "y" in this context. It is reserved for use as the independent variable.`
-                    );
-                    return;
-                  }
+              if (!forceDefined) {
+                const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
+                if (m_lhs_fnDec) {
+                  if (!plot.defines.getDefine(m_lhs_fnDec)) {
+                    if (
+                      self.variable !== "y" &&
+                      fnDlgFunctionVal.indexOf("y") !== -1
+                    ) {
+                      alert(
+                        `Cannot use "y" in this context. It is reserved for use as the independent variable.`
+                      );
+                      return;
+                    }
 
-                  // console.log(
-                  //   `${m_lhs_fnDec} is an undefined function. try to define it`
-                  // );
+                    // console.log(
+                    //   `${m_lhs_fnDec} is an undefined function. try to define it`
+                    // );
 
-                  if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
-                    alert(`Tried but failed to define "${m_lhs_fnDec}".`);
-                    return;
-                  }
-                  fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
-                  arr = [m_lhs];
-                } else {
-                  if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
-                    alert(
-                      `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
-                    );
-                    return;
+                    if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
+                      alert(`Tried but failed to define "${m_lhs_fnDec}".`);
+                      return;
+                    }
+                    fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
+                    arr = [m_lhs];
+                  } else {
+                    if (
+                      arr[0].indexOf("y") == -1 &&
+                      arr[1].indexOf("y") == -1
+                    ) {
+                      alert(
+                        `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
+                      );
+                      return;
+                    }
                   }
                 }
               }
@@ -966,8 +989,8 @@ class MFunctionDlg {
                   return;
                 }
 
-                fnDlgFunctionVal = `${m_lhs}=${m_rhs}+y`;
-                arr = fnDlgFunctionVal.split("=");
+                //fnDlgFunctionVal = `${m_lhs}=${m_rhs}`;
+                //arr = fnDlgFunctionVal.split("=");
               }
 
               //console.log("Implicit");
@@ -988,7 +1011,7 @@ class MFunctionDlg {
                   var eq = nerdamer(fnDlgFunctionVal);
                   var solution =
                     self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
-                  if (typeof solution === "object") {
+                  if (typeof solution === "object" && solution[0]) {
                     arr = [solution[0].toString()];
                   } else {
                     arr = [solution.toString()];
@@ -1055,7 +1078,7 @@ class MFunctionDlg {
                 var eq = nerdamer(`${m_arr[0]}=${m_arr[1]}`);
                 var solution =
                   self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
-                if (typeof solution === "object") {
+                if (typeof solution === "object" && solution[0]) {
                   arr[0] = "y";
                   arr[1] = solution[0].toString();
                 } else {

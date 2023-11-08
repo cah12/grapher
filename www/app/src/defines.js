@@ -627,6 +627,9 @@ class Defines {
 ] 
 [{ l: 'c1*v1', r: 'c1v1' }]
 */
+      if (res.indexOf("'") !== -1) {
+        return null;
+      }
       res = Utility.replaceKeywordMarkers(res);
       if (m_simplify) {
         try {
@@ -646,7 +649,8 @@ class Defines {
           //throw "MathJs throwed an error.";
           return res;
         }
-      } //else return Utility.replaceKeywordMarkers(res);
+      }
+      return res;
     }
 
     /* this.getDerivativeDeclaration = function (str, variable) {
