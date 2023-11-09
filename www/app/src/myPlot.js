@@ -263,6 +263,13 @@ class MyPlot extends Plot {
     });
 
     Static.bind("addCurve", function (e, title, samples, upload, result) {
+      if (!samples.length) {
+        const uploadStr = upload ? "during upload" : "";
+        alert(
+          `Failed to generate saamples for the curve "${title}" ${uploadStr}.`
+        );
+        return;
+      }
       let curve = addCurve(title, samples, upload);
       curve.attach(self);
     });

@@ -137,10 +137,10 @@ class DefinesDlg extends ModalDlg {
       var define = defines.hasDefine(self.selector("definesName").val());
       if (!define) {
         self.selector("definesRemove").attr("disabled", true);
-        self.selector("definesRemoveAll").attr("disabled", true);
+        //self.selector("definesRemoveAll").attr("disabled", true);
       } else {
         self.selector("definesRemove").attr("disabled", false);
-        self.selector("definesRemoveAll").attr("disabled", false);
+        //self.selector("definesRemoveAll").attr("disabled", false);
       }
     }
 
@@ -280,7 +280,7 @@ class DefinesDlg extends ModalDlg {
       } else {
         self.selector("definesAdd").attr("disabled", true);
         self.selector("definesRemove").attr("disabled", true);
-        self.selector("definesRemoveAll").attr("disabled", true);
+        //self.selector("definesRemoveAll").attr("disabled", true);
       }
     });
 
@@ -296,7 +296,7 @@ class DefinesDlg extends ModalDlg {
       } else {
         self.selector("definesAdd").attr("disabled", true);
         self.selector("definesRemove").attr("disabled", true);
-        self.selector("definesRemoveAll").attr("disabled", true);
+        //self.selector("definesRemoveAll").attr("disabled", true);
       }
     });
 
@@ -485,8 +485,6 @@ class Defines {
         while (full_dec) {
           m_str = m_str.replace(full_dec, "");
           if (dec) {
-            const val = m_defines.get(dec) || null;
-            console.log(val);
             if (!m_defines.get(dec)) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
               let fnDec = dec.replaceAll("'", "");
@@ -507,18 +505,15 @@ class Defines {
                 values.push(_derivative);
                 //$(window).trigger("defineAdded", [dec, _derivative]);
               } else {
-                alert(
-                  `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
-                );
+                // alert(
+                //   `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+                // );
                 return null;
               }
             } else {
-              if (m_str.length) {
-                alert(
-                  `Attempt to use "${dec}" failed because it is undefined.`
-                );
-                return null;
-              }
+              // if (m_str.length) {
+              //   return null;
+              // }
               full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
               if (full_dec) {
                 dec = self.getDerivativeDeclaration(m_str, variable);
@@ -532,8 +527,9 @@ class Defines {
           }
         }
         if (names.length) {
-          for (let i = 0; i < names.length; i++) {
-            $(window).trigger("defineAdded", [names[i], values[i]]);
+          let m_names = _.uniq(names, (x) => x.name);
+          for (let i = 0; i < m_names.length; i++) {
+            $(window).trigger("defineAdded", [m_names[i], values[i]]);
           }
         }
         //}
@@ -652,32 +648,6 @@ class Defines {
       }
       return res;
     }
-
-    /* this.getDerivativeDeclaration = function (str, variable) {
-      let ind = str.lastIndexOf("'(");
-      for (let index = ind - 1; index > 0; index--) {
-        if (str[index] == "'") ind--;
-        else break;
-      }
-      if (ind == -1) return null;
-      //const startIndex = str.indexOf("'") - 1;
-      let res = ""; //str[ind - 1] + "'";
-      for (let index = ind - 1; index < str.length; index++) {
-        res += str[index];
-        if (str[index] == "(") {
-          ind = index;
-          break;
-        }
-      }
-      let par = 1;
-      for (let i = ind + 1; i < str.length; i++) {
-        res += str[i];
-        if (str[i] == "(") par++;
-        if (str[i] == ")") par--;
-        if (par == 0) break;
-      }
-      return res;
-    }; */
 
     this.getDerivativeDeclaration = function (str, variable) {
       //let test = 0;

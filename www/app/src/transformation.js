@@ -381,27 +381,41 @@ class Transformation {
           plot.autoRefresh();
           return;
         }
-        fn = `-(${curve.fn})`;
-        if (doSwap) {
-          curve.unSwapAxes();
+
+        if (fn) {
+          if (doSwap) {
+            curve.unSwapAxes();
+          }
+          fn = math
+            .simplify(
+              fn.replaceAll(variable, `(-1*${variable})`),
+              {},
+              { exactFractions: false }
+            )
+            .toString();
+          //Replace the whitespace delimiters stripped out by simplify()
+          fn = fn.replaceAll("mod", " mod ");
         }
-        fn = math
-          .simplify(
-            fn.replaceAll(variable, `(-1*${variable})`),
-            {},
-            { exactFractions: false }
-          )
-          .toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        fn = fn.replaceAll("mod", " mod ");
+        if (parametricFnX && parametricFnY) {
+          lowerX = curve.parametricLowerX;
+          upperX = curve.parametricUpperX;
+          parametricFnX = `-(${parametricFnX})`;
+          parametricFnY = `-(${parametricFnY})`;
+        }
         const functionDlgData = {
           rtti: PlotItem.RttiValues.Rtti_PlotCurve,
           lowerLimit: curve.maxXValue() * -1, //Number
           upperLimit: curve.minXValue() * -1, //Number
+          lowerX,
+          upperX,
           threeD: false,
           title: Utility.generateCurveName(m_plot, "trans_"), //eq + domain[0], //String
           variable, //String
           fn: fn, //String
+          parametricFnX,
+          parametricFnY,
+          expandedParametricFnX: parametricFnX,
+          expandedParametricFnY: parametricFnY,
           expandedFn: fn, //String
           numOfPoints, //Number
           unboundedRange: false, //Boolean
