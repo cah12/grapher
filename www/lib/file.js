@@ -296,7 +296,7 @@ class MFile {
           _plot.findPlotCurve(obj[i].title)
         ) {
           Utility.alert(obj[i].title + " already exist");
-          Upload.reset($("#fileInput"));
+          //Upload.reset($("#fileInput"));
           return; //false;
         }
       }
@@ -455,7 +455,7 @@ class MFile {
         }
       }
 
-      Upload.reset($("#fileInput"));
+      //Upload.reset($("#fileInput"));
     }
 
     this.setPlotData = function (data, mongo = false) {
@@ -483,11 +483,17 @@ class MFile {
 
     this.upload = function (data, mongo = false) {
       let extension = data.fileName.split(".")[1];
-      //console.log(extension)
+      if (extension === "def") {
+        plot.defines.processUploadData({
+          fileName: data.fileName,
+          content: data.content,
+        });
+      }
       if (
         extension == "xls" ||
         extension == "xlsx" ||
         extension == "txt" ||
+        //extension == "def" ||
         extension == "tbl"
       ) {
         //csv
@@ -575,7 +581,7 @@ class MFile {
               "Do you want to save the changes to the Grapher?",
               function (answer) {
                 if (answer == Cancel) {
-                  Upload.reset($("#fileInput"));
+                  //Upload.reset($("#fileInput"));
                   if (sideBarHidden) {
                     _plot.rightSidebar.showSidebar(true);
 
@@ -585,7 +591,7 @@ class MFile {
                 }
                 if (answer == Yes) {
                   function saveCb() {
-                    Upload.reset($("#fileInput"));
+                    //Upload.reset($("#fileInput"));
                     for (let i = 0; i < list.length; ++i) {
                       list[i].detach();
                       list[i].delete();
@@ -753,8 +759,9 @@ class MFile {
           curve.fn = curve.expandedFn = undefined;
           curve.attach(_plot);
         }
-        Upload.reset($("#fileInput"));
+        //Upload.reset($("#fileInput"));
       }
+      //Upload.reset($("#fileInput"));
     };
 
     this.save = function (cb) {

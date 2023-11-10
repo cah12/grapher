@@ -16,7 +16,8 @@ class AlertDlg {
 		<h4 class="modal-title"><b>Alert</b></h4>\
 		</div>\
 		<div class="modal-body">\
-		<p id="msg"></p>\
+		<p id="msg" style="word-break: break-all;"></p>\
+    <!--div id="msg"></div-->\
 		</div>\
 		<div id="alertDlgFooter1" class="modal-footer">\
     <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
@@ -54,7 +55,8 @@ class AlertDlg {
       $("#alertDlgFooter2").hide();
       $("#alertDlgFooter3").hide();
       $("#alertDlgFooter1").show();
-      $("#msg").text(msg);
+
+      $("#msg").html(msg.replaceAll("\n", "<br>"));
       if (type == "small") {
         $("#dlg").addClass("modal-sm");
       } else {
@@ -95,7 +97,7 @@ class AlertDlg {
       this.alertYesCb = cb;
       $("#alertDlgFooter1").hide();
       $("#alertDlgFooter2").show();
-      $("#msg").text(msg);
+      $("#msg").html(msg);
       if (type == "small") {
         $("#dlg").addClass("modal-sm");
       } else {
@@ -2287,26 +2289,27 @@ class Utility {
   }
 
   static getFullDerivativeDeclaration(str) {
-    let ind = str.lastIndexOf("'(");
+    let m_str = Utility.purgeAndMarkKeywords(str);
+    let ind = m_str.lastIndexOf("'(");
     for (let index = ind - 1; index > 0; index--) {
-      if (str[index] == "'") ind--;
+      if (m_str[index] == "'") ind--;
       else break;
     }
     if (ind == -1) return null;
-    //const startIndex = str.indexOf("'") - 1;
-    let res = ""; //str[ind - 1] + "'";
-    for (let index = ind - 1; index < str.length; index++) {
-      res += str[index];
-      if (str[index] == "(") {
+    //const startIndex = m_str.indexOf("'") - 1;
+    let res = ""; //m_str[ind - 1] + "'";
+    for (let index = ind - 1; index < m_str.length; index++) {
+      res += m_str[index];
+      if (m_str[index] == "(") {
         ind = index;
         break;
       }
     }
     let par = 1;
-    for (let i = ind + 1; i < str.length; i++) {
-      res += str[i];
-      if (str[i] == "(") par++;
-      if (str[i] == ")") par--;
+    for (let i = ind + 1; i < m_str.length; i++) {
+      res += m_str[i];
+      if (m_str[i] == "(") par++;
+      if (m_str[i] == ")") par--;
       if (par == 0) break;
     }
     return res;
@@ -2314,15 +2317,15 @@ class Utility {
 
   static getFunctionDeclaration(str) {
     //f(x)
-    for (let i = 3; i < str.length; i++) {
+    let m_str = Utility.purgeAndMarkKeywords(str);
+    for (let i = 3; i < m_str.length; i++) {
       if (
-        str[i] === ")" &&
-        str[i - 2] === "(" &&
-        Utility.isAlpha(str[i - 1]) &&
-        Utility.isAlpha(str[i - 3])
+        m_str[i] === ")" &&
+        m_str[i - 2] === "(" &&
+        Utility.isAlpha(m_str[i - 1]) &&
+        Utility.isAlpha(m_str[i - 3])
       ) {
-        // if (i == 3 || !Utility.isAlpha(str[i - 4]))
-        return str.substring(i - 3, i + 1);
+        return m_str.substring(i - 3, i + 1);
       }
     }
     return null;

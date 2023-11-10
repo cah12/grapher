@@ -146,6 +146,14 @@ class MToolBar extends ToolBar {
       _plot.trashDlg.trashCb(_plot);
     }
 
+    function reservedFn() {
+      let s = Static.keywords.toString();
+      s = s.replaceAll(",", ", ");
+      Utility.alert(
+        `The ${Static.keywords.length} words listed below are reserved for internal use by this application.\nDo not try to redefine any of the reserved words:\n\n${s}`
+      );
+    }
+
     function functionFn() {
       _plot._functionDlg.functionDlg(Utility.generateCurveName(_plot));
     }
@@ -164,6 +172,7 @@ class MToolBar extends ToolBar {
       markerFn,
       zoneFn,
       _plot.print,
+      reservedFn,
       trashFn,
     ];
 
@@ -215,6 +224,11 @@ class MToolBar extends ToolBar {
           text: "Print",
           icon: "images/print.png",
           tooltip: "Print the current graph.",
+        },
+        {
+          text: "Reserved words",
+          icon: "images/list.png",
+          tooltip: "Shows a list of reserved keywords.",
         },
         {
           text: "Recycle bin",

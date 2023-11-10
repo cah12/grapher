@@ -238,10 +238,16 @@ class DefinesDlg extends ModalDlg {
         return;
       }
       if (error.errorType == Defines.DefineError.keyword) {
-        alert(
-          'Define name,"' + name + '", contains "' + error.name + '" keyword!'
+        // alert(
+        //   'Define name,"' + name + '", contains "' + error.name + '" keyword!'
+        // );
+        Utility.alert(
+          'Define name,"' + name + '", contains "' + error.name + '" keyword!',
+          null,
+          "keyWordOverwrite"
         );
         self.selector("definesName").val("");
+        self.selector("definesAdd").attr("disabled", true);
         if (defines.definesSize()) {
           self.selector("definesRemoveAll").attr("disabled", false);
         }
@@ -403,6 +409,10 @@ class Defines {
     let self = this;
     let m_defines = new Map();
     let m_simplify = true;
+
+    this.getDefinesDlg = function () {
+      return null; //subclass reimplement to return something useful.
+    };
 
     function getParenthesizeDefine(name) {
       if (m_defines.has(name)) {
@@ -813,6 +823,7 @@ class Defines {
     };
 
     this.upload = function (files) {
+      const self = this;
       // Loop through the FileList and render image files as thumbnails.
       for (var i = 0, f; (f = files[i]); i++) {
         // Only process image files.
@@ -822,12 +833,19 @@ class Defines {
           fileExtension != "txt" &&
           fileExtension != "xls" &&
           fileExtension != "xlsx" &&
+          fileExtension != "def" &&
           fileExtension != "plt"
         ) {
           continue;
         }
 
         var reader = new FileReader();
+
+        reader.onloadend = (function () {
+          return function (e) {
+            self.getDefinesDlg().selector("definesUpload").val(""); //reset
+          };
+        })();
 
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
@@ -847,6 +865,7 @@ class Defines {
         } else {
           reader.readAsText(f);
         }
+        //$("#fileInput").val("");
       }
     };
   }

@@ -733,12 +733,28 @@ class MFunctionDlg {
           self.variable = $("#fnDlg_variable").val();
 
           if (fnDlgFunctionVal.indexOf("=") === -1) {
-            let str = Utility.purgeAndMarkKeywords(fnDlgFunctionVal);
-
-            str = Utility.getFunctionDeclaration(str);
-            if (str && !plot.defines.getDefine(str)) {
+            let m_str = fnDlgFunctionVal;
+            let str = Utility.getFunctionDeclaration(m_str);
+            let error = [];
+            while (str) {
+              if (!plot.defines.getDefine(str)) {
+                error.push(str);
+              }
+              m_str = m_str.replaceAll(str, "");
+              str = Utility.getFunctionDeclaration(m_str);
+            }
+            if (error.length) {
+              let s = error.toString();
+              const lastIndex = s.lastIndexOf(",");
+              if (lastIndex !== -1) {
+                s =
+                  s.substring(0, lastIndex) +
+                  " and " +
+                  s.substring(lastIndex + 1);
+                s = s.replaceAll(",", ", ");
+              }
               alert(
-                `Failed to retrieve a valid define, ${str}, for expanding ${fnDlgFunctionVal}.`
+                `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
               );
               return;
             }

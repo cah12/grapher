@@ -14,9 +14,9 @@ class UpLoad {
      * Reset the file input. (inputDiv[0].value = "";)
      * @param {object} inputDiv jQuery element selector
      */
-    this.reset = function (inputDiv) {
-      inputDiv[0].value = "";
-    };
+    // this.reset = function (inputDiv) {
+    //   inputDiv[0].value = "";
+    // };
 
     this.handleFiles = function (files) {
       // Loop through the FileList.
@@ -29,12 +29,21 @@ class UpLoad {
           fileExtension != "xls" &&
           fileExtension != "xlsx" &&
           fileExtension != "plt" &&
-          fileExtension != "fnc"
+          fileExtension != "fnc" &&
+          fileExtension != "def"
         ) {
           continue;
         }
 
         var reader = new FileReader();
+
+        reader.onloadend = (function () {
+          return function (e) {
+            console.log("Here");
+            //self.reset($("#fileInput"));
+            $("#fileInput").val("");
+          };
+        })();
 
         // Closure to capture the file information.
         reader.onload = (function (theFile) {
@@ -86,13 +95,12 @@ class UpLoad {
      */
     this.setInputElement = function (inputDiv) {
       Static.bind("itemAttached", function (e, plotItem, on) {
-        //if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
         if (
           plotItem.rtti > PlotItem.RttiValues.Rtti_PlotMarker &&
           plotItem.rtti < PlotItem.RttiValues.Rtti_PlotShape
         ) {
           if ($("#fileInput").val().includes(plotItem.title()) && !on)
-            self.reset($("#fileInput"));
+            $("#fileInput").val("");
         }
       });
       inputDiv.change(function (evt) {
