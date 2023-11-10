@@ -3454,7 +3454,7 @@ class Utility {
 		}); 
 	 */
 
-  static alertYesNo = function (msg, type, doNotShowOptionId) {
+  static alertYesNoAsync(msg, type, doNotShowOptionId) {
     return new Promise((resolve, reject) => {
       if (Utility.alertObj == undefined) {
         Utility.alertObj = new AlertDlg();
@@ -3468,7 +3468,7 @@ class Utility {
         doNotShowOptionId
       );
     });
-  };
+  }
 
   static alertYesNo(msg, cb, type, doNotShowOptionId) {
     if (Utility.alertObj == undefined) {
