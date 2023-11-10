@@ -150,7 +150,7 @@ class MToolBar extends ToolBar {
       let s = Static.keywords.toString();
       s = s.replaceAll(",", ", ");
       Utility.alert(
-        `The ${Static.keywords.length} words listed below are reserved for internal use by this application.\nDo not try to redefine any of the reserved words:\n\n${s}`
+        `The <b>${Static.keywords.length}</b> words listed below are reserved for internal use by this application.\n<b>Do not</b> try to redefine any of the reserved words:\n\n${s}`
       );
     }
 

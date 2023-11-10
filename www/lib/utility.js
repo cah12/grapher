@@ -81,7 +81,6 @@ class AlertDlg {
       dlg.modal({
         backdrop: "static",
       });
-      //dlg.modal();
     };
 
     var self = this;
