@@ -802,4 +802,15 @@ require([
   // );
 
   //console.log(math.evaluate("6%4").toString());
+
+  // const mytest = async () => {
+  //   try {
+  //     const res = await Utility.alertYesNo("Hi");
+  //     console.log(res);
+  //   } catch (error) {}
+  // };
+
+  // mytest();
+
+  //Utility.alertYesNo("Hi", null, null);
 });

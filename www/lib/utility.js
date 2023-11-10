@@ -128,23 +128,27 @@ class AlertDlg {
       });
       //dlg.modal();
       //$("#alert_Modal").modal("show");
+      return 44;
     };
 
     $(".alertYes").click(function () {
       //$(".close").click();
       $("#alert_Modal").modal("hide");
+      Utility.res = Yes;
       self.alertYesCb(Yes);
     });
 
     $(".alertNo").click(function () {
       //$(".close").click();
       $("#alert_Modal").modal("hide");
+      Utility.res = No;
       self.alertYesCb(No);
     });
 
     $(".alertCancel").click(function () {
       // $(".close").click();
       $("#alert_Modal").modal("hide");
+      Utility.res = Cancel;
       self.alertYesCb(Cancel);
     });
 
@@ -1893,6 +1897,7 @@ class Utility {
               //return 1
             }
           );
+
           samples = [];
           break;
         } else {
@@ -3418,7 +3423,7 @@ class Utility {
    * @param {string} [doNotShowOptionId] Unique Id use to display the "Don't show again" checkbox.
    *
    * @example
-   * Utility.alert("No curves found", "small") //Display a small alert box with the message "No curves found".
+   * Utility.alert("No curves found", "small") //Display a small alert Utility.alertYesNobox with the message "No curves found".
    */
   static alert(msg, type, doNotShowOptionId) {
     if (Utility.alertObj == undefined) {
@@ -3448,6 +3453,23 @@ class Utility {
 		}
 		}); 
 	 */
+
+  static alertYesNo = function (msg, type, doNotShowOptionId) {
+    return new Promise((resolve, reject) => {
+      if (Utility.alertObj == undefined) {
+        Utility.alertObj = new AlertDlg();
+      }
+      Utility.alertObj.alertYesNo(
+        msg,
+        () => {
+          return resolve(Utility.res);
+        },
+        type,
+        doNotShowOptionId
+      );
+    });
+  };
+
   static alertYesNo(msg, cb, type, doNotShowOptionId) {
     if (Utility.alertObj == undefined) {
       Utility.alertObj = new AlertDlg();
