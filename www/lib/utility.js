@@ -112,23 +112,23 @@ class AlertDlg {
         $("#alertDlgFooter3").hide();
       }
 
-      $(".alertDoNotShow").on("change", function () {
-        if ($(this)[0].checked) {
-          doNotShowList.push(doNotShowOptionId);
-        } else {
-          const n = doNotShowList.indexOf(doNotShowOptionId);
-          if (n != -1) {
-            doNotShowList.splice(n, 1);
-          }
-        }
-      });
+      // $(".alertDoNotShow").on("change", function () {
+      //   if ($(this)[0].checked) {
+      //     doNotShowList.push(doNotShowOptionId);
+      //   } else {
+      //     const n = doNotShowList.indexOf(doNotShowOptionId);
+      //     if (n != -1) {
+      //       doNotShowList.splice(n, 1);
+      //     }
+      //   }
+      // });
 
       dlg.modal({
         backdrop: "static",
       });
-      //dlg.modal();
+      //dlg.modal("show");
       //$("#alert_Modal").modal("show");
-      return 44;
+      //return 44;
     };
 
     $(".alertYes").click(function () {
@@ -1752,6 +1752,10 @@ class Utility {
 
     obj.discontinuity = obj.discontinuity || [];
 
+    if (obj.discontinuity.length) {
+      numOfSamples = Math.round((numOfSamples *= 2.5));
+    }
+
     //let parser = new EvaluateExp(fx);
 
     if (typeof numOfSamples === "undefined") numOfSamples = 100;
@@ -1833,22 +1837,26 @@ class Utility {
           //console.log(xVal - step / Static.dicontinuityOffsetFactor, lowerX);
           if (xVal - step * Static.dicontinuityOffsetFactor >= lowerX) {
             yVal = parser.eval({
-              x: xVal - step * Static.dicontinuityOffsetFactor,
+              x: xVal - 1e-4,
+              //x: xVal - step * Static.dicontinuityOffsetFactor,
             });
             samples.push(
               new Misc.Point(
-                xVal - step * Static.dicontinuityOffsetFactor,
+                //xVal - step * Static.dicontinuityOffsetFactor,
+                xVal - 1e-4,
                 yVal
               )
             ); //point before but close to discontinuity
           }
           if (xVal + step * Static.dicontinuityOffsetFactor < upperX) {
             yVal = parser.eval({
-              x: xVal + step * Static.dicontinuityOffsetFactor,
+              //x: xVal + step * Static.dicontinuityOffsetFactor,
+              x: xVal + 1e-4,
             });
             samples.push(
               new Misc.Point(
-                xVal + step * Static.dicontinuityOffsetFactor,
+                //xVal + step * Static.dicontinuityOffsetFactor,
+                xVal + 1e-4,
                 yVal
               )
             ); //point after but close to discontinuity
@@ -1887,6 +1895,7 @@ class Utility {
                 //console.log("Y");
                 Utility.errorResponse = Utility.silentIgnore;
                 Utility.errorResponseChanged = true;
+                samples = [];
                 obj.warnIgnoreCb && obj.warnIgnoreCb();
                 return null;
               }
@@ -1899,7 +1908,7 @@ class Utility {
           );
 
           samples = [];
-          break;
+          return null;
         } else {
           continue;
         }
@@ -1928,7 +1937,7 @@ class Utility {
                 Utility.errorResponse = Utility.silentIgnore;
                 Utility.errorResponseChanged = true;
                 //obj.ok_fn(obj);
-
+                samples = [];
                 return null;
               }
               if (answer == No) {
@@ -1939,7 +1948,7 @@ class Utility {
             }
           );
           samples = [];
-          break;
+          // break;
         } else {
           continue;
         }

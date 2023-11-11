@@ -161,6 +161,8 @@ class MyCurve extends Curve {
         //samples are free of discontinuity.
         const samples = self.data().samples().slice();
 
+        console.log(self.discontinuity);
+
         for (let n = 0; n < self.discontinuity.length; n++) {
           for (let i = 0; i < samples.length; i++) {
             if (!self.axesSwapped) {

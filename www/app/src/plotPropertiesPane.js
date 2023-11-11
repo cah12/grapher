@@ -265,6 +265,8 @@ class PlotPropertiesPane extends PropertiesPane {
     //   },
     // });
 
+    Static.enterButton = $("#executeButton");
+
     $("#executeButton").click(function () {
       const m_value = $("#fnDlg_function")[0].value;
       if ($("#fnDlg_function").val().length) {
