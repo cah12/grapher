@@ -270,7 +270,10 @@ class ScaleMap {
         ts2 = d_transform.transform(ts2);
       }
       d_cnv = 1.0;
-      if (d_ts1 != ts2) {
+      // if (d_ts1 != ts2) {
+      //   d_cnv = (d_p2 - d_p1) / (ts2 - d_ts1);
+      // }
+      if (!Utility.mFuzzyCompare(d_ts1, ts2)) {
         d_cnv = (d_p2 - d_p1) / (ts2 - d_ts1);
       }
     }
@@ -296,6 +299,16 @@ class ScaleMap {
     this.transform = function (s) {
       return this.transform1(s);
     };
+
+    /*
+   inline double QwtScaleMap::transform( double s ) const
+ {
+     if ( m_transform )
+         s = m_transform->transform( s );
+  
+     return m_p1 + ( s - m_ts1 ) * m_cnv;
+ }
+  */
 
     //Deprecated
     this.transform1 = function (s) {

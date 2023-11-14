@@ -100,6 +100,10 @@ Static.mToPoints = function (
     for (var i = from; i <= to; i++) {
       var sample = series.sample(i);
 
+      // if (math.abs(sample.y) > 1e6) {
+      //   console.log(sample.x, sample.y);
+      // }
+
       var x = xMap.transform(sample.x) - 1; //minus 1 why
       var y = yMap.transform(sample.y) - 1; //minus 1 why
 
@@ -114,6 +118,7 @@ Static.mToPoints = function (
       numPoints++;
     }
   }
+
   return points;
 };
 

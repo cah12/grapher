@@ -78,18 +78,20 @@ class AbstractScaleDraw {
     this.longestLabel = function () {
       var m_longestLabel = "";
       var majorTicks = m_scaleDiv.ticks(ScaleDiv.TickType.MajorTick);
-      majorTicks.forEach(function (tick, i) {
-        if (i !== 0 && i !== majorTicks.length - 1) {
-          //the first and last tick label are not drawn
-          if (m_scaleDiv.contains(tick)) {
-            tick = Utility.toPrecision(tick, m_precision);
-            //if (tick > m_nonExponentNotationUpperLimit || tick < m_nonExponentNotationLowerLimit)
-            //tick = parseFloat(tick).toExponential(m_decimalPlaces);
-            if (tick.toString().length > m_longestLabel.length)
-              m_longestLabel = tick.toString();
+      if (majorTicks) {
+        majorTicks.forEach(function (tick, i) {
+          if (i !== 0 && i !== majorTicks.length - 1) {
+            //the first and last tick label are not drawn
+            if (m_scaleDiv.contains(tick)) {
+              tick = Utility.toPrecision(tick, m_precision);
+              //if (tick > m_nonExponentNotationUpperLimit || tick < m_nonExponentNotationLowerLimit)
+              //tick = parseFloat(tick).toExponential(m_decimalPlaces);
+              if (tick.toString().length > m_longestLabel.length)
+                m_longestLabel = tick.toString();
+            }
           }
-        }
-      });
+        });
+      }
       return m_longestLabel;
     };
 

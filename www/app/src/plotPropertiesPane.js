@@ -759,7 +759,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "axesOrientation",
       parentId: "drawingSettings",
       type: "select",
-      selectorOptions: ["Implicit", "Do not swap axes", "Swap axes"],
+      selectorOptions: ["Implicit", "Don't/Undo swap axes", "Swap axes"],
     });
     var aspectRatioChkBx = this.addProperty({
       name: "1:1 aspect ratio",
@@ -2200,15 +2200,17 @@ class PlotPropertiesPane extends PropertiesPane {
       if (index == 0) {
         //Implicit
         Static.swapAxes = 0;
-        console.log("Implicit", Static.swapAxes);
+        //console.log("Implicit", Static.swapAxes);
       } else if (index == 1) {
         //Do not swap axes
         Static.swapAxes = 1;
-        console.log("Do not swap axes", Static.swapAxes);
+        //console.log("Do not swap axes", Static.swapAxes);
+        plot.rv._curve.unSwapAxes();
       } else if (index == 2) {
         //Swap axes
         Static.swapAxes = 2;
-        console.log("Swap axes", Static.swapAxes);
+        //console.log("Swap axes", Static.swapAxes);
+        plot.rv._curve.swapAxes();
       }
     });
 

@@ -1753,7 +1753,7 @@ class Utility {
     obj.discontinuity = obj.discontinuity || [];
 
     if (obj.discontinuity.length) {
-      numOfSamples = Math.round((numOfSamples *= 2.5));
+      numOfSamples = Math.round((numOfSamples *= 2));
     }
 
     //let parser = new EvaluateExp(fx);
@@ -1837,26 +1837,66 @@ class Utility {
           //console.log(xVal - step / Static.dicontinuityOffsetFactor, lowerX);
           if (xVal - step * Static.dicontinuityOffsetFactor >= lowerX) {
             yVal = parser.eval({
-              x: xVal - 1e-4,
-              //x: xVal - step * Static.dicontinuityOffsetFactor,
+              x: xVal - step * Static.dicontinuityOffsetFactor,
             });
             samples.push(
               new Misc.Point(
-                //xVal - step * Static.dicontinuityOffsetFactor,
-                xVal - 1e-4,
+                xVal - step * Static.dicontinuityOffsetFactor,
                 yVal
+              )
+            ); //point before but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                (xVal - step * Static.dicontinuityOffsetFactor) * 0.75,
+                parser.eval({
+                  x: (xVal - step * Static.dicontinuityOffsetFactor) * 0.75,
+                })
+              )
+            ); //point before but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                (xVal - step * Static.dicontinuityOffsetFactor) * 0.5,
+                parser.eval({
+                  x: (xVal - step * Static.dicontinuityOffsetFactor) * 0.5,
+                })
+              )
+            ); //point before but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                (xVal - step * Static.dicontinuityOffsetFactor) * 0.25,
+                math.sign(yVal) * 1e300
               )
             ); //point before but close to discontinuity
           }
           if (xVal + step * Static.dicontinuityOffsetFactor < upperX) {
             yVal = parser.eval({
-              //x: xVal + step * Static.dicontinuityOffsetFactor,
-              x: xVal + 1e-4,
+              x: xVal + step * Static.dicontinuityOffsetFactor,
             });
             samples.push(
               new Misc.Point(
-                //xVal + step * Static.dicontinuityOffsetFactor,
-                xVal + 1e-4,
+                d - (xVal + step * Static.dicontinuityOffsetFactor) * 0.25,
+                math.sign(yVal) * 1e300
+              )
+            ); //point after but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                d - (xVal + step * Static.dicontinuityOffsetFactor) * 0.5,
+                parser.eval({
+                  x: d - (xVal + step * Static.dicontinuityOffsetFactor) * 0.5,
+                })
+              )
+            ); //point after but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                d - (xVal + step * Static.dicontinuityOffsetFactor) * 0.75,
+                parser.eval({
+                  x: d - (xVal + step * Static.dicontinuityOffsetFactor) * 0.75,
+                })
+              )
+            ); //point after but close to discontinuity
+            samples.push(
+              new Misc.Point(
+                xVal + step * Static.dicontinuityOffsetFactor,
                 yVal
               )
             ); //point after but close to discontinuity
@@ -3137,7 +3177,9 @@ class Utility {
 
     // if (places > 300) places = 300;
     var multiplier = Math.pow(10, places);
-    return Math.round(number * multiplier) / multiplier;
+    const val = Math.round(number * multiplier);
+    if (!isFinite(val)) return number;
+    return val / multiplier;
   }
 
   /**
@@ -3154,6 +3196,7 @@ class Utility {
     return false;
     //return (Math.abs(a - b) * 1000000000000. <= Math.min(Math.abs(a), Math.abs(b)));
   }
+  //return (qAbs(p1 - p2) * 100000.f <= qMin(qAbs(p1), qAbs(p2)));
 
   /**
    * Compares the floating point value value1 and value2 and returns true if they are considered equal, otherwise false.

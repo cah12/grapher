@@ -65,7 +65,7 @@ class SeriesData {
           break;
         }
       }
-      //console.log(i)
+      //console.log(i);
       for (; i <= to; i++) {
         var rect = SeriesData.mBoundingRectPoint(series.sample(i));
         if (rect.width() >= 0.0 && rect.height() >= 0.0) {
@@ -79,7 +79,7 @@ class SeriesData {
           );
         }
       }
-      //
+
       return boundingRect;
     };
 

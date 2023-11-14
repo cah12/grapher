@@ -41,9 +41,21 @@ class MyCurve extends Curve {
   //f(x) is horizontal and x is vertical
   swapAxes() {
     if (!this.axesSwapped) {
-      //console.log(this.discontinuity);
       const self = this;
       const plot = self.plot();
+
+      const x_scaleDiv = plot.axisScaleDiv(self.xAxis());
+      let x_min = x_scaleDiv.lowerBound(),
+        x_max = x_scaleDiv.upperBound();
+
+      const y_scaleDiv = plot.axisScaleDiv(self.yAxis());
+      let y_min = y_scaleDiv.lowerBound(),
+        y_max = y_scaleDiv.upperBound();
+
+      // console.log(x_min, x_max);
+      // console.log(y_min, y_max);
+      //console.log(this.discontinuity);
+
       let autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       let samples = self.data().samples();
@@ -80,6 +92,8 @@ class MyCurve extends Curve {
         plot.tbar.hideDropdownItem("Watch", i);
       }
       self.setSamples(samples);
+      plot.setAxisScale(self.xAxis(), y_min, y_max);
+      plot.setAxisScale(self.yAxis(), x_min, x_max);
       Static.trigger("invalidateWatch");
       plot.rv.updateWatchesAndTable();
       plot.setAutoReplot(autoReplot);
@@ -91,12 +105,21 @@ class MyCurve extends Curve {
   unSwapAxes() {
     if (!this.axesSwapped) return;
 
+    const self = this;
     const plot = this.plot();
+    const x_scaleDiv = plot.axisScaleDiv(self.xAxis());
+    let x_min = x_scaleDiv.lowerBound(),
+      x_max = x_scaleDiv.upperBound();
+
+    const y_scaleDiv = plot.axisScaleDiv(self.yAxis());
+    let y_min = y_scaleDiv.lowerBound(),
+      y_max = y_scaleDiv.upperBound();
+
     let autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
 
     this.axesSwapped = false;
-    const self = this;
+
     let samples = self.data().samples();
     samples = samples.map(function (pt) {
       let x = pt.x;
@@ -131,6 +154,8 @@ class MyCurve extends Curve {
       }
     }
     self.setSamples(samples);
+    plot.setAxisScale(self.xAxis(), y_min, y_max);
+    plot.setAxisScale(self.yAxis(), x_min, x_max);
     plot.rv.updateWatchesAndTable();
     plot.setAutoReplot(autoReplot);
     plot.rv.refresh();
@@ -145,23 +170,24 @@ class MyCurve extends Curve {
     }
 
     //this.unSwapAxes();
+    const plot = self.plot();
+    const autoReplot = plot.autoReplot();
+    plot.setAutoReplot(false);
 
     let indexBeforeDiscontinuity = [];
-    const plot = self.plot();
+
     if (
       //!self.unboundedRange &&
       self.discontinuity &&
       self.discontinuity.length
     ) {
-      // const autoReplot = plot.autoReplot();
-      // plot.setAutoReplot(false);
       if (!self.unboundedRange) {
         //Account for discontinuity
 
         //samples are free of discontinuity.
-        const samples = self.data().samples().slice();
+        const samples = self.data().samples();
 
-        console.log(self.discontinuity);
+        //console.log(self.discontinuity);
 
         for (let n = 0; n < self.discontinuity.length; n++) {
           for (let i = 0; i < samples.length; i++) {
@@ -188,7 +214,9 @@ class MyCurve extends Curve {
           if (indexBeforeDiscontinuity[i] <= 0) continue;
           m_to = indexBeforeDiscontinuity[i];
           if (m_from < m_to) {
+            //console.log(486, self.data().samples());
             super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+            //console.log(487, self.data().samples());
           }
           m_from = m_to + 1;
         }
@@ -197,7 +225,9 @@ class MyCurve extends Curve {
           indexBeforeDiscontinuity.length == 1 &&
           indexBeforeDiscontinuity[0] == -1
         ) {
+          //console.log(486, self.data().samples());
           super.drawCurve(painter, style, xMap, yMap, m_from, to);
+          //console.log(487, self.data().samples());
         }
 
         if (m_to < to && m_from < to) {
@@ -273,5 +303,7 @@ class MyCurve extends Curve {
     } else {
       super.drawCurve(painter, style, xMap, yMap, from, to);
     }
+    plot.setAutoReplot(autoReplot);
+    plot.autoRefresh();
   }
 }
