@@ -473,7 +473,7 @@ class Defines {
         m_str = str.slice();
         dec = Utility.getFunctionDeclaration(str);
         while (dec) {
-          m_str = m_str.replace(dec, "");
+          m_str = m_str.replaceAll(dec, "");
           if (dec) {
             if (!m_defines.get(dec)) {
               alert(
@@ -493,7 +493,7 @@ class Defines {
         let values = [];
         let names = [];
         while (full_dec) {
-          m_str = m_str.replace(full_dec, "");
+          m_str = m_str.replaceAll(full_dec, "");
           if (dec) {
             if (!m_defines.get(dec)) {
               let _derivativeOrder = Utility.derivativeOrder(dec);
@@ -537,7 +537,7 @@ class Defines {
           }
         }
         if (names.length) {
-          let m_names = _.uniq(names, (x) => x.name);
+          let m_names = _.uniq(names);
           for (let i = 0; i < m_names.length; i++) {
             $(window).trigger("defineAdded", [m_names[i], values[i]]);
           }
