@@ -266,7 +266,7 @@ class MyPlot extends Plot {
       if (!samples.length) {
         const uploadStr = upload ? "during upload" : "";
         alert(
-          `Failed to generate saamples for the curve "${title}" ${uploadStr}.`
+          `Failed to generate samples for the curve "${title}" ${uploadStr}.`
         );
         return;
       }
@@ -526,6 +526,7 @@ class MyPlot extends Plot {
       // const xDecimalPlaces = self.axisDecimalPlaces(Axis.AxisId.xBottom);
       // const yDecimalPlaces = self.axisDecimalPlaces(Axis.AxisId.yLeft);
       //console.log(functionDlgData);
+      $("html").addClass("wait");
       let newCurve = null;
       if (functionDlgData) {
         setFunctionDlgData(functionDlgData);
@@ -554,13 +555,17 @@ class MyPlot extends Plot {
             numOfSamples: self._functionDlg.numOfPoints,
             ok_fn: self._functionDlg.ok,
           });
-          if (!s) return;
+          if (!s) {
+            $("html").removeClass("wait");
+            return;
+          }
           if (s.length == 0) {
             Utility.alert(
               "Unable to derive samples from the provided domain. Check the function and limits for possible divide-by-zero error"
             );
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
+            $("html").removeClass("wait");
             return;
           }
 
@@ -581,6 +586,7 @@ class MyPlot extends Plot {
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
           }
+          $("html").removeClass("wait");
           return newCurve;
         }
         if (self._functionDlg.threeDType === "spectrogram") {
@@ -613,6 +619,7 @@ class MyPlot extends Plot {
             //self._functionDlg.closeDlg = true;
           }
         }
+        $("html").removeClass("wait");
         return newCurve;
       }
 
@@ -781,13 +788,17 @@ class MyPlot extends Plot {
 
         const samples = Utility.makeSamples(makeSamplesData); //////////////
 
-        if (!samples) return;
+        if (!samples) {
+          $("html").removeClass("wait");
+          return;
+        }
         if (samples.length == 0) {
           Utility.alert(
             "Unable to derive samples from the provided domain. Check the function and limits for possible divide-by-zero error"
           );
           //self._functionDlg.close();
           //self._functionDlg.closeDlg = true;
+          $("html").removeClass("wait");
           return;
         }
         newCurve = addCurve(title, samples, false, fn);
@@ -799,7 +810,10 @@ class MyPlot extends Plot {
         newCurve.turningPoints = makeSamplesData.turningPoints;
         newCurve.inflectionPoints = makeSamplesData.inflectionPoints;
         newCurve.latex = self._functionDlg.latex;
-        if (!newCurve) return;
+        if (!newCurve) {
+          $("html").removeClass("wait");
+          return;
+        }
         if (samples.length == 1) {
           const color = Utility.randomColor();
           let sym = new Symbol2(
@@ -861,7 +875,7 @@ class MyPlot extends Plot {
 
         newCurve.domainRangeRestriction =
           self._functionDlg.domainRangeRestriction;
-
+        $("html").removeClass("wait");
         return newCurve;
       }
     };

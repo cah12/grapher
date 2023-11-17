@@ -695,15 +695,27 @@ class MFunctionDlg {
             //console.log(res);
             if (res.indexOf(",") !== -1) {
               const sltns = res.replaceAll(",", ", ");
-
-              res = res.split(",")[0];
-              alert(
-                `The solutions for the definition of "${dec}" are [ ${sltns} ].\nThe first solution, "${res}", is used.`
-              );
+              const _res = res.split(",");
+              if (_res[0] === "0" && _res[1] !== "0") {
+                res = _res[1];
+              } else {
+                res = _res[0];
+              }
+              if (_res[0] !== "0") {
+                alert(
+                  `The solutions for the definition of "${dec}" are [ ${sltns} ].\nThe first solution, "${res}", is used.`
+                );
+              }
             }
             res = res.replace("U", dec);
             if (res.indexOf("U") !== -1) {
               return false; //failed to force definition
+            }
+            if (plot.defines.getDefine(dec)) {
+              alert(
+                `You are attempting to re-define ${dec}. Redefinition is not permitted.`
+              );
+              return;
             }
             $(window).trigger("defineAdded", [
               dec,
@@ -786,25 +798,46 @@ class MFunctionDlg {
           self.parametric_variable = $("#fnDlg_parametric_variable").val();
           //self.xIsDependentVariable
           if (domainRangeRestriction.length && self.variable) {
+            domainRangeRestriction = domainRangeRestriction
+              .replaceAll("<=", "")
+              .replace("{", "")
+              .replace("}", "");
+            if (
+              domainRangeRestriction.indexOf("<") !== -1 ||
+              domainRangeRestriction.indexOf(">") !== -1 ||
+              domainRangeRestriction.indexOf(">=") !== -1
+            ) {
+              alert(
+                `Only "less than or equal" (i.e <=) permitted in defining the domain.`
+              );
+              return;
+            }
             if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
               domainRangeRestriction = domainRangeRestriction
-                .replaceAll("<", "")
-                .replace("{", "")
-                .replace("}", "")
+                // .replaceAll("<=", "")
+                // .replace("{", "")
+                // .replace("}", "")
                 .split(self.variable);
+              if (domainRangeRestriction.length != 2) {
+                Utility.alert(
+                  `Improperly declared domain. Expected "${self.variable}" as the variable.`
+                );
+                return false;
+              }
             } else {
               domainRangeRestriction = domainRangeRestriction
-                .replaceAll("<", "")
-                .replace("{", "")
-                .replace("}", "")
+                // .replaceAll("<=", "")
+                // .replace("{", "")
+                // .replace("}", "")
                 .split(self.parametric_variable);
+              if (domainRangeRestriction.length != 2) {
+                Utility.alert(
+                  `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`
+                );
+                return false;
+              }
             }
-            if (domainRangeRestriction.length != 2) {
-              Utility.alert(
-                `${domainRangeRestriction} is improperly declared.`
-              );
-              return false;
-            }
+
             $("#fnDlg_lowerLimit")[0].setValue(
               Utility.toLatex(domainRangeRestriction[0]),
               { suppressChangeNotifications: true }
@@ -912,7 +945,7 @@ class MFunctionDlg {
               ////////////////////////////////////////////////////////
               let m_lhs = arr[0];
               let m_rhs = arr[1];
-              const m_rhs_fnDec = Utility.getFunctionDeclaration(m_rhs);
+              let m_rhs_fnDec = Utility.getFunctionDeclaration(m_rhs);
               if (m_rhs_fnDec) {
                 if (!plot.defines.getDefine(m_rhs_fnDec)) {
                   if (
@@ -925,18 +958,35 @@ class MFunctionDlg {
                     return;
                   }
 
-                  if (!forceDefine(fnDlgFunctionVal, m_rhs_fnDec)) {
-                    alert(`Tried but failed to define "${m_rhs_fnDec}".`);
-                    return;
+                  if (forceDefine(fnDlgFunctionVal, m_rhs_fnDec)) {
+                    // alert(`Tried but failed to define "${m_rhs_fnDec}".`);
+                    // return;
+
+                    forceDefined = true;
+                    fnDlgFunctionVal = m_rhs = m_rhs_fnDec;
+                    arr = [m_rhs];
                   }
-                  forceDefined = true;
-                  fnDlgFunctionVal = m_rhs = m_rhs_fnDec;
-                  arr = [m_rhs];
                 }
+              }
+              m_rhs_fnDec = Utility.getFullDerivativeDeclaration(m_rhs);
+              if (m_rhs_fnDec) {
+                const _dec = Utility.getFunctionDeclaration(m_rhs);
+                if (_dec) {
+                  m_rhs = m_rhs.replaceAll(_dec, "U");
+                }
+                m_rhs = plot.defines.expandDefines(m_rhs, self.variable, true);
+                if (_dec) {
+                  m_rhs = m_rhs.replaceAll("U", _dec);
+                }
+                if (!m_rhs) {
+                  alert(`Tried but failed to define "${m_rhs_fnDec}".`);
+                  return;
+                }
+                arr[1] = m_rhs;
               }
 
               if (!forceDefined) {
-                const m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
+                let m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
                 if (m_lhs_fnDec) {
                   if (!plot.defines.getDefine(m_lhs_fnDec)) {
                     if (
@@ -949,12 +999,10 @@ class MFunctionDlg {
                       return;
                     }
 
-                    if (!forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
-                      alert(`Tried but failed to define "${m_lhs_fnDec}".`);
-                      return;
+                    if (forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
+                      fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
+                      arr = [m_lhs];
                     }
-                    fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
-                    arr = [m_lhs];
                   } else {
                     if (
                       arr[0].indexOf("y") == -1 &&
@@ -966,6 +1014,33 @@ class MFunctionDlg {
                       return;
                     }
                   }
+                }
+                m_lhs_fnDec = Utility.getFullDerivativeDeclaration(m_lhs);
+                if (m_lhs_fnDec) {
+                  const _dec = Utility.getFunctionDeclaration(m_rhs);
+                  if (_dec) {
+                    m_lhs = m_lhs.replaceAll(_dec, "U");
+                  }
+                  m_lhs = plot.defines.expandDefines(
+                    m_lhs,
+                    self.variable,
+                    true
+                  );
+                  if (_dec) {
+                    m_lhs = m_lhs.replaceAll("U", _dec);
+                  }
+                  if (!_dec) {
+                    m_lhs = plot.defines.expandDefines(
+                      m_lhs,
+                      self.variable,
+                      true
+                    );
+                  }
+                  if (!m_lhs) {
+                    alert(`Tried but failed to define "${m_lhs_fnDec}".`);
+                    return;
+                  }
+                  arr[0] = m_lhs;
                 }
               }
               if (m_lhs !== "0" && fnDlgFunctionVal !== m_lhs) {
@@ -1007,26 +1082,53 @@ class MFunctionDlg {
               //   plot.defines
               // );
               if (arr.length == 2) {
-                if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
-                  alert(
-                    `The equation, ${arr[0]}=${arr[1]}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
-                  );
-                  return;
+                let dec = Utility.getFunctionDeclaration(arr[0]);
+                if (!dec) {
+                  dec = Utility.getFunctionDeclaration(arr[1]);
                 }
-                if (m_lhs.length == 1) {
-                  arr = [m_rhs];
-                } else {
+                if (dec) {
+                  fnDlgFunctionVal = `${arr[0]}=${arr[1]}`;
+                  fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(dec, "U");
                   var eq = nerdamer(fnDlgFunctionVal);
-                  var solution =
-                    self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
+                  var solution = eq.solveFor("U");
                   if (typeof solution === "object" && solution[0]) {
                     arr = [solution[0].toString()];
                   } else {
                     arr = [solution.toString()];
                   }
                   nerdamer.flush();
+                  fnDlgFunctionVal = arr[0];
+                  if (plot.defines.getDefine(dec)) {
+                    alert(
+                      `You are attempting to re-define ${dec}. Redefinition is not permitted.`
+                    );
+                    return;
+                  }
+                  $(window).trigger("defineAdded", [dec, fnDlgFunctionVal]);
+                } else {
+                  if (arr[0].indexOf("y") == -1 && arr[1].indexOf("y") == -1) {
+                    alert(
+                      `The equation, ${arr[0]}=${arr[1]}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
+                    );
+                    return;
+                  }
+                  if (m_lhs.length == 1) {
+                    arr = [m_rhs];
+                  } else {
+                    var eq = nerdamer(fnDlgFunctionVal);
+                    var solution =
+                      self.variable == "y"
+                        ? eq.solveFor("x")
+                        : eq.solveFor("y");
+                    if (typeof solution === "object" && solution[0]) {
+                      arr = [solution[0].toString()];
+                    } else {
+                      arr = [solution.toString()];
+                    }
+                    nerdamer.flush();
+                  }
+                  fnDlgFunctionVal = arr[0];
                 }
-                fnDlgFunctionVal = arr[0];
               }
             }
           }
@@ -1605,24 +1707,5 @@ class MFunctionDlg {
       $("#fnDlg_cancel").click();
       //m_dlg1.detach();
     };
-
-    // const options = {
-    //             hideAlphas: true,
-    //             title: 'Function Editor',
-    //             screenColor: "#fff",
-    //             screenTextColor: "#00f",
-    //             prettyOnly: true,
-    //             initializeWithLastValue: true,
-    //             validOnly: true,
-    //             bigDialog: true,
-    //             //operatorButtonTextColor: "red"
-    //             //buttonImages: {xSquareImg: "img/xSquare3.png"}
-    //              buttonImages: {xSquareImg: "Sqr", squareRootImg: "Sqrt", xToPowYImg: "x^y"}
-    //         }
-
-    //         //Create a second equation editor that will be trigger when a clickable html element with id 'test2' is clicked.
-    //         let edlg = new EquationEditor("equationEditor", options);
-
-    //         console.log(edlg)
   }
 }
