@@ -475,12 +475,12 @@ class Defines {
         while (dec) {
           m_str = m_str.replaceAll(dec, "");
           if (dec) {
-            if (!m_defines.get(dec)) {
-              alert(
-                `Attempt to use "${dec}" rejected because it is undefined.`
-              );
-              return null;
-            }
+            //if (!m_defines.get(dec)) {
+            // alert(
+            //   `Attempt to use "${dec}" rejected because it is undefined.`
+            // );
+            // return null;
+            // }
           }
           dec = Utility.getFunctionDeclaration(m_str);
         }

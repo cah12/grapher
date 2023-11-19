@@ -832,16 +832,40 @@ class MFunctionDlg {
                 );
                 return false;
               }
+              let dmLimit = domainRangeRestriction[0];
               domainRangeRestriction[0] = plot.defines.expandDefines(
                 domainRangeRestriction[0],
                 self.variable,
                 true
               );
+              domainRangeRestriction[0] = handleCoeffs(
+                domainRangeRestriction[0]
+              );
+
+              if (!domainRangeRestriction[0]) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to resolve lower limit, ${dmLimit}, within the declared domain.`
+                );
+                return false;
+              }
+              dmLimit = domainRangeRestriction[1];
               domainRangeRestriction[1] = plot.defines.expandDefines(
                 domainRangeRestriction[1],
                 self.variable,
                 true
               );
+              domainRangeRestriction[1] = handleCoeffs(
+                domainRangeRestriction[1]
+              );
+
+              if (!domainRangeRestriction[1]) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to resolve upper limit, ${dmLimit}, within the declared domain.`
+                );
+                return false;
+              }
               if (
                 parseFloat(domainRangeRestriction[0]) >=
                 parseFloat(domainRangeRestriction[1])
@@ -1500,31 +1524,21 @@ class MFunctionDlg {
           }
 
           if (domainRangeRestriction.length) {
-            let s = Utility.purgeAndMarkKeywords(domainRangeRestriction[0]);
-            for (let index = 0; index < s.length; index++) {
-              if (
-                Utility.isAlpha(s[index]) &&
-                !plot.defines.hasDefine(s[index])
-              ) {
-                if (self.coeffs.indexOf(s[index]) == -1) {
-                  self.coeffs.push(s[index]);
-                }
-              }
-            }
-            domainRangeRestriction[0] = Utility.replaceKeywordMarkers(s);
+            handleCoeffs(domainRangeRestriction[0]);
+            handleCoeffs(domainRangeRestriction[1]);
 
-            s = Utility.purgeAndMarkKeywords(domainRangeRestriction[1]);
-            for (let index = 0; index < s.length; index++) {
-              if (
-                Utility.isAlpha(s[index]) &&
-                !plot.defines.hasDefine(s[index])
-              ) {
-                if (self.coeffs.indexOf(s[index]) == -1) {
-                  self.coeffs.push(s[index]);
-                }
-              }
-            }
-            domainRangeRestriction[1] = Utility.replaceKeywordMarkers(s);
+            // s = Utility.purgeAndMarkKeywords(domainRangeRestriction[1]);
+            // for (let index = 0; index < s.length; index++) {
+            //   if (
+            //     Utility.isAlpha(s[index]) &&
+            //     !plot.defines.hasDefine(s[index])
+            //   ) {
+            //     if (self.coeffs.indexOf(s[index]) == -1) {
+            //       self.coeffs.push(s[index]);
+            //     }
+            //   }
+            // }
+            // domainRangeRestriction[1] = Utility.replaceKeywordMarkers(s);
 
             //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
           }
@@ -1534,7 +1548,7 @@ class MFunctionDlg {
             let s = Utility.purgeAndMarkKeywords(str);
             for (let i = 0; i < self.coeffs.length; i++) {
               if (s.indexOf(self.coeffs[i]) != -1) {
-                s = s.replaceAll(self.coeffs[i], "(1)");
+                s = s.replaceAll(self.coeffs[i], `(1)`);
               }
             }
             return Utility.replaceKeywordMarkers(s);
@@ -1542,7 +1556,7 @@ class MFunctionDlg {
 
           try {
             self.lowerLimit = $("#fnDlg_lowerLimit")[0].getValue("ascii-math");
-
+            //handleCoeffs(self.lowerLimit);
             self.lowerLimit = math.evaluate(
               replaceParameterWith_1(
                 plot.defines.expandDefines(self.lowerLimit, self.variable)
@@ -1550,6 +1564,7 @@ class MFunctionDlg {
             );
             if (self.lowerLimit == undefined) {
               Utility.alert("Please enter a valid lower(x) limit.");
+              $("#settingsButton").click();
               return false;
             }
             var lower = Math.abs(self.lowerLimit);
@@ -1584,11 +1599,13 @@ class MFunctionDlg {
               return;
             } */
             Utility.alert("Please enter a valid lower(x) limit.");
+            $("#settingsButton").click();
             return false;
           }
 
           try {
             self.upperLimit = $("#fnDlg_upperLimit")[0].getValue("ascii-math");
+            //handleCoeffs(self.upperLimit);
             self.upperLimit = math.evaluate(
               replaceParameterWith_1(
                 plot.defines.expandDefines(self.upperLimit, self.variable)
@@ -1596,6 +1613,7 @@ class MFunctionDlg {
             );
             if (self.upperLimit == undefined) {
               Utility.alert("Please enter a valid upper(x) limit.");
+              $("#settingsButton").click();
               return false;
             }
             var upper = Math.abs(self.upperLimit);
@@ -1627,6 +1645,7 @@ class MFunctionDlg {
               }
             } catch (err) { */
             Utility.alert("Please enter a valid upper(x) limit.");
+            $("#settingsButton").click();
             return false;
             //}
           }
@@ -1733,35 +1752,43 @@ class MFunctionDlg {
             try {
               self.lowerLimitY =
                 $("#fnDlg_lowerLimitY")[0].getValue("ascii-math");
+              //handleCoeffs(self.lowerLimitY);
               self.lowerLimitY = math.evaluate(self.lowerLimitY);
             } catch (err) {
               Utility.alert("Please enter a valid lower(y) limit.");
+              $("#settingsButton").click();
               return false;
             }
             try {
               self.upperLimitY =
                 $("#fnDlg_upperLimitY")[0].getValue("ascii-math");
+              //handleCoeffs(self.upperLimitY);
               self.upperLimitY = math.evaluate(self.upperLimitY);
             } catch (err) {
               Utility.alert("Please enter a valid upper(y) limit.");
+              $("#settingsButton").click();
               return false;
             }
             try {
               self.lowerLimitFxy = $("#fnDlg_lowerLimitFxy")[0].getValue(
                 "ascii-math"
               );
+              //handleCoeffs(self.lowerLimitFxy);
               self.lowerLimitFxy = math.evaluate(self.lowerLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid lower(f(xy)) limit.");
+              $("#settingsButton").click();
               return false;
             }
             try {
               self.upperLimitFxy = $("#fnDlg_upperLimitFxy")[0].getValue(
                 "ascii-math"
               );
+              //handleCoeffs(self.upperLimitFxy);
               self.upperLimitFxy = math.evaluate(self.upperLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid upper(f(xy)) limit.");
+              $("#settingsButton").click();
               return false;
             }
             self.variableY = $("#fnDlg_variableY").val();
@@ -1863,5 +1890,20 @@ class MFunctionDlg {
       $("#fnDlg_cancel").click();
       //m_dlg1.detach();
     };
+
+    function handleCoeffs(str) {
+      if (!str) return null;
+      if (!self.coeffs) self.coeffs = [];
+      let s = Utility.purgeAndMarkKeywords(str);
+      for (let index = 0; index < s.length; index++) {
+        if (Utility.isAlpha(s[index]) && !plot.defines.hasDefine(s[index])) {
+          if (self.coeffs.indexOf(s[index]) == -1) {
+            self.coeffs.push(s[index]);
+          }
+        }
+      }
+      s = Utility.replaceKeywordMarkers(s);
+      return s;
+    }
   }
 }
