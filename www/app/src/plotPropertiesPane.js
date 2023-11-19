@@ -268,23 +268,22 @@ class PlotPropertiesPane extends PropertiesPane {
     Static.enterButton = $("#executeButton");
 
     $("#executeButton").click(function () {
+      Static.errorMessage = "";
+      mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
       const m_value = $("#fnDlg_function")[0].value;
-      if ($("#fnDlg_function").val().length) {
-        //console.log($("#fnDlg_function")[0].value);
+      if (m_value) {
         $("html").addClass("wait");
-        plot._functionDlg.doEnter(true);
+        plot._functionDlg.doEnter(m_value, true);
         $("html").removeClass("wait");
+      } else {
+        Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
       }
-      //$("#fnDlg_function")[0].value = m_value;
       $("#fnDlg_function")[0].executeCommand("selectAll");
       $("#fnDlg_function").focus();
-      //console.log($("#fnDlg_function")[0].value);
     });
 
     $("#fnDlg_function").on("input", function (e) {
-      // $(mf).tooltip("hide");
-      // $(mf).attr("data-original-title", `Enter a function`);
-      // $(mf).removeClass("red-tooltip");
+      Static.errorMessage = "";
       Utility.displayErrorMessage(mf, null); //clear error message
     });
 

@@ -651,7 +651,7 @@ class Defines {
           return Utility.removeUnwantedAsterisk(res);
         } catch (error) {
           //console.log(counter, res);
-          Utility.alert(error, "small", "m_simplify");
+          Utility.alert(error.message, "small", "m_simplify");
           //throw "MathJs throwed an error.";
           return res;
         }

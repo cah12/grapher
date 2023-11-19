@@ -2027,7 +2027,8 @@ class Utility {
         }
 
         samples = samples.sort(function (a, b) {
-          return a.x - b.x;
+          if (step > 0) return a.x - b.x;
+          else return b.x - a.x;
         });
 
         samples = samples.filter((item, index) => {
@@ -2428,8 +2429,18 @@ class Utility {
       );
       unmodifiedOperand = `(${operand})`;
     }
+    try {
+      const m_operand = operand.substring(0, operand.indexOf("{"));
+      const arr = m_operand.split("=");
+      for (let i = 0; i < arr.length; i++) {
+        math.parse(arr[i]);
+      }
+      return { operand, unmodifiedOperand };
+    } catch (error) {
+      return null;
+    }
 
-    return { operand, unmodifiedOperand };
+    //return { operand, unmodifiedOperand };
   }
 
   // static getOperand(exp, keyword, indexOfKeyword) {
@@ -2588,6 +2599,10 @@ class Utility {
         } */
 
         let obj = Utility.getOperand(exp, keyword, indexOfKeyword);
+        if (!obj) {
+          Static.errorMessage = `Failed to determine operand for "${keyword}". Please check.`;
+          return null;
+        }
         if (obj.unmodifiedOperand) {
           exp = exp.replace(obj.unmodifiedOperand, obj.operand);
         }
@@ -2626,6 +2641,10 @@ class Utility {
         } */
 
         let obj = Utility.getOperand(exp, keyword, indexOfKeyword);
+        if (!obj) {
+          Static.errorMessage = `Failed to determine operand for "${keyword}". Please check.`;
+          return null;
+        }
         if (obj.unmodifiedOperand) {
           exp = exp.replace(obj.unmodifiedOperand, obj.operand);
         }
@@ -3127,10 +3146,14 @@ class Utility {
     let decimalPlacesX = 4;
     let decimalPlacesY = 4;
 
-    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotItem) {
+    //if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotItem) {
+    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) {
       return { decimalPlacesX, decimalPlacesY };
     }
 
+    // decimalPlacesX = Math.round(
+    //   Math.abs(1 / (curve.maxXValue() - curve.minXValue())) / 250
+    // );
     let xMinAbs = Math.abs(curve.minXValue());
     if (xMinAbs < 1) {
       while (
@@ -3142,7 +3165,12 @@ class Utility {
       if (decimalPlacesX == 15) {
         decimalPlacesX = countPlaces().placesX;
       }
+      decimalPlacesX = Math.round(decimalPlacesX * 1.5);
     }
+
+    // decimalPlacesY = Math.round(
+    //   Math.abs(1 / (curve.maxYValue() - curve.minYValue())) / 25000
+    // );
     let yMinAbs = Math.abs(curve.minYValue());
     if (yMinAbs < 1) {
       while (
@@ -3155,6 +3183,7 @@ class Utility {
         decimalPlacesY = countPlaces().placesY;
       }
     }
+
     if (decimalPlacesX == 0) {
       decimalPlacesX = 4;
     }
@@ -3628,26 +3657,34 @@ class Utility {
   }
 
   static removeUnwantedParentheses(str) {
-    let arr = str.match(/\([-+*/.+a-zA-Z0-9]*\)/g);
-    if (!arr) return str;
-    for (let i = 0; i < arr.length; i++) {
-      let doReplace = false;
-      let subStr = arr[i];
-
-      let replStr = subStr.substring(1, subStr.length - 1);
-
-      let replStr2 = replStr
-        .replaceAll("*", "")
-        .replaceAll("/", "")
-        .replace(/[a-zA-Z]/g, "");
-      if (math.hasNumericValue(replStr2)) {
-        doReplace = true;
-      }
-
-      if (replStr.length === 1 || math.hasNumericValue(replStr) || doReplace) {
-        str = str.replace(subStr, replStr);
-      }
+    while (str[0] === "(" && str[str.length - 1] === ")") {
+      str = str.replace("(", "").replace(/.$/, "");
     }
+
+    // if (Utility.containsKeyword(str)) {
+    //   return str;
+    // }
+
+    // let arr = str.match(/\([-+*/.+a-zA-Z0-9]*\)/g);
+    // if (!arr) return str;
+    // for (let i = 0; i < arr.length; i++) {
+    //   let doReplace = false;
+    //   let subStr = arr[i];
+
+    //   let replStr = subStr.substring(1, subStr.length - 1);
+
+    //   let replStr2 = replStr
+    //     .replaceAll("*", "")
+    //     .replaceAll("/", "")
+    //     .replace(/[a-zA-Z]/g, "");
+    //   if (math.hasNumericValue(replStr2)) {
+    //     doReplace = true;
+    //   }
+
+    //   if (replStr.length === 1 || math.hasNumericValue(replStr) || doReplace) {
+    //     str = str.replace(subStr, replStr);
+    //   }
+    // }
     return str;
   }
 
@@ -3966,6 +4003,12 @@ class Utility {
 
   static isParametricFunction(str) {
     if (!(str[0] == "(" && str[str.length - 1] == ")")) {
+      return false;
+    }
+    str = str.replace("(", "");
+    str = str.replace(/.$/, "");
+    const arr = str.split(",");
+    if (arr.length < 2 || arr[0].length < 1 || arr[1].length < 1) {
       return false;
     }
 
@@ -4532,6 +4575,10 @@ class Utility {
             prefix + "^" + operandOfExponent,
             index - prefix.length + 1
           );
+          if (!obj) {
+            Static.errorMessage = `Failed to determine operand for "^". Please check.`;
+            return null;
+          }
         } else {
           // obj = Utility.getOperand(result, "^", index);
           // if (obj.unmodifiedOperand) {
@@ -4570,9 +4617,19 @@ class Utility {
       const latex = mf.getValueTemp("latex");
       let result = latex
         .replace(/\\times/g, "\\cdot")
-        .replaceAll("{\\prime}", "primePlaceHolder")
+        .replaceAll("\\prime", "primePlaceHolder")
+        //.replaceAll("{\\prime}", "primePlaceHolder")
+        .replaceAll("{primePlaceHolder}", "primePlaceHolder")
         .replaceAll("{\\doubleprime}", "doublePrimePlaceHolder")
+        // .replaceAll(
+        //   "primePlaceHolderprimePlaceHolder",
+        //   "doublePrimePlaceHolder"
+        // )
         .replace(/\\cdot/g, "cdotPlaceHolder");
+
+      // while(result.idexOf("primePlaceHolderprimePlaceHolder")!==-1){
+      //   result = result.replace()
+      // }
 
       mf.value = result;
 
@@ -4597,6 +4654,8 @@ class Utility {
 
       result = result.replaceAll("primePlaceHolder", "'");
       result = result.replaceAll("doublePrimePlaceHolder", "''");
+      result = result.replaceAll("('", "'");
+      result = result.replaceAll("')", "'");
       result = result.replaceAll("^'", "'");
       result = result.replaceAll("cdotPlaceHolder", "*");
 
@@ -4629,6 +4688,10 @@ class Utility {
           const n = result.indexOf(")", index);
           const base = Utility.getLogBase(result, index); //log_12(8)
           const obj = Utility.getOperand(result, `log_${base}`, index);
+          if (!obj) {
+            Static.errorMessage = `Failed to determine operand for "log_${base}". Please check.`;
+            return null;
+          }
           if (obj.unmodifiedOperand) {
             result = result.replace(obj.unmodifiedOperand, obj.operand);
           }
@@ -4644,6 +4707,10 @@ class Utility {
         while (index !== -1) {
           const base = result[index + 4];
           const obj = Utility.getOperand(result, `log_${base}`, index);
+          if (!obj) {
+            Static.errorMessage = `Failed to determine operand for "log_${base}". Please check.`;
+            return null;
+          }
           if (obj.unmodifiedOperand) {
             result = result.replace(obj.unmodifiedOperand, obj.operand);
           }
@@ -4656,6 +4723,23 @@ class Utility {
           index = result.indexOf("log_");
         }
       }
+
+      index = result.indexOf("ln");
+      while (index !== -1) {
+        const obj = Utility.getOperand(result, `ln`, index);
+        if (!obj) {
+          Static.errorMessage = `Failed to determine operand for "ln". Please check.`;
+          return null;
+        }
+        if (obj.unmodifiedOperand) {
+          result = result.replace(obj.unmodifiedOperand, obj.operand);
+        }
+        let operand = obj.operand;
+        result = result.replace(`ln${operand}`, `log(${operand})`);
+        index = result.indexOf("ln");
+      }
+
+      // result = result.replaceAll("ln", "log");
 
       //Add whitespace delimiters to mod (i.e modulus ooperator)
       result = result.replaceAll("mod", "%");

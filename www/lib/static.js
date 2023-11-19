@@ -419,3 +419,5 @@ math.derivative = function (str, variable, options) {
   }
   return result;
 };
+
+Static.errorMessage = "";
