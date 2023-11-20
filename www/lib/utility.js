@@ -1753,7 +1753,8 @@ class Utility {
     obj.discontinuity = obj.discontinuity || [];
 
     if (obj.discontinuity.length) {
-      numOfSamples = Math.round((numOfSamples *= 2));
+      //numOfSamples = Math.round((numOfSamples *= 2));
+      numOfSamples = numOfSamples < 300 ? 300 : numOfSamples;
     }
 
     //let parser = new EvaluateExp(fx);
