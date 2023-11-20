@@ -1081,6 +1081,7 @@ class MyPlot extends Plot {
 
               // console.log(str); //If the visitor clicks OK, the input is log to the console.
               // Utility.promptErrorMsg = "Invalid input. Expected a number.";
+
               return true;
             }
           );
@@ -1111,17 +1112,23 @@ class MyPlot extends Plot {
           for (let i = 0; i < curves.length; i++) {
             self.transformation.transform(curves[i], "Reflect x-axis");
           }
+          // if (self.tbar.isButtonChecked(self.tbar.auto))
+          //   Utility.setAutoScale(self, true);
         }
         if (operationType == "Reflect y-axis") {
           for (let i = 0; i < curves.length; i++) {
             self.transformation.transform(curves[i], "Reflect y-axis");
           }
+          // if (self.tbar.isButtonChecked(self.tbar.auto))
+          //   Utility.setAutoScale(self, true);
         }
 
         if (operationType == "Reflect x and y-axes") {
           for (let i = 0; i < curves.length; i++) {
             self.transformation.transform(curves[i], "Reflect x and y-axis");
           }
+          // if (self.tbar.isButtonChecked(self.tbar.auto))
+          //   Utility.setAutoScale(self, true);
         }
       }
 
