@@ -2,7 +2,6 @@
 
 "include ['static','watch', 'plotMarker', 'symbol']";
 
-Static.accuracyFactorModerate = /* 0.004 */ 1; //moderate
 Static.accuracyFactor = Static.accuracyFactorModerate;
 Static.watchUpdateError = false;
 Static.showWatchUpdateError = true;

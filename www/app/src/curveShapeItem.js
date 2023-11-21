@@ -223,7 +223,7 @@ class CurveShapeItem extends PlotShapeItem {
 
     Static.bind("positionChanged", function (e, ruler, pos) {
       if (!ruler) return;
-      if (prevRuler === ruler && prevRulerPos === pos) return;
+      //if (prevRuler === ruler && prevRulerPos === pos) return;
       var plot = ruler.plot();
       var doReplot = plot.autoReplot();
       plot.setAutoReplot(false);

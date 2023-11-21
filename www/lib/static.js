@@ -421,3 +421,5 @@ math.derivative = function (str, variable, options) {
 };
 
 Static.errorMessage = "";
+
+Static.accuracyFactorModerate = 1; //moderate
