@@ -2,6 +2,7 @@
 
 "include ['static','watch', 'plotMarker', 'symbol']";
 
+//Static.accuracyFactorModerate = /* 0.004 */ 1; //moderate
 Static.accuracyFactor = Static.accuracyFactorModerate;
 Static.watchUpdateError = false;
 Static.showWatchUpdateError = true;
@@ -125,7 +126,7 @@ class WatchLeftRulerPosition extends Watch {
       this._curve = 0;
     };
     this.cb = function () {
-      var prevValue = self._value;
+      var prevValue = parseFloat(self._value);
       var pos = self._rulerGroup.setPosition(0, $(this).val());
       /* setPosition() returns the actual position set. Because of validation, this may be different than the argument passed to setPosition() */
       if (prevValue !== pos) {
@@ -167,7 +168,7 @@ class WatchRightRulerPosition extends Watch {
       this._curve = 0;
     };
     this.cb = function () {
-      var prevValue = self._value;
+      var prevValue = parseFloat(self._value);
       var pos = self._rulerGroup.setPosition(1, $(this).val());
       /* setPosition() returns the actual position set. Because of validation, this may be different than the argument passed to setPosition() */
       //$(this).val(pos);
@@ -210,7 +211,7 @@ class WatchBottomRulerPosition extends Watch {
       this._curve = 0;
     };
     this.cb = function () {
-      var prevValue = self._value;
+      var prevValue = parseFloat(self._value);
       var pos = self._rulerGroup.setPosition(2, $(this).val());
       /* setPosition() returns the actual position set. Because of validation, this may be different than the argument passed to setPosition() */
       if (prevValue !== pos) {
@@ -250,7 +251,7 @@ class WatchTopRulerPosition extends Watch {
       this._curve = 0;
     };
     this.cb = function () {
-      var prevValue = self._value;
+      var prevValue = parseFloat(self._value);
       var pos = self._rulerGroup.setPosition(3, $(this).val());
       /* setPosition() returns the actual position set. Because of validation, this may be different than the argument passed to setPosition() */
       if (prevValue !== pos) {

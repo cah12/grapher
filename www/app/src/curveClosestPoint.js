@@ -205,6 +205,10 @@ class MyObject extends HObject {
             );
           else {
             this._cb(this.selectorWidgetOverlay.curve, this.p);
+            Static.trigger(
+              "currentCurveChangedEnds",
+              this.selectorWidgetOverlay.curve
+            );
           }
           //this.selected = false;
         }

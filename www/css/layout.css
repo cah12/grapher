@@ -521,8 +521,7 @@ input.noInputBorders {
 
 @media not (pointer: coarse) {
   .math-field-limits::part(virtual-keyboard-toggle) {
-    display: none;
-    
+    display: none;    
   }
 }
 

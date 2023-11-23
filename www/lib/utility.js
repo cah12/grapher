@@ -1660,7 +1660,6 @@ class Utility {
             }
           );
           samples = [];
-          break;
         } else {
           continue;
         }
@@ -1674,7 +1673,7 @@ class Utility {
           );
           return null;
         } else if (Utility.errorResponse == Utility.warnIgnore) {
-          Utility.alertYesNo(
+          /* Utility.alertYesNo(
             "Error found!!! Do you want to silently ignore errors?",
             function (answer) {
               if (answer == Cancel) {
@@ -1695,8 +1694,7 @@ class Utility {
               //return 1
             }
           );
-          samples = [];
-          break;
+          samples = []; */
         } else {
           continue;
         }
@@ -1938,6 +1936,7 @@ class Utility {
                 Utility.errorResponseChanged = true;
                 samples = [];
                 obj.warnIgnoreCb && obj.warnIgnoreCb();
+                //Utility.makeSamples(obj);
                 return null;
               }
               if (answer == No) {

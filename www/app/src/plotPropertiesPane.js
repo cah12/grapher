@@ -28,8 +28,8 @@ class PlotPropertiesPane extends PropertiesPane {
     function makePointTableRow() {
       let row = $(
         '<tr>\
-        <td style="border: 1px solid"><math-field style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
-        <td style="border: 1px solid"><math-field style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
       </tr>'
       );
 
@@ -205,8 +205,14 @@ class PlotPropertiesPane extends PropertiesPane {
       if (!pointTable.is(":visible")) {
         return;
       }
+
       const samples = curve.data().samples();
       const rows = $("#pointTableTable")[0].rows;
+      if (rows.length - 2 !== samples.length) {
+      }
+      while (rows.length - 2 > samples.length) {
+        $(rows[1]).remove();
+      }
       let precisionX = plot.axisPrecision(curve.xAxis());
       let decimalPlacesX = plot.axisDecimalPlaces(curve.xAxis());
       let precisionY = plot.axisPrecision(curve.yAxis());
@@ -1676,7 +1682,7 @@ class PlotPropertiesPane extends PropertiesPane {
         "Adjust the domain",
         "Stop and warn",
         "Silently ignore",
-        "Allow for ignore",
+        //"Allow for ignore",
       ],
     });
 
@@ -3003,7 +3009,7 @@ class PlotPropertiesPane extends PropertiesPane {
       );
     }
     bottom_min.change(function () {
-      if (bottom_min.val() !== bottom_max.val())
+      if (!math.equal(bottom_min.val(), bottom_max.val()))
         plot.setAxisScale(
           Axis.AxisId.xBottom,
           parseFloat(bottom_min.val()),
@@ -3030,7 +3036,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     bottom_max.change(function () {
-      if (bottom_min.val() !== bottom_max.val())
+      if (!math.equal(bottom_min.val(), bottom_max.val()))
         plot.setAxisScale(
           Axis.AxisId.xBottom,
           parseFloat(bottom_min.val()),
@@ -3057,7 +3063,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     top_min.change(function () {
-      if (top_min.val() !== top_max.val())
+      if (!math.equal(top_min.val(), top_max.val()))
         plot.setAxisScale(
           Axis.AxisId.xTop,
           parseFloat(top_min.val()),
@@ -3084,7 +3090,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     top_max.change(function () {
-      if (top_min.val() !== top_max.val())
+      if (!math.equal(top_min.val(), top_max.val()))
         plot.setAxisScale(
           Axis.AxisId.xTop,
           parseFloat(top_min.val()),
@@ -3111,7 +3117,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     left_min.change(function () {
-      if (left_min.val() !== left_max.val())
+      if (!math.equal(left_min.val(), left_max.val()))
         plot.setAxisScale(
           Axis.AxisId.yLeft,
           parseFloat(left_min.val()),
@@ -3138,7 +3144,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     left_max.change(function () {
-      if (left_min.val() !== left_max.val())
+      if (!math.equal(left_min.val(), left_max.val()))
         plot.setAxisScale(
           Axis.AxisId.yLeft,
           parseFloat(left_min.val()),
@@ -3165,7 +3171,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_min.change(function () {
-      if (right_min.val() !== right_max.val())
+      if (!math.equal(right_min.val(), right_max.val()))
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
@@ -3192,7 +3198,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_max.change(function () {
-      if (right_min.val() !== right_max.val())
+      if (!math.equal(right_min.val(), right_max.val()))
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
