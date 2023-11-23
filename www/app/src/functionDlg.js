@@ -788,13 +788,13 @@ class MFunctionDlg {
           if (domainRangeRestriction.length && self.variable) {
             if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
               domainRangeRestriction = domainRangeRestriction
-                .replaceAll("<", "")
+                .replaceAll("<=", "")
                 .replace("{", "")
                 .replace("}", "")
                 .split(self.variable);
             } else {
               domainRangeRestriction = domainRangeRestriction
-                .replaceAll("<", "")
+                .replaceAll("<=", "")
                 .replace("{", "")
                 .replace("}", "")
                 .split(self.parametric_variable);
