@@ -4752,6 +4752,74 @@ class Utility {
     };
   }
 
+  static parametricTex(_curve, fnStr) {
+    if (!fnStr) return null;
+    // let precisionY = _curve.plot().axisPrecision(_curve.yAxis());
+    // let precisionX = _curve.plot().axisPrecision(_curve.xAxis());
+    // let decimalPlacesY = _curve.plot().axisDecimalPlaces(_curve.yAxis());
+    let decimalPlacesX = _curve.plot().axisDecimalPlaces(_curve.xAxis());
+
+    fnStr = fnStr.replaceAll(" ", "");
+
+    let parametricArr = [];
+    let parametricObj = Utility.splitParametricFunction(fnStr);
+    if (!parametricObj) {
+      parametricArr.push(fnStr);
+    } else {
+      parametricArr.push(parametricObj.operand);
+      parametricArr.push(parametricObj.base);
+    }
+
+    let m_fnConcat = "";
+
+    for (let i = 0; i < parametricArr.length; i++) {
+      let fnStr = parametricArr[i];
+
+      //Replace the whitespace delimiters stripped out by simplify()
+      fnStr = fnStr.replaceAll("mod", " mod ");
+
+      let m_fn = "";
+      if (_curve.rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+        m_fn = fnStr;
+      } else {
+        Utility.adjustLatexLogBaseDecimalPlaces(decimalPlacesX);
+        fnStr = fnStr.replaceAll("+-", "-").replaceAll("-+", "-");
+
+        m_fn = math
+          .simplify(fnStr, {}, { exactFractions: false })
+          .toTex({ parenthesis: "auto", implicit: "hide" });
+
+        //.simplify(fnStr, {}, { exactFractions: false })
+        Utility.restoreLatexLogBaseDecimalPlaces();
+      }
+
+      let ind = m_fn.indexOf("log(");
+      while (ind !== -1) {
+        let operand = Utility.getOperand(m_fn, "log", ind).operand;
+        const obj = Utility.splitParametricFunction(operand);
+        m_fn = m_fn.replace(
+          `log${operand}`,
+          `\\mathrm{log_{${obj.base}}}\\left(${obj.operand}\\right)`
+        );
+        ind = m_fn.indexOf("log(");
+      }
+
+      if (parametricArr.length > 1) {
+        if (i == 0) {
+          m_fnConcat += "(";
+          m_fnConcat += m_fn;
+          m_fnConcat += ",";
+        } else {
+          m_fnConcat += m_fn;
+          m_fnConcat += ")";
+        }
+      } else {
+        m_fnConcat += m_fn;
+      }
+    }
+    return m_fnConcat;
+  }
+
   static displayErrorMessage(mf, errorMessage) {
     if (errorMessage) {
       Utility.toolTip = $(mf).attr("data-original-title");

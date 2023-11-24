@@ -392,6 +392,9 @@ class Transformation {
             curve.unSwapAxes();
           }
           fn = math
+            .simplify(`-(${curve.fn})`, {}, { exactFractions: false })
+            .toString();
+          fn = math
             .simplify(
               fn.replaceAll(variable, `(-1*${variable})`),
               {},

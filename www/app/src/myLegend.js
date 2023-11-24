@@ -38,7 +38,7 @@ class MyLegend extends Legend {
               precisionY
             );
           }
-          fnStr = `Parametric(${_curve.parametric_variable}): (${parametricFnX}, ${parametricFnY})`;
+          fnStr = `Par(${_curve.parametric_variable}): (${parametricFnX}, ${parametricFnY})`;
         } else if (_curve.fn) {
           precisionY;
           let fn_y = _curve.fn;
@@ -75,6 +75,10 @@ class MyLegend extends Legend {
         if (arr.length < 2) {
           return;
         }
+
+        const m_fnConcat = Utility.parametricTex(_curve, fnStr);
+
+        /*
         fnStr = fnStr.replaceAll(" ", "");
 
         let parametricArr = [];
@@ -91,19 +95,6 @@ class MyLegend extends Legend {
         for (let i = 0; i < parametricArr.length; i++) {
           let fnStr = parametricArr[i];
 
-          // let ind = fnStr.indexOf("^");
-          // while (ind !== -1 /* && index - 3 >= 0 */) {
-          //   const prefix = Utility.getExponentTokenPrefix(fnStr, ind);
-          //   let obj = Utility.getOperandOfExponentToken(fnStr, ind);
-          //   if (obj.operand.length > 1 && obj.operand[0] !== "(") {
-          //     fnStr = fnStr.replace(
-          //       `${prefix}^${obj.operand[0]}`,
-          //       `(${prefix}^${obj.operand[0]})`
-          //     );
-          //   }
-          //   ind = fnStr.indexOf("^", ind + 2);
-          // }
-
           //Replace the whitespace delimiters stripped out by simplify()
           fnStr = fnStr.replaceAll("mod", " mod ");
 
@@ -113,10 +104,7 @@ class MyLegend extends Legend {
           } else {
             Utility.adjustLatexLogBaseDecimalPlaces(decimalPlacesX);
             fnStr = fnStr.replaceAll("+-", "-").replaceAll("-+", "-");
-            //nerdamer.flush();
-            // m_fn = math
-            //   .parse(fnStr)
-            //   .toTex({ parenthesis: "auto", implicit: "hide" });
+
             m_fn = math
               .simplify(fnStr, {}, { exactFractions: false })
               .toTex({ parenthesis: "auto", implicit: "hide" });
@@ -149,6 +137,8 @@ class MyLegend extends Legend {
             m_fnConcat += m_fn;
           }
         }
+*/
+        /////////////////////////
         title += "\n" + `${arr[0]}:` + m_fnConcat;
         title = title.replaceAll("log_{undefined}", "ln");
       }

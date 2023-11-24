@@ -175,61 +175,81 @@ class InfoPropertiesPane extends Pane {
       $("#fnDisplay").html("");
       //console.log(curCurve);
       let m_html = null;
-      if (curCurve.functionDlgData && curCurve.fn) {
-        if (curCurve.functionDlgData.variableY) {
-          m_html =
-            "f(" +
-            curCurve.functionDlgData.variable +
-            "," +
-            curCurve.functionDlgData.variableY +
-            ")=" +
-            curCurve.fn;
+      if (
+        (curCurve.functionDlgData && curCurve.fn) ||
+        (curCurve.parametricFnX && curCurve.parametricFnY)
+      ) {
+        if (curCurve.functionDlgData && curCurve.fn) {
+          if (curCurve.functionDlgData.variableY) {
+            m_html =
+              "f(" +
+              curCurve.functionDlgData.variable +
+              "," +
+              curCurve.functionDlgData.variableY +
+              ")=" +
+              curCurve.fn;
+          } else {
+            m_html = "f(" + curCurve.variable + ")=" + curCurve.fn;
+          }
         } else {
-          m_html = "f(" + curCurve.variable + ")=" + curCurve.fn;
+          m_html = `(${curCurve.parametricFnX}, ${curCurve.parametricFnY})`;
+          m_html = Utility.parametricTex(curCurve, m_html);
         }
         m_html = m_html.replaceAll("mod", " mod ");
-        //Utility.adjustLatexLogBaseDecimalPlaces(decimalPlacesX);
-        // m_html = math
-        //   .parse(m_html)
-        //   .toTex({ parenthesis: "auto", implicit: "hide" });
-        //Utility.restoreLatexLogBaseDecimalPlaces();
-
-        // m_html = Utility.tex2svgMultiline(
-        //   math.parse(m_html).toTex({ parenthesis: "auto", implicit: "hide" }),
-        //   60,
-        //   {
-        //     em: 16,
-        //     ex: 6,
-        //     display: false,
-        //   }
-        // );
 
         try {
           // display and re-render the expression
           MathJax.typesetClear();
           $("#fnDisplay")[0].innerHTML = "";
-          //let child = mj(m_html);
-          let child = Utility.tex2svgMultiline(
-            math.parse(m_html).toTex({ parenthesis: "auto", implicit: "hide" }),
-            60,
-            {
-              em: 16,
-              ex: 6,
-              display: false,
-            }
-          );
+          let child = null;
+          if (!curCurve.parametricFnX) {
+            child = Utility.tex2svgMultiline(
+              math
+                .parse(m_html)
+                .toTex({ parenthesis: "auto", implicit: "hide" }),
+              60,
+              {
+                em: 16,
+                ex: 6,
+                display: false,
+              }
+            );
+            //$("#fnDisplay")[0].appendChild(child);
+          } else {
+            child = Utility.tex2svgMultiline(
+              `Par(${curCurve.parametric_variable}):${m_html}`,
+              60,
+              {
+                em: 16,
+                ex: 6,
+                display: false,
+              }
+            );
+          }
           $("#fnDisplay")[0].appendChild(child);
         } catch (err) {}
       }
 
-      $("#copyText").click(function () {
-        //console.log(curCurve.title(), curCurve.fn);
-        navigator.clipboard.writeText(
-          math
-            .parse(curCurve.fn.replaceAll("mod", " mod "))
-            .toTex({ em: 16, ex: 6, display: false })
-        );
-      });
+      function copyTextCb() {
+        if (!curCurve.parametricFnX) {
+          navigator.clipboard.writeText(
+            math
+              .parse(curCurve.fn.replaceAll("mod", " mod "))
+              .toTex({ em: 16, ex: 6, display: false })
+          );
+        } else {
+          const s1 = math
+            .parse(curCurve.parametricFnX.replaceAll("mod", " mod "))
+            .toTex({ em: 16, ex: 6, display: false });
+          const s2 = math
+            .parse(curCurve.parametricFnY.replaceAll("mod", " mod "))
+            .toTex({ em: 16, ex: 6, display: false });
+
+          navigator.clipboard.writeText(`(${s1},${s2})`);
+        }
+      }
+      $("#copyText").off("click", copyTextCb);
+      $("#copyText").on("click", copyTextCb);
 
       var widthX = curCurve.upperX - curCurve.lowerX;
       var step = widthX / (damp / 10000);
@@ -488,7 +508,13 @@ class InfoPropertiesPane extends Pane {
             s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
           }
         }
-        curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
+        if (curCurve.parametricFnX) {
+          curCurve.parametricLowerX = math.evaluate(
+            Utility.replaceKeywordMarkers(s)
+          );
+        } else {
+          curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
+        }
 
         s = curCurve.domainRangeRestriction[1];
         s = curCurve.plot().defines.expandDefines(s); //plot.defines.expandDefines
@@ -498,7 +524,13 @@ class InfoPropertiesPane extends Pane {
             s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
           }
         }
-        curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
+        if (curCurve.parametricFnX) {
+          curCurve.parametricUpperX = math.evaluate(
+            Utility.replaceKeywordMarkers(s)
+          );
+        } else {
+          curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
+        }
 
         //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
       }
@@ -506,6 +538,9 @@ class InfoPropertiesPane extends Pane {
 
     function adjustCurveUnique(selector) {
       var curCurve = plot.findPlotCurve($("#currentCurve").val());
+      if (curCurve.title() !== self.currentCurveName()) {
+        return;
+      }
       var coeffs = curCurve.coeffs;
       var fn = curCurve.fn;
       if (curCurve.fn) {
@@ -531,7 +566,10 @@ class InfoPropertiesPane extends Pane {
             upperX: curCurve.upperX,
             numOfSamples: curCurve.numOfSamples,
           });
-          if (!s) return;
+          if (!s) {
+            console.log(784);
+            return;
+          }
           data.setSamples(s);
         }
       } else if (curCurve.parametricFnX && curCurve.parametricFnY) {
@@ -572,7 +610,11 @@ class InfoPropertiesPane extends Pane {
             parametricFnY,
             parametric_variable: curCurve.parametric_variable,
           });
-          if (!s) return;
+          if (!s) {
+            console.log(781);
+            return;
+          }
+
           data.setSamples(s);
         }
       }
@@ -590,6 +632,7 @@ class InfoPropertiesPane extends Pane {
       var array = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let index = 0; index < array.length; index++) {
         const curCurve = array[index];
+        //console.log(curCurve.title(), self.currentCurveName());
 
         var coeffs = curCurve.coeffs;
 
@@ -626,7 +669,10 @@ class InfoPropertiesPane extends Pane {
                   upperX: curCurve.upperX,
                   numOfSamples: curCurve.numOfSamples,
                 });
-                if (!s) return;
+                if (!s) {
+                  console.log(782);
+                  return;
+                }
                 data.setSamples(s);
               }
             } //
@@ -641,36 +687,23 @@ class InfoPropertiesPane extends Pane {
               ) {
                 fn = fn.replace(
                   currentCurveCoeffs[selectorIndex],
-                  selector.val()
+                  `(${selector.val()})`
                 );
               }
               for (let index = 0; index < coeffs.length; index++) {
                 const element = coeffs[index];
                 fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
               }
-              curCurve.coeffsVal[selectorIndex] = selector.val();
-
-              parametricFnX = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
-
-              // adjustDomain(curCurve, selector);
-
-              /* var data = curCurve.data();
-              if (curCurve.unboundedRange) {
-                data.setFn(curCurve.expandedFn);
-              } else {
-                var s = Utility.makeSamples({
-                  fx: null,
-                  lowerX: curCurve.lowerX,
-                  upperX: curCurve.upperX,
-                  numOfSamples: curCurve.numOfSamples,
-                  parametricFnX,
-                  parametricFnY,
-                  parametric_variable: parametric_variable
-                });
-                if (!s) return;
-                data.setSamples(s);
-              } */
+              //curCurve.coeffsVal[selectorIndex] = selector.val();
+              curCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
             }
+
+            for (let index = 0; index < coeffs.length; index++) {
+              const element = coeffs[index];
+              fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
+            }
+            parametricFnX = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
+
             fn = Utility.purgeAndMarkKeywords(parametricFnY);
             if (coeffs.indexOf(currentCurveCoeffs[selectorIndex]) != -1) {
               while (
@@ -679,36 +712,23 @@ class InfoPropertiesPane extends Pane {
               ) {
                 fn = fn.replace(
                   currentCurveCoeffs[selectorIndex],
-                  selector.val()
+                  `(${selector.val()})`
                 );
               }
               for (let index = 0; index < coeffs.length; index++) {
                 const element = coeffs[index];
                 fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
               }
-              curCurve.coeffsVal[selectorIndex] = selector.val();
-
-              parametricFnY = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
-
-              //adjustDomain(curCurve, selector);
-
-              /* var data = curCurve.data();
-              if (curCurve.unboundedRange) {
-                data.setFn(curCurve.expandedFn);
-              } else {
-                var s = Utility.makeSamples({
-                  fx: null,
-                  lowerX: curCurve.lowerX,
-                  upperX: curCurve.upperX,
-                  numOfSamples: curCurve.numOfSamples,
-                  parametricFnY,
-                  parametricFnY,
-                  parametric_variable: parametric_variable
-                });
-                if (!s) return;
-                data.setSamples(s);
-              } */
+              //curCurve.coeffsVal[selectorIndex] = selector.val();
+              curCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
             }
+
+            for (let index = 0; index < coeffs.length; index++) {
+              const element = coeffs[index];
+              fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
+            }
+            parametricFnY = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
+
             adjustDomain(curCurve, selector);
             var data = curCurve.data();
             if (curCurve.unboundedRange) {
@@ -725,7 +745,10 @@ class InfoPropertiesPane extends Pane {
                 parametricFnY,
                 parametric_variable: curCurve.parametric_variable,
               });
-              if (!s) return;
+              if (!s) {
+                console.log(783);
+                return;
+              }
               data.setSamples(s);
             }
           }

@@ -625,10 +625,12 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (fnDlgFunctionVal, closeDlg) {
+        //627 -01842
         let forceDefined = false;
         let expanded = false;
         let defineName = null;
         let defineValue = null;
+        self.coeffs = [];
 
         self.expandedParametricFnX = null;
         self.expandedParametricFnY = null;
@@ -1893,7 +1895,7 @@ class MFunctionDlg {
 
     function handleCoeffs(str) {
       if (!str) return null;
-      if (!self.coeffs) self.coeffs = [];
+      //if (!self.coeffs) self.coeffs = [];
       let s = Utility.purgeAndMarkKeywords(str);
       for (let index = 0; index < s.length; index++) {
         if (Utility.isAlpha(s[index]) && !plot.defines.hasDefine(s[index])) {
