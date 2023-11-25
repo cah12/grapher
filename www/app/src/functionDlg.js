@@ -416,7 +416,15 @@ class MFunctionDlg {
     }
 
     function validateLimits(lowerLimit, upperLimit) {
-      if (lowerLimit >= upperLimit) {
+      if (math.equal(lowerLimit, upperLimit)) {
+        Utility.alert(
+          "Upper limit is equal Lower limit.",
+          null,
+          "upper_equal_lower_limit"
+        );
+        return true;
+      }
+      if (lowerLimit > upperLimit) {
         Utility.alert("Upper limit must be greater than Lower limit.");
         return false;
       }
