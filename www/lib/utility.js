@@ -1751,8 +1751,8 @@ class Utility {
     obj.discontinuity = obj.discontinuity || [];
 
     if (obj.discontinuity.length) {
-      //numOfSamples = Math.round((numOfSamples *= 2));
-      numOfSamples = numOfSamples < 300 ? 300 : numOfSamples;
+      numOfSamples = Math.round((numOfSamples *= 2));
+      //numOfSamples = numOfSamples < 300 ? 300 : numOfSamples;
     }
 
     //let parser = new EvaluateExp(fx);
@@ -3117,17 +3117,19 @@ class Utility {
 
   static grapherDeterminedDecimalPlaces(curve) {
     function countPlaces() {
-      const m_samples = curve.data().samples();
-      let placesX = 0;
-      let placesY = 0;
-      for (let i = 0; i < m_samples.length; i++) {
-        let p = Utility.countDecimalPlaces(m_samples[i].x);
-        if (p > placesX) {
-          placesX = p;
-        }
-        p = Utility.countDecimalPlaces(m_samples[i].y);
-        if (p > placesY) {
-          placesY = p;
+      let placesX = 60;
+      let placesY = 60;
+      if (!curve.unboundedRange) {
+        const m_samples = curve.data().samples();
+        for (let i = 0; i < m_samples.length; i++) {
+          let p = Utility.countDecimalPlaces(m_samples[i].x);
+          if (p > placesX) {
+            placesX = p;
+          }
+          p = Utility.countDecimalPlaces(m_samples[i].y);
+          if (p > placesY) {
+            placesY = p;
+          }
         }
       }
       return { placesX, placesY };
