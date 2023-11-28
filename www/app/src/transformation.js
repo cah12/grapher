@@ -31,6 +31,7 @@ class Transformation {
           }
 
           _curve.setSamples(_samples);
+          _curve.setAxes(curve.xAxis(), curve.yAxis());
           plot.setAutoReplot(doAutoReplot);
           _curve.attach(m_plot);
 
@@ -108,6 +109,7 @@ class Transformation {
         // _curve.discontinuity = curve.discontinuity.map(function (e) {
         //   return e + param1;
         // });
+        _curve.setAxes(curve.xAxis(), curve.yAxis());
         plot.setAutoReplot(doAutoReplot);
         _curve.attach(m_plot);
         if (doSwap) {
@@ -134,6 +136,7 @@ class Transformation {
           }
 
           _curve.setSamples(_samples);
+          _curve.setAxes(curve.xAxis(), curve.yAxis());
           plot.setAutoReplot(doAutoReplot);
           _curve.attach(m_plot);
 
@@ -192,6 +195,7 @@ class Transformation {
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
         //_curve.discontinuity = curve.discontinuity;
+        _curve.setAxes(curve.xAxis(), curve.yAxis());
         _curve.attach(m_plot);
       }
 
@@ -212,6 +216,7 @@ class Transformation {
           }
 
           _curve.setSamples(_samples);
+          _curve.setAxes(curve.xAxis(), curve.yAxis());
           plot.setAutoReplot(doAutoReplot);
           _curve.attach(m_plot);
 
@@ -270,6 +275,7 @@ class Transformation {
         };
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
+        _curve.setAxes(curve.xAxis(), curve.yAxis());
         plot.setAutoReplot(doAutoReplot);
         _curve.attach(m_plot);
         if (doSwap) {
@@ -295,6 +301,7 @@ class Transformation {
             _samples.push(new Misc.Point(-1 * pt.x, pt.y));
           }
           _curve.setSamples(_samples);
+          _curve.setAxes(curve.xAxis(), curve.yAxis());
           plot.setAutoReplot(doAutoReplot);
           _curve.attach(m_plot);
           plot.autoRefresh();
@@ -356,6 +363,7 @@ class Transformation {
         };
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
+        _curve.setAxes(curve.xAxis(), curve.yAxis());
         plot.setAutoReplot(doAutoReplot);
         _curve.attach(m_plot);
         if (doSwap) {
@@ -381,6 +389,7 @@ class Transformation {
             _samples.push(new Misc.Point(-1 * pt.x, -1 * pt.y));
           }
           _curve.setSamples(_samples);
+          _curve.setAxes(curve.xAxis(), curve.yAxis());
           plot.setAutoReplot(doAutoReplot);
           _curve.attach(m_plot);
           plot.autoRefresh();
@@ -446,6 +455,7 @@ class Transformation {
         };
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
+        _curve.setAxes(curve.xAxis(), curve.yAxis());
         plot.setAutoReplot(doAutoReplot);
         _curve.attach(m_plot);
         if (doSwap) {
