@@ -1832,73 +1832,24 @@ class Utility {
           indexInDiscontinuity < obj.discontinuity.length &&
           x >= d
         ) {
-          xVal = obj.discontinuity[indexInDiscontinuity]; ////
-          //console.log(xVal - step / Static.dicontinuityOffsetFactor, lowerX);
-          if (xVal - step * Static.dicontinuityOffsetFactor >= lowerX) {
+          if (d - step * 0.001 >= lowerX) {
             yVal = parser.eval({
-              x: xVal - step * Static.dicontinuityOffsetFactor,
+              x: d - step * 0.001,
             });
+            samples.push(new Misc.Point(d - step * 0.001, yVal)); //point before but close to discontinuity
             samples.push(
-              new Misc.Point(
-                xVal - step * Static.dicontinuityOffsetFactor,
-                yVal
-              )
-            ); //point before but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal - step * Static.dicontinuityOffsetFactor * 0.75,
-                parser.eval({
-                  x: xVal - step * Static.dicontinuityOffsetFactor * 0.75,
-                })
-              )
-            ); //point before but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal - step * Static.dicontinuityOffsetFactor * 0.5,
-                parser.eval({
-                  x: xVal - step * Static.dicontinuityOffsetFactor * 0.5,
-                })
-              )
-            ); //point before but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal - step * Static.dicontinuityOffsetFactor * 0.25,
-                math.sign(yVal) * 1e300
-              )
+              new Misc.Point(d - step * 0.001, math.sign(yVal) * 1e300)
             ); //point before but close to discontinuity
           }
-          if (xVal + step * Static.dicontinuityOffsetFactor < upperX) {
+          if (d + step * 0.001 < upperX) {
             yVal = parser.eval({
-              x: xVal + step * Static.dicontinuityOffsetFactor,
+              x: d + step * 0.001,
             });
             samples.push(
-              new Misc.Point(
-                xVal + step * Static.dicontinuityOffsetFactor * 0.25,
-                math.sign(yVal) * 1e300
-              )
+              new Misc.Point(d + step * 0.001, math.sign(yVal) * 1e300)
             ); //point after but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal + step * Static.dicontinuityOffsetFactor * 0.5,
-                parser.eval({
-                  x: xVal + step * Static.dicontinuityOffsetFactor * 0.5,
-                })
-              )
-            ); //point after but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal + step * Static.dicontinuityOffsetFactor * 0.75,
-                parser.eval({
-                  x: xVal + step * Static.dicontinuityOffsetFactor * 0.75,
-                })
-              )
-            ); //point after but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                xVal + step * Static.dicontinuityOffsetFactor,
-                yVal
-              )
-            ); //point after but close to discontinuity
+
+            samples.push(new Misc.Point(d + step * 0.0001, yVal)); //point after but close to discontinuity
           }
           yVal = NaN;
           indexInDiscontinuity++;
