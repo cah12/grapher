@@ -5269,7 +5269,8 @@ Utility.warn = 1;
 Utility.warnIgnore = 2;
 Utility.silentIgnore = 3;
 Utility.errorResponseChanged = false;
-Utility.errorResponse = Utility.adjustDomain;
+//Utility.errorResponse = Utility.adjustDomain;
+Utility.errorResponse = Utility.silentIgnore;
 Utility.keywordMarkers = [];
 
 Utility.mode = "deg";

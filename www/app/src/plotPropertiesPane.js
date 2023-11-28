@@ -1679,9 +1679,10 @@ class PlotPropertiesPane extends PropertiesPane {
       parentId: "errorSettings",
       type: "select",
       selectorOptions: [
+        "Silently ignore",
         "Adjust the domain",
         "Stop and warn",
-        "Silently ignore",
+
         //"Allow for ignore",
       ],
     });
@@ -3359,16 +3360,16 @@ class PlotPropertiesPane extends PropertiesPane {
     });
     errorResponse.change(function () {
       var index = $(this)[0].selectedIndex;
-      if (index == 1) {
+      if (index == 2) {
         //console.log("Utility.warn");
         Utility.errorResponse = Utility.warn;
-      } else if (index == 2) {
+      } else if (index == 0) {
         //console.log("Utility.silentIgnore");
         Utility.errorResponse = Utility.silentIgnore;
-      } else if (index == 3) {
+        /* } else if (index == 3) {
         //console.log("Utility.warnIgnore");
-        Utility.errorResponse = Utility.warnIgnore;
-      } else {
+        Utility.errorResponse = Utility.warnIgnore; */
+      } else if (index == 1) {
         //index == 0 stopWarn
         //console.log("Utility.adjustDomain");
         Utility.errorResponse = Utility.adjustDomain;
