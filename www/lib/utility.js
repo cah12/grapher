@@ -1835,7 +1835,7 @@ class Utility {
           d = obj.discontinuity[indexInDiscontinuity];
           if (d - step * 0.01 >= lowerX) {
             yVal = parser.eval({
-              x: d - step * 0.001,
+              x: d - step * 0.01,
             });
             samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
@@ -4510,8 +4510,16 @@ class Utility {
             }
             result = result.replace(`^${obj.operand}`, "");
           } else {
-            result = result.replace(`^${obj.operand}`, "");
-            result = `(${result})^${obj.operand}`;
+            result = result.replace(`${prefix}^${obj.operand}`, `${prefix}^`);
+            const oprnd = Utility.getOperand(
+              result,
+              prefix + "^",
+              result.indexOf(prefix + "^")
+            );
+            result = result.replace(
+              `${prefix}^${oprnd.operand}`,
+              `(${prefix}${oprnd.operand})^${obj.operand}`
+            );
           }
         }
         if (obj.unmodifiedOperand) {
