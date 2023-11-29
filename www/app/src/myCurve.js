@@ -298,7 +298,7 @@ class MyCurve extends Curve {
       }
       if (!self.setAxis) {
         self.setAxis = true;
-        Utility.setAutoScale(plot, true);
+        if (!self.unboundedRange) Utility.setAutoScale(plot, true);
         plot.setAxisScale(self.yAxis(), -60, 60);
       }
     } else {
