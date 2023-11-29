@@ -271,16 +271,46 @@ class PlotPropertiesPane extends PropertiesPane {
     //   },
     // });
 
+    let executeButtonClicked = false;
+    // $("#fnDlg_function").on("focus", () => {
+    //   Utility.progressSpinner();
+    // });
+
+    // $("#fnDlg_function").on("focusout", () => {
+    //   Utility.progressSpinner(false);
+    // });
+
+    $("#executeButton").on("mousedown", () => {
+      Utility.progressSpinner();
+    });
+
+    $("#executeButton").on("mouseleave", () => {
+      if (!executeButtonClicked) Utility.progressSpinner(false);
+    });
+
     Static.enterButton = $("#executeButton");
 
     $("#executeButton").click(function () {
+      executeButtonClicked = true;
+      console.time("Timer name");
+      console.log(477);
+      const dt = Date.now();
+      //Utility.progressSpinner();
+      //plot.replot();
+
       Static.errorMessage = "";
       mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
       const m_value = $("#fnDlg_function")[0].value;
       if (m_value) {
-        $("html").addClass("wait");
         plot._functionDlg.doEnter(m_value, true);
-        $("html").removeClass("wait");
+
+        Utility.progressSpinner(false);
+        executeButtonClicked = false;
+
+        //
+        console.timeEnd("Timer name");
+
+        console.log(478);
       } else {
         Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
       }
@@ -292,6 +322,10 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.errorMessage = "";
       Utility.displayErrorMessage(mf, null); //clear error message
     });
+
+    // $("#fnDlg_function").on("keyup", function (e) {
+    //   $("#executeButton").trigger("mousedown");
+    // });
 
     $("#fnDlg_function").on("keyup", function (e) {
       mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
@@ -308,7 +342,9 @@ class PlotPropertiesPane extends PropertiesPane {
         }
         if (e.key === "Enter" || e.keyCode === 13) {
           $("#executeButton").click();
+
           mathVirtualKeyboard.hide();
+          //Utility.progressSpinner(false);
         }
       }
     });

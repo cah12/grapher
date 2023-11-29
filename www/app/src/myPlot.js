@@ -523,10 +523,6 @@ class MyPlot extends Plot {
     }
 
     this.functionDlgCb = function (functionDlgData = null) {
-      // const xDecimalPlaces = self.axisDecimalPlaces(Axis.AxisId.xBottom);
-      // const yDecimalPlaces = self.axisDecimalPlaces(Axis.AxisId.yLeft);
-      //console.log(functionDlgData);
-      $("html").addClass("wait");
       let newCurve = null;
       if (functionDlgData) {
         setFunctionDlgData(functionDlgData);
@@ -556,7 +552,6 @@ class MyPlot extends Plot {
             ok_fn: self._functionDlg.ok,
           });
           if (!s) {
-            $("html").removeClass("wait");
             return;
           }
           if (s.length == 0) {
@@ -565,7 +560,6 @@ class MyPlot extends Plot {
             );
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
-            $("html").removeClass("wait");
             return;
           }
 
@@ -586,7 +580,6 @@ class MyPlot extends Plot {
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
           }
-          $("html").removeClass("wait");
           return newCurve;
         }
         if (self._functionDlg.threeDType === "spectrogram") {
@@ -619,7 +612,6 @@ class MyPlot extends Plot {
             //self._functionDlg.closeDlg = true;
           }
         }
-        $("html").removeClass("wait");
         return newCurve;
       }
 
@@ -789,7 +781,6 @@ class MyPlot extends Plot {
         const samples = Utility.makeSamples(makeSamplesData); //////////////
 
         if (!samples) {
-          $("html").removeClass("wait");
           return;
         }
         if (samples.length == 0) {
@@ -798,7 +789,6 @@ class MyPlot extends Plot {
           );
           //self._functionDlg.close();
           //self._functionDlg.closeDlg = true;
-          $("html").removeClass("wait");
           return;
         }
         newCurve = addCurve(title, samples, false, fn);
@@ -811,7 +801,6 @@ class MyPlot extends Plot {
         newCurve.inflectionPoints = makeSamplesData.inflectionPoints;
         newCurve.latex = self._functionDlg.latex;
         if (!newCurve) {
-          $("html").removeClass("wait");
           return;
         }
         if (samples.length == 1) {
@@ -875,7 +864,7 @@ class MyPlot extends Plot {
 
         newCurve.domainRangeRestriction =
           self._functionDlg.domainRangeRestriction;
-        $("html").removeClass("wait");
+
         return newCurve;
       }
     };
@@ -1353,7 +1342,7 @@ class MyPlot extends Plot {
       if (operationType == "Create table") {
         //$("html").addClass("wait");
         curves[0].plot().plotPropertiesPane.generateTable(curves[0]);
-        //$("html").removeClass("wait");
+
         return;
       }
 

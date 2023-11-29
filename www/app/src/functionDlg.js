@@ -634,6 +634,9 @@ class MFunctionDlg {
 
       this.doEnter = function (fnDlgFunctionVal, closeDlg) {
         //627 -01842
+
+        //Utility.progressSpinner();
+
         let forceDefined = false;
         let expanded = false;
         let defineName = null;
@@ -653,16 +656,6 @@ class MFunctionDlg {
           if (arr.length !== 2) {
             return false; //failed to force definition
           }
-
-          // fn = fn
-          //   .replaceAll("U", "*U")
-          //   .replaceAll("**", "*")
-          //   .replaceAll("-*", "-")
-          //   .replaceAll("+*", "+")
-          //   .replaceAll("/*", "/")
-          //   .replaceAll("=*", "=");
-
-          // if (fn[0] == "*") fn = fn.substring(1);
 
           const expandedRHS = plot.defines.expandDefines(
             arr[1],

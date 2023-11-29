@@ -266,7 +266,18 @@ class PromptDlg {
  * 	}
  * }
  */
+
 class Utility {
+  static progressSpinner(on = true) {
+    if (on) {
+      //Utility.progressSpinner2.show();
+      $("html").addClass("wait");
+    } else {
+      //Utility.progressSpinner2.hide();
+      $("html").removeClass("wait");
+    }
+  }
+
   /**
    * Get the number of decimal places in the number.
    * @param {number} value The number whose decimal places is to be determined.
@@ -2055,6 +2066,7 @@ class Utility {
     // }
 
     //console.log(samples);
+
     return samples;
   }
 
@@ -2866,7 +2878,7 @@ class Utility {
 
       if (solution.length !== undefined) {
         for (let i = 0; i < solution.length; i++) {
-          console.log(solution.at(i).valueOf());
+          //console.log(solution.at(i).valueOf());
 
           let val = adjustForMode(e, solution.at(i).valueOf());
           //val = Utility.adjustForDecimalPlaces(val, 10);
