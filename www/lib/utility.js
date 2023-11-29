@@ -1819,11 +1819,11 @@ class Utility {
         if (zVal < zMin) zMin = zVal;
         if (zVal > zMax) zMax = zVal;
       } else {
-        let x = Utility.adjustForDecimalPlaces(xVal, 15);
+        let x = Utility.adjustForDecimalPlaces(xVal, 8);
 
         let d = Utility.adjustForDecimalPlaces(
           obj.discontinuity[indexInDiscontinuity],
-          15
+          8
         );
 
         //console.log(x, d);
@@ -4501,16 +4501,18 @@ class Utility {
           );
           bracketAdded = true;
         }
-        if (
-          (obj.operand == "-1" || obj.operand == "(-1)") &&
-          Static.trigKeywords.indexOf(prefix) !== -1
-        ) {
-          if (prefix[0] == "a") {
-            result = result.replace(`${prefix}`, `${prefix.substring(1)}`);
+        if (Static.trigKeywords.indexOf(prefix) !== -1) {
+          if (obj.operand == "-1" || obj.operand == "(-1)") {
+            if (prefix[0] == "a") {
+              result = result.replace(`${prefix}`, `${prefix.substring(1)}`);
+            } else {
+              result = result.replace(`${prefix}`, `a${prefix}`);
+            }
+            result = result.replace(`^${obj.operand}`, "");
           } else {
-            result = result.replace(`${prefix}`, `a${prefix}`);
+            result = result.replace(`^${obj.operand}`, "");
+            result = `(${result})^${obj.operand}`;
           }
-          result = result.replace(`^${obj.operand}`, "");
         }
         if (obj.unmodifiedOperand) {
           result = result.replace(obj.unmodifiedOperand, obj.operand);
