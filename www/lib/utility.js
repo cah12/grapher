@@ -1832,21 +1832,22 @@ class Utility {
           indexInDiscontinuity < obj.discontinuity.length &&
           x >= d
         ) {
-          if (d - step * 0.001 >= lowerX) {
+          d = obj.discontinuity[indexInDiscontinuity];
+          if (d - step * 0.01 >= lowerX) {
             yVal = parser.eval({
               x: d - step * 0.001,
             });
-            samples.push(new Misc.Point(d - step * 0.001, yVal)); //point before but close to discontinuity
+            samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
-              new Misc.Point(d - step * 0.001, math.sign(yVal) * 1e300)
+              new Misc.Point(d - step * 0.01, math.sign(yVal) * 1e300)
             ); //point before but close to discontinuity
           }
-          if (d + step * 0.001 < upperX) {
+          if (d + step * 0.01 < upperX) {
             yVal = parser.eval({
-              x: d + step * 0.001,
+              x: d + step * 0.01,
             });
             samples.push(
-              new Misc.Point(d + step * 0.001, math.sign(yVal) * 1e300)
+              new Misc.Point(d + step * 0.01, math.sign(yVal) * 1e300)
             ); //point after but close to discontinuity
 
             samples.push(new Misc.Point(d + step * 0.0001, yVal)); //point after but close to discontinuity
@@ -2493,10 +2494,15 @@ class Utility {
   }
 
   static discontinuity(exp, lower, upper, indepVar) {
-    $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
-      console.log(mode);
-      Utility.mode = mode;
-    });
+    function bindEquationEditorAngleModeChanged() {
+      $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
+        console.log(mode);
+        Utility.mode = mode;
+      });
+    }
+
+    const bindFunc = _.once(bindEquationEditorAngleModeChanged);
+    bindFunc();
 
     if (indepVar !== "x") {
       exp = Utility.purgeAndMarkKeywords(exp);
@@ -2669,19 +2675,28 @@ class Utility {
       return exp;
     }
 
-    function adjustForMode(solution) {
-      let considerMode = false;
-      for (let i = 0; i < denominators.length; i++) {
-        for (let n = 0; n < trigs.length; n++) {
-          if (denominators[i].indexOf(trigs[n]) !== -1) {
-            considerMode = true;
-            break;
+    function adjustForMode(factor, solution) {
+      // let considerMode = false;
+      // for (let i = 0; i < denominators.length; i++) {
+      //   for (let n = 0; n < trigs.length; n++) {
+      //     if (denominators[i].indexOf(trigs[n]) !== -1) {
+      //       considerMode = true;
+      //       break;
+      //     }
+      //   }
+      //   if (considerMode) break;
+      // }
+      // if (considerMode && Utility.mathMode() == "deg") {
+      //   return (solution * 180) / Math.PI;
+      // }
+      // return solution;
+
+      for (let i = 0; i < trigs.length; i++) {
+        if (factor.indexOf(trigs[i]) !== -1) {
+          if (Utility.mathMode() == "deg") {
+            return (solution * 180) / Math.PI;
           }
         }
-        if (considerMode) break;
-      }
-      if (considerMode && Utility.mathMode() == "deg") {
-        return (solution * 180) / Math.PI;
       }
       return solution;
     }
@@ -2851,15 +2866,10 @@ class Utility {
 
       if (solution.length !== undefined) {
         for (let i = 0; i < solution.length; i++) {
-          //console.log(math.evaluate(solution.at(i).valueOf()));
-          // let val = Utility.adjustForDecimalPlaces(
-          //   adjustForMode(math.evaluate(solution.at(i).valueOf())),
-          //   10
-          // );
-          let val = Utility.adjustForDecimalPlaces(
-            adjustForMode(solution.at(i).valueOf()),
-            10
-          );
+          console.log(solution.at(i).valueOf());
+
+          let val = adjustForMode(e, solution.at(i).valueOf());
+          //val = Utility.adjustForDecimalPlaces(val, 10);
           m_result.push(val);
         }
         m_result = _.uniq(m_result);
@@ -2869,21 +2879,6 @@ class Utility {
 
         //let periodic = true;
         if (solution.length > 20) {
-          /* let m_d =
-            (m_result[1] % Math.floor(180 / coeff)) -
-            (m_result[0] % Math.floor(180 / coeff));
-          for (let i = 1; i < m_result.length; i++) {
-            if (
-              ((m_result[i] % Math.floor(180 / coeff)) -
-                (m_result[i - 1] % Math.floor(180 / coeff))) %
-                Math.floor(180 / coeff) !=
-              m_d
-            ) {
-              periodic = false;
-              break;
-            }
-          } */
-
           if (periodic) {
             //a periodic function
             //Check for periodic

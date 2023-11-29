@@ -211,7 +211,7 @@ class MyCurve extends Curve {
         let m_from = from,
           m_to;
         for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
-          if (indexBeforeDiscontinuity[i] <= 0) continue;
+          if (indexBeforeDiscontinuity[i] < 0) continue;
           m_to = indexBeforeDiscontinuity[i];
           if (m_from < m_to) {
             //console.log(486, self.data().samples());
