@@ -272,13 +272,12 @@ class PlotPropertiesPane extends PropertiesPane {
     // });
 
     let executeButtonClicked = false;
-    // $("#fnDlg_function").on("focus", () => {
-    //   Utility.progressSpinner();
-    // });
 
-    // $("#fnDlg_function").on("focusout", () => {
-    //   Utility.progressSpinner(false);
-    // });
+    mf.addEventListener("beforeinput", (e) => {
+      if (e.data == "insertLineBreak" && mf.caretPoint) {
+        $("#executeButton").trigger("mousedown");
+      }
+    });
 
     $("#executeButton").on("mousedown", () => {
       Utility.progressSpinner();
@@ -292,9 +291,9 @@ class PlotPropertiesPane extends PropertiesPane {
 
     $("#executeButton").click(function () {
       executeButtonClicked = true;
-      console.time("Timer name");
-      console.log(477);
-      const dt = Date.now();
+      // console.time("Timer name");
+      // console.log(477);
+      // const dt = Date.now();
       //Utility.progressSpinner();
       //plot.replot();
 
@@ -308,9 +307,9 @@ class PlotPropertiesPane extends PropertiesPane {
         executeButtonClicked = false;
 
         //
-        console.timeEnd("Timer name");
+        // console.timeEnd("Timer name");
 
-        console.log(478);
+        // console.log(478);
       } else {
         Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
       }

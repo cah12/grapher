@@ -269,12 +269,25 @@ class PromptDlg {
 
 class Utility {
   static progressSpinner(on = true) {
+    if (!Utility.progressSpinnerInit) {
+      Utility.progressSpinnerInit = true;
+      $("#centralDiv").append(Utility.progressSpinner2);
+    }
     if (on) {
-      //Utility.progressSpinner2.show();
-      $("html").addClass("wait");
+      Utility.inProgress = true;
+
+      Utility.progressSpinner2.css(
+        "left",
+        parseInt($("#centralDiv").css("width")) * 0.5 - 21
+      );
+      Utility.progressSpinner2.css(
+        "top",
+        parseInt($("#centralDiv").css("height")) * 0.5 - 21
+      );
+      Utility.progressSpinner2.show();
     } else {
-      //Utility.progressSpinner2.hide();
-      $("html").removeClass("wait");
+      Utility.progressSpinner2.hide();
+      //clearTimeout(Utility.tm);
     }
   }
 
@@ -5244,3 +5257,8 @@ Utility.keywordMarkers = [];
 Utility.mode = "deg";
 
 Utility.stepsData = null;
+
+Utility.progressSpinner2 = $(
+  '<img id="imageLoader" class="loader" style= "display:none; z-index:100000; width:40px;height:40px; position: absolute;" src="images/imageLoader.png">'
+);
+Utility.progressSpinnerInit = false;
