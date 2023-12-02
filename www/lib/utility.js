@@ -268,14 +268,21 @@ class PromptDlg {
  */
 
 class Utility {
+  static progressWait(on = true) {
+    if (on) {
+      $("html").addClass("wait");
+    } else {
+      $("html").removeClass("wait");
+      Utility.inProgress = false;
+    }
+  }
+
   static progressSpinner(on = true) {
     if (!Utility.progressSpinnerInit) {
       Utility.progressSpinnerInit = true;
       $("#centralDiv").append(Utility.progressSpinner2);
     }
     if (on) {
-      Utility.inProgress = true;
-
       Utility.progressSpinner2.css(
         "left",
         parseInt($("#centralDiv").css("width")) * 0.5 - 21
@@ -287,7 +294,7 @@ class Utility {
       Utility.progressSpinner2.show();
     } else {
       Utility.progressSpinner2.hide();
-      //clearTimeout(Utility.tm);
+      Utility.inProgress = false;
     }
   }
 
@@ -1756,6 +1763,7 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj) {
+    //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
     }
@@ -1997,6 +2005,7 @@ class Utility {
       //console.log("Add Turning points", points);
       obj.turningPoints = points; //return turning points to makeSamples() caller
 
+      //console.time("object");
       if (points.length) {
         for (let i = 0; i < points.length; i++) {
           samples.push(points[i]);
@@ -2079,7 +2088,7 @@ class Utility {
     // }
 
     //console.log(samples);
-
+    //console.timeEnd("object");
     return samples;
   }
 
@@ -2519,6 +2528,7 @@ class Utility {
   }
 
   static discontinuity(exp, lower, upper, indepVar) {
+    //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
       $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
         console.log(mode);
@@ -2956,6 +2966,7 @@ class Utility {
     result = result.sort(function (a, b) {
       return a - b;
     });
+    //console.timeEnd("discontinuity");
     return result;
   }
 

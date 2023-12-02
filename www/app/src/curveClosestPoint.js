@@ -1,4 +1,5 @@
 "include ['static','widgetOverlay', 'plotMarker']";
+"use strict";
 
 class MyOverlay extends WidgetOverlay {
   //function MyOverlay(widget){
@@ -273,11 +274,11 @@ class MyObject extends HObject {
     Static.bind("itemAttached", function (e, plotItem, on) {
       if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
         if (!on) {
-          MyObject.undoStack = MyObject.undoStack.filter(function (e) {
-            return e.curve != plotItem;
+          MyObject.undoStack = MyObject.undoStack.filter(function (elm) {
+            return elm.curve != plotItem;
           });
-          MyObject.redoStack = MyObject.undoStack.filter(function (e) {
-            return e.curve != plotItem;
+          MyObject.redoStack = MyObject.undoStack.filter(function (elm) {
+            return elm.curve != plotItem;
           });
         }
       }

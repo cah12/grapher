@@ -8,6 +8,8 @@ class InfoPropertiesPane extends Pane {
     var m_sidebarReDisplay = false;
     let playImgSrc = "images/play.png";
 
+    let curCurve = null;
+
     let domainMin = 0;
     let domainMax = 0;
 
@@ -141,13 +143,13 @@ class InfoPropertiesPane extends Pane {
     var damp = 30000;
     //Utility.alert("You have more than 5 unknown coefficients. Only the first 5 coefficients could be adjusted from the sidebar. The value of each remaining will be 1.")
     function initSidebarInput() {
-      var curves = plot
+      /* var curves = plot
         .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
         .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
         .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram))
-        .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotZone));
+        .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotZone)); */
       hideAllInputs();
-      var curCurve = plot.findPlotCurve($("#currentCurve").val());
+      curCurve = plot.findPlotCurve($("#currentCurve").val());
       if (!curCurve) {
         return;
       }
@@ -244,7 +246,6 @@ class InfoPropertiesPane extends Pane {
           const s2 = math
             .parse(curCurve.parametricFnY.replaceAll("mod", " mod "))
             .toTex({ em: 16, ex: 6, display: false });
-
           navigator.clipboard.writeText(`(${s1},${s2})`);
         }
       }
@@ -807,18 +808,18 @@ class InfoPropertiesPane extends Pane {
       }
     });
 
-    function getLastValidValue(input) {
-      /* var inputIds = [
-        "coeff_val0",
-        "coeff_val1",
-        "coeff_val2",
-        "coeff_val3",
-        "coeff_val4",
-      ]; */
-      var curCurve = plot.findPlotCurve($("#currentCurve").val());
+    // function getLastValidValue(input) {
+    //   /* var inputIds = [
+    //     "coeff_val0",
+    //     "coeff_val1",
+    //     "coeff_val2",
+    //     "coeff_val3",
+    //     "coeff_val4",
+    //   ]; */
+    //   var curCurve = plot.findPlotCurve($("#currentCurve").val());
 
-      return curCurve.coeffsVal[inputIds.indexOf(input[0].id)];
-    }
+    //   return curCurve.coeffsVal[inputIds.indexOf(input[0].id)];
+    // }
 
     function isValidNumber(val) {
       return _.isFinite(parseFloat(val));

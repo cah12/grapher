@@ -1,6 +1,29 @@
 "include ['plotcurve']";
 
+"use strict";
+
 class MyCurve extends Curve {
+  static init() {
+    Static.bind("itemAttached", (e, item, on) => {
+      if (item == this && on) {
+        if (Static.swapAxes == 0) {
+          //Implicit
+          if (this.xIsDependentVariable) {
+            this.swapAxes();
+            Static.trigger("axesSwapped", item);
+          }
+        }
+        if (Static.swapAxes == 1) {
+          //Do not swap
+        }
+        if (Static.swapAxes == 2) {
+          //Swap
+          this.swapAxes();
+          Static.trigger("axesSwapped", item);
+        }
+      }
+    });
+  }
   constructor(tle) {
     super(tle);
     const self = this;
@@ -14,7 +37,9 @@ class MyCurve extends Curve {
       return "[MyCurve]";
     };
 
-    Static.bind("itemAttached", function (e, item, on) {
+    MyCurve.init();
+
+    /* Static.bind("itemAttached", function (e, item, on) {
       //console.log(486, item == self, on);
       if (item == self && on) {
         if (Static.swapAxes == 0) {
@@ -33,7 +58,7 @@ class MyCurve extends Curve {
           Static.trigger("axesSwapped", item);
         }
       }
-    });
+    }); */
 
     //this.discontinuity = [0]; //-2, 2]; //0, Math.PI, 2 * Math.PI, 3 * Math.PI, 4 * Math.PI];
   }

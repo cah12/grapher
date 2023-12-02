@@ -1,5 +1,7 @@
 "include ['static', 'modalDlg']";
 
+"use strict";
+
 ///////////////////////////////////////////////////////
 
 class DefinesDlg extends ModalDlg {
@@ -716,13 +718,15 @@ class Defines {
 
     this.expandDefines = function (str, variable, derive = true) {
       let prevExpanded = str;
+
       str = doExpandDefines(str, variable, derive);
       if (!str) return null;
       //let prevExpanded = null;
       let n = 0;
       while (str && str !== prevExpanded && n < 200) {
-        prevExpanded = str;
+        // prevExpanded = str;
         str = doExpandDefines(str, variable, derive);
+        prevExpanded = str;
         n++;
       }
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");

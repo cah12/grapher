@@ -277,7 +277,7 @@ class CurveShapeItem extends PlotShapeItem {
       if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
         if (on) {
           //attached
-          if (!self.curve()); //plot.cs.setCurve(plotItem);
+          //if (!self.curve()); //plot.cs.setCurve(plotItem);
         } else {
           //detached
           if (

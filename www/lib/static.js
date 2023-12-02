@@ -423,3 +423,12 @@ math.derivative = function (str, variable, options) {
 Static.errorMessage = "";
 
 Static.accuracyFactorModerate = 1; //moderate
+
+// const registry = new FinalizationRegistry((message) => console.log(message));
+
+// function example() {
+//   const x = {};
+//   registry.register(x, "x has been collected");
+// }
+
+// example();

@@ -280,36 +280,25 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     $("#executeButton").on("mousedown", () => {
-      Utility.progressSpinner();
+      Utility.progressWait();
     });
 
     $("#executeButton").on("mouseleave", () => {
-      if (!executeButtonClicked) Utility.progressSpinner(false);
+      if (!executeButtonClicked) Utility.progressWait(false);
     });
 
     Static.enterButton = $("#executeButton");
 
     $("#executeButton").click(function () {
       executeButtonClicked = true;
-      // console.time("Timer name");
-      // console.log(477);
-      // const dt = Date.now();
-      //Utility.progressSpinner();
-      //plot.replot();
 
       Static.errorMessage = "";
       mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
       const m_value = $("#fnDlg_function")[0].value;
       if (m_value) {
         plot._functionDlg.doEnter(m_value, true);
-
-        Utility.progressSpinner(false);
         executeButtonClicked = false;
-
-        //
-        // console.timeEnd("Timer name");
-
-        // console.log(478);
+        Utility.progressWait(false);
       } else {
         Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
       }
@@ -343,7 +332,6 @@ class PlotPropertiesPane extends PropertiesPane {
           $("#executeButton").click();
 
           mathVirtualKeyboard.hide();
-          //Utility.progressSpinner(false);
         }
       }
     });

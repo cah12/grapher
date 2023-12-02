@@ -1,5 +1,7 @@
 "include ['myLegend', 'curveClosestPoint', 'plot', 'functionData', 'plotGrid', 'spectrogram']";
 
+"use strict";
+
 /*function decimalPlaces(num) {
   var match = (''+num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
   if (!match) { return 0; }
@@ -33,18 +35,6 @@ class MyPlot extends Plot {
 
     this.insertLegend(new MyLegend());
     this.enableLegend(true);
-
-    /* var m_settings = new MSettings();        
-        this.settings = function () {
-          return m_settings;
-        }
-        m_settings.setPlot(this); */
-
-    /* const constructors = {
-      curveConstructor: MyCurve,
-      markerConstructor: PlotMarker,
-      //arrowSymbolConstructor: PointMarkerSymbol
-    }; */
 
     //this.defines = new MDefines(this /* , constructors */);
     this.file = new MFile(this /* , constructors */);
@@ -99,7 +89,8 @@ class MyPlot extends Plot {
         return null;
       }
 
-      var curve = new MyCurve(title);
+      let curve = new MyCurve(title);
+
       curve.expandedFn = fn;
 
       if (!upload) self.addCurveInit(curve);
@@ -121,13 +112,12 @@ class MyPlot extends Plot {
 
       curve.functionDlgData = getFunctionDlgData(curve.rtti);
 
-      //curve.attach(self);
-      //self.enableLegend(enabled);
       self.rv.setCurrentCurve(curve);
       if (self.sidebar) {
         self.sidebar.initSidebar();
         self.rv.refresh(); //Added 06/17/2020
       }
+
       return curve;
     }
 
@@ -524,6 +514,7 @@ class MyPlot extends Plot {
 
     this.functionDlgCb = function (functionDlgData = null) {
       let newCurve = null;
+
       if (functionDlgData) {
         setFunctionDlgData(functionDlgData);
       }
@@ -791,7 +782,9 @@ class MyPlot extends Plot {
           //self._functionDlg.closeDlg = true;
           return;
         }
+
         newCurve = addCurve(title, samples, false, fn);
+
         if (!newCurve.parametricLowerX) {
           newCurve.parametricLowerX = m_lowerX;
           newCurve.parametricUpperX = m_upperX;
@@ -803,6 +796,7 @@ class MyPlot extends Plot {
         if (!newCurve) {
           return;
         }
+
         if (samples.length == 1) {
           const color = Utility.randomColor();
           let sym = new Symbol2(
@@ -830,8 +824,6 @@ class MyPlot extends Plot {
         newCurve.discontinuity = discont;
         //newCurve.setAxis = false;
         newCurve.xIsDependentVariable = self._functionDlg.xIsDependentVariable;
-
-        // if (!functionDlgData) newCurve.attach(self);
 
         var decimalPlacesY = 4;
         var decimalPlacesX = 4;

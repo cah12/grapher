@@ -633,10 +633,6 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (fnDlgFunctionVal, closeDlg) {
-        //627 -01842
-
-        //Utility.progressSpinner();
-
         let forceDefined = false;
         let expanded = false;
         let defineName = null;
@@ -1371,6 +1367,7 @@ class MFunctionDlg {
               self.variable
             );
             if (!dec) {
+              //console.time("timer");
               self.expandedFn =
                 self.fn =
                 fnDlgFunctionVal =
@@ -1379,6 +1376,7 @@ class MFunctionDlg {
                     self.variable,
                     false
                   );
+              //console.timeEnd("timer");
               if (!self.expandedFn) {
                 // alert(
                 //   `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
@@ -1798,7 +1796,9 @@ class MFunctionDlg {
             self.color1 = $("#fnDlg_color1").val();
             self.color2 = $("#fnDlg_color2").val();
           }
+          //console.time("timer");
           cb();
+          //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
           const fn = negativeRootFn();
           if (Static.negativeRoot && fn) {
