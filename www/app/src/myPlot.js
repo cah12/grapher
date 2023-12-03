@@ -2147,9 +2147,6 @@ class MyPlot extends Plot {
           self.watchAreaBelowCurve.setEnable(
             self.tbar.isDropdownItemChecked("Watch", 6)
           );
-          /* self.tbar.setDropdownItemCheck("Watch", 6, false);
-          self.watchAreaBelowCurve.setEnable(false); */
-          //Static.trigger("positionChanged"); //force sidebar update
         }
       }
     });

@@ -37,8 +37,6 @@ class MyCurve extends Curve {
       return "[MyCurve]";
     };
 
-    MyCurve.init();
-
     /* Static.bind("itemAttached", function (e, item, on) {
       //console.log(486, item == self, on);
       if (item == self && on) {
@@ -333,3 +331,4 @@ class MyCurve extends Curve {
     plot.autoRefresh();
   }
 }
+MyCurve.init();

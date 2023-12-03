@@ -90,6 +90,7 @@ class Watch {
 
     this.setEnable = function (set) {
       _enable = set;
+      //if(!_enable && this._curve) this._curve = null;
       Static.trigger("watchEnabled", [this, set]);
       Static.trigger("invalidateWatch");
     };

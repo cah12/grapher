@@ -343,6 +343,7 @@ class PlotPropertiesPane extends PropertiesPane {
         pointTable.hide();
         headerElement.show();
         clearPointTable();
+        newTableCurve = null;
       }
       $("#fnDlg_title").val(Utility.generateCurveName(plot));
     });
@@ -367,28 +368,7 @@ class PlotPropertiesPane extends PropertiesPane {
       let color = Utility.randomColor();
       newTableCurve.setPen(new Misc.Pen(color, 4));
       newTableCurve.setStyle(Curve.CurveStyle.Dots);
-      /*let sym = new Symbol2(
-        Symbol2.Style.MRect,
-        new Misc.Brush(Utility.invert(color)),
-        new Misc.Pen(color),
-        new Misc.Size(8, 8)
-      );
-      newTableCurve.setSymbol(sym);
-      let attribute = "";
-      if (Static.showline && Static.showsymbol) {
-        attribute = "lineAndSymbol";
-      } else if (Static.showline) {
-        attribute = "line";
-      } else if (Static.showsymbol) {
-        attribute = "symbol";
-      }
-      Utility.setLegendAttribute(
-        newTableCurve,
-        attribute,
-        newTableCurve.getLegendIconSize()
-      );*/ //attribute = "line" or "symbol" or "lineAndSymbol"
 
-      //newTableCurve.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
       newTableCurve.attach(plot);
     });
 

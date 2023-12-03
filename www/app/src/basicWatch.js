@@ -56,12 +56,18 @@ class CGMarker extends PlotMarker {
     Static.bind("showSidebar", showSidebarCb);
 
     const axisChangedCb = function (e, axis, curve) {
-      if (curve != undefined) self.setAxes(curve.xAxis(), curve.yAxis());
+      if (curve != undefined) {
+        self.setAxes(curve.xAxis(), curve.yAxis());
+        //curve = null;
+      }
     };
     Static.bind("axisChanged", axisChangedCb);
 
     const currentCurveChangedCb = function (e, curve) {
-      if (curve != undefined) self.setAxes(curve.xAxis(), curve.yAxis());
+      if (curve != undefined) {
+        self.setAxes(curve.xAxis(), curve.yAxis());
+        //curve = null;
+      }
     };
     Static.bind("currentCurveChanged", currentCurveChangedCb);
 
@@ -382,7 +388,7 @@ class WatchAreaBelowCurve extends Watch {
       ) {
         //self._magnifying = false;
         this._update = false;
-        //this._curve = 0;
+        this._curve = 0;
         return;
       }
 
