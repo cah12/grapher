@@ -1055,6 +1055,7 @@ class MyPlot extends Plot {
                     m_translateX,
                     m_translateY
                   );
+                  curves[i] = null;
                 }
               } else {
                 return false;
@@ -1081,6 +1082,7 @@ class MyPlot extends Plot {
                 const scale = parseFloat(csvStr);
                 for (let i = 0; i < curves.length; i++) {
                   self.transformation.transform(curves[i], "Scale", scale);
+                  curves[i] = null;
                 }
               }
             } else {
