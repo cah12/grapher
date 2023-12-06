@@ -2171,8 +2171,7 @@ class Utility {
   ) {
     let result = [];
     let m_fn = fn;
-    /*
-    
+
     let derivative = null;
     if (!samples || samples.length == 0) {
       return result;
@@ -2199,9 +2198,9 @@ class Utility {
       //No
       return result;
     }
-*/
+
     //derivative = math.derivative(derivative, variable);
-    const parser = new EvaluateExp(fn);
+    const parser = new EvaluateExp(derivative);
     /* 1 when x > 0
       -1 when x < 0
       0 when x == 0 */
