@@ -2189,7 +2189,7 @@ class Utility {
 
     try {
       //Second derivative
-      derivative = math.derivative(derivative, variable);
+      derivative = math.derivative(derivative.toString(), variable);
     } catch (error) {
       return result;
     }
@@ -2200,7 +2200,7 @@ class Utility {
     }
 
     //derivative = math.derivative(derivative, variable);
-    const parser = new EvaluateExp(derivative);
+    const parser = new EvaluateExp(derivative.toString());
     /* 1 when x > 0
       -1 when x < 0
       0 when x == 0 */
