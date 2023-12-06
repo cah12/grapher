@@ -2108,13 +2108,13 @@ class Utility {
     //Replace the whitespace delimiters stripped out by simplify()
     fn = fn.replaceAll("mod", " mod ");
 
-    const infPoints = Utility.curveInflectionPoint(
-      fn,
-      variable,
-      samples,
-      decimalPlacesX,
-      decimalPlacesY
-    );
+    // const infPoints = Utility.curveInflectionPoint(
+    //   fn,
+    //   variable,
+    //   samples,
+    //   decimalPlacesX,
+    //   decimalPlacesY
+    // );
 
     let m_fn = fn;
     let result = [];
@@ -2130,58 +2130,6 @@ class Utility {
     if (isFinite(derivative)) {
       return result;
     }
-    // if (isNaN(derivative) || !isFinite(derivative)) {
-    //   return result;
-    // }
-    //derivative = derivative.toString();
-
-    var solution = [];
-    if (derivative.indexOf(variable) !== -1) {
-      var eq = null;
-      try {
-        eq = nerdamer(`${derivative}=0`);
-        solution = eq.solveFor(variable);
-        nerdamer.flush();
-      } catch (error) {
-        //console.log("App unable to find turning point");
-      }
-    }
-    //console.log(solution[0].toString());
-    /* if (solution && solution.length < 20) {
-      m_fn = m_fn.replaceAll(variable, "Z");
-      for (let i = 0; i < solution.length; i++) {
-        result.push(
-          new Misc.Point(
-            Utility.adjustForDecimalPlaces(
-              parseFloat(solution[i].toString()),
-              decimalPlacesX
-            ),
-            Utility.adjustForDecimalPlaces(
-              math.evaluate(m_fn, { Z: parseFloat(solution[i].toString()) }),
-              decimalPlacesY
-            )
-          )
-        );
-      }
-      const xLower = samples[0].x;
-      const xUpper = samples[samples.length - 1].x;
-      //console.log(xLower, xUpper);
-
-      result = result.filter(function (e) {
-        return e.x >= xLower && e.x <= xUpper;
-      });
-
-      if (infPoints && infPoints.length) {
-        const arr = infPoints.map(function (e) {
-          return e.x;
-        });
-        result = result.filter(function (el) {
-          return arr.indexOf(el.x) === -1;
-        });
-      }
-
-      return result;
-    } */
 
     const parser = new EvaluateExp(derivative);
 
@@ -2221,8 +2169,10 @@ class Utility {
     decimalPlacesX = 4,
     decimalPlacesY = 4
   ) {
-    let m_fn = fn;
     let result = [];
+    let m_fn = fn;
+    /*
+    
     let derivative = null;
     if (!samples || samples.length == 0) {
       return result;
@@ -2232,32 +2182,39 @@ class Utility {
     } catch (error) {
       return result;
     }
+    //Do derivative have dependent variable?
     if (isFinite(derivative.toString())) {
+      //No
       return result;
     }
-    // if (isNaN(derivative) || !isFinite(derivative)) {
-    //   return result;
-    // }
-    derivative = math.derivative(derivative, variable);
-    const parser = new EvaluateExp(derivative.toString());
+
+    try {
+      //Second derivative
+      derivative = math.derivative(derivative, variable);
+    } catch (error) {
+      return result;
+    }
+    //Do second derivative have dependent variable?
+    if (isFinite(derivative.toString())) {
+      //No
+      return result;
+    }
+*/
+    //derivative = math.derivative(derivative, variable);
+    const parser = new EvaluateExp(fn);
     /* 1 when x > 0
       -1 when x < 0
       0 when x == 0 */
     // console.log("m_fn", m_fn);
     // console.log("samples[1].x", samples[1].x);
-    let sign = math.sign(parser.eval({ x: samples[1].x }));
+    let sign = math.sign(samples[1].y);
     if (sign == 0) {
       sign = 1;
     }
     for (let i = 1; i < samples.length; i++) {
-      const m = parser.eval({ x: samples[i].x });
-      // if (math.sign(m) == 0) {
-      //   result.push(
-      //     new Misc.Point(samples[i].x, math.evaluate(m_fn, { x: samples[i].x }))
-      //   );
-      //   sign *= -1;
-      //   break;
-      // }
+      //const m = parser.eval({ x: samples[i].x });
+      const m = samples[i].y;
+
       if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
         //Search for turning point
         const numOfSteps = 1000 / Static.accuracyFactor;
@@ -3061,41 +3018,6 @@ class Utility {
     //return math.format(value, {precision: numberOfDigits});
     return value.toPrecision(numberOfDigits);
   }
-
-  /* static logStep(changeType, obj = null) {
-    let displayStr = null;
-    switch (changeType) {
-      case Static.operation:
-        Utility.stepsData = obj;
-        displayStr = `Finding the point(s) of intersection of the curves "${Utility.stepsData.equations[0]}" and "${Utility.stepsData.equations[1]}".`;
-        console.log(displayStr);
-        break;
-      case Static.constructEquation:
-        if (obj == "Intersection") {
-          displayStr = `At any point of intersection, equtions are equal. Thus\n\t ${Utility.stepsData.equations[0]} = ${Utility.stepsData.equations[1]}.`;
-        }
-        console.log(displayStr);
-        break;
-      case Static.rearrangeEquation:
-        if (obj == "Intersection") {
-          displayStr = `Re-arranging the equations. We get\n\t (${Utility.stepsData.equations[0]}) - (${Utility.stepsData.equations[1]}) = 0`;
-        }
-        console.log(displayStr);
-        break;
-      case Static.solveEquation:
-        if (obj == "Intersection") {
-          displayStr = `Solving the equation for "${Utility.stepsData.variable}":`;
-          console.log(displayStr);
-          Static.stepper.load();
-        }
-        //Static.stepper.unload();
-        //console.log(displayStr);
-        break;
-
-      default:
-        break;
-    }
-  } */
 
   static grapherDeterminedDecimalPlaces(curve) {
     function countPlaces() {

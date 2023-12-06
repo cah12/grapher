@@ -1045,7 +1045,7 @@ class MyPlot extends Plot {
                 // const m_translateX = math.evaluate(arr[0]);
                 // const m_translateY = math.evaluate(arr[1]);
 
-                const plot = curves[0].plot();
+                //const plot = curves[0].plot();
                 // const doAutoReplot = plot.autoReplot();
                 // plot.setAutoReplot(false);
                 for (let i = 0; i < curves.length; i++) {
@@ -1375,7 +1375,9 @@ class MyPlot extends Plot {
 
       if (
         operationType == "Turning point" ||
-        operationType == "Inflection point"
+        operationType == "Inflection point" ||
+        operationType == "Y-Intercept" ||
+        operationType == "X-Intercept"
       ) {
         //console.log(curves);
         // let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
@@ -1439,9 +1441,128 @@ class MyPlot extends Plot {
             }
           }
 
+          if (operationType == "X-Intercept") {
+            const curve = curves[i];
+
+            var eq = nerdamer(`(${curve.expandedFn})=0`);
+            //Static.expression = `(${simplifiedExp})=0`;
+            var solution = eq.solveFor(curves[0].variable);
+            nerdamer.flush();
+
+            const fn = curve.expandedFn.replaceAll(curves[0].variable, "U");
+            points = [];
+            for (let i = 0; i < solution.length; i++) {
+              //console.log(solution.at(i).toString());
+              const val = math.evaluate(solution.at(i).toString());
+
+              points.push({
+                x: val,
+                y: math.evaluate(fn, {
+                  U: val,
+                }),
+              });
+            }
+
+            points = points.filter(function (e) {
+              return isFinite(e.x) && isFinite(e.y);
+            });
+
+            if (points && points.length) {
+              for (let n = 0; n < points.length; n++) {
+                const odd = m % 2;
+                m++;
+                const { spacing, align } = getArrowSymbolProperties();
+                const element = points[n];
+                const tpName = Utility.generateCurveName(self, "x~");
+                const marker = new PlotMarker(tpName);
+                marker.toolTipValueName = "X-Intercept:";
+                marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+                marker.setXAxis(curve.xAxis());
+                marker.setYAxis(curve.yAxis());
+
+                marker.setSymbol(new PointMarkerSymbol());
+
+                marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+                marker.setLegendIconSize(new Misc.Size(10, 10));
+
+                marker.setValue(element);
+                marker.setLabel(tpName);
+                var m_symbol = marker.symbol();
+                m_symbol.setSize(new Misc.Size(10, 10));
+                marker.setLabelAlignment(align | Static.AlignBottom);
+                marker.setSpacing(spacing);
+
+                marker.setLabelFont(
+                  new Misc.Font({
+                    fontColor: "#0B00FC",
+                    name: "Times New Roman",
+                    style: "normal",
+                    th: 12,
+                    weight: "bold",
+                  })
+                );
+
+                marker.attach(self);
+              }
+            }
+          }
+
+          if (operationType == "Y-Intercept") {
+            const curve = curves[i];
+
+            let pt = null;
+
+            try {
+              pt = new Misc.Point(
+                0,
+                math.evaluate(
+                  curve.expandedFn.replaceAll(curve.variable, "U"),
+                  { U: 0 }
+                )
+              );
+            } catch (error) {
+              console.log(error);
+            }
+
+            if (pt) {
+              const { spacing, align } = getArrowSymbolProperties();
+
+              const tpName = Utility.generateCurveName(self, "y~");
+              const marker = new PlotMarker(tpName);
+              marker.toolTipValueName = "Y-Intercept:";
+              marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+              marker.setXAxis(curve.xAxis());
+              marker.setYAxis(curve.yAxis());
+
+              marker.setSymbol(new PointMarkerSymbol());
+
+              marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+              marker.setLegendIconSize(new Misc.Size(10, 10));
+
+              marker.setValue(pt);
+              marker.setLabel(tpName);
+              var m_symbol = marker.symbol();
+              m_symbol.setSize(new Misc.Size(10, 10));
+              marker.setLabelAlignment(align | Static.AlignBottom);
+              marker.setSpacing(spacing);
+
+              marker.setLabelFont(
+                new Misc.Font({
+                  fontColor: "#0B00FC",
+                  name: "Times New Roman",
+                  style: "normal",
+                  th: 12,
+                  weight: "bold",
+                })
+              );
+
+              marker.attach(self);
+            }
+          }
+
           if (operationType == "Inflection point") {
             const curve = curves[i];
-            points = curve.inflectionPoints;
+            points = curve.inflectionPoints || [];
 
             for (let n = 0; n < points.length; n++) {
               const element = points[n];
@@ -1478,10 +1599,24 @@ class MyPlot extends Plot {
               marker.attach(self);
             }
           }
-          if (!points || !points.length) {
-            let pointType = "turning";
-            if (operationType == "Inflection point") pointType = "inflection";
-            str += `${curves[i].title()} has 0 ${pointType} point\n`;
+
+          let pointType = "turning";
+          if (operationType == "Inflection point") pointType = "inflection";
+          if (curves[i].parametricFnX) {
+            str += `${
+              pointType === "turning" ? "Turning" : "Inflection"
+            } points for parametric functions not yet supported.\n`;
+          } else if (!curves[i].expandedFn) {
+            str += `No function expression found to determine ${pointType} points for ${curves[
+              i
+            ].title()}.\n`;
+          } else if (
+            operationType !== "Y-Intercept" &&
+            operationType !== "X-Intercept"
+          ) {
+            if (!points || !points.length) {
+              str += `${curves[i].title()} has 0 ${pointType} point\n`;
+            }
           }
         }
         self.setAutoReplot(doAutoReplot);
@@ -1517,6 +1652,8 @@ class MyPlot extends Plot {
 
           let res = [];
 
+          let imaginary = false;
+
           if (
             curves[0].expandedFn &&
             curves[1].expandedFn &&
@@ -1545,10 +1682,10 @@ class MyPlot extends Plot {
               return;
             }
 
-            nerdamer.flush();
-            var eq = nerdamer(`(${expandedFn1})-(${expandedFn2})=0`);
-            Static.expression = `(${expandedFn1})-(${expandedFn2})=0`;
+            var eq = nerdamer(`(${simplifiedExp})=0`);
+            //Static.expression = `(${simplifiedExp})=0`;
             var solution = eq.solveFor(curves[0].variable);
+            nerdamer.flush();
 
             if (solution && solution.length < 20) {
               const fn = expandedFn1.replaceAll(curves[0].variable, "Z");
@@ -1572,65 +1709,74 @@ class MyPlot extends Plot {
               const m_l = res.length;
 
               res = res.filter(function (e) {
+                if (
+                  !imaginary &&
+                  (typeof e.x === "object" || typeof e.y === "object")
+                )
+                  imaginary = true;
                 return e.x >= xLower && e.x <= xUpper;
               });
+              if (!imaginary) {
+                if (res.length == 0) {
+                  //Utility.logStep("info", `No solution(s) within domain [${xLower}, ${xUpper}]`);
+                }
 
-              if (res.length == 0) {
-                //Utility.logStep("info", `No solution(s) within domain [${xLower}, ${xUpper}]`);
+                if (m_l == res.length) {
+                  //Utility.logStep("info", `All solution(s) within domain [${xLower}, ${xUpper}]`);
+                }
+
+                const { spacing, align, angle } = getArrowSymbolProperties();
+
+                let str = "";
+                for (let i = 0; i < res.length; i++) {
+                  const element = res[i];
+                  const { spacing, align } = getArrowSymbolProperties();
+                  const ipName = Utility.generateCurveName(self, "X");
+                  const marker = new PlotMarker(ipName);
+                  marker.setItemAttribute(
+                    PlotItem.ItemAttribute.AutoScale,
+                    true
+                  );
+                  marker.setXAxis(curves[0].xAxis());
+                  marker.setYAxis(curves[0].yAxis());
+
+                  // const sym = new Symbol2();
+                  // sym.setBrush(new Misc.Brush(Static.NoBrush));
+                  // sym.setSize(new Misc.Size(10, 10));
+                  // sym.setStyle(Symbol2.Style.Ellipse);
+                  // marker.setSymbol(sym);
+
+                  marker.setSymbol(new PointMarkerSymbol());
+                  marker.toolTipValueName = "Intersection point:";
+
+                  marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+                  marker.setLegendIconSize(new Misc.Size(10, 10));
+
+                  marker.setValue(element);
+                  marker.setLabel(ipName);
+                  var m_symbol = marker.symbol();
+                  m_symbol.setSize(new Misc.Size(10, 10));
+                  marker.setLabelAlignment(align | Static.AlignBottom);
+                  marker.setSpacing(spacing);
+
+                  marker.setLabelFont(
+                    new Misc.Font({
+                      fontColor: "#000000",
+                      name: "Times New Roman",
+                      style: "normal",
+                      th: 12,
+                      weight: "bold",
+                    })
+                  );
+
+                  marker.attach(self);
+                }
+
+                //const ptStr = res.length > 1 ? "points" : "point";
+
+                //alert(`${res.length} ${ptStr} of intersection:\n` + str);
+                return;
               }
-
-              if (m_l == res.length) {
-                //Utility.logStep("info", `All solution(s) within domain [${xLower}, ${xUpper}]`);
-              }
-
-              const { spacing, align, angle } = getArrowSymbolProperties();
-
-              let str = "";
-              for (let i = 0; i < res.length; i++) {
-                const element = res[i];
-                const { spacing, align } = getArrowSymbolProperties();
-                const ipName = Utility.generateCurveName(self, "X");
-                const marker = new PlotMarker(ipName);
-                marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
-                marker.setXAxis(curves[0].xAxis());
-                marker.setYAxis(curves[0].yAxis());
-
-                // const sym = new Symbol2();
-                // sym.setBrush(new Misc.Brush(Static.NoBrush));
-                // sym.setSize(new Misc.Size(10, 10));
-                // sym.setStyle(Symbol2.Style.Ellipse);
-                // marker.setSymbol(sym);
-
-                marker.setSymbol(new PointMarkerSymbol());
-                marker.toolTipValueName = "Intersection point:";
-
-                marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-                marker.setLegendIconSize(new Misc.Size(10, 10));
-
-                marker.setValue(element);
-                marker.setLabel(ipName);
-                var m_symbol = marker.symbol();
-                m_symbol.setSize(new Misc.Size(10, 10));
-                marker.setLabelAlignment(align | Static.AlignBottom);
-                marker.setSpacing(spacing);
-
-                marker.setLabelFont(
-                  new Misc.Font({
-                    fontColor: "#000000",
-                    name: "Times New Roman",
-                    style: "normal",
-                    th: 12,
-                    weight: "bold",
-                  })
-                );
-
-                marker.attach(self);
-              }
-
-              //const ptStr = res.length > 1 ? "points" : "point";
-
-              //alert(`${res.length} ${ptStr} of intersection:\n` + str);
-              return;
             }
           }
 

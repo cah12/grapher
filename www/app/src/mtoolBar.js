@@ -673,6 +673,22 @@ class MToolBar extends ToolBar {
           name: "Point",
           subMenu: [
             {
+              name: "Y-Intercept",
+              //img: "images/brush.png",
+              title: "Find the Y-Intercept",
+              fun: function () {
+                operationPrep("Y-Intercept");
+              },
+            },
+            {
+              name: "X-Intercept",
+              //img: "images/brush.png",
+              title: "Find the X-Intercept",
+              fun: function () {
+                operationPrep("X-Intercept");
+              },
+            },
+            {
               name: "Intersection",
               //img: "images/brush.png",
               title:
