@@ -165,7 +165,6 @@ class MToolBar extends ToolBar {
 
     var fnListFile = [
       _plot.file.save,
-      functionFn,
       pointEntryFn,
       calculatorFn,
       definesFn,
@@ -189,11 +188,6 @@ class MToolBar extends ToolBar {
           text: "Download",
           icon: "images/download.png",
           tooltip: "Download the current graph.",
-        },
-        {
-          text: "Curve Function",
-          icon: "images/function.png",
-          tooltip: "Launches the function dialog.",
         },
         {
           text: "Point entry",
