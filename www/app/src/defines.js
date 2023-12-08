@@ -468,6 +468,7 @@ class Defines {
     let counter = 0;
     function doExpandDefines(str, variable, derive) {
       //handle function declarations
+
       let m_str;
       let dec;
 
@@ -722,13 +723,53 @@ class Defines {
       str = doExpandDefines(str, variable, derive);
       if (!str) return null;
       //let prevExpanded = null;
+
       let n = 0;
-      while (str && str !== prevExpanded && n < 200) {
-        // prevExpanded = str;
-        str = doExpandDefines(str, variable, derive);
-        prevExpanded = str;
-        n++;
+      if (!variable) {
+        while (str && str !== prevExpanded && n < 200) {
+          prevExpanded = str;
+          str = doExpandDefines(str, variable, derive);
+          //prevExpanded = str;
+          n++;
+        }
+      } else {
+        let scope = new Map();
+        scope.set(variable, 1);
+        let s1 = str;
+        try {
+          s1 = math.evaluate(str, scope);
+        } catch (error) {}
+        let s2 = prevExpanded;
+        try {
+          s2 = math.evaluate(prevExpanded, scope);
+        } catch (error) {}
+        if (typeof s1 === "number") {
+          s1 = `${Math.round(s1)}`;
+        }
+        if (typeof s2 === "number") {
+          s2 = `${Math.round(s2)}`;
+        }
+        while (str && s1 !== s2 && n < 200) {
+          prevExpanded = str;
+          str = doExpandDefines(str, variable, derive);
+          //prevExpanded = str;
+          try {
+            s1 = math.evaluate(str, scope);
+          } catch (error) {}
+          try {
+            s2 = math.evaluate(prevExpanded, scope);
+          } catch (error) {}
+          if (typeof s1 === "number") {
+            s1 = `${Math.round(s1)}`;
+          }
+          if (typeof s2 === "number") {
+            s2 = `${Math.round(s2)}`;
+          }
+
+          n++;
+        }
       }
+      console.log(n);
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };
 
