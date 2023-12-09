@@ -718,6 +718,10 @@ class Defines {
     }; */
 
     this.expandDefines = function (str, variable, derive = true) {
+      if (!str || str.length === 0) {
+        return str;
+      }
+      str = str.replaceAll(" ", "");
       let prevExpanded = str;
 
       str = doExpandDefines(str, variable, derive);
@@ -726,13 +730,14 @@ class Defines {
 
       let n = 0;
       if (!variable) {
-        while (str && str !== prevExpanded && n < 200) {
+        while (str !== prevExpanded && n < 100) {
           prevExpanded = str;
           str = doExpandDefines(str, variable, derive);
           //prevExpanded = str;
           n++;
         }
       } else {
+        prevExpanded = str;
         let scope = new Map();
         scope.set(variable, 1);
         let s1 = str;
@@ -749,7 +754,19 @@ class Defines {
         if (typeof s2 === "number") {
           s2 = `${Math.round(s2)}`;
         }
-        while (str && s1 !== s2 && n < 200) {
+        s1 = math
+          .simplify(math.parse(s1), {}, { exactFractions: false })
+          .toString()
+          .replaceAll("*", "")
+          .replaceAll(" ", "");
+        s2 = math
+          .simplify(math.parse(s2), {}, { exactFractions: false })
+          .toString()
+          .replaceAll("*", "")
+          .replaceAll(" ", "");
+        // s1 = Utility.removeUnwantedAsterisk((math.simplify(s1, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
+        // s2 = Utility.removeUnwantedAsterisk((math.simplify(s2, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
+        while (s1 !== s2 && n < 100) {
           prevExpanded = str;
           str = doExpandDefines(str, variable, derive);
           //prevExpanded = str;
@@ -765,7 +782,18 @@ class Defines {
           if (typeof s2 === "number") {
             s2 = `${Math.round(s2)}`;
           }
-
+          s1 = math
+            .simplify(math.parse(s1), {}, { exactFractions: false })
+            .toString()
+            .replaceAll("*", "")
+            .replaceAll(" ", "");
+          s2 = math
+            .simplify(math.parse(s2), {}, { exactFractions: false })
+            .toString()
+            .replaceAll("*", "")
+            .replaceAll(" ", "");
+          // s1 = Utility.removeUnwantedAsterisk((math.simplify(s1, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
+          // s2 = Utility.removeUnwantedAsterisk((math.simplify(s2, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
           n++;
         }
       }
