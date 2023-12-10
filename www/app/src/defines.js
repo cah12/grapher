@@ -764,8 +764,6 @@ class Defines {
           .toString()
           .replaceAll("*", "")
           .replaceAll(" ", "");
-        // s1 = Utility.removeUnwantedAsterisk((math.simplify(s1, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
-        // s2 = Utility.removeUnwantedAsterisk((math.simplify(s2, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
         while (s1 !== s2 && n < 100) {
           prevExpanded = str;
           str = doExpandDefines(str, variable, derive);
@@ -792,8 +790,6 @@ class Defines {
             .toString()
             .replaceAll("*", "")
             .replaceAll(" ", "");
-          // s1 = Utility.removeUnwantedAsterisk((math.simplify(s1, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
-          // s2 = Utility.removeUnwantedAsterisk((math.simplify(s2, {}, {exactFractions:false}).toString()).replaceAll(" ", ""));
           n++;
         }
       }
