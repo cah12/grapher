@@ -20,7 +20,7 @@ class AlertDlg {
     <!--div id="msg"></div-->\
 		</div>\
 		<div id="alertDlgFooter1" class="modal-footer">\
-    <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
+    <label class="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
 		<button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>\
 		</div>\
 		<div id="alertDlgFooter2" class="modal-footer">\
@@ -29,7 +29,7 @@ class AlertDlg {
 		<button id="cancel" class="alertCancel" type="button" class="btn btn-default">Cancel</button>\
     </div>\
 		<div id="alertDlgFooter3" class="modal-footer">\
-    <label id="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
+    <label class="doNotShowContainer" style="float: left;"><input id="doNotShow" class="alertDoNotShow" type="checkbox"/> Don\'t show again</label>\
 		<button id="yes" class="alertYes" type="button" class="btn btn-default">Yes</button>\
 		<button id="no" class="alertNo" type="button" class="btn btn-default">No</button>\
 		<button id="cancel" class="alertCancel" type="button" class="btn btn-default">Cancel</button>\
@@ -42,7 +42,7 @@ class AlertDlg {
     //console.log(dlg)
     $("body").append(dlg);
 
-    $("#doNotShowContainer").hide();
+    $(".doNotShowContainer").hide();
 
     dlg.css("z-index", 1000000000); //ensure dialog is not covered
 
@@ -63,21 +63,25 @@ class AlertDlg {
         $("#dlg").removeClass("modal-sm");
       }
       if (doNotShowOptionId) {
-        $("#doNotShowContainer").show();
+        $(".doNotShowContainer").show();
       } else {
-        $("#doNotShowContainer").hide();
+        $(".doNotShowContainer").hide();
       }
 
-      $(".alertDoNotShow").on("change", function () {
-        if ($(this)[0].checked) {
-          doNotShowList.push(doNotShowOptionId);
-        } else {
-          const n = doNotShowList.indexOf(doNotShowOptionId);
-          if (n != -1) {
-            doNotShowList.splice(n, 1);
+      if (!self.initialized) {
+        self.initialized = true;
+        $(".alertDoNotShow").on("change", function () {
+          if ($(this)[0].checked) {
+            doNotShowList.push(doNotShowOptionId);
+          } else {
+            const n = doNotShowList.indexOf(doNotShowOptionId);
+            if (n != -1) {
+              doNotShowList.splice(n, 1);
+            }
           }
-        }
-      });
+        });
+      }
+
       dlg.modal({
         backdrop: "static",
       });
@@ -106,22 +110,25 @@ class AlertDlg {
       if (doNotShowOptionId) {
         $("#alertDlgFooter2").hide();
         $("#alertDlgFooter3").show();
-        $("#doNotShowContainer").show();
+        $(".doNotShowContainer").show();
       } else {
-        $("#doNotShowContainer").hide();
+        $(".doNotShowContainer").hide();
         $("#alertDlgFooter3").hide();
       }
 
-      // $(".alertDoNotShow").on("change", function () {
-      //   if ($(this)[0].checked) {
-      //     doNotShowList.push(doNotShowOptionId);
-      //   } else {
-      //     const n = doNotShowList.indexOf(doNotShowOptionId);
-      //     if (n != -1) {
-      //       doNotShowList.splice(n, 1);
-      //     }
-      //   }
-      // });
+      if (!self.initialized) {
+        self.initialized = true;
+        $(".alertDoNotShow").on("change", function () {
+          if ($(this)[0].checked) {
+            doNotShowList.push(doNotShowOptionId);
+          } else {
+            const n = doNotShowList.indexOf(doNotShowOptionId);
+            if (n != -1) {
+              doNotShowList.splice(n, 1);
+            }
+          }
+        });
+      }
 
       dlg.modal({
         backdrop: "static",

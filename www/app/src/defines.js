@@ -233,6 +233,7 @@ class DefinesDlg extends ModalDlg {
               const latexValue = mf.latexValue;
               self.doAdd(name, { value, latexValue });
             }
+            return;
           },
           "medium",
           "redefine"
@@ -737,7 +738,7 @@ class Defines {
           n++;
         }
       } else {
-        prevExpanded = str;
+        //prevExpanded = str;
         let scope = new Map();
         scope.set(variable, 1);
         let s1 = str;
