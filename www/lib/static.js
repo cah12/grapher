@@ -350,6 +350,12 @@ Static.isAlpha = function (ch) {
 };
 
 function reduceMultiplyByZero(str) {
+  if (!str && !str.length) {
+    return str;
+  }
+  if (typeof str !== "string") {
+    return str;
+  }
   //remove white space
   str = str.replace(/\s/g, "");
 
@@ -393,6 +399,9 @@ function reduceMultiplyByZero(str) {
 }
 
 const customParse = function (str) {
+  if (typeof str !== "string") {
+    return str;
+  }
   return originalParse(reduceMultiplyByZero(str));
 };
 

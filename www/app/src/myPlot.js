@@ -547,7 +547,7 @@ class MyPlot extends Plot {
           }
           if (s.length == 0) {
             Utility.alert(
-              "Unable to derive samples from the provided domain. Check the function and limits for possible divide-by-zero error"
+              `Unable to derive samples for "${fn}". Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
             );
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
@@ -776,7 +776,7 @@ class MyPlot extends Plot {
         }
         if (samples.length == 0) {
           Utility.alert(
-            "Unable to derive samples from the provided domain. Check the function and limits for possible divide-by-zero error"
+            `Unable to derive samples for "${fn}". Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
           );
           //self._functionDlg.close();
           //self._functionDlg.closeDlg = true;
