@@ -204,17 +204,7 @@ class DefinesDlg extends ModalDlg {
         }
         return;
       }
-      if (error.errorType == Defines.DefineError.contain) {
-        /* alert(
-          'Define name,"' +
-            name +
-            '", contains, or is part of, the earlier define.'
-        ); */
-        /* self.selector("definesName").val("");
-        if (defines.definesSize()) {
-          self.selector("definesRemoveAll").attr("disabled", false);
-        } */
-        //return;
+      if (error.errorType == Defines.DefineError.redefine) {
         Utility.alertYesNo(
           `Are you sure yo want to redefine "${name}"`,
           function (action) {
@@ -238,6 +228,19 @@ class DefinesDlg extends ModalDlg {
           "medium",
           "redefine"
         );
+        return;
+      }
+
+      if (error.errorType == Defines.DefineError.contain) {
+        alert(
+          'Define name,"' +
+            name +
+            '", contains, or is part of, the earlier define.'
+        );
+        self.selector("definesName").val("");
+        if (defines.definesSize()) {
+          self.selector("definesRemoveAll").attr("disabled", false);
+        }
         return;
       }
       if (error.errorType == Defines.DefineError.keyword) {
@@ -434,8 +437,19 @@ class Defines {
       if (!(c > 96 && c < 122)) {
         return { errorType: Defines.DefineError.start, name: _name };
       }
-      var earlier = m_defines.has(_name);
+
+      // const keys = m_defines.keys();
+      let earlier = null;
+      m_defines.forEach((val, key) => {
+        if (_name.indexOf(key) !== -1 || key.indexOf(_name) !== -1) {
+          earlier = key;
+        }
+      });
+
+      //var earlier = m_defines.has(_name);
       if (earlier) {
+        if (_name.length === earlier.length)
+          return { errorType: Defines.DefineError.redefine, name: earlier };
         return { errorType: Defines.DefineError.contain, name: earlier };
       }
       var keyword = Utility.containsKeyword(_name);
@@ -769,9 +783,11 @@ class Defines {
           prevExpanded = str;
           str = doExpandDefines(str, variable, derive);
           //prevExpanded = str;
+          s1 = str;
           try {
             s1 = math.evaluate(str, scope);
           } catch (error) {}
+          s2 = prevExpanded;
           try {
             s2 = math.evaluate(prevExpanded, scope);
           } catch (error) {}
@@ -941,7 +957,10 @@ class Defines {
   }
 }
 
-Enumerator.enum("DefineError { noError= 0, start, contain, keyword }", Defines);
+Enumerator.enum(
+  "DefineError { noError= 0, start, redefine, contain, keyword }",
+  Defines
+);
 
 class MDefines extends Defines {
   constructor(plot, editor) {
