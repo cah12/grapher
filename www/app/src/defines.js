@@ -733,6 +733,9 @@ class Defines {
     }; */
 
     this.expandDefines = function (str, variable, derive = true) {
+      if ($.isNumeric(str)) {
+        return str;
+      }
       if (!str || str.length === 0) {
         return str;
       }
