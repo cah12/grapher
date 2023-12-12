@@ -2298,7 +2298,10 @@ class Utility {
       if (m_str[index] == "'") ind--;
       else break;
     }
-    if (ind == -1) return null;
+    if (ind == -1) {
+      Utility.replaceKeywordMarkers(m_str);
+      return null;
+    }
     //const startIndex = m_str.indexOf("'") - 1;
     let res = ""; //m_str[ind - 1] + "'";
     for (let index = ind - 1; index < m_str.length; index++) {
@@ -2315,6 +2318,7 @@ class Utility {
       if (m_str[i] == ")") par--;
       if (par == 0) break;
     }
+    Utility.replaceKeywordMarkers(m_str);
     return res;
   }
 
@@ -2328,9 +2332,12 @@ class Utility {
         Utility.isAlpha(m_str[i - 1]) &&
         Utility.isAlpha(m_str[i - 3])
       ) {
-        return m_str.substring(i - 3, i + 1);
+        const res = m_str.substring(i - 3, i + 1);
+        Utility.replaceKeywordMarkers(m_str);
+        return res;
       }
     }
+    Utility.replaceKeywordMarkers(m_str);
     return null;
   }
 
@@ -4047,6 +4054,7 @@ class Utility {
           Utility.keywordMarkers[i].marker,
           Utility.keywordMarkers[i].keyword
         );
+        // console.log("replaceKey");
       }
     }
     Utility.keywordMarkers = [];
@@ -4054,55 +4062,88 @@ class Utility {
   }
 
   static purgeAndMarkKeywords(str) {
+    let result = str;
     for (var i = 0; i < Static.keywords.length; ++i) {
-      while (str.indexOf(Static.keywords[i]) != -1) {
+      while (result.indexOf(Static.keywords[i]) != -1) {
         var _marker = "%" + Utility.keywordMarkers.length + "%";
-        str = str.replace(Static.keywords[i], _marker);
+        result = result.replace(Static.keywords[i], _marker);
         Utility.keywordMarkers.push({
           marker: _marker,
           keyword: Static.keywords[i],
         });
+        //console.log("purgeKey");
       }
     }
-    return str;
+    return result;
   }
 
   static insertProductSignOn_e(str) {
+    if ($.isNumeric(str)) {
+      return str;
+    }
     if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
       return "";
     }
     let indexOfe = str.indexOf("e");
     while (indexOfe !== -1) {
-      if (indexOfe < str.length - 1 && Utility.isAlpha(str[indexOfe + 1])) {
-        str = str.replace("e", "~*");
-      }
-      if (indexOfe > 0 && Utility.isAlpha(str[indexOfe - 1])) {
+      let replaced = false;
+      if (
+        indexOfe > 0 &&
+        (Utility.isAlpha(str[indexOfe - 1]) || str[indexOfe - 1] === "~")
+      ) {
         str = str.replace("e", "*~");
+        replaced = true;
       }
-      indexOfe = str.indexOf("e", indexOfe + 1);
+      if (
+        indexOfe < str.length - 1 &&
+        (Utility.isAlpha(str[indexOfe + 1]) ||
+          Utility.isDigit(str[indexOfe + 1]))
+      ) {
+        str = str.replace("e", "~*");
+        replaced = true;
+      }
+
+      if (!replaced) {
+        str = str.replace("e", "~");
+      }
+      indexOfe = str.indexOf("e");
     }
     str = str.replaceAll("~", "e");
     return str;
   }
 
   static insertProductSignOnPi(str) {
+    if ($.isNumeric(str)) {
+      return str;
+    }
     if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
       return "";
     }
     let indexOfPi = str.indexOf("pi");
     while (indexOfPi !== -1) {
+      let replaced = false;
+      if (
+        indexOfPi > 0 &&
+        (Utility.isAlpha(str[indexOfPi - 1]) || str[indexOfPi - 1] === "~")
+      ) {
+        str = str.replace("pi", "*~~");
+        replaced = true;
+      }
       if (
         indexOfPi + 1 < str.length - 1 &&
-        Utility.isAlpha(str[indexOfPi + 2])
+        (Utility.isAlpha(str[indexOfPi + 2]) ||
+          Utility.isDigit(str[indexOfPi + 2]))
       ) {
         str = str.replace("pi", "~~*");
+        replaced = true;
       }
-      if (indexOfPi > 0 && Utility.isAlpha(str[indexOfPi - 1])) {
-        str = str.replace("pi", "*~~");
+
+      if (!replaced) {
+        str = str.replace("pi", "~~");
       }
-      indexOfPi = str.indexOf("pi", indexOfPi + 1);
+      indexOfPi = str.indexOf("pi");
     }
     str = str.replaceAll("~~", "pi");
     return str;
@@ -4568,7 +4609,7 @@ class Utility {
         //   "primePlaceHolderprimePlaceHolder",
         //   "doublePrimePlaceHolder"
         // )
-        .replace(/\\cdot/g, "cdotPlaceHolder");
+        .replace(/\\cdot/g, " cdotPlaceHolder ");
 
       // while(result.idexOf("primePlaceHolderprimePlaceHolder")!==-1){
       //   result = result.replace()
