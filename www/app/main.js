@@ -807,4 +807,7 @@ require([
   // setTimeout(() => {
   //   Utility.progressSpinner(false);
   // }, 1000);
+
+  const parser = math.parse("e*x^2");
+  //console.log(parser.evaluate({ x: -10 }).toString());
 });

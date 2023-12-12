@@ -4067,6 +4067,24 @@ class Utility {
     return str;
   }
 
+  static insertProductSignOn_e(str) {
+    if (str.indexOf(",") != -1) return str;
+    if (!str || str.length == 0) {
+      return "";
+    }
+    let indexOfe = str.indexOf("e");
+    while (indexOfe !== -1) {
+      if (indexOfe < str.length - 1 && Utility.isAlpha(str[indexOfe + 1])) {
+        str = str.replace("e", "e*");
+      }
+      if (indexOfe > 0 && Utility.isAlpha(str[indexOfe - 1])) {
+        str = str.replace("e", "*e");
+      }
+      indexOfe = str.indexOf("e", indexOfe + 1);
+    }
+    return str;
+  }
+
   static insertProductSignOnPi(str) {
     if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
@@ -4159,6 +4177,7 @@ class Utility {
     }
 
     result = Utility.insertProductSignOnPi(result);
+    result = Utility.insertProductSignOn_e(result);
     return result;
   }
 
