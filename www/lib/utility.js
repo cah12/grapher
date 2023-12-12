@@ -4075,13 +4075,14 @@ class Utility {
     let indexOfe = str.indexOf("e");
     while (indexOfe !== -1) {
       if (indexOfe < str.length - 1 && Utility.isAlpha(str[indexOfe + 1])) {
-        str = str.replace("e", "e*");
+        str = str.replace("e", "~*");
       }
       if (indexOfe > 0 && Utility.isAlpha(str[indexOfe - 1])) {
-        str = str.replace("e", "*e");
+        str = str.replace("e", "*~");
       }
       indexOfe = str.indexOf("e", indexOfe + 1);
     }
+    str = str.replaceAll("~", "e");
     return str;
   }
 
@@ -4096,13 +4097,14 @@ class Utility {
         indexOfPi + 1 < str.length - 1 &&
         Utility.isAlpha(str[indexOfPi + 2])
       ) {
-        str = str.replace("pi", "pi*");
+        str = str.replace("pi", "~~*");
       }
       if (indexOfPi > 0 && Utility.isAlpha(str[indexOfPi - 1])) {
-        str = str.replace("pi", "*pi");
+        str = str.replace("pi", "*~~");
       }
       indexOfPi = str.indexOf("pi", indexOfPi + 1);
     }
+    str = str.replaceAll("~~", "pi");
     return str;
   }
 
