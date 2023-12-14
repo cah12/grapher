@@ -917,7 +917,7 @@ class MyPlot extends Plot {
       }
     });
 
-    function doCombine(curves) {
+    function doCombine(curves, prefix) {
       let precisionY, precisionX, decimalPlacesY, decimalPlacesX;
       if (curves[0]) {
         precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
@@ -1443,68 +1443,20 @@ class MyPlot extends Plot {
 
           if (operationType == "X-Intercept") {
             const curve = curves[i];
-
-            var eq = nerdamer(`(${curve.expandedFn})=0`);
-            //Static.expression = `(${simplifiedExp})=0`;
-            var solution = eq.solveFor(curves[0].variable);
-            nerdamer.flush();
-
-            const fn = curve.expandedFn.replaceAll(curves[0].variable, "U");
-            points = [];
-            for (let i = 0; i < solution.length; i++) {
-              //console.log(solution.at(i).toString());
-              const val = math.evaluate(solution.at(i).toString());
-
-              points.push({
-                x: val,
-                y: math.evaluate(fn, {
-                  U: val,
-                }),
-              });
-            }
-
-            points = points.filter(function (e) {
-              return isFinite(e.x) && isFinite(e.y);
-            });
-
-            if (points && points.length) {
-              for (let n = 0; n < points.length; n++) {
-                const odd = m % 2;
-                m++;
-                const { spacing, align } = getArrowSymbolProperties();
-                const element = points[n];
-                const tpName = Utility.generateCurveName(self, "x~");
-                const marker = new PlotMarker(tpName);
-                marker.toolTipValueName = "X-Intercept:";
-                marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
-                marker.setXAxis(curve.xAxis());
-                marker.setYAxis(curve.yAxis());
-
-                marker.setSymbol(new PointMarkerSymbol());
-
-                marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-                marker.setLegendIconSize(new Misc.Size(10, 10));
-
-                marker.setValue(element);
-                marker.setLabel(tpName);
-                var m_symbol = marker.symbol();
-                m_symbol.setSize(new Misc.Size(10, 10));
-                marker.setLabelAlignment(align | Static.AlignBottom);
-                marker.setSpacing(spacing);
-
-                marker.setLabelFont(
-                  new Misc.Font({
-                    fontColor: "#0B00FC",
-                    name: "Times New Roman",
-                    style: "normal",
-                    th: 12,
-                    weight: "bold",
-                  })
-                );
-
-                marker.attach(self);
-              }
-            }
+            let tempCurve = new MyCurve();
+            tempCurve.setAxes(curve.xAxis(), curve.yAxis());
+            tempCurve.setSamples([
+              new Misc.Point(curve.minXValue(), 0),
+              new Misc.Point(curve.maxXValue(), 0),
+            ]);
+            self.curveSelector.operationType = "Intersection";
+            curves.push(tempCurve);
+            doCombine(curves, "x~");
+            self.curveSelector.operationType = null;
+            tempCurve = null;
+            self.setAutoReplot(doAutoReplot);
+            self.autoRefresh();
+            return;
           }
 
           if (operationType == "Y-Intercept") {
@@ -1625,6 +1577,9 @@ class MyPlot extends Plot {
       }
 
       if (operationType == "Intersection") {
+        if (!prefix) {
+          prefix = "X";
+        }
         //console.log(curves);
         if (curves.length > 1) {
           if (curves[0].title() == curves[1].title()) {
@@ -1731,7 +1686,7 @@ class MyPlot extends Plot {
                 for (let i = 0; i < res.length; i++) {
                   const element = res[i];
                   const { spacing, align } = getArrowSymbolProperties();
-                  const ipName = Utility.generateCurveName(self, "X");
+                  const ipName = Utility.generateCurveName(self, prefix);
                   const marker = new PlotMarker(ipName);
                   marker.setItemAttribute(
                     PlotItem.ItemAttribute.AutoScale,
@@ -1747,7 +1702,11 @@ class MyPlot extends Plot {
                   // marker.setSymbol(sym);
 
                   marker.setSymbol(new PointMarkerSymbol());
-                  marker.toolTipValueName = "Intersection point:";
+                  let toolTipName = "Intersection point:";
+                  if (ipName.indexOf("x~") !== -1) {
+                    toolTipName = "X-Intercept:";
+                  }
+                  marker.toolTipValueName = toolTipName;
 
                   marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
                   marker.setLegendIconSize(new Misc.Size(10, 10));
@@ -1851,7 +1810,7 @@ class MyPlot extends Plot {
 
             const element = new Misc.Point(x, y);
             const { spacing, align } = getArrowSymbolProperties();
-            const ipName = Utility.generateCurveName(self, "X");
+            const ipName = Utility.generateCurveName(self, prefix);
             const marker = new PlotMarker(ipName);
             marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
             marker.setXAxis(curves[0].xAxis());
@@ -1864,7 +1823,11 @@ class MyPlot extends Plot {
             // marker.setSymbol(sym);
 
             marker.setSymbol(new PointMarkerSymbol());
-            marker.toolTipValueName = "Intersection point:";
+            let toolTipName = "Intersection point:";
+            if (ipName.indexOf("x~") !== -1) {
+              toolTipName = "X-Intercept:";
+            }
+            marker.toolTipValueName = toolTipName;
 
             marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
             marker.setLegendIconSize(new Misc.Size(10, 10));
@@ -1984,7 +1947,7 @@ class MyPlot extends Plot {
           for (let i = 0; i < res.length; i++) {
             const element = res[i];
             const { spacing, align } = getArrowSymbolProperties();
-            const ipName = Utility.generateCurveName(self, "X");
+            const ipName = Utility.generateCurveName(self, prefix);
             const marker = new PlotMarker(ipName);
             marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
             marker.setXAxis(curves[0].xAxis());
@@ -1997,7 +1960,11 @@ class MyPlot extends Plot {
             // marker.setSymbol(sym);
 
             marker.setSymbol(new PointMarkerSymbol());
-            marker.toolTipValueName = "Intersection point:";
+            let toolTipName = "Intersection point:";
+            if (ipName.indexOf("x~") !== -1) {
+              toolTipName = "X-Intercept:";
+            }
+            marker.toolTipValueName = toolTipName;
 
             marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
             marker.setLegendIconSize(new Misc.Size(10, 10));
