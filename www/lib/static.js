@@ -61,11 +61,20 @@ String.prototype.insertAt = function (idx, rem, str) {
   return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
 };
 
+String.prototype.insert = function (index, string) {
+  if (index > 0) {
+    return (
+      this.substring(0, index) + string + this.substring(index, this.length)
+    );
+  }
+  return string + this;
+};
+
 String.prototype.replaceAt = function (index, replacement) {
   return (
-    this.substr(0, index) +
+    this.substring(0, index) +
     replacement +
-    this.substr(index + replacement.length)
+    this.substring(index + replacement.length)
   );
 };
 

@@ -747,16 +747,16 @@ class Defines {
       //let prevExpanded = null;
 
       let n = 0;
-      if (!variable) {
+      /* if (!variable) {
         while (str !== prevExpanded && n < 100) {
           prevExpanded = str;
           str = doExpandDefines(str, variable, derive);
           //prevExpanded = str;
           n++;
         }
-      } else {
-        //prevExpanded = str;
-        let scope = new Map();
+      } else { */
+      //prevExpanded = str;
+      /* let scope = new Map();
         scope.set(variable, 1);
         let s1 = str;
         try {
@@ -781,12 +781,12 @@ class Defines {
           .simplify(math.parse(s2), {}, { exactFractions: false })
           .toString()
           .replaceAll("*", "")
-          .replaceAll(" ", "");
-        while (s1 !== s2 && n < 100) {
-          prevExpanded = str;
-          str = doExpandDefines(str, variable, derive);
-          //prevExpanded = str;
-          s1 = str;
+          .replaceAll(" ", ""); */
+      while (!Utility.isMathematicalEqual(str, prevExpanded) && n < 100) {
+        prevExpanded = str;
+        str = doExpandDefines(str, variable, derive);
+        //prevExpanded = str;
+        /* s1 = str;
           try {
             s1 = math.evaluate(str, scope);
           } catch (error) {}
@@ -809,10 +809,10 @@ class Defines {
             .simplify(math.parse(s2), {}, { exactFractions: false })
             .toString()
             .replaceAll("*", "")
-            .replaceAll(" ", "");
-          n++;
-        }
+            .replaceAll(" ", ""); */
+        n++;
       }
+      // }
       console.log(n);
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };

@@ -3575,6 +3575,24 @@ class Utility {
     return pattern.test(c);
   }
 
+  static isMathematicalEqual(exp1, exp2) {
+    let scope = new Map();
+    for (let i = 0; i < exp1.length; i++) {
+      if (Utility.isAlpha(exp1[i])) {
+        scope.set(exp1[i], 1);
+      }
+    }
+    let s1 = exp1;
+    try {
+      s1 = math.evaluate(exp1, scope);
+    } catch (error) {}
+    let s2 = exp2;
+    try {
+      s2 = math.evaluate(exp2, scope);
+    } catch (error) {}
+    return s1 == s2;
+  }
+
   static removeUnwantedParentheses(str) {
     while (str[0] === "(" && str[str.length - 1] === ")") {
       str = str.replace("(", "").replace(/.$/, "");
@@ -4598,7 +4616,29 @@ class Utility {
     mf.getValueTemp = mf.getValue;
 
     mf.getValue = function (format = "ascii-math") {
-      const latex = mf.getValueTemp("latex");
+      let latex = mf.getValueTemp("latex");
+      //Handle \frac
+      let index = latex.indexOf("\\frac");
+      while (index !== -1) {
+        if (latex[index + 5] !== "{") {
+          latex = latex.insert(index + 7, "\\cdot ");
+          index = latex.indexOf("\\frac", index + 12);
+        } else {
+          index = latex.indexOf("}{");
+          index = latex.indexOf("}", index + 2);
+          latex = latex.insert(index + 1, "\\cdot ");
+          index = latex.indexOf("\\frac", index + 5);
+        }
+      }
+      latex = latex.replaceAll("\\cdot \\cdot ", "\\cdot ");
+      latex = latex.replaceAll("\\cdot \\right", "\\right");
+      index = latex.lastIndexOf("\\cdot ");
+      if (index !== -1) {
+        if (latex.length - 1 - 5 == index) {
+          latex = latex.substring(0, latex.lastIndexOf("\\cdot "));
+        }
+      }
+
       let result = latex
         .replace(/\\times/g, "\\cdot")
         .replaceAll("\\prime", "primePlaceHolder")
@@ -4660,7 +4700,7 @@ class Utility {
 
       //console.log(result);
 
-      let index = result.indexOf("log");
+      index = result.indexOf("log");
       if (index !== -1) {
         while (index !== -1 && result[index + 3] !== "_") {
           result = result.replace("log", "log_(10)");

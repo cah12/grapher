@@ -808,5 +808,6 @@ require([
   //   Utility.progressSpinner(false);
   // }, 1000);
 
-  //console.log($.isNumeric(42));
+  // const str = "Hello Hope";
+  // console.log(str.insert(5, " Corwin"));
 });
