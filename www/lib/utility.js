@@ -4624,7 +4624,7 @@ class Utility {
           latex = latex.insert(index + 7, "\\cdot ");
           index = latex.indexOf("\\frac", index + 12);
         } else {
-          index = latex.indexOf("}{");
+          index = latex.indexOf("}{", index);
           index = latex.indexOf("}", index + 2);
           latex = latex.insert(index + 1, "\\cdot ");
           index = latex.indexOf("\\frac", index + 5);
@@ -4637,6 +4637,11 @@ class Utility {
         if (latex.length - 1 - 5 == index) {
           latex = latex.substring(0, latex.lastIndexOf("\\cdot "));
         }
+      }
+      latex = latex.replaceAll("\\frac", "\\cdot \\frac");
+      latex = latex.replaceAll("\\cdot\\cdot ", "\\cdot ");
+      if (latex.indexOf("\\cdot") == 0) {
+        latex = latex.replace("\\cdot", "");
       }
 
       let result = latex
