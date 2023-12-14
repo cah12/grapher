@@ -4617,7 +4617,7 @@ class Utility {
 
     mf.getValue = function (format = "ascii-math") {
       let latex = mf.getValueTemp("latex");
-      //Handle \frac
+      //Handle \frac start
       let index = latex.indexOf("\\frac");
       while (index !== -1) {
         if (latex[index + 5] !== "{") {
@@ -4631,6 +4631,7 @@ class Utility {
         }
       }
       latex = latex.replaceAll("\\cdot \\cdot ", "\\cdot ");
+      latex = latex.replaceAll("\\cdot \\cdot", "\\cdot ");
       latex = latex.replaceAll("\\cdot \\right", "\\right");
       index = latex.lastIndexOf("\\cdot ");
       if (index !== -1) {
@@ -4640,9 +4641,13 @@ class Utility {
       }
       latex = latex.replaceAll("\\frac", "\\cdot \\frac");
       latex = latex.replaceAll("\\cdot\\cdot ", "\\cdot ");
+      latex = latex.replaceAll("\\left(\\cdot ", "\\left(");
+      latex = latex.replaceAll("+\\cdot", "+").replaceAll("\\cdot +", "+");
+      latex = latex.replaceAll("-\\cdot", "-").replaceAll("\\cdot -", "-");
       if (latex.indexOf("\\cdot") == 0) {
         latex = latex.replace("\\cdot", "");
       }
+      //Handle \frac end
 
       let result = latex
         .replace(/\\times/g, "\\cdot")

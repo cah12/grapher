@@ -140,7 +140,10 @@ class MyLegend extends Legend {
 */
         /////////////////////////
         title += "\n" + `${arr[0]}:` + m_fnConcat;
-        title = title.replaceAll("log_{undefined}", "ln");
+        title = title
+          .replaceAll("log_{undefined}", "ln")
+          .replaceAll("+-", "-")
+          .replaceAll("-+", "-");
       }
       self.setTooltip(rowNumber, title);
       _curve = 0;
