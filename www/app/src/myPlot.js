@@ -980,7 +980,9 @@ class MyPlot extends Plot {
         operationType == "Scale" ||
         operationType == "Reflect x-axis" ||
         operationType == "Reflect y-axis" ||
-        operationType == "Reflect x and y-axes"
+        operationType == "Reflect x and y-axes" ||
+        operationType == "Reflect y equal" ||
+        operationType == "Reflect x equal"
       ) {
         if (operationType == "Translate") {
           let entry = "1,1";
@@ -1091,19 +1093,63 @@ class MyPlot extends Plot {
             return true;
           });
         }
+        if (operationType == "Reflect x equal") {
+          Utility.prompt("Enter a value for x = ", "1", function (val) {
+            if (val) {
+              if (isNaN(parseFloat(val))) {
+                Utility.promptErrorMsg =
+                  "Improper value receive. Expected a number.";
+                return false;
+              } else {
+                const m_val = parseFloat(val);
+                for (let i = 0; i < curves.length; i++) {
+                  self.transformation.transform(
+                    curves[i],
+                    "Reflect x equal",
+                    m_val
+                  );
+                  curves[i] = null;
+                }
+              }
+            } else {
+              return false;
+            }
+            return true;
+          });
+        }
+        if (operationType == "Reflect y equal") {
+          Utility.prompt("Enter a value for y = ", "1", function (val) {
+            if (val) {
+              if (isNaN(parseFloat(val))) {
+                Utility.promptErrorMsg =
+                  "Improper value receive. Expected a number.";
+                return false;
+              } else {
+                const m_val = parseFloat(val);
+                for (let i = 0; i < curves.length; i++) {
+                  self.transformation.transform(
+                    curves[i],
+                    "Reflect y equal",
+                    m_val
+                  );
+                  curves[i] = null;
+                }
+              }
+            } else {
+              return false;
+            }
+            return true;
+          });
+        }
         if (operationType == "Reflect x-axis") {
           for (let i = 0; i < curves.length; i++) {
             self.transformation.transform(curves[i], "Reflect x-axis");
           }
-          // if (self.tbar.isButtonChecked(self.tbar.auto))
-          //   Utility.setAutoScale(self, true);
         }
         if (operationType == "Reflect y-axis") {
           for (let i = 0; i < curves.length; i++) {
             self.transformation.transform(curves[i], "Reflect y-axis");
           }
-          // if (self.tbar.isButtonChecked(self.tbar.auto))
-          //   Utility.setAutoScale(self, true);
         }
 
         if (operationType == "Reflect x and y-axes") {
@@ -1443,6 +1489,7 @@ class MyPlot extends Plot {
 
           if (operationType == "X-Intercept") {
             const curve = curves[i];
+            let m_curves = [curve];
             let tempCurve = new MyCurve();
             tempCurve.setAxes(curve.xAxis(), curve.yAxis());
             tempCurve.setSamples([
@@ -1450,13 +1497,14 @@ class MyPlot extends Plot {
               new Misc.Point(curve.maxXValue(), 0),
             ]);
             self.curveSelector.operationType = "Intersection";
-            curves.push(tempCurve);
-            doCombine(curves, "x~");
+            m_curves.push(tempCurve);
+            doCombine(m_curves, "x~");
             self.curveSelector.operationType = null;
             tempCurve = null;
-            self.setAutoReplot(doAutoReplot);
-            self.autoRefresh();
-            return;
+
+            if (i < curves.length) {
+              continue;
+            }
           }
 
           if (operationType == "Y-Intercept") {

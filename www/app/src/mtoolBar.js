@@ -659,6 +659,24 @@ class MToolBar extends ToolBar {
                     //operationPrep("Join and keep");
                   },
                 },
+                {
+                  name: "over line x=?",
+                  //img: "images/brush.png",
+                  title: "Reflect the curve over the x equal to some value",
+                  fun: function () {
+                    operationPrep("Reflect x equal");
+                    //operationPrep("Join and keep");
+                  },
+                },
+                {
+                  name: "over line y=?",
+                  //img: "images/brush.png",
+                  title: "Reflect the curve over the y equal to some value",
+                  fun: function () {
+                    operationPrep("Reflect y equal");
+                    //operationPrep("Join and keep");
+                  },
+                },
               ],
             },
           ],
