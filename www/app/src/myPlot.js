@@ -1782,10 +1782,57 @@ class MyPlot extends Plot {
 
           //console.log(decimalPlacesX, decimalPlacesY);
 
+          function isPointATurningPoint(tps, pt) {
+            if (!tps) return false;
+            for (let i = 0; i < tps.length; i++) {
+              if (tps[i].x === pt.x && tps[i].y === pt.y) {
+                return true;
+              }
+            }
+            return false;
+          }
+
           //const round = 30;
           const m_eps = 1e-14;
+          //const m_eps = 2.22e-16;
           let samples1 = curves[0].data().samples();
           let samples2 = curves[1].data().samples();
+
+          let tempSamples = [];
+          while (samples1.length > 200) {
+            const tps = curves[0].turningPoints;
+            for (let i = 0; i < samples1.length; i++) {
+              if (i % 2 == 0 || isPointATurningPoint(tps, samples1[i])) {
+                tempSamples.push(samples1[i]);
+              }
+            }
+            if (
+              tempSamples[tempSamples.length - 1].x !==
+              samples1[samples1.length - 1].x
+            ) {
+              tempSamples.push(samples1[samples1.length - 1]);
+            }
+            samples1 = tempSamples;
+            tempSamples = [];
+          }
+
+          tempSamples = [];
+          while (samples2.length > 200) {
+            const tps = curves[1].turningPoints;
+            for (let i = 0; i < samples2.length; i++) {
+              if (i % 2 == 0 || isPointATurningPoint(tps, samples2[i])) {
+                tempSamples.push(samples2[i]);
+              }
+            }
+            if (
+              tempSamples[tempSamples.length - 1].x !==
+              samples2[samples2.length - 1].x
+            ) {
+              tempSamples.push(samples2[samples2.length - 1]);
+            }
+            samples2 = tempSamples;
+            tempSamples = [];
+          }
 
           if (samples2.length == 2 && samples1.length > 2) {
             const temp = samples1;
@@ -1824,6 +1871,12 @@ class MyPlot extends Plot {
               point1Line2,
               point2Line2
             );
+
+            if (!point) {
+              point = [0, 0];
+              // console.log(point);
+              //console.log(point1Line1, point2Line1, point1Line2, point2Line2);
+            }
 
             // let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
             // let precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
@@ -1949,6 +2002,12 @@ class MyPlot extends Plot {
                   point2Line2
                 );
 
+                //console.log(point);
+                if (!point) {
+                  continue;
+                  // point = [0, 0];
+                  // console.log(point);
+                }
                 let pt = new Misc.Point(point[0], point[1]);
 
                 function resHasPoint(pt) {
