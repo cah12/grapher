@@ -2139,21 +2139,25 @@ class Utility {
     }
 
     const parser = new EvaluateExp(derivative);
-
+    let step = 0;
     let sign = math.sign(parser.eval({ x: samples[0].x }));
     for (let i = 0; i < samples.length; i++) {
-      const m = parser.eval({ x: samples[i].x });
-      if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
+      ////////////////////////
+      //const m = parser.eval({ x: samples[i].x });
+      const m = math.sign(parser.eval({ x: samples[i].x }));
+      if (m !== sign) {
+        //if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
         //Search for turning point
-        const numOfSteps = 1000 / Static.accuracyFactor;
-        const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
+        const numOfSteps = 200; //1000 / Static.accuracyFactor;
+        step = (samples[i].x - samples[i - 1].x) / numOfSteps;
         let arr = [];
         for (let n = 0; n < numOfSteps; n++) {
           let xVal = samples[i - 1].x + n * step;
           arr.push(Math.abs(parser.eval({ x: xVal })));
         }
         const min = Math.min(...arr);
-        sign *= -1;
+        //sign *= -1;
+        sign = math.sign(parser.eval({ x: samples[i].x }));
         let xVal = samples[i - 1].x + arr.indexOf(min) * step;
         result.push(
           new Misc.Point(
@@ -2166,7 +2170,28 @@ class Utility {
         );
       }
     }
-    return result;
+    //Test
+    let arr = [];
+    step = samples[1].x - samples[0].x;
+    for (let i = 0; i < result.length; i++) {
+      const x = result[i].x;
+      let pt1 = new Misc.Point(x - step, math.evaluate(fn, { x: x - step }));
+      let pt2 = new Misc.Point(x, math.evaluate(fn, { x }));
+      const slopeBeforeTp = Utility.slope(pt1, pt2);
+      pt1 = new Misc.Point(x, math.evaluate(fn, { x }));
+      pt2 = new Misc.Point(x + step, math.evaluate(fn, { x: x + step }));
+      const slopeAfterTp = Utility.slope(pt1, pt2);
+      if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
+        arr.push(result[i]);
+      }
+    }
+    return arr;
+  }
+
+  static slope(p1, p2) {
+    const slp = (p2.y - p1.y) / (p2.x - p1.x);
+    //console.log(slp);
+    return slp;
   }
 
   static curveInflectionPoint(
@@ -2178,6 +2203,7 @@ class Utility {
   ) {
     let result = [];
     let m_fn = fn;
+    //let m_fn = fn.replaceAll("abs", "");
 
     let derivative = null;
     if (!samples || samples.length == 0) {
@@ -2208,22 +2234,23 @@ class Utility {
 
     //derivative = math.derivative(derivative, variable);
     const parser = new EvaluateExp(derivative.toString());
+    //const parser = new EvaluateExp(m_fn);
     /* 1 when x > 0
       -1 when x < 0
       0 when x == 0 */
     // console.log("m_fn", m_fn);
-    // console.log("samples[1].x", samples[1].x);
-    let sign = math.sign(samples[1].y);
+
+    let sign = math.sign(parser.eval({ x: samples[0].x }));
     if (sign == 0) {
       sign = 1;
     }
-    for (let i = 1; i < samples.length; i++) {
-      //const m = parser.eval({ x: samples[i].x });
-      const m = samples[i].y;
 
-      if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
+    for (let i = 1; i < samples.length; i++) {
+      const m = math.sign(parser.eval({ x: samples[i].x }));
+      if (m !== sign) {
         //Search for turning point
-        const numOfSteps = 1000 / Static.accuracyFactor;
+
+        const numOfSteps = 200;
         const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
         let arr = [];
         for (let n = 0; n < numOfSteps; n++) {
@@ -3576,12 +3603,14 @@ class Utility {
   }
 
   static isMathematicalEqual(exp1, exp2) {
+    exp1 = Utility.purgeAndMarkKeywords(exp1);
     let scope = new Map();
     for (let i = 0; i < exp1.length; i++) {
       if (Utility.isAlpha(exp1[i])) {
         scope.set(exp1[i], 1);
       }
     }
+    exp1 = Utility.replaceKeywordMarkers(exp1);
     let s1 = exp1;
     try {
       s1 = math.evaluate(exp1, scope);
@@ -4617,6 +4646,7 @@ class Utility {
 
     mf.getValue = function (format = "ascii-math") {
       let latex = mf.getValueTemp("latex");
+      //latex = latex.replaceAll("{}}", "");
       //Handle \frac start
       let index = latex.indexOf("\\frac");
       while (index !== -1) {
@@ -4630,6 +4660,7 @@ class Utility {
           index = latex.indexOf("\\frac", index + 5);
         }
       }
+      latex = latex.replaceAll("\\cdot }", " }");
       latex = latex.replaceAll("\\cdot \\cdot ", "\\cdot ");
       latex = latex.replaceAll("\\cdot \\cdot", "\\cdot ");
       latex = latex.replaceAll("\\cdot \\right", "\\right");
@@ -4644,9 +4675,11 @@ class Utility {
       latex = latex.replaceAll("\\left(\\cdot ", "\\left(");
       latex = latex.replaceAll("+\\cdot", "+").replaceAll("\\cdot +", "+");
       latex = latex.replaceAll("-\\cdot", "-").replaceAll("\\cdot -", "-");
+      latex = latex.replaceAll("{\\cdot", "{");
       if (latex.indexOf("\\cdot") == 0) {
         latex = latex.replace("\\cdot", "");
       }
+      //latex = latex.replaceAll(" ", "");
       //Handle \frac end
 
       let result = latex
@@ -4781,6 +4814,18 @@ class Utility {
       //console.log(result);
 
       mf.value = latex;
+
+      index = result.indexOf("|");
+      let m = 0;
+      while (index !== -1) {
+        if (m == 0 || m % 2 == 0) {
+          result = result.replace("|", "abs(");
+        } else {
+          result = result.replace("|", ")");
+        }
+        m++;
+        index = result.indexOf("|");
+      }
 
       return result;
     };

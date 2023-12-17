@@ -664,14 +664,17 @@ class Defines {
 
           //Replace the whitespace delimiters stripped out by simplify()
           res = res.replaceAll("mod", " mod ");
-          //counter++;
-          //console.log(counter, res);
           return Utility.removeUnwantedAsterisk(res);
         } catch (error) {
-          //console.log(counter, res);
-          Utility.alert(error.message, "small", "m_simplify");
-          //throw "MathJs throwed an error.";
-          return res;
+          // Utility.alert(error.message, "small", "m_simplify");
+          // return res;
+          res = res.replace(/\s/g, "");
+          res = res.replaceAll("+-", "-");
+          res = res.replaceAll("-+", "-");
+
+          //Replace the whitespace delimiters stripped out by simplify()
+          res = res.replaceAll("mod", " mod ");
+          return Utility.removeUnwantedAsterisk(res);
         }
       }
       return res;

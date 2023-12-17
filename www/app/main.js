@@ -809,5 +809,13 @@ require([
   // }, 1000);
 
   // const str = "Hello Hope";
-  // console.log(str.insert(5, " Corwin"));
+  // console.log(
+  //   math
+  //     .simplify(
+  //       "x^0.33333",
+  //       {},
+  //       { exactFractions: true /* , fractionsLimit: 10000000000000 */ }
+  //     )
+  //     .toString()
+  // );
 });

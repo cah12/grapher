@@ -415,6 +415,7 @@ const customParse = function (str) {
 };
 
 const customSimplify = function (str, scope, options) {
+  if (str && str.im) return str;
   scope = scope || {};
   options = options || { exactFractions: false };
   if (typeof str !== "string") str = str.toString();
@@ -450,3 +451,18 @@ Static.accuracyFactorModerate = 1; //moderate
 // }
 
 // example();
+
+const customPow = function (num, pow) {
+  if (math.abs(pow) < 1) {
+    const p = 1 / pow;
+    if (p % 2 !== 0) {
+      const sign = math.sign(num);
+      return Math.pow(math.abs(num), pow) * sign;
+    }
+  }
+
+  return originalPow(num, pow);
+};
+
+const originalPow = math.pow;
+math.pow = customPow;

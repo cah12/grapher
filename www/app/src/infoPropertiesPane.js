@@ -238,14 +238,17 @@ class InfoPropertiesPane extends Pane {
             math
               .parse(curCurve.fn.replaceAll("mod", " mod "))
               .toTex({ em: 16, ex: 6, display: false })
+              .replaceAll("{}}", "")
           );
         } else {
           const s1 = math
             .parse(curCurve.parametricFnX.replaceAll("mod", " mod "))
-            .toTex({ em: 16, ex: 6, display: false });
+            .toTex({ em: 16, ex: 6, display: false })
+            .replaceAll("{}}", "");
           const s2 = math
             .parse(curCurve.parametricFnY.replaceAll("mod", " mod "))
-            .toTex({ em: 16, ex: 6, display: false });
+            .toTex({ em: 16, ex: 6, display: false })
+            .replaceAll("{}}", "");
           navigator.clipboard.writeText(`(${s1},${s2})`);
         }
       }

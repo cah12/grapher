@@ -1657,7 +1657,7 @@ class MyPlot extends Plot {
 
           let imaginary = false;
 
-          if (
+          /*if (
             curves[0].expandedFn &&
             curves[1].expandedFn &&
             !curves[1].axesSwapped &&
@@ -1743,11 +1743,7 @@ class MyPlot extends Plot {
                   marker.setXAxis(curves[0].xAxis());
                   marker.setYAxis(curves[0].yAxis());
 
-                  // const sym = new Symbol2();
-                  // sym.setBrush(new Misc.Brush(Static.NoBrush));
-                  // sym.setSize(new Misc.Size(10, 10));
-                  // sym.setStyle(Symbol2.Style.Ellipse);
-                  // marker.setSymbol(sym);
+                  
 
                   marker.setSymbol(new PointMarkerSymbol());
                   let toolTipName = "Intersection point:";
@@ -1779,13 +1775,10 @@ class MyPlot extends Plot {
                   marker.attach(self);
                 }
 
-                //const ptStr = res.length > 1 ? "points" : "point";
-
-                //alert(`${res.length} ${ptStr} of intersection:\n` + str);
                 return;
               }
             }
-          }
+          }*/
 
           //console.log(decimalPlacesX, decimalPlacesY);
 

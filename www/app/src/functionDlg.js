@@ -666,19 +666,30 @@ class MFunctionDlg {
           );
           if (!expandedLHS) return null;
           fn = `${expandedLHS}=${expandedRHS}`;
+          fn = `${expandedLHS}=${expandedRHS}`;
           fn = Utility.insertProductSign(fn, plot.defines);
 
           let res = null;
           //fn = fn.replaceAll(dec, "U");
 
-          var eq = nerdamer(fn);
-          var solution = eq.solveFor("U");
-          if (typeof solution === "array" && solution[0]) {
-            res = solution[0].toString();
-          } else {
-            res = solution.toString();
+          if (expandedLHS == "U") {
+            res = expandedRHS;
           }
-          nerdamer.flush();
+
+          if (expandedRHS == "U") {
+            res = expandedLHS;
+          }
+
+          if (!res) {
+            var eq = nerdamer(fn);
+            var solution = eq.solveFor("U");
+            if (typeof solution === "array" && solution[0]) {
+              res = solution[0].toString();
+            } else {
+              res = solution.toString();
+            }
+            nerdamer.flush();
+          }
           if (res) {
             //res = `U=${res}`;
             //console.log(res);
@@ -969,9 +980,11 @@ class MFunctionDlg {
             let solution = eq.solveFor("y");
             //console.log(solution);
             if (typeof solution === "object" && solution[0]) {
-              arr = ["y", solution[0].toString()];
+              //arr = ["y", solution[0].toString()];
+              arr = ["y", solution[0].toString().replaceAll("abs", "")];
             } else {
-              arr = ["y", solution.toString()];
+              arr = ["y", solution.toString().replaceAll("abs", "")];
+              //arr = ["y", solution.toString()];
             }
             nerdamer.flush();
             fnDlgFunctionVal = `y=${arr[1]}`;
