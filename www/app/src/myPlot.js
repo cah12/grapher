@@ -2043,9 +2043,51 @@ class MyPlot extends Plot {
             }
           }
 
+          function adjustIp(pt) {
+            const fn1 = curves[0].fn;
+            const fn2 = curves[1].fn;
+            let add = true;
+            if (fn1 && fn2) {
+              const step =
+                math.min(
+                  math.abs(curves[0].sample(1).x - curves[0].sample(0).x),
+                  math.abs(curves[1].sample(1).x - curves[1].sample(0).x)
+                ) / 8000;
+              const fx = `${fn2}-${fn1}`;
+              let diff = math.abs(math.evaluate(fx, { x: pt.x }));
+
+              if (diff > 1e-4) {
+                const d = math.abs(math.evaluate(fx, { x: pt.x + step }));
+                if (d > diff) {
+                  add = false;
+                }
+              }
+              let n = 0;
+              let prevDiff = Number.MAX_VALUE;
+              while (diff < prevDiff && n < 400) {
+                n++;
+                prevDiff = diff;
+                if (add) {
+                  pt.x = pt.x + step;
+                  diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                } else {
+                  pt.x = pt.x - step;
+                  diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                }
+                //console.log("n:", n);
+              }
+              pt.y =
+                (math.evaluate(fn1, { x: pt.x }) +
+                  math.evaluate(fn2, { x: pt.x })) /
+                2;
+              return pt;
+            }
+            return pt;
+          }
+
           let str = "";
           for (let i = 0; i < res.length; i++) {
-            const element = res[i];
+            const element = adjustIp(res[i]);
             const { spacing, align } = getArrowSymbolProperties();
             const ipName = Utility.generateCurveName(self, prefix);
             const marker = new PlotMarker(ipName);
