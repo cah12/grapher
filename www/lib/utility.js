@@ -2035,67 +2035,32 @@ class Utility {
       }
     }
 
-    //Check the samples for discontinuity
+    if (samples[0] && samples[0].x > lowerX) {
+      let scope = new Map();
+      scope.set(indepVar, samples[0].x - step);
+      let num = parser.eval(scope);
 
-    // let m_prev, m_diff, p1, p2;
+      let n = 0;
+      let inc = step / 500;
+      let x = 0;
+      while (!isFinite(num) && n < 400) {
+        n++;
+        x = samples[0].x - step + n * inc;
+        scope.set(indepVar, x);
+        num = parser.eval(scope);
+        console.log("test", n);
+      }
+      // if (!isFinite(num) && typeof num === "object") {
+      //   console.log(456);\
+      x = samples[0].x - step + (n - 1) * inc;
+      scope.set(indepVar, x);
+      num = parser.eval(scope);
+      if ($.isNumeric(num.re)) {
+        samples = [new Misc.Point(x, num.re), ...samples];
+      }
+      // }
+    }
 
-    // for (let i = 1; i < samples.length; i++) {
-    //   p1 = samples[i - 1];
-    //   p2 = samples[i];
-
-    //   let m = (p2.y - p1.y) / (p2.x - p1.x);
-    //   if (m_prev !== undefined) {
-    //     m_diff = m - m_prev;
-    //     if (Math.abs(m_diff) > 20) {
-    //       console.log(p1.x, p2.x);
-    //       let m_x = p1.x;
-    //       let s = (p2.x - p1.x) / 40000;
-    //       let n = 0;
-    //       while (m_x < p2.x) {
-    //         let y = Math.abs(parser.eval({ x: m_x }));
-    //         console.log("y", y, n);
-    //         m_x += s;
-    //         n++;
-    //       }
-    //       break;
-    //     }
-    //   }
-    //   m_prev = m;
-    // }
-
-    // if (
-    //   obj.discontinuity &&
-    //   obj.discontinuity.length &&
-    //   Utility.mFuzzyCompare(
-    //     obj.discontinuity[obj.discontinuity.length - 1],
-    //     samples[samples.length - 1].x,
-    //     1e-10
-    //   )
-    // )
-    //   if (
-    //     obj.discontinuity &&
-    //     obj.discontinuity.length &&
-    //     Utility.mFuzzyCompare(obj.discontinuity[0], samples[0].x, 1e-10)
-    //   ) {
-    //     //samples = samples.slice(0, samples.length - 1);
-    //   }
-
-    //samples.shift();
-
-    //console.log(samples);
-    //remove outliers
-    //TODO replace with algorithm that filters outliers.
-    // if (obj.discontinuity && obj.discontinuity.length) {
-    //   samples = samples.filter(function (e) {
-    //     return Math.abs(e.y) < 1e14;
-    //   });
-    // }
-    // if (obj.discontinuity && obj.discontinuity.length) {
-    //   samples = this.filterOutlier(samples);
-    // }
-
-    //console.log(samples);
-    //console.timeEnd("object");
     return samples;
   }
 
