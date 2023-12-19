@@ -1683,7 +1683,7 @@ class PlotPropertiesPane extends PropertiesPane {
       type: "select",
       selectorOptions: [
         "Silently ignore",
-        "Adjust the domain",
+        //"Adjust the domain",
         "Stop and warn",
 
         //"Allow for ignore",
@@ -3363,7 +3363,7 @@ class PlotPropertiesPane extends PropertiesPane {
     });
     errorResponse.change(function () {
       var index = $(this)[0].selectedIndex;
-      if (index == 2) {
+      if (index == 1) {
         //console.log("Utility.warn");
         Utility.errorResponse = Utility.warn;
       } else if (index == 0) {
@@ -3372,11 +3372,11 @@ class PlotPropertiesPane extends PropertiesPane {
         /* } else if (index == 3) {
         //console.log("Utility.warnIgnore");
         Utility.errorResponse = Utility.warnIgnore; */
-      } else if (index == 1) {
+      } /* else if (index == 1) {
         //index == 0 stopWarn
         //console.log("Utility.adjustDomain");
         Utility.errorResponse = Utility.adjustDomain;
-      }
+      } */
     });
 
     Static.bind("currentCurveChanged", function (e, _curve) {

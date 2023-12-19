@@ -2041,24 +2041,28 @@ class Utility {
       let num = parser.eval(scope);
 
       let n = 0;
-      let inc = step / 500;
+      let inc = step / 1000;
       let x = 0;
-      while (!isFinite(num) && n < 400) {
+      while (!isFinite(num) && n < 600) {
         n++;
         x = samples[0].x - step + n * inc;
         scope.set(indepVar, x);
         num = parser.eval(scope);
-        console.log("test", n);
+        //console.log("test", n);
       }
-      // if (!isFinite(num) && typeof num === "object") {
-      //   console.log(456);\
+
       x = samples[0].x - step + (n - 1) * inc;
       scope.set(indepVar, x);
       num = parser.eval(scope);
       if ($.isNumeric(num.re)) {
-        samples = [new Misc.Point(x, num.re), ...samples];
+        let s = (samples[0].x - x) / 3;
+        const p0 = new Misc.Point(x, num.re);
+        scope.set(indepVar, x + s);
+        const p1 = new Misc.Point(x + s, parser.eval(scope));
+        scope.set(indepVar, x + 2 * s);
+        const p2 = new Misc.Point(x + 2 * s, parser.eval(scope));
+        samples = [p0, p1, p2, ...samples];
       }
-      // }
     }
 
     return samples;
@@ -3584,6 +3588,9 @@ class Utility {
     try {
       s2 = math.evaluate(exp2, scope);
     } catch (error) {}
+    if (typeof s1 === "object" && typeof s2 === "object") {
+      return s1.im == s2.im && s1.re == s2.re;
+    }
     return s1 == s2;
   }
 

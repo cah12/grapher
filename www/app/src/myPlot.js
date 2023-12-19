@@ -1799,7 +1799,7 @@ class MyPlot extends Plot {
           let samples2 = curves[1].data().samples();
 
           let tempSamples = [];
-          while (samples1.length > 200) {
+          while (samples1.length > 160) {
             const tps = curves[0].turningPoints;
             for (let i = 0; i < samples1.length; i++) {
               if (i % 2 == 0 || isPointATurningPoint(tps, samples1[i])) {
@@ -1817,7 +1817,7 @@ class MyPlot extends Plot {
           }
 
           tempSamples = [];
-          while (samples2.length > 200) {
+          while (samples2.length > 160) {
             const tps = curves[1].turningPoints;
             for (let i = 0; i < samples2.length; i++) {
               if (i % 2 == 0 || isPointATurningPoint(tps, samples2[i])) {
@@ -2061,26 +2061,27 @@ class MyPlot extends Plot {
                 if (d > diff) {
                   add = false;
                 }
-              }
-              let n = 0;
-              let prevDiff = Number.MAX_VALUE;
-              while (diff < prevDiff && n < 400) {
-                n++;
-                prevDiff = diff;
-                if (add) {
-                  pt.x = pt.x + step;
-                  diff = math.abs(math.evaluate(fx, { x: pt.x }));
-                } else {
-                  pt.x = pt.x - step;
-                  diff = math.abs(math.evaluate(fx, { x: pt.x }));
+
+                let n = 0;
+                let prevDiff = Number.MAX_VALUE;
+                while (diff < prevDiff && n < 2000) {
+                  n++;
+                  prevDiff = diff;
+                  if (add) {
+                    pt.x = pt.x + step;
+                    diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                  } else {
+                    pt.x = pt.x - step;
+                    diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                  }
+                  //console.log("n:", n);
                 }
-                //console.log("n:", n);
+                pt.y =
+                  (math.evaluate(fn1, { x: pt.x }) +
+                    math.evaluate(fn2, { x: pt.x })) /
+                  2;
+                return pt;
               }
-              pt.y =
-                (math.evaluate(fn1, { x: pt.x }) +
-                  math.evaluate(fn2, { x: pt.x })) /
-                2;
-              return pt;
             }
             return pt;
           }
