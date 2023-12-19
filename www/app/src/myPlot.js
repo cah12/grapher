@@ -2018,11 +2018,11 @@ class MyPlot extends Plot {
                         res[i].x,
                         decimalPlacesX
                       ) ==
-                        Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) &&
+                      Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
                       Utility.adjustForDecimalPlaces(
                         res[i].y,
                         decimalPlacesY
-                      ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY)
+                      ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
                     ) {
                       return true;
                     }
@@ -2048,15 +2048,21 @@ class MyPlot extends Plot {
             const fn2 = curves[1].fn;
             let add = true;
             if (fn1 && fn2) {
-              const step =
-                math.min(
-                  math.abs(curves[0].sample(1).x - curves[0].sample(0).x),
-                  math.abs(curves[1].sample(1).x - curves[1].sample(0).x)
-                ) / 8000;
+              let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
+              const px = 1 / 400;
+              const step = math.abs(
+                xMap.invTransform(2 * px) - xMap.invTransform(px)
+              );
+
+              // const step =
+              //   math.min(
+              //     math.abs(curves[0].sample(1).x - curves[0].sample(0).x),
+              //     math.abs(curves[1].sample(1).x - curves[1].sample(0).x)
+              //   ) / 8000;
               const fx = `${fn2}-${fn1}`;
               let diff = math.abs(math.evaluate(fx, { x: pt.x }));
 
-              if (diff > 1e-4) {
+              if (diff > 1e-8) {
                 const d = math.abs(math.evaluate(fx, { x: pt.x + step }));
                 if (d > diff) {
                   add = false;
@@ -2074,8 +2080,8 @@ class MyPlot extends Plot {
                     pt.x = pt.x - step;
                     diff = math.abs(math.evaluate(fx, { x: pt.x }));
                   }
-                  //console.log("n:", n);
                 }
+                console.log("n:", n);
                 pt.y =
                   (math.evaluate(fn1, { x: pt.x }) +
                     math.evaluate(fn2, { x: pt.x })) /
