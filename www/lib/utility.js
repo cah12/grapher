@@ -1769,16 +1769,24 @@ class Utility {
    * - indepVarY - The character representing the y independent variable.
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
-  static makeSamples(obj) {
+  static makeSamples(obj, redo = false) {
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
     }
+
+    var lowerX;
+    var upperX;
+
+    if (!redo) {
+      lowerX = obj.lowerX;
+      upperX = obj.upperX;
+    }
     var fx = obj.fx;
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;
-    var lowerX = obj.lowerX;
-    var upperX = obj.upperX;
+    // var lowerX = obj.lowerX;
+    // var upperX = obj.upperX;
     var lowerY;
     var upperY;
     var numOfSamples = obj.numOfSamples;
@@ -2035,13 +2043,15 @@ class Utility {
       }
     }
 
+    const inc = step / 1000;
+    let reSample = false;
     if (samples[0] && samples[0].x > lowerX) {
       let scope = new Map();
       scope.set(indepVar, samples[0].x - step);
       let num = parser.eval(scope);
 
       let n = 0;
-      let inc = step / 1000;
+
       let x = 0;
       while (!isFinite(num) && n < 2000) {
         n++;
@@ -2062,7 +2072,9 @@ class Utility {
         scope.set(indepVar, x + 2 * s);
         const p2 = new Misc.Point(x + 2 * s, parser.eval(scope));
         samples = [p0, p1, p2, ...samples];
+      } else {
       }
+      reSample = true;
     }
 
     const sz = samples.length;
@@ -2072,7 +2084,7 @@ class Utility {
       let num = parser.eval(scope);
 
       let n = 0;
-      let inc = step / 1000;
+
       let x = 0;
       while (!isFinite(num) && n < 2000) {
         n++;
@@ -2098,6 +2110,30 @@ class Utility {
         samples.push(p0);
       } else {
       }
+      reSample = true;
+    }
+
+    if (reSample) {
+      let l = samples[0].x;
+      let n = 0;
+      while (!$.isNumeric(l) && n < 10) {
+        n++;
+        l = l + inc;
+      }
+      let u = samples[samples.length - 1].x;
+      n = 0;
+      while (!$.isNumeric(u) && n < 10) {
+        n++;
+        u = u - inc;
+      }
+      const decimalPlacesX = Math.max(
+        obj.plot.axisDecimalPlaces(0),
+        obj.plot.axisDecimalPlaces(1)
+      );
+      obj.lowerX = Utility.adjustForDecimalPlaces(l, decimalPlacesX);
+      obj.upperX = Utility.adjustForDecimalPlaces(u, decimalPlacesX);
+      console.log(obj.lowerX, obj.upperX);
+      Utility.makeSamples(obj, true);
     }
 
     return samples;

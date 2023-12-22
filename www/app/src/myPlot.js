@@ -531,6 +531,7 @@ class MyPlot extends Plot {
         //console.log("do 3d")
         if (self._functionDlg.threeDType === "spectrocurve") {
           var s = Utility.makeSamples({
+            plot: self,
             fx: fn,
             threeD: true,
             variable: self._functionDlg.variable,
@@ -767,7 +768,7 @@ class MyPlot extends Plot {
         }
         makeSamplesData.discontinuity = discont;
         // makeSamplesData.xDecimalPlaces = xDecimalPlaces;
-        // makeSamplesData.yDecimalPlaces = yDecimalPlaces;
+        makeSamplesData.plot = self;
 
         const samples = Utility.makeSamples(makeSamplesData); //////////////
 
