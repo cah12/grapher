@@ -453,7 +453,9 @@ Static.accuracyFactorModerate = 1; //moderate
 // example();
 
 const customPow = function (num, pow) {
-  if (math.abs(pow) < 1) {
+  const rd = Math.round(pow);
+
+  if (pow - rd !== 0 && math.abs(pow - rd) < 1) {
     const p = 1 / pow;
     if (p % 2 !== 0) {
       const sign = math.sign(num);

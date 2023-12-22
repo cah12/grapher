@@ -1857,15 +1857,16 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "userDecimalPlacesForCalculation",
       parentId: "decimalPlacesForCalculationy",
       type: "checkbox",
+      checked: true,
     });
     var bottom_decimalPlaces = this.addProperty({
       name: "Bottom axis",
       title: "Set the maximum decimal places used in calculations",
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
-      disabled: true,
+      //disabled: true,
       type: "number",
-      value: "2",
+      value: "1",
       min: "0",
     });
     var left_decimalPlaces = this.addProperty({
@@ -1874,8 +1875,8 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      disabled: true,
-      value: "2",
+      //disabled: true,
+      value: "1",
       min: "0",
     });
     var top_decimalPlaces = this.addProperty({
@@ -1884,8 +1885,8 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      disabled: true,
-      value: "2",
+      //disabled: true,
+      value: "1",
       min: "0",
     });
     var right_decimalPlaces = this.addProperty({
@@ -1894,8 +1895,8 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      disabled: true,
-      value: "2",
+      //disabled: true,
+      value: "1",
       min: "0",
     });
 

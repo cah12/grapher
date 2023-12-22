@@ -105,6 +105,15 @@ class Transformation {
         };
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
+        const arr = [];
+        const tps = curve.turningPoints;
+        for (let i = 0; i < tps.length; i++) {
+          arr.push(new Misc.Point(tps[i].x + param1, tps[i].y + param2));
+        }
+
+        _curve.turningPoints = arr;
+        //console.log(_curve.turningPoints, curve.turningPoints);
+
         //_curve.setAxis = true;
         // _curve.discontinuity = curve.discontinuity.map(function (e) {
         //   return e + param1;

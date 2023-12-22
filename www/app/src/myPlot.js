@@ -1491,6 +1491,7 @@ class MyPlot extends Plot {
             const curve = curves[i];
             let m_curves = [curve];
             let tempCurve = new MyCurve();
+            tempCurve.fn = "0";
             tempCurve.setAxes(curve.xAxis(), curve.yAxis());
             tempCurve.setSamples([
               new Misc.Point(curve.minXValue(), 0),
@@ -1949,13 +1950,26 @@ class MyPlot extends Plot {
 
           /////////////////////////////////////////////////////////////
 
-          for (let i = 0; i < samples1.length; i++) {
-            for (let n = 0; n < samples2.length; n++) {
-              if (
-                samples1[i].x == samples2[n].x &&
-                samples1[i].y == samples2[n].y
-              ) {
-                res.push(samples2[n]);
+          if (samples1.length >= samples2.length) {
+            for (let i = 0; i < samples1.length; i++) {
+              for (let n = 0; n < samples2.length; n++) {
+                if (
+                  samples1[i].x == samples2[n].x &&
+                  samples1[i].y == samples2[n].y
+                ) {
+                  res.push(samples2[n]);
+                }
+              }
+            }
+          } else {
+            for (let i = 0; i < samples2.length; i++) {
+              for (let n = 0; n < samples1.length; n++) {
+                if (
+                  samples2[i].x == samples1[n].x &&
+                  samples2[i].y == samples1[n].y
+                ) {
+                  res.push(samples1[n]);
+                }
               }
             }
           }
@@ -2037,29 +2051,37 @@ class MyPlot extends Plot {
                   (rect1.height() == 0 && rect2.contains(pt, false)) ||
                   (rect2.height() == 0 && rect1.contains(pt, false))
                 ) {
-                  if (!resHasPoint(pt)) res.push(pt);
+                  if (!resHasPoint(pt)) {
+                    res.push(pt);
+                  }
                 }
               }
             }
           }
 
-          function adjustIp(pt) {
+          function adjustIp(_pt) {
+            let pt = new Misc.Point(_pt.x, _pt.y);
             const fn1 = curves[0].fn;
             const fn2 = curves[1].fn;
+
             let add = true;
             if (fn1 && fn2) {
+              // const mx = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+              const mx = pt.x;
+              const my1 = math.evaluate(fn1, { x: mx });
+              const my2 = math.evaluate(fn2, { x: mx });
+              if (my1 == my2) {
+                return pt;
+              }
+
               let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
-              const px = 1 / 400;
-              const step = math.abs(
-                xMap.invTransform(2 * px) - xMap.invTransform(px)
+              const px = 1e-4;
+              const step = math.max(
+                1e-5,
+                math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
               );
 
-              // const step =
-              //   math.min(
-              //     math.abs(curves[0].sample(1).x - curves[0].sample(0).x),
-              //     math.abs(curves[1].sample(1).x - curves[1].sample(0).x)
-              //   ) / 8000;
-              const fx = `${fn2}-${fn1}`;
+              const fx = `(${fn2})-(${fn1})`;
               let diff = math.abs(math.evaluate(fx, { x: pt.x }));
 
               if (diff > 1e-8) {
@@ -2070,7 +2092,7 @@ class MyPlot extends Plot {
 
                 let n = 0;
                 let prevDiff = Number.MAX_VALUE;
-                while (diff < prevDiff && n < 2000) {
+                while (diff < prevDiff && n < 16000) {
                   n++;
                   prevDiff = diff;
                   if (add) {
@@ -2081,11 +2103,22 @@ class MyPlot extends Plot {
                     diff = math.abs(math.evaluate(fx, { x: pt.x }));
                   }
                 }
-                console.log("n:", n);
-                pt.y =
-                  (math.evaluate(fn1, { x: pt.x }) +
-                    math.evaluate(fn2, { x: pt.x })) /
-                  2;
+
+                pt.x = pt.x - 0.5 * step;
+
+                if (fn1.indexOf("^") === -1) {
+                  pt.y = math.evaluate(fn1, { x: pt.x });
+                } else if (fn2.indexOf("^") === -1) {
+                  pt.y = math.evaluate(fn2, { x: pt.x });
+                } else {
+                  pt.y =
+                    (math.evaluate(fn1, { x: pt.x }) +
+                      math.evaluate(fn2, { x: pt.x })) /
+                    2;
+                }
+
+                pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+                pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
                 return pt;
               }
             }
@@ -2095,6 +2128,7 @@ class MyPlot extends Plot {
           let str = "";
           for (let i = 0; i < res.length; i++) {
             const element = adjustIp(res[i]);
+            //const element = res[i];
             const { spacing, align } = getArrowSymbolProperties();
             const ipName = Utility.generateCurveName(self, prefix);
             const marker = new PlotMarker(ipName);

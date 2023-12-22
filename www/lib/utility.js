@@ -2043,7 +2043,7 @@ class Utility {
       let n = 0;
       let inc = step / 1000;
       let x = 0;
-      while (!isFinite(num) && n < 600) {
+      while (!isFinite(num) && n < 2000) {
         n++;
         x = samples[0].x - step + n * inc;
         scope.set(indepVar, x);
@@ -2062,6 +2062,41 @@ class Utility {
         scope.set(indepVar, x + 2 * s);
         const p2 = new Misc.Point(x + 2 * s, parser.eval(scope));
         samples = [p0, p1, p2, ...samples];
+      }
+    }
+
+    const sz = samples.length;
+    if (samples[sz - 1] && samples[sz - 1].x < upperX) {
+      let scope = new Map();
+      scope.set(indepVar, samples[sz - 1].x + step);
+      let num = parser.eval(scope);
+
+      let n = 0;
+      let inc = step / 1000;
+      let x = 0;
+      while (!isFinite(num) && n < 2000) {
+        n++;
+        x = samples[sz - 1].x + step - n * inc;
+        scope.set(indepVar, x);
+        num = parser.eval(scope);
+        //console.log("test", n);
+      }
+
+      x = samples[sz - 1].x + step - (n - 1) * inc;
+      scope.set(indepVar, x);
+      num = parser.eval(scope);
+      if ($.isNumeric(num.re)) {
+        let s = (x - samples[sz - 1].x) / 3;
+        const p0 = new Misc.Point(x, num.re);
+        scope.set(indepVar, x - s);
+        const p1 = new Misc.Point(x - s, parser.eval(scope));
+        scope.set(indepVar, x - 2 * s);
+        const p2 = new Misc.Point(x - 2 * s, parser.eval(scope));
+        //samples = [p2, p1, p0, ...samples];
+        samples.push(p2);
+        samples.push(p1);
+        samples.push(p0);
+      } else {
       }
     }
 
@@ -2151,9 +2186,31 @@ class Utility {
       pt2 = new Misc.Point(x + step, math.evaluate(fn, { x: x + step }));
       const slopeAfterTp = Utility.slope(pt1, pt2);
       if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
-        arr.push(result[i]);
+        let n = 0;
+        const incrmt = step * 1e-5;
+        let _x1 = x - 500 * incrmt;
+        let _y1;
+        let _x2 = _x1 + incrmt;
+        let _y2;
+        let slope = math.abs(slopeBeforeTp);
+        let prevSlope = Number.MAX_VALUE;
+        while (slope < prevSlope && n < 3000) {
+          prevSlope = slope;
+          pt1.x = _x1 + n * incrmt;
+          pt1.y = math.evaluate(fn, { x: pt1.x });
+          pt2.x = _x2 + n * incrmt;
+          pt2.y = math.evaluate(fn, { x: pt2.x });
+          slope = math.abs(Utility.slope(pt1, pt2));
+          n++;
+        }
+        //console.log("TP n:", n);
+        pt1.x = pt1.x - 0.5 * incrmt;
+        pt1.y = math.evaluate(fn, { x: pt1.x });
+        //console.log("TP:", pt1);
+        arr.push(pt1);
       }
     }
+
     return arr;
   }
 
@@ -2220,26 +2277,27 @@ class Utility {
         //Search for turning point
 
         const numOfSteps = 200;
+        let minMax;
         const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
         let arr = [];
         for (let n = 0; n < numOfSteps; n++) {
           let xVal = samples[i - 1].x + n * step;
           arr.push(Math.abs(parser.eval({ x: xVal })));
         }
-        const min = Math.min(...arr);
+        //console.log("arr:", arr);
+        if (arr.length > 1) {
+          if (arr[1] < arr[0]) {
+            minMax = Math.min(...arr);
+          } else {
+            minMax = Math.max(...arr);
+          }
+        }
+        //const min = Math.min(...arr);
         // console.log("Static.accuracyFactor", numOfSteps);
         //console.log(486, min);
         sign *= -1;
-        let xVal = samples[i - 1].x + arr.indexOf(min) * step;
-        result.push(
-          new Misc.Point(
-            Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
-            Utility.adjustForDecimalPlaces(
-              math.evaluate(m_fn, { x: xVal }),
-              decimalPlacesY
-            )
-          )
-        );
+        let xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
+        result.push(new Misc.Point(xVal, math.evaluate(m_fn, { x: xVal })));
       }
     }
     return result;
