@@ -2124,10 +2124,11 @@ class Utility {
         n++;
         u = u - inc;
       }
-      const decimalPlacesX = Math.max(
-        obj.plot.axisDecimalPlaces(0),
-        obj.plot.axisDecimalPlaces(1)
-      );
+      // const decimalPlacesX = Math.max(
+      //   obj.plot.axisDecimalPlaces(0),
+      //   obj.plot.axisDecimalPlaces(1)
+      // );
+      const decimalPlacesX = 4;
       const lowerX = Utility.adjustForDecimalPlaces(l, decimalPlacesX);
       const upperX = Utility.adjustForDecimalPlaces(u, decimalPlacesX);
       //console.log(lowerX, upperX);

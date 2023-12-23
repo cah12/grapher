@@ -531,7 +531,6 @@ class MyPlot extends Plot {
         //console.log("do 3d")
         if (self._functionDlg.threeDType === "spectrocurve") {
           var s = Utility.makeSamples({
-            plot: self,
             fx: fn,
             threeD: true,
             variable: self._functionDlg.variable,
@@ -768,7 +767,6 @@ class MyPlot extends Plot {
         }
         makeSamplesData.discontinuity = discont;
         // makeSamplesData.xDecimalPlaces = xDecimalPlaces;
-        makeSamplesData.plot = self;
 
         const samples = Utility.makeSamples(makeSamplesData); //////////////
 
@@ -785,6 +783,10 @@ class MyPlot extends Plot {
         }
 
         newCurve = addCurve(title, samples, false, fn);
+
+        //makeSamples() may modify the domain.
+        newCurve.lowerX = makeSamplesData.lowerX;
+        newCurve.upperX = makeSamplesData.upperX;
 
         if (!newCurve.parametricLowerX) {
           newCurve.parametricLowerX = m_lowerX;
