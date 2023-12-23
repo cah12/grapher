@@ -3082,5 +3082,7 @@ class MyPlot extends Plot {
     });
 
     self.grapherEditor.initEditor();
+
+    self.plotPropertiesPane.setPlotPropertiesSettings();
   }
 }

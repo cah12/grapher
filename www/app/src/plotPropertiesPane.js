@@ -604,7 +604,7 @@ class PlotPropertiesPane extends PropertiesPane {
       title: "Set plot footer font weight",
       fun: plotFooterBold,
     });
-    this.addProperty({
+    const plot_background = this.addProperty({
       name: "Background",
       id: "plotBackground",
       parentId: "generalSettings",
@@ -3974,5 +3974,105 @@ class PlotPropertiesPane extends PropertiesPane {
 
     // self.hide("pointSelected");
     //self.hide("upperLimit");
+
+    this.setPlotPropertiesSettings = function () {
+      const bottom_decimalPlaces_val = localStorage.getItem(
+        "DecimalPlacesBottomAxis"
+      );
+      if (bottom_decimalPlaces_val) {
+        bottom_decimalPlaces.val(bottom_decimalPlaces_val);
+        bottom_decimalPlaces.trigger("change");
+      }
+      const top_decimalPlaces_val = localStorage.getItem(
+        "DecimalPlacesTopAxis"
+      );
+      if (top_decimalPlaces_val) {
+        top_decimalPlaces.val(top_decimalPlaces_val);
+        top_decimalPlaces.trigger("change");
+      }
+      const left_decimalPlaces_val = localStorage.getItem(
+        "DecimalPlacesLeftAxis"
+      );
+      if (left_decimalPlaces_val) {
+        left_decimalPlaces.val(left_decimalPlaces_val);
+        left_decimalPlaces.trigger("change");
+      }
+      const right_decimalPlaces_val = localStorage.getItem(
+        "DecimalPlacesRightAxis"
+      );
+      if (right_decimalPlaces_val) {
+        right_decimalPlaces.val(right_decimalPlaces_val);
+        right_decimalPlaces.trigger("change");
+      }
+      const bottom_precision_val = localStorage.getItem("BottomPrecision");
+      if (bottom_precision_val) {
+        bottom_precision.val(bottom_precision_val);
+        bottom_precision.trigger("change");
+      }
+      const top_precision_val = localStorage.getItem("TopPrecision");
+      if (top_precision_val) {
+        top_precision.val(top_precision_val);
+        top_precision.trigger("change");
+      }
+      const left_precision_val = localStorage.getItem("LeftPrecision");
+      if (left_precision_val) {
+        left_precision.val(left_precision_val);
+        left_precision.trigger("change");
+      }
+      const right_precision_val = localStorage.getItem("RightPrecision");
+      if (right_precision_val) {
+        right_precision.val(right_precision_val);
+        right_precision.trigger("change");
+      }
+      const plot_background_val = localStorage.getItem("PlotBackground");
+      if (plot_background_val) {
+        plot_background.val(plot_background_val);
+        plot_background.trigger("change");
+      }
+    };
+
+    this.savePlotPropertiesSettings = function () {
+      localStorage.setItem(
+        "DecimalPlacesBottomAxis",
+        bottom_decimalPlaces.val()
+      );
+      localStorage.setItem("DecimalPlacesTopAxis", top_decimalPlaces.val());
+      localStorage.setItem("DecimalPlacesLeftAxis", left_decimalPlaces.val());
+      localStorage.setItem("DecimalPlacesRightAxis", right_decimalPlaces.val());
+
+      localStorage.setItem("BottomPrecision", bottom_precision.val());
+      localStorage.setItem("TopPrecision", top_precision.val());
+      localStorage.setItem("LeftPrecision", left_precision.val());
+      localStorage.setItem("RightPrecision", right_precision.val());
+
+      localStorage.setItem("PlotBackground", plot_background.val());
+    };
+
+    this.restoreDefaults = function () {
+      localStorage.setItem("DecimalPlacesBottomAxis", 1);
+      localStorage.setItem("DecimalPlacesTopAxis", 1);
+      localStorage.setItem("DecimalPlacesLeftAxis", 1);
+      localStorage.setItem("DecimalPlacesRightAxis", 1);
+
+      localStorage.setItem("BottomPrecision", 4);
+      localStorage.setItem("TopPrecision", 4);
+      localStorage.setItem("LeftPrecision", 4);
+      localStorage.setItem("RightPrecision", 4);
+
+      localStorage.setItem("PlotBackground", "#ffffc8");
+
+      //console.log()
+      self.setPlotPropertiesSettings();
+    };
+
+    $(window).bind("beforeunload", function () {
+      self.savePlotPropertiesSettings();
+    });
+
+    $(window).bind("reload", function () {
+      self.savePlotPropertiesSettings();
+    });
+
+    //
   }
 }

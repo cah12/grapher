@@ -146,6 +146,10 @@ class MToolBar extends ToolBar {
       _plot.trashDlg.trashCb(_plot);
     }
 
+    function restoreDefaults() {
+      _plot.plotPropertiesPane.restoreDefaults();
+    }
+
     function reservedFn() {
       let s = Static.keywords.toString();
       s = s.replaceAll(",", ", ");
@@ -173,6 +177,7 @@ class MToolBar extends ToolBar {
       _plot.print,
       reservedFn,
       trashFn,
+      restoreDefaults,
     ];
 
     this.addToolButton("dropdown", {
@@ -228,6 +233,11 @@ class MToolBar extends ToolBar {
           text: "Recycle bin",
           icon: "images/trash.png",
           tooltip: "Open the recycle bin.",
+        },
+        {
+          text: "Restore defaults",
+          icon: "images/restoreDefaults.png",
+          tooltip: "Restores plot properties pane defaults.",
         },
       ],
     });

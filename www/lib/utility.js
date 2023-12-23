@@ -1769,24 +1769,22 @@ class Utility {
    * - indepVarY - The character representing the y independent variable.
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
-  static makeSamples(obj, redo = false) {
+  static makeSamples(obj, limits_x = null) {
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
     }
 
-    var lowerX;
-    var upperX;
-
-    if (!redo) {
-      lowerX = obj.lowerX;
-      upperX = obj.upperX;
+    if (limits_x) {
+      obj.lowerX = limits_x.lowerX;
+      obj.upperX = limits_x.upperX;
     }
+
     var fx = obj.fx;
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;
-    // var lowerX = obj.lowerX;
-    // var upperX = obj.upperX;
+    var lowerX = obj.lowerX;
+    var upperX = obj.upperX;
     var lowerY;
     var upperY;
     var numOfSamples = obj.numOfSamples;
@@ -2130,10 +2128,10 @@ class Utility {
         obj.plot.axisDecimalPlaces(0),
         obj.plot.axisDecimalPlaces(1)
       );
-      obj.lowerX = Utility.adjustForDecimalPlaces(l, decimalPlacesX);
-      obj.upperX = Utility.adjustForDecimalPlaces(u, decimalPlacesX);
-      console.log(obj.lowerX, obj.upperX);
-      Utility.makeSamples(obj, true);
+      const lowerX = Utility.adjustForDecimalPlaces(l, decimalPlacesX);
+      const upperX = Utility.adjustForDecimalPlaces(u, decimalPlacesX);
+      //console.log(lowerX, upperX);
+      return Utility.makeSamples(obj, { lowerX, upperX });
     }
 
     return samples;
