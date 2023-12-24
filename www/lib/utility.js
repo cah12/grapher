@@ -2041,98 +2041,78 @@ class Utility {
       }
     }
 
-    const inc = step / 1000;
-    let reSample = false;
-    if (samples[0] && samples[0].x > lowerX) {
-      let scope = new Map();
-      scope.set(indepVar, samples[0].x - step);
-      let num = parser.eval(scope);
+    if (!obj.adjustingCurve) {
+      const inc = step / 2000;
+      let reSample = false;
+      let x_lower;
+      let x_upper;
+      if (
+        samples[0] &&
+        Utility.adjustForDecimalPlaces(samples[0].x, obj.xDecimalPlaces) >
+          lowerX
+      ) {
+        let scope = new Map();
+        scope.set(indepVar, samples[0].x - step);
+        let num = parser.eval(scope);
 
-      let n = 0;
+        let n = 0;
 
-      let x = 0;
-      while (!isFinite(num) && n < 2000) {
-        n++;
-        x = samples[0].x - step + n * inc;
-        scope.set(indepVar, x);
-        num = parser.eval(scope);
-        //console.log("test", n);
+        let x = 0;
+        while (!isFinite(num) && n < 4000) {
+          n++;
+          x = samples[0].x - step + n * inc;
+          scope.set(indepVar, x);
+          num = parser.eval(scope);
+          //console.log("test1", n);
+        }
+
+        x_lower = samples[0].x - step + n * inc;
+        samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
+          x_lower,
+          obj.xDecimalPlaces
+        );
+        reSample = true;
       }
 
-      x = samples[0].x - step + (n - 1) * inc;
-      scope.set(indepVar, x);
-      num = parser.eval(scope);
-      if ($.isNumeric(num.re)) {
-        let s = (samples[0].x - x) / 3;
-        const p0 = new Misc.Point(x, num.re);
-        scope.set(indepVar, x + s);
-        const p1 = new Misc.Point(x + s, parser.eval(scope));
-        scope.set(indepVar, x + 2 * s);
-        const p2 = new Misc.Point(x + 2 * s, parser.eval(scope));
-        samples = [p0, p1, p2, ...samples];
-      } else {
-      }
-      reSample = true;
-    }
+      const sz = samples.length;
+      if (
+        samples[sz - 1] &&
+        Utility.adjustForDecimalPlaces(samples[sz - 1].x, obj.xDecimalPlaces) <
+          upperX
+      ) {
+        let scope = new Map();
+        scope.set(indepVar, samples[sz - 1].x + step);
+        let num = parser.eval(scope);
 
-    const sz = samples.length;
-    if (samples[sz - 1] && samples[sz - 1].x < upperX) {
-      let scope = new Map();
-      scope.set(indepVar, samples[sz - 1].x + step);
-      let num = parser.eval(scope);
+        let n = 0;
 
-      let n = 0;
+        let x = 0;
+        while (!isFinite(num) && n < 4000) {
+          n++;
+          x = samples[sz - 1].x + step - n * inc;
+          scope.set(indepVar, x);
+          num = parser.eval(scope);
+          // console.log("test2", n);
+        }
 
-      let x = 0;
-      while (!isFinite(num) && n < 2000) {
-        n++;
-        x = samples[sz - 1].x + step - n * inc;
-        scope.set(indepVar, x);
-        num = parser.eval(scope);
-        //console.log("test", n);
+        x_upper = samples[sz - 1].x + step - n * inc;
+        samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
+          x_upper,
+          obj.xDecimalPlaces
+        );
+        reSample = true;
       }
 
-      x = samples[sz - 1].x + step - (n - 1) * inc;
-      scope.set(indepVar, x);
-      num = parser.eval(scope);
-      if ($.isNumeric(num.re)) {
-        let s = (x - samples[sz - 1].x) / 3;
-        const p0 = new Misc.Point(x, num.re);
-        scope.set(indepVar, x - s);
-        const p1 = new Misc.Point(x - s, parser.eval(scope));
-        scope.set(indepVar, x - 2 * s);
-        const p2 = new Misc.Point(x - 2 * s, parser.eval(scope));
-        //samples = [p2, p1, p0, ...samples];
-        samples.push(p2);
-        samples.push(p1);
-        samples.push(p0);
-      } else {
-      }
-      reSample = true;
-    }
+      if (reSample) {
+        let lowerX = x_lower;
+        let upperX = x_upper;
+        if (obj.xDecimalPlaces) {
+          lowerX = Utility.adjustForDecimalPlaces(x_lower, obj.xDecimalPlaces);
+          upperX = Utility.adjustForDecimalPlaces(x_upper, obj.xDecimalPlaces);
+        }
 
-    if (reSample) {
-      let l = samples[0].x;
-      let n = 0;
-      while (!$.isNumeric(l) && n < 10) {
-        n++;
-        l = l + inc;
+        return Utility.makeSamples(obj, { lowerX, upperX });
       }
-      let u = samples[samples.length - 1].x;
-      n = 0;
-      while (!$.isNumeric(u) && n < 10) {
-        n++;
-        u = u - inc;
-      }
-      // const decimalPlacesX = Math.max(
-      //   obj.plot.axisDecimalPlaces(0),
-      //   obj.plot.axisDecimalPlaces(1)
-      // );
-      const decimalPlacesX = 4;
-      const lowerX = Utility.adjustForDecimalPlaces(l, decimalPlacesX);
-      const upperX = Utility.adjustForDecimalPlaces(u, decimalPlacesX);
-      //console.log(lowerX, upperX);
-      return Utility.makeSamples(obj, { lowerX, upperX });
     }
 
     return samples;

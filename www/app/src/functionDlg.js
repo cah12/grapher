@@ -1813,30 +1813,13 @@ class MFunctionDlg {
           cb();
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
-          let fn; //Array;
-          if (Static.negativeRoot) {
-            fn = negativeRootFn();
-            if (fn && fn.length) {
-              const title = self.title;
-              for (let i = 0; i < fn.length; i++) {
-                // self.fn = self.expandedFn = fn[i];
-                // self.title = i + "~" + title;
-                // cb();
-                const primaryCurve = plot.findPlotCurve(title);
-                const primarySamples = primaryCurve.data().samples();
-                const samples = primarySamples.map((pt) => {
-                  return new Misc.Point(pt.x, -pt.y);
-                });
-                //console.log(primaryCurve)
-
-                const curve = new MyCurve(`${i}~${title}`);
-                curve.expandedFn = `-(${primaryCurve.expandedFn})`;
-                curve.fn = `-(${primaryCurve.fn})`;
-                curve.variable = self.variable;
-                curve.setSamples(samples);
-
-                curve.attach(plot);
-              }
+          const fn = negativeRootFn();
+          if (Static.negativeRoot && fn) {
+            const title = self.title;
+            for (let i = 0; i < fn.length; i++) {
+              self.fn = self.expandedFn = fn[i];
+              self.title = i + "~" + title;
+              cb();
             }
           }
           if (

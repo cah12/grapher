@@ -766,7 +766,10 @@ class MyPlot extends Plot {
           }
         }
         makeSamplesData.discontinuity = discont;
-        // makeSamplesData.xDecimalPlaces = xDecimalPlaces;
+        makeSamplesData.xDecimalPlaces = Math.max(
+          self.axisDecimalPlaces(0),
+          self.axisDecimalPlaces(0)
+        );
 
         const samples = Utility.makeSamples(makeSamplesData); //////////////
 

@@ -564,12 +564,32 @@ class InfoPropertiesPane extends Pane {
         if (curCurve.unboundedRange) {
           data.setFn(fn);
         } else {
-          var s = Utility.makeSamples({
+          /* var s = Utility.makeSamples({
+            adjustingCurve: true,
             fx: fn,
             lowerX: curCurve.lowerX,
             upperX: curCurve.upperX,
             numOfSamples: curCurve.numOfSamples,
+          }); */
+
+          const expr = math.compile(fn);
+          // evaluate the expression repeatedly for different values of x
+          let xValues = math
+            .range(
+              curCurve.lowerX,
+              curCurve.upperX,
+              (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples
+            )
+            .toArray();
+          if (xValues[xValues.length - 1] < curCurve.upperX) {
+            xValues.push(curCurve.upperX);
+          }
+          const scope = new Map();
+          const s = xValues.map(function (x) {
+            scope.set(curCurve.variable, x);
+            return new Misc.Point(x, expr.evaluate(scope));
           });
+
           if (!s) {
             console.log(784);
             return;
@@ -603,7 +623,8 @@ class InfoPropertiesPane extends Pane {
         if (curCurve.unboundedRange) {
           data.setFn(curCurve.expandedFn);
         } else {
-          var s = Utility.makeSamples({
+          /* var s = Utility.makeSamples({
+            adjustingCurve: true,
             fx: null,
             // lowerX: curCurve.lowerX,
             // upperX: curCurve.upperX,
@@ -613,7 +634,26 @@ class InfoPropertiesPane extends Pane {
             parametricFnX,
             parametricFnY,
             parametric_variable: curCurve.parametric_variable,
+          }); */
+
+          const exprX = math.compile(parametricFnX);
+          const exprY = math.compile(parametricFnY);
+          // evaluate the expression repeatedly for different values of x
+          let values = math
+            .range(
+              curCurve.parametricLowerX,
+              curCurve.parametricUpperX,
+              (curCurve.parametricUpperX - curCurve.parametricLowerX) /
+                curCurve.numOfSamples
+            )
+            .toArray();
+          values.push(values[0]);
+          const scope = new Map();
+          const s = values.map(function (x) {
+            scope.set(curCurve.parametric_variable, x);
+            return new Misc.Point(exprX.evaluate(scope), exprY.evaluate(scope));
           });
+
           if (!s) {
             console.log(781);
             return;
@@ -627,6 +667,9 @@ class InfoPropertiesPane extends Pane {
     }
 
     function adjustCurveNonUnique(selector) {
+      console.time();
+      // const doReplot = plot.autoReplot();
+      // plot.setAutoReplot(false);
       const currentCurveCoeffs = plot.findPlotCurve(
         self.currentCurveName()
       ).coeffs;
@@ -667,12 +710,34 @@ class InfoPropertiesPane extends Pane {
               if (curCurve.unboundedRange) {
                 data.setFn(curCurve.expandedFn);
               } else {
-                var s = Utility.makeSamples({
+                console.time();
+
+                /* var s = Utility.makeSamples({
+                  adjustingCurve: true,
                   fx: curCurve.expandedFn,
                   lowerX: curCurve.lowerX,
                   upperX: curCurve.upperX,
                   numOfSamples: curCurve.numOfSamples,
+                }); */
+
+                const expr = math.compile(curCurve.expandedFn);
+                // evaluate the expression repeatedly for different values of x
+                let xValues = math
+                  .range(
+                    curCurve.lowerX,
+                    curCurve.upperX,
+                    (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples
+                  )
+                  .toArray();
+                if (xValues[xValues.length - 1] < curCurve.upperX) {
+                  xValues.push(curCurve.upperX);
+                }
+                const scope = new Map();
+                const s = xValues.map(function (x) {
+                  scope.set(curCurve.variable, x);
+                  return new Misc.Point(x, expr.evaluate(scope));
                 });
+
                 if (!s) {
                   console.log(782);
                   return;
@@ -738,7 +803,8 @@ class InfoPropertiesPane extends Pane {
             if (curCurve.unboundedRange) {
               data.setFn(curCurve.expandedFn);
             } else {
-              var s = Utility.makeSamples({
+              /* var s = Utility.makeSamples({
+                adjustingCurve: true,
                 fx: null,
                 // lowerX: curCurve.lowerX,
                 // upperX: curCurve.upperX,
@@ -748,6 +814,26 @@ class InfoPropertiesPane extends Pane {
                 parametricFnX,
                 parametricFnY,
                 parametric_variable: curCurve.parametric_variable,
+              }); */
+              const exprX = math.compile(parametricFnX);
+              const exprY = math.compile(parametricFnY);
+              // evaluate the expression repeatedly for different values of x
+              let values = math
+                .range(
+                  curCurve.parametricLowerX,
+                  curCurve.parametricUpperX,
+                  (curCurve.parametricUpperX - curCurve.parametricLowerX) /
+                    curCurve.numOfSamples
+                )
+                .toArray();
+              values.push(values[0]);
+              const scope = new Map();
+              const s = values.map(function (x) {
+                scope.set(curCurve.parametric_variable, x);
+                return new Misc.Point(
+                  exprX.evaluate(scope),
+                  exprY.evaluate(scope)
+                );
               });
               if (!s) {
                 console.log(783);
@@ -759,6 +845,7 @@ class InfoPropertiesPane extends Pane {
         }
       }
       Static.trigger("curveAdjusted");
+      //plot.setAutoReplot(doReplot);
       plot.autoRefresh();
     }
 
