@@ -667,7 +667,7 @@ class InfoPropertiesPane extends Pane {
     }
 
     function adjustCurveNonUnique(selector) {
-      console.time();
+      //console.time();
       // const doReplot = plot.autoReplot();
       // plot.setAutoReplot(false);
       const currentCurveCoeffs = plot.findPlotCurve(
@@ -710,7 +710,7 @@ class InfoPropertiesPane extends Pane {
               if (curCurve.unboundedRange) {
                 data.setFn(curCurve.expandedFn);
               } else {
-                console.time();
+                //console.time();
 
                 /* var s = Utility.makeSamples({
                   adjustingCurve: true,
