@@ -955,6 +955,23 @@ class Utility {
     }
   }
 
+  static arrayHasPoint(arr, pt, decimalPlacesX = 8) {
+    for (let i = 0; i < arr.length; i++) {
+      //if (arr[i].isEqual(pt)) return true;
+      if (
+        Utility.adjustForDecimalPlaces(arr[i].x, decimalPlacesX) ==
+        Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
+        Utility.adjustForDecimalPlaces(
+          arr[i].y,
+          decimalPlacesY
+        ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static pltPlotCurveData(plot, curveData) {
     let curve = null;
     if (curveData.fn) {
@@ -2115,6 +2132,14 @@ class Utility {
       }
     }
 
+    samples = samples.map((pt) => {
+      if ($.isNumeric(obj.xDecimalPlaces))
+        pt.x = Utility.adjustForDecimalPlaces(pt.x, obj.xDecimalPlaces);
+      if ($.isNumeric(obj.yDecimalPlaces))
+        pt.y = Utility.adjustForDecimalPlaces(pt.y, obj.yDecimalPlaces);
+      return pt;
+    });
+
     return samples;
   }
 
@@ -2133,14 +2158,6 @@ class Utility {
     }
     //Replace the whitespace delimiters stripped out by simplify()
     fn = fn.replaceAll("mod", " mod ");
-
-    // const infPoints = Utility.curveInflectionPoint(
-    //   fn,
-    //   variable,
-    //   samples,
-    //   decimalPlacesX,
-    //   decimalPlacesY
-    // );
 
     let m_fn = fn;
     let result = [];
@@ -2225,7 +2242,6 @@ class Utility {
         arr.push(pt1);
       }
     }
-
     return arr;
   }
 
@@ -2235,12 +2251,23 @@ class Utility {
     return slp;
   }
 
+  static isPointATurningPoint(tps, pt) {
+    if (!tps) return false;
+    for (let i = 0; i < tps.length; i++) {
+      if (tps[i].x === pt.x && tps[i].y === pt.y) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   static curveInflectionPoint(
     fn,
     variable,
     samples,
-    decimalPlacesX = 4,
-    decimalPlacesY = 4
+    curve = null,
+    decimalPlacesX = 8,
+    decimalPlacesY = 8
   ) {
     let result = [];
     let m_fn = fn;
@@ -2273,6 +2300,25 @@ class Utility {
       return result;
     }
 
+    if (curve) {
+      let tempSamples = [];
+      while (samples.length > 160) {
+        const tps = curve.turningPoints;
+        for (let i = 0; i < samples.length; i++) {
+          if (i % 2 == 0 || Utility.isPointATurningPoint(tps, samples[i])) {
+            tempSamples.push(samples[i]);
+          }
+        }
+        if (
+          tempSamples[tempSamples.length - 1].x !==
+          samples[samples.length - 1].x
+        ) {
+          tempSamples.push(samples[samples.length - 1]);
+        }
+        samples = tempSamples;
+      }
+    }
+
     //derivative = math.derivative(derivative, variable);
     const parser = new EvaluateExp(derivative.toString());
     //const parser = new EvaluateExp(m_fn);
@@ -2288,31 +2334,36 @@ class Utility {
 
     for (let i = 1; i < samples.length; i++) {
       const m = math.sign(parser.eval({ x: samples[i].x }));
-      if (m !== sign) {
-        //Search for turning point
-
+      if (m !== sign || m == 0) {
         const numOfSteps = 200;
         let minMax;
         const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
+        console.log(step);
+        let xVal;
+
         let arr = [];
         for (let n = 0; n < numOfSteps; n++) {
-          let xVal = samples[i - 1].x + n * step;
+          xVal = samples[i - 1].x + n * step;
           arr.push(Math.abs(parser.eval({ x: xVal })));
         }
         //console.log("arr:", arr);
         if (arr.length > 1) {
-          if (arr[1] < arr[0]) {
+          if (arr[1] < arr[0] || arr[0] < 1e-10) {
             minMax = Math.min(...arr);
           } else {
             minMax = Math.max(...arr);
           }
         }
-        //const min = Math.min(...arr);
-        // console.log("Static.accuracyFactor", numOfSteps);
-        //console.log(486, min);
+
         sign *= -1;
-        let xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
-        result.push(new Misc.Point(xVal, math.evaluate(m_fn, { x: xVal })));
+        xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
+        result.push(
+          new Misc.Point(
+            Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
+            Utility.adjustForDecimalPlaces(math.evaluate(m_fn, { x: xVal })),
+            decimalPlacesY
+          )
+        );
       }
     }
     return result;
@@ -3190,6 +3241,7 @@ class Utility {
    * adjustForDecimalPlaces(4.145214, 3) -> 4.145
    */
   static adjustForDecimalPlaces(number, places) {
+    if (places === 0) return Math.round(number);
     if (places == undefined) places = 5;
 
     // if (places > 300) places = 300;

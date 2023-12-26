@@ -2032,6 +2032,13 @@ class PlotPropertiesPane extends PropertiesPane {
         }
         plot.setAutoReplot(autoReplot);
         plot.autoRefresh();
+      } else {
+        if (!userDecimalPlacesForCalculation[0].checked) {
+          bottom_decimalPlaces.val(100);
+          top_decimalPlaces.val(100);
+          left_decimalPlaces.val(100);
+          right_decimalPlaces.val(100);
+        }
       }
     }
 
@@ -2051,7 +2058,12 @@ class PlotPropertiesPane extends PropertiesPane {
     }
     userDecimalPlacesForCalculation.change(function () {
       setReadonlyUserDecimalPlacesForCalculation(!this.checked);
+
       updateCalculationDecimalPlaces();
+      bottom_decimalPlaces.trigger("change");
+      top_decimalPlaces.trigger("change");
+      left_decimalPlaces.trigger("change");
+      right_decimalPlaces.trigger("change");
       Static.userDecimalPlacesForCalculation = this.checked;
     });
     /////////////////////////////////////////////
@@ -4049,10 +4061,10 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.restoreDefaults = function () {
-      localStorage.setItem("DecimalPlacesBottomAxis", 1);
-      localStorage.setItem("DecimalPlacesTopAxis", 1);
-      localStorage.setItem("DecimalPlacesLeftAxis", 1);
-      localStorage.setItem("DecimalPlacesRightAxis", 1);
+      localStorage.setItem("DecimalPlacesBottomAxis", 4);
+      localStorage.setItem("DecimalPlacesTopAxis", 4);
+      localStorage.setItem("DecimalPlacesLeftAxis", 4);
+      localStorage.setItem("DecimalPlacesRightAxis", 4);
 
       localStorage.setItem("BottomPrecision", 4);
       localStorage.setItem("TopPrecision", 4);

@@ -27,7 +27,7 @@ class AbstractScaleDraw {
     var m_map = new ScaleMap();
     var m_scaleDiv = null;
 
-    var m_decimalPlaces = 1; //For calculations only
+    var m_decimalPlaces = 4; //For calculations only
     var m_precision = 4; //For display
 
     var m_spacing = 4;

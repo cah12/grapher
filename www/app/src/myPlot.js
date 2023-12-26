@@ -766,9 +766,12 @@ class MyPlot extends Plot {
           }
         }
         makeSamplesData.discontinuity = discont;
-        makeSamplesData.xDecimalPlaces = Math.max(
-          self.axisDecimalPlaces(0),
-          self.axisDecimalPlaces(0)
+        makeSamplesData.xDecimalPlaces = self.axisDecimalPlaces(
+          Axis.AxisId.xBottom
+        );
+
+        makeSamplesData.yDecimalPlaces = self.axisDecimalPlaces(
+          Axis.AxisId.yLeft
         );
 
         const samples = Utility.makeSamples(makeSamplesData); //////////////
@@ -1454,6 +1457,31 @@ class MyPlot extends Plot {
             points = curve.turningPoints;
 
             if (points && points.length) {
+              if (curve.coeffs && curve.coeffs.length) {
+                let tpInvalid = false;
+                const coeffsVal = curve.coeffsVal;
+                for (let i = 0; i < coeffsVal.length; i++) {
+                  if (coeffsVal[i] !== 1) {
+                    tpInvalid = true;
+                    break;
+                  }
+                }
+                if (tpInvalid) {
+                  let fn = curve.fn;
+                  const coeffs = curve.coeffs;
+                  for (let i = 0; i < coeffs.length; i++) {
+                    fn = fn.replaceAll(coeffs[i], coeffsVal[i]);
+                    points = Utility.curveTurningPoint(
+                      fn,
+                      curve.variable,
+                      curve.data().samples(),
+                      decimalPlacesX,
+                      decimalPlacesY
+                    );
+                  }
+                }
+              }
+
               for (let n = 0; n < points.length; n++) {
                 const odd = m % 2;
                 m++;
@@ -1495,6 +1523,7 @@ class MyPlot extends Plot {
 
           if (operationType == "X-Intercept") {
             const curve = curves[i];
+
             let m_curves = [curve];
             let tempCurve = new MyCurve();
             tempCurve.fn = "0";
@@ -1508,6 +1537,23 @@ class MyPlot extends Plot {
             doCombine(m_curves, "x~");
             self.curveSelector.operationType = null;
             tempCurve = null;
+
+            /* var eq = nerdamer(`${curve.fn}=0`);
+            var solution = eq.solveFor(curve.variable);
+            let values = solution.toString().split(",");
+            // if (typeof solution === "object" && solution[0]) {
+            //   arr[0] = "y";
+            //   arr[1] = solution[0].toString();
+            // } else {
+            //   arr[0] = "y";
+            //   arr[1] = solution.toString();
+            // }
+            nerdamer.flush();
+
+            values = values.map((val) => {
+              return math.evaluate(val);
+            });
+            console.log(values); */
 
             if (i < curves.length) {
               continue;
@@ -1570,6 +1616,32 @@ class MyPlot extends Plot {
           if (operationType == "Inflection point") {
             const curve = curves[i];
             points = curve.inflectionPoints || [];
+
+            if (curve.coeffs && curve.coeffs.length) {
+              let unfltnInvalid = false;
+              const coeffsVal = curve.coeffsVal;
+              for (let i = 0; i < coeffsVal.length; i++) {
+                if (coeffsVal[i] !== 1) {
+                  unfltnInvalid = true;
+                  break;
+                }
+              }
+              if (unfltnInvalid) {
+                let fn = curve.fn;
+                const coeffs = curve.coeffs;
+                for (let i = 0; i < coeffs.length; i++) {
+                  fn = fn.replaceAll(coeffs[i], coeffsVal[i]);
+                  points = Utility.curveInflectionPoint(
+                    fn,
+                    curve.variable,
+                    curve.data().samples(),
+                    curve,
+                    decimalPlacesX,
+                    decimalPlacesY
+                  );
+                }
+              }
+            }
 
             for (let n = 0; n < points.length; n++) {
               const element = points[n];
@@ -1789,7 +1861,7 @@ class MyPlot extends Plot {
 
           //console.log(decimalPlacesX, decimalPlacesY);
 
-          function isPointATurningPoint(tps, pt) {
+          /* function isPointATurningPoint(tps, pt) {
             if (!tps) return false;
             for (let i = 0; i < tps.length; i++) {
               if (tps[i].x === pt.x && tps[i].y === pt.y) {
@@ -1797,7 +1869,7 @@ class MyPlot extends Plot {
               }
             }
             return false;
-          }
+          } */
 
           //const round = 30;
           const m_eps = 1e-14;
@@ -1809,7 +1881,10 @@ class MyPlot extends Plot {
           while (samples1.length > 160) {
             const tps = curves[0].turningPoints;
             for (let i = 0; i < samples1.length; i++) {
-              if (i % 2 == 0 || isPointATurningPoint(tps, samples1[i])) {
+              if (
+                i % 2 == 0 ||
+                Utility.isPointATurningPoint(tps, samples1[i])
+              ) {
                 tempSamples.push(samples1[i]);
               }
             }
@@ -1827,7 +1902,10 @@ class MyPlot extends Plot {
           while (samples2.length > 160) {
             const tps = curves[1].turningPoints;
             for (let i = 0; i < samples2.length; i++) {
-              if (i % 2 == 0 || isPointATurningPoint(tps, samples2[i])) {
+              if (
+                i % 2 == 0 ||
+                Utility.isPointATurningPoint(tps, samples2[i])
+              ) {
                 tempSamples.push(samples2[i]);
               }
             }
@@ -1903,6 +1981,8 @@ class MyPlot extends Plot {
               Utility.adjustForDecimalPlaces(point[1], decimalPlacesY),
               precisionY
             );
+            // let x = Utility.adjustForDecimalPlaces(point[0], decimalPlacesX);
+            // let y = Utility.adjustForDecimalPlaces(point[1], decimalPlacesY);
 
             if (x == "Infinity" || y == "Infinity") {
               alert(`0 points of intersection:\n`);
@@ -2030,25 +2110,25 @@ class MyPlot extends Plot {
                 }
                 let pt = new Misc.Point(point[0], point[1]);
 
-                function resHasPoint(pt) {
-                  for (let i = 0; i < res.length; i++) {
-                    //if (res[i].isEqual(pt)) return true;
-                    if (
-                      Utility.adjustForDecimalPlaces(
-                        res[i].x,
-                        decimalPlacesX
-                      ) ==
-                      Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
-                      Utility.adjustForDecimalPlaces(
-                        res[i].y,
-                        decimalPlacesY
-                      ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
-                    ) {
-                      return true;
-                    }
-                  }
-                  return false;
-                }
+                // function resHasPoint(pt) {
+                //   for (let i = 0; i < res.length; i++) {
+                //     //if (res[i].isEqual(pt)) return true;
+                //     if (
+                //       Utility.adjustForDecimalPlaces(
+                //         res[i].x,
+                //         decimalPlacesX
+                //       ) ==
+                //       Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
+                //       Utility.adjustForDecimalPlaces(
+                //         res[i].y,
+                //         decimalPlacesY
+                //       ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
+                //     ) {
+                //       return true;
+                //     }
+                //   }
+                //   return false;
+                // }
 
                 if (
                   (point &&
@@ -2057,7 +2137,7 @@ class MyPlot extends Plot {
                   (rect1.height() == 0 && rect2.contains(pt, false)) ||
                   (rect2.height() == 0 && rect1.contains(pt, false))
                 ) {
-                  if (!resHasPoint(pt)) {
+                  if (!Utility.arrayHasPoint(res, pt, decimalPlacesX)) {
                     res.push(pt);
                   }
                 }
@@ -2067,11 +2147,28 @@ class MyPlot extends Plot {
 
           function adjustIp(_pt) {
             let pt = new Misc.Point(_pt.x, _pt.y);
-            const fn1 = curves[0].fn;
-            const fn2 = curves[1].fn;
+            let fn1 = curves[0].fn;
+            let fn2 = curves[1].fn;
 
             let add = true;
             if (fn1 && fn2) {
+              const coeffs1 = curves[0].coeffs;
+              const coeffs2 = curves[1].coeffs;
+              const coeffs1Val = curves[0].coeffsVal;
+              const coeffs2Val = curves[1].coeffsVal;
+
+              if (coeffs1 && coeffs1Val) {
+                for (let i = 0; i < coeffs1.length; i++) {
+                  fn1 = fn1.replaceAll(coeffs1[i], coeffs1Val[i]);
+                }
+              }
+
+              if (coeffs2 && coeffs2Val) {
+                for (let i = 0; i < coeffs2.length; i++) {
+                  fn2 = fn2.replaceAll(coeffs2[i], coeffs2Val[i]);
+                }
+              }
+
               // const mx = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
               const mx = pt.x;
               const my1 = math.evaluate(fn1, { x: mx });
@@ -2081,11 +2178,14 @@ class MyPlot extends Plot {
               }
 
               let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
-              const px = 1e-4;
+              // const px = 1e-4;
+              const px = 1e-3;
               const step = math.max(
                 1e-5,
                 math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
               );
+
+              //console.log("step", step);
 
               const fx = `(${fn2})-(${fn1})`;
               let diff = math.abs(math.evaluate(fx, { x: pt.x }));
@@ -2109,6 +2209,7 @@ class MyPlot extends Plot {
                     diff = math.abs(math.evaluate(fx, { x: pt.x }));
                   }
                 }
+                //console.log(n);
 
                 pt.x = pt.x - 0.5 * step;
 
@@ -2130,6 +2231,22 @@ class MyPlot extends Plot {
             }
             return pt;
           }
+
+          res = res.map((pt) => {
+            pt = adjustIp(pt);
+            pt.x = parseFloat(pt.x);
+            pt.y = parseFloat(pt.y);
+            return pt;
+          });
+
+          let arr = [];
+          for (let i = 0; i < res.length; i++) {
+            if (!Utility.arrayHasPoint(arr, res[i], decimalPlacesX)) {
+              arr.push(res[i]);
+            }
+          }
+
+          res = arr;
 
           let str = "";
           for (let i = 0; i < res.length; i++) {
