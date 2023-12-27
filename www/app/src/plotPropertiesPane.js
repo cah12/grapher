@@ -1857,7 +1857,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "userDecimalPlacesForCalculation",
       parentId: "decimalPlacesForCalculationy",
       type: "checkbox",
-      checked: true,
+      //checked: true,
     });
     var bottom_decimalPlaces = this.addProperty({
       name: "Bottom axis",
@@ -2034,10 +2034,10 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.autoRefresh();
       } else {
         if (!userDecimalPlacesForCalculation[0].checked) {
-          bottom_decimalPlaces.val(100);
-          top_decimalPlaces.val(100);
-          left_decimalPlaces.val(100);
-          right_decimalPlaces.val(100);
+          bottom_decimalPlaces.val(300);
+          top_decimalPlaces.val(300);
+          left_decimalPlaces.val(300);
+          right_decimalPlaces.val(300);
         }
       }
     }

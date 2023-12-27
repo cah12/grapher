@@ -416,7 +416,7 @@ class MFunctionDlg {
     }
 
     function validateLimits(lowerLimit, upperLimit) {
-      if (math.equal(lowerLimit, upperLimit)) {
+      if (Utility.mFuzzyCompare(lowerLimit, upperLimit, 1e-300)) {
         Utility.alert(
           "Upper limit is equal Lower limit.",
           null,
@@ -1630,15 +1630,15 @@ class MFunctionDlg {
               $("#settingsButton").click();
               return false;
             }
-            var upper = Math.abs(self.upperLimit);
-            if (self.upperLimit > 0 && upper < Math.cbrt(Static._eps)) {
-              Utility.alert(
-                `Absolute value of upper(x) limit must not be less than ${Math.cbrt(
-                  Static._eps
-                )}.`
-              );
-              return false;
-            }
+            // var upper = Math.abs(self.upperLimit);
+            // if (self.upperLimit > 0 && upper < Math.cbrt(Static._eps)) {
+            //   Utility.alert(
+            //     `Absolute value of upper(x) limit must not be less than ${Math.cbrt(
+            //       Static._eps
+            //     )}.`
+            //   );
+            //   return false;
+            // }
           } catch (err) {
             /* try {
               self.upperLimit = math.evaluate(

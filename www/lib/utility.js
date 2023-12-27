@@ -1218,13 +1218,16 @@ class Utility {
    * @param {Misc.Point} p2 Second point
    * @returns {String} equation (e.g. "-15 x + 34")
    */
-  static linearEquationFromPoints(p1, p2, decimalPlaces) {
+  static linearEquationFromPoints(p1, p2, decimalPlaces = 400) {
     var m = (p2.y - p1.y) / (p2.x - p1.x);
     var c = -m * p1.x + p1.y;
-    if (decimalPlaces) {
-      m = Utility.adjustForDecimalPlaces(m, decimalPlaces);
-      c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
-    }
+    const eps = 1e-20;
+    // if (decimalPlaces) {
+    //   if (math.abs(m) < eps)
+    //     m = Utility.adjustForDecimalPlaces(m, decimalPlaces);
+    //   if (math.abs(c) < eps)
+    //     c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
+    // }
     var fn = m.toString();
     fn += "x+";
     fn += c.toString();
@@ -1920,6 +1923,12 @@ class Utility {
           //i--;
         } else {
           yVal = parser.eval({ x: xVal });
+          const abs_yVal = Math.abs(yVal);
+          if (abs_yVal !== 0) {
+            if (abs_yVal < 1e-300) {
+              return [];
+            }
+          }
         }
       }
 
@@ -2031,8 +2040,9 @@ class Utility {
         indepVar,
         samples
       );
-      const points = Utility.curveTurningPoint(fx, indepVar, samples);
+      let points = Utility.curveTurningPoint(fx, indepVar, samples);
       //console.log("Add Turning points", points);
+
       obj.turningPoints = points; //return turning points to makeSamples() caller
 
       //console.time("object");
@@ -2059,14 +2069,15 @@ class Utility {
     }
 
     if (!obj.adjustingCurve) {
+      const places = Math.min(60, obj.xDecimalPlaces);
       const inc = step / 2000;
       let reSample = false;
       let x_lower;
       let x_upper;
       if (
         samples[0] &&
-        Utility.adjustForDecimalPlaces(samples[0].x, obj.xDecimalPlaces) >
-          lowerX
+        Utility.adjustForDecimalPlaces(samples[0].x, places) >
+          Utility.adjustForDecimalPlaces(lowerX, places)
       ) {
         let scope = new Map();
         scope.set(indepVar, samples[0].x - step);
@@ -2086,7 +2097,7 @@ class Utility {
         x_lower = samples[0].x - step + n * inc;
         samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
           x_lower,
-          obj.xDecimalPlaces
+          places
         );
         reSample = true;
       }
@@ -2094,8 +2105,8 @@ class Utility {
       const sz = samples.length;
       if (
         samples[sz - 1] &&
-        Utility.adjustForDecimalPlaces(samples[sz - 1].x, obj.xDecimalPlaces) <
-          upperX
+        Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
+          Utility.adjustForDecimalPlaces(upperX, places)
       ) {
         let scope = new Map();
         scope.set(indepVar, samples[sz - 1].x + step);
@@ -2115,7 +2126,7 @@ class Utility {
         x_upper = samples[sz - 1].x + step - n * inc;
         samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
           x_upper,
-          obj.xDecimalPlaces
+          places
         );
         reSample = true;
       }
@@ -2132,13 +2143,13 @@ class Utility {
       }
     }
 
-    samples = samples.map((pt) => {
-      if ($.isNumeric(obj.xDecimalPlaces))
-        pt.x = Utility.adjustForDecimalPlaces(pt.x, obj.xDecimalPlaces);
-      if ($.isNumeric(obj.yDecimalPlaces))
-        pt.y = Utility.adjustForDecimalPlaces(pt.y, obj.yDecimalPlaces);
-      return pt;
-    });
+    // samples = samples.map((pt) => {
+    //   if ($.isNumeric(obj.xDecimalPlaces))
+    //     pt.x = Utility.adjustForDecimalPlaces(pt.x, obj.xDecimalPlaces);
+    //   if ($.isNumeric(obj.yDecimalPlaces))
+    //     pt.y = Utility.adjustForDecimalPlaces(pt.y, obj.yDecimalPlaces);
+    //   return pt;
+    // });
 
     return samples;
   }
@@ -2242,6 +2253,11 @@ class Utility {
         arr.push(pt1);
       }
     }
+    arr = arr.map((pt) => {
+      pt.x = Utility.adjustForDecimalPlaces(pt.x, 100);
+      pt.y = Utility.adjustForDecimalPlaces(pt.y, 200);
+      return pt;
+    });
     return arr;
   }
 
@@ -3153,6 +3169,52 @@ class Utility {
   }
 
   static grapherDeterminedDecimalPlaces(curve) {
+    let decimalPlacesX = 2;
+    let decimalPlacesY = 2;
+
+    if (
+      Utility.errorResponse === Utility.silentIgnore &&
+      curve.discontinuity &&
+      curve.discontinuity.length > 0
+    ) {
+      return { decimalPlacesX: 200, decimalPlacesY: 200 };
+    }
+
+    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) {
+      return { decimalPlacesX, decimalPlacesY };
+    }
+
+    const { width, height } = curve.boundingRect().size();
+
+    //console.log(width, height);
+
+    if (width >= 10 && width < 20) {
+      decimalPlacesX = 3;
+    } else if (width >= 1 && width < 10) {
+      decimalPlacesX = 4;
+    } else if (width < 1) {
+      decimalPlacesX = Math.min(
+        300,
+        2 * Math.max(2, Math.abs(Math.ceil(math.log(width, 10))))
+      );
+    }
+
+    if (height >= 10 && height < 20) {
+      decimalPlacesY = 3;
+    } else if (height >= 1 && height < 10) {
+      decimalPlacesY = 4;
+    } else if (height < 1) {
+      decimalPlacesY = Math.min(
+        300,
+        2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))
+      );
+    }
+
+    //console.log({ decimalPlacesX, decimalPlacesY });
+    return { decimalPlacesX, decimalPlacesY };
+  }
+
+  static grapherDeterminedDecimalPlaces1(curve) {
     function countPlaces() {
       let placesX = 60;
       let placesY = 60;
@@ -3229,6 +3291,9 @@ class Utility {
     if (decimalPlacesY == 0) {
       decimalPlacesY = 4;
     }
+    decimalPlacesY = Math.max(decimalPlacesY, Math.round(2 * decimalPlacesX));
+    decimalPlacesX = Math.min(300, decimalPlacesX);
+    decimalPlacesY = Math.min(300, decimalPlacesY);
     return { decimalPlacesX, decimalPlacesY };
   }
 

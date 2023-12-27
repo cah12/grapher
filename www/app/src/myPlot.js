@@ -781,7 +781,7 @@ class MyPlot extends Plot {
         }
         if (samples.length == 0) {
           Utility.alert(
-            `Unable to derive samples for "${fn}". Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
+            `Unable to derive samples for "${fn}".\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
           );
           //self._functionDlg.close();
           //self._functionDlg.closeDlg = true;
@@ -933,6 +933,46 @@ class MyPlot extends Plot {
         precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
         decimalPlacesY = curves[0].plot().axisDecimalPlaces(curves[0].yAxis());
         decimalPlacesX = curves[0].plot().axisDecimalPlaces(curves[0].xAxis());
+
+        /* Utility.alert(
+            `Unable to derive samples for "${fn}".\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-200, 1e+200].`
+          ); */
+        let invalid = false;
+        for (let i = 0; i < curves.length; i++) {
+          const curve = curves[i];
+          const minXVal = math.abs(curve.minXValue());
+          const minYVal = math.abs(curve.minYValue());
+          const maxXVal = math.abs(curve.maxXValue());
+          const maxYVal = math.abs(curve.maxYValue());
+
+          if (minXVal !== 0) {
+            if (minXVal < 1e-100) {
+              invalid = true;
+            }
+          }
+          if (minYVal !== 0) {
+            if (minYVal < 1e-100) {
+              invalid = true;
+            }
+          }
+          if (maxXVal !== 0) {
+            if (maxXVal > 1e100) {
+              invalid = true;
+            }
+          }
+          if (maxYVal !== 0) {
+            if (maxYVal > 1e100) {
+              invalid = true;
+            }
+          }
+
+          if (invalid) {
+            Utility.alert(
+              `Unable to perform the operation. Check that values in the domain and range are within [1e-100, 1e+100] and [1e-200, 1e+200] respectively.`
+            );
+            return;
+          }
+        }
       }
 
       function getArrowSymbolCount() {
@@ -1707,7 +1747,12 @@ class MyPlot extends Plot {
         if (!prefix) {
           prefix = "X";
         }
-        //console.log(curves);
+        // console.log(
+        //   "xAxis decimalPlaces:" + self.axisDecimalPlaces(curves[0].xAxis())
+        // );
+        // console.log(
+        //   "yAxis decimalPlaces:" + self.axisDecimalPlaces(curves[0].yAxis())
+        // );
         if (curves.length > 1) {
           if (curves[0].title() == curves[1].title()) {
             alert("Cannot find the intersection of a curve with itself.");
@@ -1872,7 +1917,7 @@ class MyPlot extends Plot {
           } */
 
           //const round = 30;
-          const m_eps = 1e-14;
+          const m_eps = 1e-300;
           //const m_eps = 2.22e-16;
           let samples1 = curves[0].data().samples();
           let samples2 = curves[1].data().samples();
@@ -1925,6 +1970,7 @@ class MyPlot extends Plot {
             samples2 = temp;
           }
 
+          //console.log(samples2);
           if (
             (samples1.length == 2 ||
               Utility.linearEquationFromPoints(samples1[0], samples1[1], 10) ==
@@ -1973,16 +2019,16 @@ class MyPlot extends Plot {
             //   .plot()
             //   .axisDecimalPlaces(curves[0].xAxis());
 
-            let x = Utility.toPrecision(
-              Utility.adjustForDecimalPlaces(point[0], decimalPlacesX),
-              precisionX
-            );
-            let y = Utility.toPrecision(
-              Utility.adjustForDecimalPlaces(point[1], decimalPlacesY),
-              precisionY
-            );
-            // let x = Utility.adjustForDecimalPlaces(point[0], decimalPlacesX);
-            // let y = Utility.adjustForDecimalPlaces(point[1], decimalPlacesY);
+            // let x = Utility.toPrecision(
+            //   Utility.adjustForDecimalPlaces(point[0], decimalPlacesX),
+            //   precisionX
+            // );
+            // let y = Utility.toPrecision(
+            //   Utility.adjustForDecimalPlaces(point[1], decimalPlacesY),
+            //   precisionY
+            // );
+            let x = Utility.adjustForDecimalPlaces(point[0]);
+            let y = Utility.adjustForDecimalPlaces(point[1]);
 
             if (x == "Infinity" || y == "Infinity") {
               alert(`0 points of intersection:\n`);
