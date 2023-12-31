@@ -3197,7 +3197,9 @@ class Utility {
       numberOfDigits = 16;
     }
     //return math.format(value, {precision: numberOfDigits});
-    return value.toPrecision(numberOfDigits);
+    value = parseFloat(value);
+    if ($.isNumeric(value)) return value.toPrecision(numberOfDigits);
+    return value;
   }
 
   static grapherDeterminedDecimalPlaces(curve) {
