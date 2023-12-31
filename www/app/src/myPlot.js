@@ -2113,41 +2113,60 @@ class MyPlot extends Plot {
             tempSamples = [];
           }
 
+          let samples1_minY = curves[0].minYValue();
+          let samples1_maxY = curves[0].maxYValue();
+          let samples2_minY = curves[1].minYValue();
+          let samples2_maxY = curves[1].maxYValue();
+
           if (samples2.length == 2 && samples1.length > 2) {
             const temp = samples1;
             samples1 = samples2;
             samples2 = temp;
+
+            const temp_samples1_minY = samples1_minY;
+            samples1_minY = samples2_minY;
+            samples2_minY = temp_samples1_minY;
+
+            const temp_samples2_maxY = samples2_maxY;
+            samples2_maxY = samples1_maxY;
+            samples1_maxY = temp_samples2_maxY;
           }
 
           let parallelToXAxis_1 = false;
           let parallelToXAxis_2 = false;
           let parallelToXAxis = false;
 
-          if (samples1[0].y === samples1[1].y) {
+          if (
+            samples1[0].y === samples1[1].y &&
+            (samples2_minY == samples1[0].y || samples2_maxY == samples1[0].y)
+          ) {
             //console.log("samples1 parallel to x-axis");
             parallelToXAxis_1 = true;
           }
 
-          if (samples2[0].y === samples2[1].y) {
+          if (
+            samples2[0].y === samples2[1].y &&
+            (samples1_minY == samples2[0].y || samples1_maxY == samples2[0].y)
+          ) {
             //console.log("samples2 parallel to x-axis");
             parallelToXAxis_2 = true;
           }
 
           if (parallelToXAxis_1 && !parallelToXAxis_2) {
-            parallelToXAxis = true;
             const y = samples1[0].y;
             for (let i = 0; i < samples2.length; i++) {
               if (samples2[i].y == y) {
                 res.push(samples2[i]);
+                parallelToXAxis = true;
               }
             }
           }
           if (parallelToXAxis_2 && !parallelToXAxis_1) {
-            parallelToXAxis = true;
             const y = samples2[0].y;
             for (let i = 0; i < samples1.length; i++) {
               if (samples1[i].y == y) {
                 res.push(samples1[i]);
+                parallelToXAxis = true;
               }
             }
           }
@@ -2514,10 +2533,7 @@ class MyPlot extends Plot {
 
           res = res.filter((item, index) => {
             if (index > 0) {
-              return (
-                res[index - 1].x !== res[index].x &&
-                res[index - 1].y !== res[index].y
-              );
+              return res[index - 1].x !== res[index].x;
             }
             return true;
           });
