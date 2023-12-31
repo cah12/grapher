@@ -1067,7 +1067,7 @@ class MyPlot extends Plot {
             }
           }
           if (minYVal !== 0) {
-            if (minYVal < 1e-200) {
+            if (minYVal < 1e-300) {
               invalid = true;
             }
           }
