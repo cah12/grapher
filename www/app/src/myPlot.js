@@ -846,12 +846,128 @@ class MyPlot extends Plot {
           var decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
         }
 
-        m_samples = m_samples.map(function (e) {
-          return new Misc.Point(
-            Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
-            Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
-          );
-        });
+        const tps = newCurve.turningPoints;
+        if (tps && tps.length) {
+          let scaleX = 1;
+          let scaleY = 1;
+          const width =
+            math.max(
+              math.abs(newCurve.minXValue()),
+              math.abs(newCurve.maxXValue())
+            ) * 2;
+          const height =
+            math.max(
+              math.abs(newCurve.minYValue()),
+              math.abs(newCurve.maxYValue())
+            ) * 2;
+          //const { width, height } = newCurve.boundingRect().size();
+          if (width > 1e6) {
+            scaleX = 1e6 / width;
+          }
+          if (height > 1e6) {
+            scaleY = 1e6 / height;
+          }
+
+          let n = 0;
+          m_samples = m_samples.map(function (e) {
+            //if (scaleX !== 1 || scaleY !== 1) {
+            if (tps && Utility.isPointATurningPoint(tps, e)) {
+              let pt = new Misc.Point(
+                Utility.adjustForDecimalPlaces(
+                  e.x * scaleX,
+                  decimalPlacesX / 2
+                ),
+                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
+              );
+              pt.x = pt.x / scaleX;
+              pt.y = pt.y / scaleY;
+              newCurve.turningPoints[n] = pt;
+              n++;
+              return pt;
+            }
+            // }
+            return new Misc.Point(
+              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
+              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
+            );
+          });
+
+          // newCurve.turningPoints = newCurve.turningPoints.filter(
+          //   (item, index) => {
+          //     if (index > 0) {
+          //       return (
+          //         newCurve.turningPoints[index - 1].x !==
+          //           newCurve.turningPoints[index].x &&
+          //         newCurve.turningPoints[index - 1].y !==
+          //           newCurve.turningPoints[index].y
+          //       );
+          //     }
+          //     return true;
+          //   }
+          // );
+        }
+
+        const ips = newCurve.inflectionPoints;
+        if (ips && ips.length) {
+          let scaleX = 1;
+          let scaleY = 1;
+          const width =
+            math.max(
+              math.abs(newCurve.minXValue()),
+              math.abs(newCurve.maxXValue())
+            ) * 2;
+          const height =
+            math.max(
+              math.abs(newCurve.minYValue()),
+              math.abs(newCurve.maxYValue())
+            ) * 2;
+          //const { width, height } = newCurve.boundingRect().size();
+          if (width > 1e6) {
+            scaleX = 1e6 / width;
+          }
+          if (height > 1e6) {
+            scaleY = 1e6 / height;
+          }
+
+          let n = 0;
+          m_samples = m_samples.map(function (e) {
+            // if (scaleX !== 1 || scaleY !== 1) {
+            if (ips && Utility.isPointATurningPoint(ips, e)) {
+              let pt = new Misc.Point(
+                Utility.adjustForDecimalPlaces(
+                  e.x * scaleX,
+                  decimalPlacesX / 2
+                ),
+                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
+              );
+              pt.x = pt.x / scaleX;
+              pt.y = pt.y / scaleY;
+              newCurve.inflectionPoints[n] = pt;
+              n++;
+              return pt;
+            }
+            // }
+            return new Misc.Point(
+              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
+              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
+            );
+          });
+
+          // newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
+          //   (item, index) => {
+          //     if (index > 0) {
+          //       return (
+          //         newCurve.inflectionPoints[index - 1].x !==
+          //           newCurve.inflectionPoints[index].x &&
+          //         newCurve.inflectionPoints[index - 1].y !==
+          //           newCurve.inflectionPoints[index].y
+          //       );
+          //     }
+          //     return true;
+          //   }
+          // );
+        }
+
         newCurve.setSamples(m_samples);
 
         if (!functionDlgData) newCurve.attach(self);
@@ -951,7 +1067,7 @@ class MyPlot extends Plot {
             }
           }
           if (minYVal !== 0) {
-            if (minYVal < 1e-100) {
+            if (minYVal < 1e-200) {
               invalid = true;
             }
           }
@@ -961,7 +1077,7 @@ class MyPlot extends Plot {
             }
           }
           if (maxYVal !== 0) {
-            if (maxYVal > 1e100) {
+            if (maxYVal > 1e300) {
               invalid = true;
             }
           }
@@ -974,6 +1090,19 @@ class MyPlot extends Plot {
           }
         }
       }
+
+      // for (let i = 0; i < curves.length; i++) {
+      //   const curve = curves[i];
+      //   if(curve.turningPoints){
+      //     let tps = curve.turningPoints;
+      //     tps = tps.map((pt)=>{
+      //       pt.x = Utility.adjustForDecimalPlaces(pt.x, Math.min(100, decimalPlacesX/2));
+      //       pt.y = Utility.adjustForDecimalPlaces(pt.y, Math.min(100, decimalPlacesY/2));
+      //       return pt;
+      //     });
+      //     curve.turningPoints = tps;
+      //   }
+      // }
 
       function getArrowSymbolCount() {
         let list = self.itemList(PlotItem.RttiValues.Rtti_PlotMarker);
@@ -1568,9 +1697,25 @@ class MyPlot extends Plot {
             let tempCurve = new MyCurve();
             tempCurve.fn = "0";
             tempCurve.setAxes(curve.xAxis(), curve.yAxis());
+
+            const minX = curve.minXValue();
+            const maxX = curve.maxXValue();
+            /* const numberOfSteps = 200;
+            const step = (maxX - minX) / numberOfSteps;
+            let samples = [];
+
+            for (let i = 0; i < numberOfSteps; i++) {
+              samples.push(new Misc.Point(minX + i * step, 0));
+            }
+
+            if (samples[numberOfSteps - 1].x !== maxX) {
+              samples[numberOfSteps - 1] = new Misc.Point(maxX, 0);
+            }
+            tempCurve.setSamples(samples);
+            */
             tempCurve.setSamples([
-              new Misc.Point(curve.minXValue(), 0),
-              new Misc.Point(curve.maxXValue(), 0),
+              new Misc.Point(minX, 0),
+              new Misc.Point(maxX, 0),
             ]);
             self.curveSelector.operationType = "Intersection";
             m_curves.push(tempCurve);
@@ -1925,10 +2070,12 @@ class MyPlot extends Plot {
           let tempSamples = [];
           while (samples1.length > 160) {
             const tps = curves[0].turningPoints;
+            const ips = curves[0].inflectionPoints;
             for (let i = 0; i < samples1.length; i++) {
               if (
                 i % 2 == 0 ||
-                Utility.isPointATurningPoint(tps, samples1[i])
+                Utility.isPointATurningPoint(tps, samples1[i]) ||
+                Utility.isInflectionPoint(ips, samples1[i])
               ) {
                 tempSamples.push(samples1[i]);
               }
@@ -1946,10 +2093,12 @@ class MyPlot extends Plot {
           tempSamples = [];
           while (samples2.length > 160) {
             const tps = curves[1].turningPoints;
+            const ips = curves[0].inflectionPoints;
             for (let i = 0; i < samples2.length; i++) {
               if (
                 i % 2 == 0 ||
-                Utility.isPointATurningPoint(tps, samples2[i])
+                Utility.isPointATurningPoint(tps, samples2[i]) ||
+                Utility.isInflectionPoint(ips, samples2[i])
               ) {
                 tempSamples.push(samples2[i]);
               }
@@ -1970,221 +2119,278 @@ class MyPlot extends Plot {
             samples2 = temp;
           }
 
+          let parallelToXAxis_1 = false;
+          let parallelToXAxis_2 = false;
+          let parallelToXAxis = false;
+
+          if (samples1[0].y === samples1[1].y) {
+            //console.log("samples1 parallel to x-axis");
+            parallelToXAxis_1 = true;
+          }
+
+          if (samples2[0].y === samples2[1].y) {
+            //console.log("samples2 parallel to x-axis");
+            parallelToXAxis_2 = true;
+          }
+
+          if (parallelToXAxis_1 && !parallelToXAxis_2) {
+            parallelToXAxis = true;
+            const y = samples1[0].y;
+            for (let i = 0; i < samples2.length; i++) {
+              if (samples2[i].y == y) {
+                res.push(samples2[i]);
+              }
+            }
+          }
+          if (parallelToXAxis_2 && !parallelToXAxis_1) {
+            parallelToXAxis = true;
+            const y = samples2[0].y;
+            for (let i = 0; i < samples1.length; i++) {
+              if (samples1[i].y == y) {
+                res.push(samples1[i]);
+              }
+            }
+          }
+
           //console.log(samples2);
-          if (
-            (samples1.length == 2 ||
-              Utility.linearEquationFromPoints(samples1[0], samples1[1], 10) ==
+          else if (
+            /* (samples1.length == 2 && samples2.length == 2) ||
+            (samples1.length == 2 &&
+              Utility.linearEquationFromPoints(
+                samples2[0],
+                samples2[1],
+                decimalPlacesY / 2
+              ) ==
+                Utility.linearEquationFromPoints(
+                  samples2[1],
+                  samples2[2],
+                  decimalPlacesY / 2
+                )) ||
+            (samples2.length == 2 &&
+              Utility.linearEquationFromPoints(
+                samples1[0],
+                samples1[1],
+                decimalPlacesY / 2
+              ) ==
                 Utility.linearEquationFromPoints(
                   samples1[1],
                   samples1[2],
-                  10
-                )) &&
-            (samples2.length == 2 ||
-              Utility.linearEquationFromPoints(samples2[0], samples2[1], 10) ==
-                Utility.linearEquationFromPoints(samples2[1], samples2[2], 10))
+                  decimalPlacesY / 2
+                )) */
+            0
           ) {
-            //Intersect line
-            let point1Line1 = [samples1[0].x, samples1[0].y];
-            let point2Line1 = [
-              samples1[samples1.length - 1].x,
-              samples1[samples1.length - 1].y,
-            ];
+            if (
+              /* Utility.linearEquationFromPoints(
+                samples1[0],
+                samples1[1],
+                decimalPlacesY / 2
+              ) ==
+                Utility.linearEquationFromPoints(
+                  samples1[1],
+                  samples1[2],
+                  decimalPlacesY / 2
+                ) &&
+              Utility.linearEquationFromPoints(
+                samples2[0],
+                samples2[1],
+                decimalPlacesY / 2
+              ) ==
+                Utility.linearEquationFromPoints(
+                  samples2[1],
+                  samples2[2],
+                  decimalPlacesY / 2
+                ) */
+              1
+            ) {
+              //Intersect line
+              let point1Line1 = [samples1[0].x, samples1[0].y];
+              let point2Line1 = [
+                samples1[samples1.length - 1].x,
+                samples1[samples1.length - 1].y,
+              ];
 
-            let point1Line2 = [samples2[0].x, samples2[0].y];
-            let point2Line2 = [
-              samples2[samples2.length - 1].x,
-              samples2[samples2.length - 1].y,
-            ];
+              let point1Line2 = [samples2[0].x, samples2[0].y];
+              let point2Line2 = [
+                samples2[samples2.length - 1].x,
+                samples2[samples2.length - 1].y,
+              ];
 
-            let point = math.intersect(
-              point1Line1,
-              point2Line1,
-              point1Line2,
-              point2Line2
-            );
+              let point = math.intersect(
+                point1Line1,
+                point2Line1,
+                point1Line2,
+                point2Line2
+              );
 
-            if (!point) {
-              point = [0, 0];
-              // console.log(point);
-              //console.log(point1Line1, point2Line1, point1Line2, point2Line2);
+              if (point) {
+                //   point = [0, 0];
+                //   // console.log(point);
+                //   //console.log(point1Line1, point2Line1, point1Line2, point2Line2);
+                // }
+
+                let x = Utility.adjustForDecimalPlaces(point[0]);
+                let y = Utility.adjustForDecimalPlaces(point[1]);
+
+                if (x == "Infinity" || y == "Infinity") {
+                  if (prefix === "x~") alert(`0 x-intercept:\n`);
+                  else alert(`0 points of intersection:\n`);
+                  return;
+                }
+
+                const element = new Misc.Point(x, y);
+                const { spacing, align } = getArrowSymbolProperties();
+                const ipName = Utility.generateCurveName(self, prefix);
+                const marker = new PlotMarker(ipName);
+                marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+                marker.setXAxis(curves[0].xAxis());
+                marker.setYAxis(curves[0].yAxis());
+
+                // const sym = new Symbol2();
+                // sym.setBrush(new Misc.Brush(Static.NoBrush));
+                // sym.setSize(new Misc.Size(10, 10));
+                // sym.setStyle(Symbol2.Style.Ellipse);
+                // marker.setSymbol(sym);
+
+                marker.setSymbol(new PointMarkerSymbol());
+                let toolTipName = "Intersection point:";
+                if (ipName.indexOf("x~") !== -1) {
+                  toolTipName = "X-Intercept:";
+                }
+                marker.toolTipValueName = toolTipName;
+
+                marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+                marker.setLegendIconSize(new Misc.Size(10, 10));
+
+                marker.setValue(element);
+                marker.setLabel(ipName);
+                var m_symbol = marker.symbol();
+                m_symbol.setSize(new Misc.Size(10, 10));
+                marker.setLabelAlignment(align | Static.AlignBottom);
+                marker.setSpacing(spacing);
+
+                marker.setLabelFont(
+                  new Misc.Font({
+                    fontColor: "#000000",
+                    name: "Times New Roman",
+                    style: "normal",
+                    th: 12,
+                    weight: "bold",
+                  })
+                );
+
+                marker.attach(self);
+                return;
+              }
             }
-
-            // let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
-            // let precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
-            // //const precision = Math.min(precisionX, precisionY);
-            // let decimalPlacesY = curves[0]
-            //   .plot()
-            //   .axisDecimalPlaces(curves[0].yAxis());
-            // let decimalPlacesX = curves[0]
-            //   .plot()
-            //   .axisDecimalPlaces(curves[0].xAxis());
-
-            // let x = Utility.toPrecision(
-            //   Utility.adjustForDecimalPlaces(point[0], decimalPlacesX),
-            //   precisionX
-            // );
-            // let y = Utility.toPrecision(
-            //   Utility.adjustForDecimalPlaces(point[1], decimalPlacesY),
-            //   precisionY
-            // );
-            let x = Utility.adjustForDecimalPlaces(point[0]);
-            let y = Utility.adjustForDecimalPlaces(point[1]);
-
-            if (x == "Infinity" || y == "Infinity") {
-              alert(`0 points of intersection:\n`);
-              return;
-            }
-
-            const element = new Misc.Point(x, y);
-            const { spacing, align } = getArrowSymbolProperties();
-            const ipName = Utility.generateCurveName(self, prefix);
-            const marker = new PlotMarker(ipName);
-            marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
-            marker.setXAxis(curves[0].xAxis());
-            marker.setYAxis(curves[0].yAxis());
-
-            // const sym = new Symbol2();
-            // sym.setBrush(new Misc.Brush(Static.NoBrush));
-            // sym.setSize(new Misc.Size(10, 10));
-            // sym.setStyle(Symbol2.Style.Ellipse);
-            // marker.setSymbol(sym);
-
-            marker.setSymbol(new PointMarkerSymbol());
-            let toolTipName = "Intersection point:";
-            if (ipName.indexOf("x~") !== -1) {
-              toolTipName = "X-Intercept:";
-            }
-            marker.toolTipValueName = toolTipName;
-
-            marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-            marker.setLegendIconSize(new Misc.Size(10, 10));
-
-            marker.setValue(element);
-            marker.setLabel(ipName);
-            var m_symbol = marker.symbol();
-            m_symbol.setSize(new Misc.Size(10, 10));
-            marker.setLabelAlignment(align | Static.AlignBottom);
-            marker.setSpacing(spacing);
-
-            marker.setLabelFont(
-              new Misc.Font({
-                fontColor: "#000000",
-                name: "Times New Roman",
-                style: "normal",
-                th: 12,
-                weight: "bold",
-              })
-            );
-
-            marker.attach(self);
-            return;
           }
 
           /////////////////////////////////////////////////////////////
 
-          if (samples1.length >= samples2.length) {
-            for (let i = 0; i < samples1.length; i++) {
-              for (let n = 0; n < samples2.length; n++) {
-                if (
-                  samples1[i].x == samples2[n].x &&
-                  samples1[i].y == samples2[n].y
-                ) {
-                  res.push(samples2[n]);
+          if (!parallelToXAxis) {
+            if (samples1.length >= samples2.length) {
+              for (let i = 0; i < samples1.length; i++) {
+                for (let n = 0; n < samples2.length; n++) {
+                  if (
+                    samples1[i].x == samples2[n].x &&
+                    samples1[i].y == samples2[n].y
+                  ) {
+                    res.push(samples2[n]);
+                  }
+                }
+              }
+            } else {
+              for (let i = 0; i < samples2.length; i++) {
+                for (let n = 0; n < samples1.length; n++) {
+                  if (
+                    samples2[i].x == samples1[n].x &&
+                    samples2[i].y == samples1[n].y
+                  ) {
+                    res.push(samples1[n]);
+                  }
                 }
               }
             }
-          } else {
-            for (let i = 0; i < samples2.length; i++) {
-              for (let n = 0; n < samples1.length; n++) {
-                if (
-                  samples2[i].x == samples1[n].x &&
-                  samples2[i].y == samples1[n].y
-                ) {
-                  res.push(samples1[n]);
-                }
-              }
-            }
-          }
 
-          for (let i = 1; i < samples1.length; i++) {
-            let point1Line1 = [
-              samples1[i - 1].x,
-              Math.abs(samples1[i - 1].y) < m_eps ? 0 : samples1[i - 1].y,
-            ];
-            let point2Line1 = [
-              samples1[i].x,
-              Math.abs(samples1[i].y) < m_eps ? 0 : samples1[i].y,
-            ];
-
-            let rect1 = new Misc.Rect(
-              point1Line1[0],
-              point1Line1[1],
-              point2Line1[0] - point1Line1[0],
-              point2Line1[1] - point1Line1[1]
-            ).normalized();
-
-            for (let j = 1; j < samples2.length; j++) {
-              let point1Line2 = [
-                samples2[j - 1].x,
-                Math.abs(samples2[j - 1].y) < m_eps ? 0 : samples2[j - 1].y,
+            for (let i = 1; i < samples1.length; i++) {
+              let point1Line1 = [
+                samples1[i - 1].x,
+                Math.abs(samples1[i - 1].y) < m_eps ? 0 : samples1[i - 1].y,
               ];
-              let point2Line2 = [
-                samples2[j].x,
-                Math.abs(samples2[j].y) < m_eps ? 0 : samples2[j].y,
+              let point2Line1 = [
+                samples1[i].x,
+                Math.abs(samples1[i].y) < m_eps ? 0 : samples1[i].y,
               ];
 
-              let rect2 = new Misc.Rect(
-                point1Line2[0],
-                point1Line2[1],
-                point2Line2[0] - point1Line2[0],
-                point2Line2[1] - point1Line2[1]
+              let rect1 = new Misc.Rect(
+                point1Line1[0],
+                point1Line1[1],
+                point2Line1[0] - point1Line1[0],
+                point2Line1[1] - point1Line1[1]
               ).normalized();
 
-              if (rect1.intersects(rect2)) {
-                let point = math.intersect(
-                  point1Line1,
-                  point2Line1,
-                  point1Line2,
-                  point2Line2
-                );
+              for (let j = 1; j < samples2.length; j++) {
+                let point1Line2 = [
+                  samples2[j - 1].x,
+                  Math.abs(samples2[j - 1].y) < m_eps ? 0 : samples2[j - 1].y,
+                ];
+                let point2Line2 = [
+                  samples2[j].x,
+                  Math.abs(samples2[j].y) < m_eps ? 0 : samples2[j].y,
+                ];
 
-                //console.log(point);
-                if (!point) {
-                  continue;
-                  // point = [0, 0];
-                  // console.log(point);
-                }
-                let pt = new Misc.Point(point[0], point[1]);
+                let rect2 = new Misc.Rect(
+                  point1Line2[0],
+                  point1Line2[1],
+                  point2Line2[0] - point1Line2[0],
+                  point2Line2[1] - point1Line2[1]
+                ).normalized();
 
-                // function resHasPoint(pt) {
-                //   for (let i = 0; i < res.length; i++) {
-                //     //if (res[i].isEqual(pt)) return true;
-                //     if (
-                //       Utility.adjustForDecimalPlaces(
-                //         res[i].x,
-                //         decimalPlacesX
-                //       ) ==
-                //       Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
-                //       Utility.adjustForDecimalPlaces(
-                //         res[i].y,
-                //         decimalPlacesY
-                //       ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
-                //     ) {
-                //       return true;
-                //     }
-                //   }
-                //   return false;
-                // }
+                if (rect1.intersects(rect2)) {
+                  let point = math.intersect(
+                    point1Line1,
+                    point2Line1,
+                    point1Line2,
+                    point2Line2
+                  );
 
-                if (
-                  (point &&
-                    rect2.contains(pt, false) &&
-                    rect1.contains(pt, false)) ||
-                  (rect1.height() == 0 && rect2.contains(pt, false)) ||
-                  (rect2.height() == 0 && rect1.contains(pt, false))
-                ) {
-                  if (!Utility.arrayHasPoint(res, pt, decimalPlacesX)) {
-                    res.push(pt);
+                  //console.log(point);
+                  if (!point) {
+                    continue;
+                    // point = [0, 0];
+                    // console.log(point);
+                  }
+                  let pt = new Misc.Point(point[0], point[1]);
+
+                  // function resHasPoint(pt) {
+                  //   for (let i = 0; i < res.length; i++) {
+                  //     //if (res[i].isEqual(pt)) return true;
+                  //     if (
+                  //       Utility.adjustForDecimalPlaces(
+                  //         res[i].x,
+                  //         decimalPlacesX
+                  //       ) ==
+                  //       Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
+                  //       Utility.adjustForDecimalPlaces(
+                  //         res[i].y,
+                  //         decimalPlacesY
+                  //       ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
+                  //     ) {
+                  //       return true;
+                  //     }
+                  //   }
+                  //   return false;
+                  // }
+
+                  if (
+                    (point &&
+                      rect2.contains(pt, false) &&
+                      rect1.contains(pt, false)) ||
+                    (rect1.height() == 0 && rect2.contains(pt, false)) ||
+                    (rect2.height() == 0 && rect1.contains(pt, false))
+                  ) {
+                    if (!Utility.arrayHasPoint(res, pt, decimalPlacesX)) {
+                      res.push(pt);
+                    }
                   }
                 }
               }
@@ -2225,7 +2431,7 @@ class MyPlot extends Plot {
 
               let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
               // const px = 1e-4;
-              const px = 1e-3;
+              const px = 5e-3;
               const step = math.max(
                 1e-5,
                 math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
@@ -2255,7 +2461,7 @@ class MyPlot extends Plot {
                     diff = math.abs(math.evaluate(fx, { x: pt.x }));
                   }
                 }
-                //console.log(n);
+                //console.log("n", n);
 
                 pt.x = pt.x - 0.5 * step;
 
@@ -2270,8 +2476,14 @@ class MyPlot extends Plot {
                     2;
                 }
 
-                pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-                pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+                pt.x = Utility.adjustForDecimalPlaces(
+                  pt.x,
+                  Math.min(100, decimalPlacesX)
+                );
+                pt.y = Utility.adjustForDecimalPlaces(
+                  pt.y,
+                  Math.min(decimalPlacesY)
+                );
                 return pt;
               }
             }
@@ -2279,11 +2491,13 @@ class MyPlot extends Plot {
           }
 
           res = res.map((pt) => {
-            pt = adjustIp(pt);
+            //pt = adjustIp(pt);
             pt.x = parseFloat(pt.x);
             pt.y = parseFloat(pt.y);
             return pt;
           });
+
+          //console.log(res);
 
           let arr = [];
           for (let i = 0; i < res.length; i++) {
@@ -2292,12 +2506,28 @@ class MyPlot extends Plot {
             }
           }
 
-          res = arr;
+          //console.time("adjustIp");
+          res = arr.map((e) => {
+            return adjustIp(e);
+          });
+          //console.timeEnd("adjustIp");
+
+          res = res.filter((item, index) => {
+            if (index > 0) {
+              return (
+                res[index - 1].x !== res[index].x &&
+                res[index - 1].y !== res[index].y
+              );
+            }
+            return true;
+          });
+
+          //res = arr;
 
           let str = "";
           for (let i = 0; i < res.length; i++) {
-            const element = adjustIp(res[i]);
-            //const element = res[i];
+            //const element = adjustIp(res[i]);
+            const element = res[i];
             const { spacing, align } = getArrowSymbolProperties();
             const ipName = Utility.generateCurveName(self, prefix);
             const marker = new PlotMarker(ipName);
@@ -2341,7 +2571,11 @@ class MyPlot extends Plot {
             marker.attach(self);
           }
 
-          if (res.length == 0) alert(`0 points of intersection:\n`);
+          if (res.length == 0) {
+            //alert(`0 points of intersection:\n`);
+            if (prefix === "x~") alert(`No x-intercept:\n`);
+            else alert(`0 points of intersection:\n`);
+          }
         }
       }
     }

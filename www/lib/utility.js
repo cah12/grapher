@@ -1228,9 +1228,12 @@ class Utility {
     //   if (math.abs(c) < eps)
     //     c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
     // }
-    var fn = m.toString();
-    fn += "x+";
-    fn += c.toString();
+    // var fn = m.toString();
+    // fn += "x+";
+    // fn += c.toString();
+
+    var fn = `${m}x+${c}`;
+    console.log("fn:", fn);
     return fn;
   }
 
@@ -1925,7 +1928,7 @@ class Utility {
           yVal = parser.eval({ x: xVal });
           const abs_yVal = Math.abs(yVal);
           if (abs_yVal !== 0) {
-            if (abs_yVal < 1e-300) {
+            if (abs_yVal < 1e-300 || abs_yVal > 1e300) {
               return [];
             }
           }
@@ -2035,11 +2038,16 @@ class Utility {
       return { data: samples, zLimits: { min: zMin, max: zMax } };
     }
     if (!obj.threeD) {
-      obj.inflectionPoints = Utility.curveInflectionPoint(
-        fx,
-        indepVar,
-        samples
-      );
+      let _points = Utility.curveInflectionPoint(fx, indepVar, samples);
+
+      obj.inflectionPoints = _points; //return inflection points to makeSamples() caller
+
+      if (_points.length) {
+        for (let i = 0; i < _points.length; i++) {
+          samples.push(_points[i]);
+        }
+      }
+
       let points = Utility.curveTurningPoint(fx, indepVar, samples);
       //console.log("Add Turning points", points);
 
@@ -2050,96 +2058,108 @@ class Utility {
         for (let i = 0; i < points.length; i++) {
           samples.push(points[i]);
         }
+      }
+      if (lowerX < 0 && upperX > 0) {
+        samples.push(new Misc.Point(0, parser.eval({ x: 0 })));
+      }
 
-        samples = samples.sort(function (a, b) {
-          if (step > 0) return a.x - b.x;
-          else return b.x - a.x;
-        });
+      samples = samples.sort(function (a, b) {
+        if (step > 0) return a.x - b.x;
+        else return b.x - a.x;
+      });
 
-        samples = samples.filter((item, index) => {
-          if (index > 0) {
-            return (
-              samples[index - 1].x !== samples[index].x &&
-              samples[index - 1].y !== samples[index].y
+      samples = samples.filter((item, index) => {
+        if (index > 0) {
+          return (
+            samples[index - 1].x !== samples[index].x ||
+            samples[index - 1].y !== samples[index].y
+          );
+        }
+        return true;
+      });
+
+      let lastPt = samples[samples.length - 1];
+      lastPt.x = upperX;
+      lastPt.y = parser.eval({ x: upperX });
+      if (!obj.adjustingCurve) {
+        const places = Math.min(60, obj.xDecimalPlaces);
+        const inc = step / 2000;
+        let reSample = false;
+        let x_lower;
+        let x_upper;
+        if (
+          samples[0] &&
+          Utility.adjustForDecimalPlaces(samples[0].x, places) >
+            Utility.adjustForDecimalPlaces(lowerX, places)
+        ) {
+          let scope = new Map();
+          scope.set(indepVar, samples[0].x - step);
+          let num = parser.eval(scope);
+
+          let n = 0;
+
+          let x = 0;
+          while (!isFinite(num) && n < 4000) {
+            n++;
+            x = samples[0].x - step + n * inc;
+            scope.set(indepVar, x);
+            num = parser.eval(scope);
+            //console.log("test1", n);
+          }
+
+          x_lower = samples[0].x - step + n * inc;
+          samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
+            x_lower,
+            places
+          );
+          reSample = true;
+        }
+
+        const sz = samples.length;
+        if (
+          samples[sz - 1] &&
+          Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
+            Utility.adjustForDecimalPlaces(upperX, places)
+        ) {
+          let scope = new Map();
+          scope.set(indepVar, samples[sz - 1].x + step);
+          let num = parser.eval(scope);
+
+          let n = 0;
+
+          let x = 0;
+          while (!isFinite(num) && n < 4000) {
+            n++;
+            x = samples[sz - 1].x + step - n * inc;
+            scope.set(indepVar, x);
+            num = parser.eval(scope);
+            // console.log("test2", n);
+          }
+
+          x_upper = samples[sz - 1].x + step - n * inc;
+          samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
+            x_upper,
+            places
+          );
+          reSample = true;
+        }
+
+        if (reSample) {
+          let lowerX = x_lower;
+          let upperX = x_upper;
+          if (obj.xDecimalPlaces) {
+            lowerX = Utility.adjustForDecimalPlaces(
+              x_lower,
+              obj.xDecimalPlaces
+            );
+            upperX = Utility.adjustForDecimalPlaces(
+              x_upper,
+              obj.xDecimalPlaces
             );
           }
-          return true;
-        });
-      }
-    }
 
-    if (!obj.adjustingCurve) {
-      const places = Math.min(60, obj.xDecimalPlaces);
-      const inc = step / 2000;
-      let reSample = false;
-      let x_lower;
-      let x_upper;
-      if (
-        samples[0] &&
-        Utility.adjustForDecimalPlaces(samples[0].x, places) >
-          Utility.adjustForDecimalPlaces(lowerX, places)
-      ) {
-        let scope = new Map();
-        scope.set(indepVar, samples[0].x - step);
-        let num = parser.eval(scope);
-
-        let n = 0;
-
-        let x = 0;
-        while (!isFinite(num) && n < 4000) {
-          n++;
-          x = samples[0].x - step + n * inc;
-          scope.set(indepVar, x);
-          num = parser.eval(scope);
-          //console.log("test1", n);
+          return Utility.makeSamples(obj, { lowerX, upperX });
         }
-
-        x_lower = samples[0].x - step + n * inc;
-        samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
-          x_lower,
-          places
-        );
-        reSample = true;
-      }
-
-      const sz = samples.length;
-      if (
-        samples[sz - 1] &&
-        Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
-          Utility.adjustForDecimalPlaces(upperX, places)
-      ) {
-        let scope = new Map();
-        scope.set(indepVar, samples[sz - 1].x + step);
-        let num = parser.eval(scope);
-
-        let n = 0;
-
-        let x = 0;
-        while (!isFinite(num) && n < 4000) {
-          n++;
-          x = samples[sz - 1].x + step - n * inc;
-          scope.set(indepVar, x);
-          num = parser.eval(scope);
-          // console.log("test2", n);
-        }
-
-        x_upper = samples[sz - 1].x + step - n * inc;
-        samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
-          x_upper,
-          places
-        );
-        reSample = true;
-      }
-
-      if (reSample) {
-        let lowerX = x_lower;
-        let upperX = x_upper;
-        if (obj.xDecimalPlaces) {
-          lowerX = Utility.adjustForDecimalPlaces(x_lower, obj.xDecimalPlaces);
-          upperX = Utility.adjustForDecimalPlaces(x_upper, obj.xDecimalPlaces);
-        }
-
-        return Utility.makeSamples(obj, { lowerX, upperX });
       }
     }
 
@@ -2158,8 +2178,8 @@ class Utility {
     fn,
     variable,
     samples,
-    decimalPlacesX = 4,
-    decimalPlacesY = 4
+    decimalPlacesX = 100,
+    decimalPlacesY = 100
   ) {
     if (!variable || fn.indexOf(variable) == -1) {
       return [];
@@ -2187,16 +2207,18 @@ class Utility {
 
     const parser = new EvaluateExp(derivative);
     let step = 0;
+    const numOfSteps = 1000 / Static.accuracyFactor;
+    step = (samples[1].x - samples[0].x) / numOfSteps;
     let sign = math.sign(parser.eval({ x: samples[0].x }));
-    for (let i = 0; i < samples.length; i++) {
+    for (let i = 1; i < samples.length; i++) {
       ////////////////////////
       //const m = parser.eval({ x: samples[i].x });
       const m = math.sign(parser.eval({ x: samples[i].x }));
       if (m !== sign) {
         //if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
         //Search for turning point
-        const numOfSteps = 200; //1000 / Static.accuracyFactor;
-        step = (samples[i].x - samples[i - 1].x) / numOfSteps;
+        // const numOfSteps = 1000 / Static.accuracyFactor;
+        // step = (samples[i + 1].x - samples[i].x) / numOfSteps;
         let arr = [];
         for (let n = 0; n < numOfSteps; n++) {
           let xVal = samples[i - 1].x + n * step;
@@ -2271,6 +2293,16 @@ class Utility {
     if (!tps) return false;
     for (let i = 0; i < tps.length; i++) {
       if (tps[i].x === pt.x && tps[i].y === pt.y) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static isInflectionPoint(ips, pt) {
+    if (!ips) return false;
+    for (let i = 0; i < ips.length; i++) {
+      if (ips[i].x === pt.x && ips[i].y === pt.y) {
         return true;
       }
     }
@@ -2354,7 +2386,7 @@ class Utility {
         const numOfSteps = 200;
         let minMax;
         const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
-        console.log(step);
+        //console.log(step);
         let xVal;
 
         let arr = [];
@@ -3187,23 +3219,34 @@ class Utility {
     const { width, height } = curve.boundingRect().size();
 
     //console.log(width, height);
-
-    if (width >= 10 && width < 20) {
+    if (width >= 5000) {
+      decimalPlacesX = 0;
+    } else if (width >= 500 && width < 5000) {
+      decimalPlacesX = 1;
+    } else if (width >= 10 && width < 500) {
+      decimalPlacesX = 2;
+    } else if (width >= 10 && width < 20) {
       decimalPlacesX = 3;
-    } else if (width >= 1 && width < 10) {
+    } else if (width >= 0.1 && width < 10) {
       decimalPlacesX = 4;
-    } else if (width < 1) {
+    } else if (width < 0.1) {
       decimalPlacesX = Math.min(
         300,
         2 * Math.max(2, Math.abs(Math.ceil(math.log(width, 10))))
       );
     }
 
-    if (height >= 10 && height < 20) {
+    if (height >= 5000) {
+      decimalPlacesY = 0;
+    } else if (height >= 500 && height < 5000) {
+      decimalPlacesY = 1;
+    } else if (height >= 10 && height < 500) {
+      decimalPlacesY = 2;
+    } else if (height >= 10 && height < 20) {
       decimalPlacesY = 3;
-    } else if (height >= 1 && height < 10) {
-      decimalPlacesY = 4;
-    } else if (height < 1) {
+    } else if (height >= 0.001 && height < 10) {
+      decimalPlacesY = 6;
+    } else if (height < 0.001) {
       decimalPlacesY = Math.min(
         300,
         2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))

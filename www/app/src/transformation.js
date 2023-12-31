@@ -105,15 +105,26 @@ class Transformation {
         };
 
         const _curve = m_plot.functionDlgCb(functionDlgData);
-        const arr = [];
+        let arr = [];
         const tps = curve.turningPoints;
         if (tps) {
           for (let i = 0; i < tps.length; i++) {
             arr.push(new Misc.Point(tps[i].x + param1, tps[i].y + param2));
           }
         }
-
         _curve.turningPoints = arr;
+
+        arr = [];
+        const infltnps = curve.inflectionPoints;
+        if (infltnps) {
+          for (let i = 0; i < infltnps.length; i++) {
+            arr.push(
+              new Misc.Point(infltnps[i].x + param1, infltnps[i].y + param2)
+            );
+          }
+        }
+        _curve.inflectionPoints = arr;
+
         //console.log(_curve.turningPoints, curve.turningPoints);
 
         //_curve.setAxis = true;
