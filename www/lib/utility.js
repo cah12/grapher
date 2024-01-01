@@ -3220,12 +3220,12 @@ class Utility {
 
     const { width, height } = curve.boundingRect().size();
 
-    //console.log(width, height);
+    //console.log(curve.boundingRect().height());
     if (width >= 5000) {
       decimalPlacesX = 0;
-    } else if (width >= 500 && width < 5000) {
+    } else if (width >= 3000 && width < 5000) {
       decimalPlacesX = 1;
-    } else if (width >= 10 && width < 500) {
+    } else if (width >= 10 && width < 3000) {
       decimalPlacesX = 2;
     } else if (width >= 10 && width < 20) {
       decimalPlacesX = 3;
@@ -3240,15 +3240,15 @@ class Utility {
 
     if (height >= 5000) {
       decimalPlacesY = 0;
-    } else if (height >= 500 && height < 5000) {
+    } else if (height >= 3000 && height < 5000) {
       decimalPlacesY = 1;
-    } else if (height >= 10 && height < 500) {
+    } else if (height >= 10 && height < 3000) {
       decimalPlacesY = 2;
     } else if (height >= 10 && height < 20) {
       decimalPlacesY = 3;
-    } else if (height >= 0.001 && height < 10) {
-      decimalPlacesY = 6;
-    } else if (height < 0.001) {
+    } else if (height >= 0.1 && height < 10) {
+      decimalPlacesY = 4;
+    } else if (height < 0.1) {
       decimalPlacesY = Math.min(
         300,
         2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))

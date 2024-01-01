@@ -846,7 +846,8 @@ class MyPlot extends Plot {
           var decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
         }
 
-        const tps = newCurve.turningPoints;
+        /////////////////////////////////////////////////////////////
+        /* const tps = newCurve.turningPoints;
         if (tps && tps.length) {
           let scaleX = 1;
           let scaleY = 1;
@@ -869,15 +870,15 @@ class MyPlot extends Plot {
           }
 
           let n = 0;
-          m_samples = m_samples.map(function (e) {
-            //if (scaleX !== 1 || scaleY !== 1) {
-            if (tps && Utility.isPointATurningPoint(tps, e)) {
-              let pt = new Misc.Point(
-                Utility.adjustForDecimalPlaces(
-                  e.x * scaleX,
-                  decimalPlacesX / 2
-                ),
-                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
+          m_samples = m_samples.map(function (pt) {
+            if (Utility.isPointATurningPoint(tps, pt)) {
+              pt.x = Utility.adjustForDecimalPlaces(
+                pt.x * scaleX,
+                decimalPlacesX / 2
+              );
+              pt.y = Utility.adjustForDecimalPlaces(
+                pt.y * scaleY,
+                decimalPlacesY / 2
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
@@ -885,26 +886,22 @@ class MyPlot extends Plot {
               n++;
               return pt;
             }
-            // }
-            return new Misc.Point(
-              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
-              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
-            );
+            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+            return pt;
           });
 
-          // newCurve.turningPoints = newCurve.turningPoints.filter(
-          //   (item, index) => {
-          //     if (index > 0) {
-          //       return (
-          //         newCurve.turningPoints[index - 1].x !==
-          //           newCurve.turningPoints[index].x &&
-          //         newCurve.turningPoints[index - 1].y !==
-          //           newCurve.turningPoints[index].y
-          //       );
-          //     }
-          //     return true;
-          //   }
-          // );
+          newCurve.turningPoints = newCurve.turningPoints.filter(
+            (item, index) => {
+              if (index > 0) {
+                return (
+                  newCurve.turningPoints[index - 1].x !==
+                  newCurve.turningPoints[index].x
+                );
+              }
+              return true;
+            }
+          );
         }
 
         const ips = newCurve.inflectionPoints;
@@ -930,15 +927,16 @@ class MyPlot extends Plot {
           }
 
           let n = 0;
-          m_samples = m_samples.map(function (e) {
+          m_samples = m_samples.map(function (pt) {
             // if (scaleX !== 1 || scaleY !== 1) {
-            if (ips && Utility.isPointATurningPoint(ips, e)) {
-              let pt = new Misc.Point(
-                Utility.adjustForDecimalPlaces(
-                  e.x * scaleX,
-                  decimalPlacesX / 2
-                ),
-                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
+            if (Utility.isPointATurningPoint(ips, pt)) {
+              pt.x = Utility.adjustForDecimalPlaces(
+                pt.x * scaleX,
+                decimalPlacesX / 2
+              );
+              pt.y = Utility.adjustForDecimalPlaces(
+                pt.y * scaleY,
+                decimalPlacesY / 2
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
@@ -946,27 +944,96 @@ class MyPlot extends Plot {
               n++;
               return pt;
             }
-            // }
-            return new Misc.Point(
-              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
-              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
-            );
+            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+            return pt;
           });
 
-          // newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
-          //   (item, index) => {
-          //     if (index > 0) {
-          //       return (
-          //         newCurve.inflectionPoints[index - 1].x !==
-          //           newCurve.inflectionPoints[index].x &&
-          //         newCurve.inflectionPoints[index - 1].y !==
-          //           newCurve.inflectionPoints[index].y
-          //       );
-          //     }
-          //     return true;
-          //   }
-          // );
+          newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
+            (item, index) => {
+              if (index > 0) {
+                return (
+                  newCurve.inflectionPoints[index - 1].x !==
+                  newCurve.inflectionPoints[index].x
+                );
+              }
+              return true;
+            }
+          );
+        } */
+
+        const tps = newCurve.turningPoints;
+        const ips = newCurve.inflectionPoints;
+        let scaleX = 1;
+        let scaleY = 1;
+        if ((tps && tps.length) || (ips && ips.length)) {
+          const width =
+            math.max(
+              math.abs(newCurve.minXValue()),
+              math.abs(newCurve.maxXValue())
+            ) * 2;
+          const height =
+            math.max(
+              math.abs(newCurve.minYValue()),
+              math.abs(newCurve.maxYValue())
+            ) * 2;
+          //const { width, height } = newCurve.boundingRect().size();
+          if (width > 1e6) {
+            scaleX = 1e6 / width;
+          }
+          if (height > 1e6) {
+            scaleY = 1e6 / height;
+          }
+
+          let n = 0;
+          m_samples = m_samples.map(function (pt) {
+            const tp = Utility.isPointATurningPoint(tps, pt);
+            const ip = Utility.isPointATurningPoint(ips, pt);
+            if (tp || ip) {
+              pt.x = Utility.adjustForDecimalPlaces(
+                pt.x * scaleX,
+                decimalPlacesX / 2
+              );
+              pt.y = Utility.adjustForDecimalPlaces(
+                pt.y * scaleY,
+                decimalPlacesY / 2
+              );
+              pt.x = pt.x / scaleX;
+              pt.y = pt.y / scaleY;
+
+              n++;
+              return pt;
+            }
+            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+            return pt;
+          });
+
+          newCurve.turningPoints = newCurve.turningPoints.filter(
+            (item, index) => {
+              if (index > 0) {
+                return (
+                  newCurve.turningPoints[index - 1].x !==
+                  newCurve.turningPoints[index].x
+                );
+              }
+              return true;
+            }
+          );
+          newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
+            (item, index) => {
+              if (index > 0) {
+                return (
+                  newCurve.inflectionPoints[index - 1].x !==
+                  newCurve.inflectionPoints[index].x
+                );
+              }
+              return true;
+            }
+          );
         }
+
+        /////////////////////////////////////////
 
         newCurve.setSamples(m_samples);
 
@@ -1084,7 +1151,7 @@ class MyPlot extends Plot {
 
           if (invalid) {
             Utility.alert(
-              `Unable to perform the operation. Check that values in the domain and range are within [1e-100, 1e+100] and [1e-200, 1e+200] respectively.`
+              `Unable to perform the operation. Check that values in the domain and range are within [1e-100, 1e+100] and [1e-300, 1e+300] respectively.`
             );
             return;
           }
@@ -2449,8 +2516,8 @@ class MyPlot extends Plot {
               }
 
               let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
-              // const px = 1e-4;
-              const px = 5e-3;
+              const px = 1e-4;
+              //const px = 8e-3;
               const step = math.max(
                 1e-5,
                 math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
