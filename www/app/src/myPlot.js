@@ -986,10 +986,11 @@ class MyPlot extends Plot {
           }
 
           let n = 0;
+          //if(scaleX != 1 && scaleY != 1){
           m_samples = m_samples.map(function (pt) {
             const tp = Utility.isPointATurningPoint(tps, pt);
             const ip = Utility.isPointATurningPoint(ips, pt);
-            if (tp || ip) {
+            if ((tp || ip) && scaleX != 1 && scaleY != 1) {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x * scaleX,
                 decimalPlacesX / 2
@@ -1008,6 +1009,7 @@ class MyPlot extends Plot {
             pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
             return pt;
           });
+          // }
 
           newCurve.turningPoints = newCurve.turningPoints.filter(
             (item, index) => {

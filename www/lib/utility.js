@@ -3203,6 +3203,62 @@ class Utility {
   }
 
   static grapherDeterminedDecimalPlaces(curve) {
+    let decimalPlacesX = 0;
+    let decimalPlacesY = 0;
+
+    const step = curve.sample(1).x - curve.sample(0).x;
+    const { width, height } = curve.boundingRect().size();
+
+    //console.log(step, width, height);
+
+    const p = math.parse(curve.fn);
+    const scope = new Map();
+    let n = 0;
+    const { variable } = curve;
+
+    //x decimal
+    while (n < 300) {
+      const val0 = Utility.adjustForDecimalPlaces(
+        curve.sample(0).x,
+        decimalPlacesX
+      );
+      const val1 = Utility.adjustForDecimalPlaces(
+        curve.sample(1).x,
+        decimalPlacesX
+      );
+      if (val0 != val1) {
+        break;
+      }
+      decimalPlacesX++;
+      n++;
+    }
+    decimalPlacesX += 1;
+
+    //y decimal
+    /* while (n < 300) {
+      scope.set(variable, curve.sample(0).x);
+      const val0 = Utility.adjustForDecimalPlaces(
+        p.evaluate(scope),
+        decimalPlacesX
+      );
+      scope.set(variable, curve.sample(1).x);
+      const val1 = Utility.adjustForDecimalPlaces(
+        p.evaluate(scope),
+        decimalPlacesX
+      );
+      if (val0 != val1) {
+        break;
+      }
+      decimalPlacesY++;
+      n++;
+    } */
+    decimalPlacesY = Math.round(2 * decimalPlacesX);
+
+    console.log({ decimalPlacesX, decimalPlacesY });
+    return { decimalPlacesX, decimalPlacesY };
+  }
+
+  static grapherDeterminedDecimalPlaces1(curve) {
     let decimalPlacesX = 2;
     let decimalPlacesY = 2;
 
@@ -3259,7 +3315,7 @@ class Utility {
     return { decimalPlacesX, decimalPlacesY };
   }
 
-  static grapherDeterminedDecimalPlaces1(curve) {
+  static grapherDeterminedDecimalPlaces2(curve) {
     function countPlaces() {
       let placesX = 60;
       let placesY = 60;
