@@ -870,15 +870,14 @@ class MyPlot extends Plot {
           }
 
           let n = 0;
-          m_samples = m_samples.map(function (pt) {
-            if (Utility.isPointATurningPoint(tps, pt)) {
-              pt.x = Utility.adjustForDecimalPlaces(
-                pt.x * scaleX,
-                decimalPlacesX / 2
-              );
-              pt.y = Utility.adjustForDecimalPlaces(
-                pt.y * scaleY,
-                decimalPlacesY / 2
+          m_samples = m_samples.map(function (e) {
+            if (Utility.isPointATurningPoint(tps, e)) {
+              let pt = new Misc.Point(
+                Utility.adjustForDecimalPlaces(
+                  e.x * scaleX,
+                  decimalPlacesX / 2
+                ),
+                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
@@ -886,9 +885,10 @@ class MyPlot extends Plot {
               n++;
               return pt;
             }
-            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
-            return pt;
+            return new Misc.Point(
+              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
+              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
+            );
           });
 
           newCurve.turningPoints = newCurve.turningPoints.filter(
@@ -902,9 +902,9 @@ class MyPlot extends Plot {
               return true;
             }
           );
-        }
+        } */
 
-        const ips = newCurve.inflectionPoints;
+        /* const ips = newCurve.inflectionPoints;
         if (ips && ips.length) {
           let scaleX = 1;
           let scaleY = 1;
@@ -986,30 +986,33 @@ class MyPlot extends Plot {
           }
 
           let n = 0;
-          //if(scaleX != 1 && scaleY != 1){
           m_samples = m_samples.map(function (pt) {
             const tp = Utility.isPointATurningPoint(tps, pt);
             const ip = Utility.isPointATurningPoint(ips, pt);
-            if ((tp || ip) && scaleX != 1 && scaleY != 1) {
+            /* if ((tp || ip) && (scaleX != 1 || scaleY != 1)) {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x * scaleX,
-                decimalPlacesX / 2
+                decimalPlacesX / (2 - decimalPlacesX * 0.01)
               );
               pt.y = Utility.adjustForDecimalPlaces(
                 pt.y * scaleY,
-                decimalPlacesY / 2
+                decimalPlacesY / (2 - decimalPlacesY * 0.01)
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
 
               n++;
               return pt;
+            } */
+            if (tp || ip) {
+              pt.x = Utility.adjustForDecimalPlaces(
+                pt.x,
+                decimalPlacesX / (1 + decimalPlacesX * 0.003)
+              );
+              //pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
             }
-            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
             return pt;
           });
-          // }
 
           newCurve.turningPoints = newCurve.turningPoints.filter(
             (item, index) => {

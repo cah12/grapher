@@ -2244,6 +2244,10 @@ class Utility {
     step = samples[1].x - samples[0].x;
     for (let i = 0; i < result.length; i++) {
       const x = result[i].x;
+      if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
+        arr.push(result[i]);
+        continue;
+      }
       let pt1 = new Misc.Point(x - step, math.evaluate(fn, { x: x - step }));
       let pt2 = new Misc.Point(x, math.evaluate(fn, { x }));
       const slopeBeforeTp = Utility.slope(pt1, pt2);
@@ -2275,11 +2279,11 @@ class Utility {
         arr.push(pt1);
       }
     }
-    arr = arr.map((pt) => {
-      pt.x = Utility.adjustForDecimalPlaces(pt.x, 100);
-      pt.y = Utility.adjustForDecimalPlaces(pt.y, 200);
-      return pt;
-    });
+    // arr = arr.map((pt) => {
+    //   pt.x = Utility.adjustForDecimalPlaces(pt.x, 100);
+    //   pt.y = Utility.adjustForDecimalPlaces(pt.y, 200);
+    //   return pt;
+    // });
     return arr;
   }
 
@@ -3202,59 +3206,44 @@ class Utility {
     return value;
   }
 
+  static decimalPlaces(num) {
+    var match = ("" + num).match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+    if (!match) {
+      return 0;
+    }
+    return Math.max(
+      0,
+      // Number of digits right of decimal point.
+      (match[1] ? match[1].length : 0) -
+        // Adjust for scientific notation.
+        (match[2] ? +match[2] : 0)
+    );
+  }
+
   static grapherDeterminedDecimalPlaces(curve) {
-    let decimalPlacesX = 0;
-    let decimalPlacesY = 0;
+    let decimalPlacesX = 2;
+    let decimalPlacesY = 2;
 
-    const step = curve.sample(1).x - curve.sample(0).x;
-    const { width, height } = curve.boundingRect().size();
+    const sample0 = curve.sample(0);
+    const sample1 = curve.sample(1);
+    let x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
+    let x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
 
-    //console.log(step, width, height);
-
-    const p = math.parse(curve.fn);
-    const scope = new Map();
     let n = 0;
-    const { variable } = curve;
-
-    //x decimal
-    while (n < 300) {
-      const val0 = Utility.adjustForDecimalPlaces(
-        curve.sample(0).x,
-        decimalPlacesX
-      );
-      const val1 = Utility.adjustForDecimalPlaces(
-        curve.sample(1).x,
-        decimalPlacesX
-      );
-      if (val0 != val1) {
-        break;
-      }
+    while (x0 == x1 && n < 300) {
       decimalPlacesX++;
+      x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
+      x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
       n++;
     }
-    decimalPlacesX += 1;
+    const { width, height } = curve.boundingRect().size();
+    // decimalPlacesX = Math.round(decimalPlacesX / 4);
+    decimalPlacesY = Math.min(
+      300,
+      2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))
+    );
 
-    //y decimal
-    /* while (n < 300) {
-      scope.set(variable, curve.sample(0).x);
-      const val0 = Utility.adjustForDecimalPlaces(
-        p.evaluate(scope),
-        decimalPlacesX
-      );
-      scope.set(variable, curve.sample(1).x);
-      const val1 = Utility.adjustForDecimalPlaces(
-        p.evaluate(scope),
-        decimalPlacesX
-      );
-      if (val0 != val1) {
-        break;
-      }
-      decimalPlacesY++;
-      n++;
-    } */
-    decimalPlacesY = Math.round(2 * decimalPlacesX);
-
-    console.log({ decimalPlacesX, decimalPlacesY });
+    //console.log({ decimalPlacesX, decimalPlacesY });
     return { decimalPlacesX, decimalPlacesY };
   }
 
