@@ -36,6 +36,8 @@ class MyPlot extends Plot {
     this.insertLegend(new MyLegend());
     this.enableLegend(true);
 
+    let entry = "1,1";
+
     //this.defines = new MDefines(this /* , constructors */);
     this.file = new MFile(this /* , constructors */);
 
@@ -985,31 +987,21 @@ class MyPlot extends Plot {
             scaleY = 1e6 / height;
           }
 
-          let n = 0;
           m_samples = m_samples.map(function (pt) {
             const tp = Utility.isPointATurningPoint(tps, pt);
             const ip = Utility.isPointATurningPoint(ips, pt);
-            /* if ((tp || ip) && (scaleX != 1 || scaleY != 1)) {
+
+            if (tp || ip) {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x * scaleX,
-                decimalPlacesX / (2 - decimalPlacesX * 0.01)
+                decimalPlacesX + 1
               );
               pt.y = Utility.adjustForDecimalPlaces(
                 pt.y * scaleY,
-                decimalPlacesY / (2 - decimalPlacesY * 0.01)
+                decimalPlacesY
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
-
-              n++;
-              return pt;
-            } */
-            if (tp || ip) {
-              pt.x = Utility.adjustForDecimalPlaces(
-                pt.x,
-                decimalPlacesX / (1 + decimalPlacesX * 0.003)
-              );
-              //pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
             }
             return pt;
           });
@@ -1235,7 +1227,6 @@ class MyPlot extends Plot {
         operationType == "Reflect x equal"
       ) {
         if (operationType == "Translate") {
-          let entry = "1,1";
           Utility.prompt(
             "Enter comma separated values",
             entry,
@@ -1291,7 +1282,7 @@ class MyPlot extends Plot {
                   entry = csvStr;
                   return false;
                 }
-                //entry = csvStr;
+                entry = csvStr;
                 //} else {
                 //validInput = true;
                 // const m_translateX = math.evaluate(arr[0]);
@@ -2210,7 +2201,7 @@ class MyPlot extends Plot {
 
           if (
             samples1[0].y === samples1[1].y &&
-            (samples2_minY == samples1[0].y || samples2_maxY == samples1[0].y)
+            (samples2_minY <= samples1[0].y || samples2_maxY >= samples1[0].y)
           ) {
             //console.log("samples1 parallel to x-axis");
             parallelToXAxis_1 = true;
@@ -2218,7 +2209,7 @@ class MyPlot extends Plot {
 
           if (
             samples2[0].y === samples2[1].y &&
-            (samples1_minY == samples2[0].y || samples1_maxY == samples2[0].y)
+            (samples1_minY <= samples2[0].y || samples1_maxY >= samples2[0].y)
           ) {
             //console.log("samples2 parallel to x-axis");
             parallelToXAxis_2 = true;

@@ -225,6 +225,18 @@ class PromptDlg {
       });
     };
 
+    $("#prompt_msg").on("keydown", function (e) {
+      if (e.keyCode == 13) {
+        e.preventDefault();
+        $("#prompt_ok").click(); // Not working?
+      }
+    });
+
+    prompt_dlg.on("shown.bs.modal", function () {
+      $("#prompt_ok").trigger("focus");
+      //$("#prompt_msg").trigger("focus");
+    });
+
     prompt_dlg.on("hidden.bs.modal", function () {
       $("#progressSpinner").show();
       $("#error").hide();
@@ -244,7 +256,6 @@ class PromptDlg {
       Utility.promptProgress = true;
       if (self.cb($("#prompt_msg").val())) {
         $(".close").click();
-        //prompt_dlg.detach();
       } else {
         $("#prompt_msg").select();
         $("#progressSpinner").hide();
@@ -2318,8 +2329,8 @@ class Utility {
     variable,
     samples,
     curve = null,
-    decimalPlacesX = 8,
-    decimalPlacesY = 8
+    decimalPlacesX = 200,
+    decimalPlacesY = 400
   ) {
     let result = [];
     let m_fn = fn;
@@ -2400,7 +2411,7 @@ class Utility {
         }
         //console.log("arr:", arr);
         if (arr.length > 1) {
-          if (arr[1] < arr[0] || arr[0] < 1e-10) {
+          if (arr[1] < arr[0] || arr[0] < 1e-100) {
             minMax = Math.min(...arr);
           } else {
             minMax = Math.max(...arr);
@@ -3236,154 +3247,19 @@ class Utility {
       x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
       n++;
     }
-    const { width, height } = curve.boundingRect().size();
-    // decimalPlacesX = Math.round(decimalPlacesX / 4);
-    decimalPlacesY = Math.min(
-      300,
-      2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))
-    );
 
-    //console.log({ decimalPlacesX, decimalPlacesY });
-    return { decimalPlacesX, decimalPlacesY };
-  }
-
-  static grapherDeterminedDecimalPlaces1(curve) {
-    let decimalPlacesX = 2;
-    let decimalPlacesY = 2;
-
-    if (
-      Utility.errorResponse === Utility.silentIgnore &&
-      curve.discontinuity &&
-      curve.discontinuity.length > 0
-    ) {
-      return { decimalPlacesX: 200, decimalPlacesY: 200 };
-    }
-
-    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) {
-      return { decimalPlacesX, decimalPlacesY };
-    }
-
-    const { width, height } = curve.boundingRect().size();
-
-    //console.log(curve.boundingRect().height());
-    if (width >= 5000) {
-      decimalPlacesX = 0;
-    } else if (width >= 3000 && width < 5000) {
-      decimalPlacesX = 1;
-    } else if (width >= 10 && width < 3000) {
-      decimalPlacesX = 2;
-    } else if (width >= 10 && width < 20) {
-      decimalPlacesX = 3;
-    } else if (width >= 0.1 && width < 10) {
-      decimalPlacesX = 4;
-    } else if (width < 0.1) {
-      decimalPlacesX = Math.min(
-        300,
-        2 * Math.max(2, Math.abs(Math.ceil(math.log(width, 10))))
-      );
-    }
-
-    if (height >= 5000) {
-      decimalPlacesY = 0;
-    } else if (height >= 3000 && height < 5000) {
-      decimalPlacesY = 1;
-    } else if (height >= 10 && height < 3000) {
-      decimalPlacesY = 2;
-    } else if (height >= 10 && height < 20) {
-      decimalPlacesY = 3;
-    } else if (height >= 0.1 && height < 10) {
-      decimalPlacesY = 4;
-    } else if (height < 0.1) {
-      decimalPlacesY = Math.min(
-        300,
-        2 * Math.max(2, Math.abs(Math.ceil(math.log(height, 10))))
-      );
+    //const parser = math.parse(curve.fn);
+    n = 0;
+    let y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
+    let y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
+    while (y0 == y1 && n < 300) {
+      decimalPlacesY++;
+      y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
+      y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
+      n++;
     }
 
     //console.log({ decimalPlacesX, decimalPlacesY });
-    return { decimalPlacesX, decimalPlacesY };
-  }
-
-  static grapherDeterminedDecimalPlaces2(curve) {
-    function countPlaces() {
-      let placesX = 60;
-      let placesY = 60;
-      if (!curve.unboundedRange) {
-        const m_samples = curve.data().samples();
-        for (let i = 0; i < m_samples.length; i++) {
-          let p = Utility.countDecimalPlaces(m_samples[i].x);
-          if (p > placesX) {
-            placesX = p;
-          }
-          p = Utility.countDecimalPlaces(m_samples[i].y);
-          if (p > placesY) {
-            placesY = p;
-          }
-        }
-      }
-      return { placesX, placesY };
-    }
-
-    // console.log(curve);
-
-    if (
-      Utility.errorResponse === Utility.silentIgnore &&
-      curve.discontinuity &&
-      curve.discontinuity.length > 0
-    ) {
-      return { decimalPlacesX: 200, decimalPlacesY: 200 };
-    }
-
-    let decimalPlacesX = 4;
-    let decimalPlacesY = 4;
-
-    //if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotItem) {
-    if (!curve || curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve) {
-      return { decimalPlacesX, decimalPlacesY };
-    }
-
-    // decimalPlacesX = Math.round(
-    //   Math.abs(1 / (curve.maxXValue() - curve.minXValue())) / 250
-    // );
-    let xMinAbs = Math.abs(curve.minXValue());
-    if (xMinAbs < 1) {
-      while (
-        decimalPlacesX !== 15 &&
-        math.round(xMinAbs, decimalPlacesX) == 0
-      ) {
-        decimalPlacesX += 1;
-      }
-      if (decimalPlacesX == 15) {
-        decimalPlacesX = countPlaces().placesX;
-      }
-      decimalPlacesX = Math.round(decimalPlacesX * 1.5);
-    }
-
-    // decimalPlacesY = Math.round(
-    //   Math.abs(1 / (curve.maxYValue() - curve.minYValue())) / 25000
-    // );
-    let yMinAbs = Math.abs(curve.minYValue());
-    if (yMinAbs < 1) {
-      while (
-        decimalPlacesY !== 15 &&
-        math.round(yMinAbs, decimalPlacesY) == 0
-      ) {
-        decimalPlacesY += 1;
-      }
-      if (decimalPlacesY == 15) {
-        decimalPlacesY = countPlaces().placesY;
-      }
-    }
-
-    if (decimalPlacesX == 0) {
-      decimalPlacesX = 4;
-    }
-    if (decimalPlacesY == 0) {
-      decimalPlacesY = 4;
-    }
-    decimalPlacesY = Math.max(decimalPlacesY, Math.round(2 * decimalPlacesX));
-    decimalPlacesX = Math.min(300, decimalPlacesX);
-    decimalPlacesY = Math.min(300, decimalPlacesY);
     return { decimalPlacesX, decimalPlacesY };
   }
 
