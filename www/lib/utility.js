@@ -3245,30 +3245,32 @@ class Utility {
 
     const sample0 = curve.sample(0);
     const sample1 = curve.sample(1);
-    let x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
-    let x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
+    if (sample0 && sample1) {
+      let x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
+      let x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
 
-    let n = 0;
-    while (x0 == x1 && n < 300) {
-      decimalPlacesX++;
-      x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
-      x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
-      n++;
-    }
+      let n = 0;
+      while (x0 == x1 && n < 300) {
+        decimalPlacesX++;
+        x0 = Utility.adjustForDecimalPlaces(sample0.x, decimalPlacesX);
+        x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
+        n++;
+      }
 
-    //const parser = math.parse(curve.fn);
-    n = 0;
-    let y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
-    let y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
-    while (y0 == y1 && n < 300) {
-      decimalPlacesY++;
-      y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
-      y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
-      n++;
-    }
+      //const parser = math.parse(curve.fn);
+      n = 0;
+      let y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
+      let y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
+      while (y0 == y1 && n < 300) {
+        decimalPlacesY++;
+        y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
+        y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
+        n++;
+      }
 
-    if (decimalPlacesY == 302) {
-      decimalPlacesY = 2;
+      if (decimalPlacesY == 302) {
+        decimalPlacesY = 2;
+      }
     }
     //console.log({ decimalPlacesX, decimalPlacesY });
     return { decimalPlacesX, decimalPlacesY };
