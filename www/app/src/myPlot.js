@@ -1002,7 +1002,16 @@ class MyPlot extends Plot {
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
+              return pt;
             }
+            pt.x = Utility.adjustForDecimalPlaces(
+              pt.x,
+              math.max(4, (decimalPlacesX + 1) * 2)
+            );
+            pt.y = Utility.adjustForDecimalPlaces(
+              pt.y,
+              math.max(4, decimalPlacesY * 2)
+            );
             return pt;
           });
 

@@ -187,23 +187,23 @@ class MFunctionDlg {
                 <br-->\
                 <div id="limits" class="row">\
                 <div class="col-sm-3">Lower limit(<span class="limit_x">x</span>):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimit" style="width:100%" />-10.0</math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimit" style="width:100%" />-10.0</math-field></div>\
                 <div class="col-sm-3">Upper limit(<span class="limit_x">x</span>):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimit" style="width:100%" />10.0</math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimit" style="width:100%" />10.0</math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="limitsY" class="row">\
                 <div class="col-sm-3">Lower limit(y):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitY" style="width:100%" value="-10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitY" style="width:100%" value="-10.0"/></math-field></div>\
                 <div class="col-sm-3">Upper limit(y):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitY" style="width:100%" value="10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitY" style="width:100%" value="10.0"/></math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="limitsFxy" class="row">\
                 <div class="col-sm-3">Lower limit(f(xy)):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitFxy" style="width:100%" value="0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_lowerLimitFxy" style="width:100%" value="0"/></math-field></div>\
                 <div class="col-sm-3">Upper limit(f(xy)):</div>\
-                <div class="col-sm-3"><math-field class="math-field-limits" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitFxy" style="width:100%" value="10.0"/></math-field></div>\
+                <div class="col-sm-3"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_upperLimitFxy" style="width:100%" value="10.0"/></math-field></div>\
                 </div>\
                 <!--br-->\
                 <div id="colorInterval" class="row">\
@@ -283,6 +283,7 @@ class MFunctionDlg {
 
     $('input[name="math_mode"]').on("change", function () {
       Replacement.config.angles = $(this).val();
+      $("#fnDlg_ok").trigger("focus");
     });
 
     $("#fnDlg_variable").on("input", function () {
@@ -290,6 +291,18 @@ class MFunctionDlg {
       let fnDlgFunctionVal = mf.getValue("ascii-math");
       if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
         $(".limit_x").html($(this).val());
+      }
+    });
+
+    $("#fnDlg_variable").on("keydown", function (e) {
+      if (e.keyCode == 13) {
+        $("#fnDlg_ok").trigger("focus");
+      }
+    });
+
+    $("#fnDlg_parametric_variable").on("keydown", function (e) {
+      if (e.keyCode == 13) {
+        $("#fnDlg_ok").trigger("focus");
       }
     });
 
@@ -453,6 +466,64 @@ class MFunctionDlg {
         $("#fnDlg_ok").trigger("focus");
       });
 
+      $("#functionModal").on("hidden.bs.modal", function () {
+        $("#executeButton").trigger("focus");
+      });
+
+      $("#fnDlg_numberOfPoints,#fnDlg_color1,#fnDlg_color2").on(
+        "change",
+        (e) => {
+          $("#fnDlg_ok").trigger("focus");
+        }
+      );
+
+      const els = document.getElementsByClassName("math-field-limits-enter");
+      for (let i = 0; i < els.length; i++) {
+        els[i].addEventListener("beforeinput", (e) => {
+          if (e.inputType === "insertLineBreak") {
+            e.preventDefault();
+            $("#fnDlg_ok").click();
+          }
+        });
+      }
+
+      /* $("#fnDlg_lowerLimit")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      });
+      $("#fnDlg_upperLimit")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      });
+      $("#fnDlg_lowerLimitY")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      });
+      $("#fnDlg_upperLimitY")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      });
+      $("#fnDlg_lowerLimitFxy")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      });
+      $("#fnDlg_upperLimitFxy")[0].addEventListener("beforeinput", (e) => {
+        if (e.inputType === "insertLineBreak") {
+          e.preventDefault();
+          $("#fnDlg_ok").click();
+        }
+      }); */
+
       //$("#cont_parametric_variable").hide();
       //$("#cont_variable").hide();
       $("#cont_variableY").hide();
@@ -470,6 +541,7 @@ class MFunctionDlg {
         } else {
           //$("#limits").show();
         }
+        $("#fnDlg_ok").trigger("focus");
       });
 
       $("#fnDlg_threeD").change(function () {
@@ -507,6 +579,8 @@ class MFunctionDlg {
         $("#fnDlg_variable").val("x");
         $("#fnDlg_variableY").val("y");
         $("#fnDlg_function").change();
+
+        $("#fnDlg_ok").trigger("focus");
       });
 
       $("#threeDType").change(function () {
@@ -515,6 +589,11 @@ class MFunctionDlg {
         } else {
           $("#interpolationContainer").hide();
         }
+        $("#fnDlg_ok").trigger("focus");
+      });
+
+      $("#interpolationType").change(function () {
+        $("#fnDlg_ok").trigger("focus");
       });
 
       /* let functionDlgData = {
@@ -1898,9 +1977,9 @@ class MFunctionDlg {
       }
     };
 
-    m_dlg1.on("hidden.bs.modal", function () {
-      //m_dlg1.detach();
-    });
+    // m_dlg1.on("hidden.bs.modal", function () {
+    //   //m_dlg1.detach();
+    // });
 
     this.close = function () {
       $("#fnDlg_cancel").click();

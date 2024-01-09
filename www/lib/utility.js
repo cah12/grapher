@@ -234,7 +234,6 @@ class PromptDlg {
 
     prompt_dlg.on("shown.bs.modal", function () {
       $("#prompt_ok").trigger("focus");
-      //$("#prompt_msg").trigger("focus");
     });
 
     prompt_dlg.on("hidden.bs.modal", function () {
@@ -2089,12 +2088,14 @@ class Utility {
         return true;
       });
 
-      let lastPt = samples[samples.length - 1];
+      let lastPt = new Misc.Point();
+
+      //let lastPt = samples[samples.length - 1];
       lastPt.x = upperX;
       lastPt.y = parser.eval({ x: upperX });
       if (!obj.adjustingCurve) {
         const places = Math.min(60, obj.xDecimalPlaces);
-        const inc = step / 2000;
+        const inc = step / 4000;
         let reSample = false;
         let x_lower;
         let x_upper;
@@ -2255,16 +2256,23 @@ class Utility {
     step = samples[1].x - samples[0].x;
     for (let i = 0; i < result.length; i++) {
       const x = result[i].x;
-      if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
-        arr.push(result[i]);
-        continue;
-      }
+      // if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
+      //   arr.push(result[i]);
+      //   continue;
+      // }
       let pt1 = new Misc.Point(x - step, math.evaluate(fn, { x: x - step }));
       let pt2 = new Misc.Point(x, math.evaluate(fn, { x }));
       const slopeBeforeTp = Utility.slope(pt1, pt2);
       pt1 = new Misc.Point(x, math.evaluate(fn, { x }));
       pt2 = new Misc.Point(x + step, math.evaluate(fn, { x: x + step }));
       const slopeAfterTp = Utility.slope(pt1, pt2);
+      if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
+        if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
+          arr.push(result[i]);
+          continue;
+        }
+      }
+
       if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
         let n = 0;
         const incrmt = step * 1e-5;
@@ -3259,6 +3267,9 @@ class Utility {
       n++;
     }
 
+    if (decimalPlacesY == 302) {
+      decimalPlacesY = 2;
+    }
     //console.log({ decimalPlacesX, decimalPlacesY });
     return { decimalPlacesX, decimalPlacesY };
   }
