@@ -784,7 +784,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "plusMinusRoot",
       parentId: "drawingSettings",
       type: "checkbox",
-      //checked: true,
+      checked: true,
       title: "Add a curve for any negative root",
       fun: negativeRoot,
     });

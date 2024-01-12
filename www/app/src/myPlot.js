@@ -785,8 +785,6 @@ class MyPlot extends Plot {
           Utility.alert(
             `Unable to derive samples for "${fn}".\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
           );
-          //self._functionDlg.close();
-          //self._functionDlg.closeDlg = true;
           return;
         }
 
@@ -836,16 +834,16 @@ class MyPlot extends Plot {
         //newCurve.setAxis = false;
         newCurve.xIsDependentVariable = self._functionDlg.xIsDependentVariable;
 
-        var decimalPlacesY = 4;
-        var decimalPlacesX = 4;
+        let decimalPlacesY = 4;
+        let decimalPlacesX = 4;
         let m_samples = newCurve.data().samples();
         if (!Static.userDecimalPlacesForCalculation) {
           const obj = Utility.grapherDeterminedDecimalPlaces(newCurve);
           decimalPlacesY = obj.decimalPlacesY;
           decimalPlacesX = obj.decimalPlacesX;
         } else {
-          var decimalPlacesY = self.axisDecimalPlaces(newCurve.yAxis());
-          var decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
+          decimalPlacesY = self.axisDecimalPlaces(newCurve.yAxis());
+          decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
         }
 
         /////////////////////////////////////////////////////////////
@@ -1044,13 +1042,6 @@ class MyPlot extends Plot {
         newCurve.setSamples(m_samples);
 
         if (!functionDlgData) newCurve.attach(self);
-
-        //newCurve.functionDlgData = getFunctionDlgData(newCurve.rtti);
-
-        if (newCurve && self._functionDlg.close) {
-          //self._functionDlg.close();
-          //self._functionDlg.closeDlg = true;
-        }
 
         newCurve.domainRangeRestriction =
           self._functionDlg.domainRangeRestriction;

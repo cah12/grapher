@@ -322,7 +322,7 @@ Static.enableContextMenu = function (el) {
 Static.dicontinuityFactor = 1e6;
 Static.dicontinuityOffsetFactor = 2 / Static.dicontinuityFactor; //8e6;
 
-Static.negativeRoot = false;
+Static.negativeRoot = true;
 Static.aspectRatioOneToOne = false;
 
 Static.swapAxes = 0; //0 == Implict, 1==Do not swap and 2 == swap

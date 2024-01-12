@@ -624,14 +624,55 @@ class MFunctionDlg {
         if (!self.expandedFn) return fn;
         const node = math.parse(self.expandedFn);
         let filtered = node.filter(function (node) {
-          return node.op === "^";
+          if (
+            node.fn &&
+            (node.fn === "pow" || (node.fn.name && node.fn.name === "sqrt"))
+          ) {
+            if (node.fn.name && node.fn.name === "sqrt") {
+              return true;
+            }
+            const val = node.args[1].value;
+            if ($.isNumeric(val) && val < 1) {
+              const fr = math.simplify(`${val}`, {}, { exactFractions: true });
+              const denom = fr.args[1].value;
+              if (denom % 2 == 0) {
+                return true;
+              }
+              //console.log(fr);
+            }
+          }
+          return false;
         });
 
-        filtered = filtered.concat(
+        // filtered = filtered.concat(
+        //   node.filter(function (node) {
+        //     return node.fn && node.fn.name === "sqrt";
+        //   })
+        // );
+
+        /* filtered = filtered.concat(
           node.filter(function (node) {
-            return node.fn && node.fn.name === "sqrt";
+            if (node.fn === "sqrt") {
+              return true;
+            }
+            if (node.fn === "pow") {
+              const val = node.args[1].value;
+              if ($.isNumeric(val) && val < 1) {
+                const fr = math.simplify(
+                  `${val}`,
+                  {},
+                  { exactFractions: true }
+                );
+                const denom = fr.args[1].value;
+                if (denom % 2 == 0) {
+                  return true;
+                }
+                //console.log(fr);
+              }
+            }
+            return false;
           })
-        );
+        ); */
 
         for (let i = 0; i < filtered.length; i++) {
           //console.log(filtered[i].args);
@@ -660,7 +701,7 @@ class MFunctionDlg {
               fn.push(s);
             }
           }
-          if (filtered[i].fn && filtered[i].fn.name === "sqrt") {
+          if (filtered[i].fn) {
             let s = self.expandedFn.replace(
               filtered[i].toString().replace(/\s/g, ""),
               `-(${filtered[i].toString()})`
@@ -674,6 +715,8 @@ class MFunctionDlg {
             fn.push(s);
           }
         }
+
+        fn = _.uniq(fn);
 
         return fn;
       }

@@ -2105,26 +2105,34 @@ class Utility {
             Utility.adjustForDecimalPlaces(lowerX, places)
         ) {
           let scope = new Map();
-          scope.set(indepVar, samples[0].x - step);
+          scope.set(indepVar, samples[0].x);
           let num = parser.eval(scope);
-
-          let n = 0;
-
-          let x = 0;
-          while (!isFinite(num) && n < 4000) {
-            n++;
-            x = samples[0].x - step + n * inc;
-            scope.set(indepVar, x);
+          if (!isFinite(num)) {
+            scope.set(indepVar, samples[0].x - step);
             num = parser.eval(scope);
-            //console.log("test1", n);
+
+            let n = 0;
+
+            let x = 0;
+            while (!isFinite(num) && n < 4000) {
+              n++;
+              x = samples[0].x - step + n * inc;
+              scope.set(indepVar, x);
+              num = parser.eval(scope);
+              //console.log("test1", n);
+            }
+            x_lower = samples[0].x - step + n * inc;
+          } else {
+            x_lower = samples[0].x;
           }
 
-          x_lower = samples[0].x - step + n * inc;
           samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
             x_lower,
             places
           );
           reSample = true;
+        } else {
+          x_lower = samples[0].x;
         }
 
         const sz = samples.length;
@@ -2134,26 +2142,34 @@ class Utility {
             Utility.adjustForDecimalPlaces(upperX, places)
         ) {
           let scope = new Map();
-          scope.set(indepVar, samples[sz - 1].x + step);
+          scope.set(indepVar, samples[sz - 1].x);
           let num = parser.eval(scope);
-
-          let n = 0;
-
-          let x = 0;
-          while (!isFinite(num) && n < 4000) {
-            n++;
-            x = samples[sz - 1].x + step - n * inc;
-            scope.set(indepVar, x);
+          if (!isFinite(num)) {
+            scope.set(indepVar, samples[sz - 1].x + step);
             num = parser.eval(scope);
-            // console.log("test2", n);
-          }
 
-          x_upper = samples[sz - 1].x + step - n * inc;
+            let n = 0;
+
+            let x = 0;
+            while (!isFinite(num) && n < 4000) {
+              n++;
+              x = samples[sz - 1].x + step - n * inc;
+              scope.set(indepVar, x);
+              num = parser.eval(scope);
+              // console.log("test2", n);
+            }
+
+            x_upper = samples[sz - 1].x + step - n * inc;
+          } else {
+            x_upper = samples[sz - 1].x;
+          }
           samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
             x_upper,
             places
           );
           reSample = true;
+        } else {
+          x_upper = samples[sz - 1].x;
         }
 
         if (reSample) {
@@ -2175,13 +2191,10 @@ class Utility {
       }
     }
 
-    // samples = samples.map((pt) => {
-    //   if ($.isNumeric(obj.xDecimalPlaces))
-    //     pt.x = Utility.adjustForDecimalPlaces(pt.x, obj.xDecimalPlaces);
-    //   if ($.isNumeric(obj.yDecimalPlaces))
-    //     pt.y = Utility.adjustForDecimalPlaces(pt.y, obj.yDecimalPlaces);
-    //   return pt;
-    // });
+    samples = samples.filter((pt) => {
+      if ($.isNumeric(pt.x) && $.isNumeric(pt.y)) return true;
+      return false;
+    });
 
     return samples;
   }
@@ -2405,36 +2418,38 @@ class Utility {
 
     for (let i = 1; i < samples.length; i++) {
       const m = math.sign(parser.eval({ x: samples[i].x }));
-      if (m !== sign || m == 0) {
-        const numOfSteps = 200;
-        let minMax;
-        const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
-        //console.log(step);
-        let xVal;
+      if ($.isNumeric(m) && $.isNumeric(sign) && m != 0 && sign != 0) {
+        if (m !== sign) {
+          const numOfSteps = 200;
+          let minMax;
+          const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
+          //console.log(step);
+          let xVal;
 
-        let arr = [];
-        for (let n = 0; n < numOfSteps; n++) {
-          xVal = samples[i - 1].x + n * step;
-          arr.push(Math.abs(parser.eval({ x: xVal })));
-        }
-        //console.log("arr:", arr);
-        if (arr.length > 1) {
-          if (arr[1] < arr[0] || arr[0] < 1e-100) {
-            minMax = Math.min(...arr);
-          } else {
-            minMax = Math.max(...arr);
+          let arr = [];
+          for (let n = 0; n < numOfSteps; n++) {
+            xVal = samples[i - 1].x + n * step;
+            arr.push(Math.abs(parser.eval({ x: xVal })));
           }
-        }
+          //console.log("arr:", arr);
+          if (arr.length > 1) {
+            if (arr[1] < arr[0] || arr[0] < 1e-100) {
+              minMax = Math.min(...arr);
+            } else {
+              minMax = Math.max(...arr);
+            }
+          }
 
-        sign *= -1;
-        xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
-        result.push(
-          new Misc.Point(
-            Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
-            Utility.adjustForDecimalPlaces(math.evaluate(m_fn, { x: xVal })),
-            decimalPlacesY
-          )
-        );
+          sign *= -1;
+          xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
+          result.push(
+            new Misc.Point(
+              Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
+              Utility.adjustForDecimalPlaces(math.evaluate(m_fn, { x: xVal })),
+              decimalPlacesY
+            )
+          );
+        }
       }
     }
     return result;
