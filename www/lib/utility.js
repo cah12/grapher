@@ -2095,7 +2095,7 @@ class Utility {
       lastPt.y = parser.eval({ x: upperX });
       if (!obj.adjustingCurve) {
         const places = Math.min(60, obj.xDecimalPlaces);
-        const inc = step / 4000;
+        const inc = step / 500;
         let reSample = false;
         let x_lower;
         let x_upper;
@@ -2105,27 +2105,26 @@ class Utility {
             Utility.adjustForDecimalPlaces(lowerX, places)
         ) {
           let scope = new Map();
-          scope.set(indepVar, samples[0].x);
+          scope.set(indepVar, samples[0].x - step);
           let num = parser.eval(scope);
-          if (!isFinite(num)) {
-            scope.set(indepVar, samples[0].x - step);
+
+          scope.set(indepVar, samples[0].x - step);
+          num = parser.eval(scope);
+
+          let n = 0;
+
+          let x = 0;
+
+          while (!isFinite(num) && n < 4000) {
+            n++;
+            x = samples[0].x - step + n * inc;
+            scope.set(indepVar, x);
             num = parser.eval(scope);
-
-            let n = 0;
-
-            let x = 0;
-            while (!isFinite(num) && n < 4000) {
-              n++;
-              x = samples[0].x - step + n * inc;
-              scope.set(indepVar, x);
-              num = parser.eval(scope);
-              //console.log("test1", n);
-            }
-            x_lower = samples[0].x - step + n * inc;
-          } else {
-            x_lower = samples[0].x;
+            //console.log("test1", n);
           }
+          console.log("test1", n);
 
+          x_lower = samples[0].x - step + n * inc;
           samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
             x_lower,
             places
@@ -2142,27 +2141,21 @@ class Utility {
             Utility.adjustForDecimalPlaces(upperX, places)
         ) {
           let scope = new Map();
-          scope.set(indepVar, samples[sz - 1].x);
+          scope.set(indepVar, samples[sz - 1].x + step);
           let num = parser.eval(scope);
-          if (!isFinite(num)) {
-            scope.set(indepVar, samples[sz - 1].x + step);
+
+          let n = 0;
+
+          let x = 0;
+          while (!isFinite(num) && n < 4000) {
+            n++;
+            x = samples[sz - 1].x + step - n * inc;
+            scope.set(indepVar, x);
             num = parser.eval(scope);
-
-            let n = 0;
-
-            let x = 0;
-            while (!isFinite(num) && n < 4000) {
-              n++;
-              x = samples[sz - 1].x + step - n * inc;
-              scope.set(indepVar, x);
-              num = parser.eval(scope);
-              // console.log("test2", n);
-            }
-
-            x_upper = samples[sz - 1].x + step - n * inc;
-          } else {
-            x_upper = samples[sz - 1].x;
           }
+          console.log("test2", n);
+
+          x_upper = samples[sz - 1].x + step - n * inc;
           samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
             x_upper,
             places
