@@ -59,6 +59,9 @@ class MyPlot extends Plot {
 
     //this.curveSettings = new MCurveSettings(this);
 
+    let decimalPlacesY = self.axisDecimalPlaces(Axis.AxisId.yLeft);
+    let decimalPlacesX = self.axisDecimalPlaces(Axis.AxisId.xBottom);
+
     function getCoffsVal() {
       var result = [];
       var coeffs = self._functionDlg.coeffs || [];
@@ -158,7 +161,6 @@ class MyPlot extends Plot {
 
     Static.bind("addSpectrocurve", function (e, fileName, samples, upload) {
       addSpectrocurve(fileName, "red", "green", samples, upload).attach(self);
-      //newCurve.attach(self);
     });
 
     function addSpectrogram(title, color1, color2, data, upload) {
@@ -549,7 +551,10 @@ class MyPlot extends Plot {
           }
           if (s.length == 0) {
             Utility.alert(
-              `Unable to derive samples for "${fn}". Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
+              `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
+                fn,
+                decimalPlacesX
+              )}"</b>. Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
             );
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
@@ -783,7 +788,10 @@ class MyPlot extends Plot {
         }
         if (samples.length == 0) {
           Utility.alert(
-            `Unable to derive samples for "${fn}".\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
+            `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
+              fn,
+              decimalPlacesX
+            )}"</b>.\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
           );
           return;
         }
@@ -834,17 +842,17 @@ class MyPlot extends Plot {
         //newCurve.setAxis = false;
         newCurve.xIsDependentVariable = self._functionDlg.xIsDependentVariable;
 
-        let decimalPlacesY = 4;
-        let decimalPlacesX = 4;
+        // let decimalPlacesY = 4;
+        // let decimalPlacesX = 4;
         let m_samples = newCurve.data().samples();
         if (!Static.userDecimalPlacesForCalculation) {
           const obj = Utility.grapherDeterminedDecimalPlaces(newCurve);
           decimalPlacesY = obj.decimalPlacesY;
           decimalPlacesX = obj.decimalPlacesX;
-        } else {
+        } /* else {
           decimalPlacesY = self.axisDecimalPlaces(newCurve.yAxis());
           decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
-        }
+        } */
 
         /////////////////////////////////////////////////////////////
         /* const tps = newCurve.turningPoints;
@@ -1114,9 +1122,6 @@ class MyPlot extends Plot {
         decimalPlacesY = curves[0].plot().axisDecimalPlaces(curves[0].yAxis());
         decimalPlacesX = curves[0].plot().axisDecimalPlaces(curves[0].xAxis());
 
-        /* Utility.alert(
-            `Unable to derive samples for "${fn}".\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-200, 1e+200].`
-          ); */
         let invalid = false;
         for (let i = 0; i < curves.length; i++) {
           const curve = curves[i];
@@ -1664,7 +1669,8 @@ class MyPlot extends Plot {
         operationType == "Turning point" ||
         operationType == "Inflection point" ||
         operationType == "Y-Intercept" ||
-        operationType == "X-Intercept"
+        operationType == "X-Intercept" ||
+        operationType == "Inverse"
       ) {
         //console.log(curves);
         // let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
@@ -1750,6 +1756,38 @@ class MyPlot extends Plot {
 
                 marker.attach(self);
               }
+            }
+          }
+
+          if (operationType == "Inverse") {
+            //const curve = curves[0];
+            //for (let i = 0; i < curves.length; i++) {
+            const curve = curves[i];
+
+            console.log("Inverse", curve);
+            const newCurve = new MyCurve(`Inv-${curve.title()}`);
+            const samples = curve.data().samples();
+            const _samples = samples.map((pt) => {
+              return new Misc.Point(pt.y, pt.x);
+            });
+            newCurve.setAxes(curve.xAxis(), curve.yAxis());
+            newCurve.setSamples(_samples);
+            if (curve.turningPoints) {
+              newCurve.turningPoints = curve.turningPoints.map((pt) => {
+                return new Misc.Point(pt.y, pt.x);
+              });
+            }
+            if (curve.inflectionPoints) {
+              newCurve.inflectionPoints = curve.inflectionPoints.map((pt) => {
+                return new Misc.Point(pt.y, pt.x);
+              });
+            }
+            newCurve.relation = true;
+            newCurve.attach(self);
+            if (i == curves.length - 1) {
+              self.setAutoReplot(doAutoReplot);
+              self.autoRefresh();
+              return;
             }
           }
 
@@ -2558,14 +2596,8 @@ class MyPlot extends Plot {
                     2;
                 }
 
-                pt.x = Utility.adjustForDecimalPlaces(
-                  pt.x,
-                  Math.min(100, decimalPlacesX)
-                );
-                pt.y = Utility.adjustForDecimalPlaces(
-                  pt.y,
-                  Math.min(decimalPlacesY)
-                );
+                pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+                pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
                 return pt;
               }
             }
@@ -2574,10 +2606,44 @@ class MyPlot extends Plot {
 
           res = res.map((pt) => {
             //pt = adjustIp(pt);
-            pt.x = parseFloat(pt.x);
-            pt.y = parseFloat(pt.y);
+            pt.x = Utility.adjustForDecimalPlaces(
+              parseFloat(pt.x),
+              decimalPlacesX - 1
+            );
+            pt.y = Utility.adjustForDecimalPlaces(
+              parseFloat(pt.y),
+              decimalPlacesY - 1
+            );
             return pt;
           });
+
+          if (prefix == "x~") {
+            const variable = curves[0].variable;
+            let fn = curves[0].fn;
+            if ($.isNumeric(fn)) {
+              fn = curves[1].fn;
+            }
+
+            const p = math.parse(fn);
+            const scope = new Map();
+
+            if (
+              res.length > 1 &&
+              math.sign(res[0].x) != math.sign(res[res.length - 1].x)
+            ) {
+              res.push(new Misc.Point(0, 0));
+            }
+            if (p) {
+              res = res.filter((pt) => {
+                scope.set(variable, pt.x);
+                const v = p.evaluate(scope);
+                if (Utility.mFuzzyCompare(v, 0) || math.abs(pt.x) > 1) {
+                  return true;
+                }
+                return false;
+              });
+            }
+          }
 
           //console.log(res);
 

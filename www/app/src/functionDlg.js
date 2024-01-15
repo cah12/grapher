@@ -622,6 +622,11 @@ class MFunctionDlg {
       function negativeRootFn() {
         let fn = [];
         if (!self.expandedFn) return fn;
+        const degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
+        //console.log(self.expandedFn, degOfPoly);
+        if (degOfPoly % 2 != 0) {
+          return fn;
+        }
         const node = math.parse(self.expandedFn);
         let filtered = node.filter(function (node) {
           if (
@@ -717,6 +722,8 @@ class MFunctionDlg {
         }
 
         fn = _.uniq(fn);
+
+        if (fn.length) fn = [fn[0]];
 
         return fn;
       }
@@ -1058,12 +1065,20 @@ class MFunctionDlg {
             self.domainRangeRestriction = domainRangeRestriction;
           }
           let arr = fnDlgFunctionVal.split("=");
+
           if (
             arr.length == 2 &&
             fnDlgFunctionVal.indexOf("y") !== -1 &&
             self.variable !== "y"
           ) {
             const lhs = plot.defines.expandDefines(arr[0], self.variable, true);
+            if (!Utility.isValidExpression(lhs, "y")) {
+              Utility.displayErrorMessage(
+                mf,
+                `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`
+              );
+              return;
+            }
             if (!lhs) {
               // alert(
               //   `Failed to retrieve a valid define for expanding "${arr[0]}".`
@@ -1075,6 +1090,13 @@ class MFunctionDlg {
               return;
             }
             const rhs = plot.defines.expandDefines(arr[1], self.variable, true);
+            if (!Utility.isValidExpression(rhs, "y")) {
+              Utility.displayErrorMessage(
+                mf,
+                `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`
+              );
+              return;
+            }
             if (!rhs) {
               // alert(
               //   `Failed to retrieve a valid define for expanding "${arr[1]}".`

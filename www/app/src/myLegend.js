@@ -15,12 +15,18 @@ class MyLegend extends Legend {
 
       let fnStr = null;
       let fnStrLatex = _curve.latex;
+
+      let m_fn = null;
+      if (_curve.fn) {
+        m_fn = Utility.adjustExpForDecimalPlaces(_curve.fn, decimalPlacesX);
+      }
+
       if (
         (_curve.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve ||
           _curve.rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) &&
         _curve.functionDlgData
       ) {
-        fnStr = `f(${_curve.functionDlgData.variable}, ${_curve.functionDlgData.variableY}): ${_curve.fn}`;
+        fnStr = `f(${_curve.functionDlgData.variable}, ${_curve.functionDlgData.variableY}): ${m_fn}`;
       }
       if (_curve.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
         if (_curve.parametricFnX && _curve.parametricFnY) {
@@ -39,12 +45,12 @@ class MyLegend extends Legend {
             );
           }
           fnStr = `Par(${_curve.parametric_variable}): (${parametricFnX}, ${parametricFnY})`;
-        } else if (_curve.fn) {
+        } else if (m_fn) {
           precisionY;
-          let fn_y = _curve.fn;
+          let fn_y = m_fn;
           if (!isNaN(fn_y)) {
             fn_y = Utility.toPrecision(
-              Utility.adjustForDecimalPlaces(_curve.fn, decimalPlacesY),
+              Utility.adjustForDecimalPlaces(m_fn, decimalPlacesY),
               precisionY
             );
           }

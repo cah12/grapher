@@ -1936,6 +1936,12 @@ class Utility {
           //i--;
         } else {
           yVal = parser.eval({ x: xVal });
+          if (math.isNaN(yVal)) {
+            // alert(
+            //   `Unable to plot the function. Perhaps the "Vertical Line Test!!" failed`
+            // );
+            return [];
+          }
           const abs_yVal = Math.abs(yVal);
           if (abs_yVal !== 0) {
             if (abs_yVal < 1e-300 || abs_yVal > 1e300) {
@@ -2048,6 +2054,7 @@ class Utility {
       return { data: samples, zLimits: { min: zMin, max: zMax } };
     }
     if (!obj.threeD) {
+      //samples = Utility.removeNonNumericPoints(samples);
       let _points = Utility.curveInflectionPoint(fx, indepVar, samples);
 
       obj.inflectionPoints = _points; //return inflection points to makeSamples() caller
@@ -2095,7 +2102,7 @@ class Utility {
       lastPt.y = parser.eval({ x: upperX });
       if (!obj.adjustingCurve) {
         const places = Math.min(60, obj.xDecimalPlaces);
-        const inc = step / 500;
+        const inc = step / 1000;
         let reSample = false;
         let x_lower;
         let x_upper;
@@ -2115,7 +2122,7 @@ class Utility {
 
           let x = 0;
 
-          while (!isFinite(num) && n < 4000) {
+          while (!isFinite(num) && n < 1020) {
             n++;
             x = samples[0].x - step + n * inc;
             scope.set(indepVar, x);
@@ -2147,7 +2154,7 @@ class Utility {
           let n = 0;
 
           let x = 0;
-          while (!isFinite(num) && n < 4000) {
+          while (!isFinite(num) && n < 1020) {
             n++;
             x = samples[sz - 1].x + step - n * inc;
             scope.set(indepVar, x);
@@ -2184,12 +2191,17 @@ class Utility {
       }
     }
 
-    samples = samples.filter((pt) => {
+    samples = Utility.removeNonNumericPoints(samples);
+
+    return samples;
+  }
+
+  static removeNonNumericPoints(samples) {
+    if (!samples) return [];
+    return samples.filter((pt) => {
       if ($.isNumeric(pt.x) && $.isNumeric(pt.y)) return true;
       return false;
     });
-
-    return samples;
   }
 
   static curveTurningPoint(
@@ -2205,6 +2217,7 @@ class Utility {
     if (!samples || samples.length == 0) {
       return [];
     }
+
     //Replace the whitespace delimiters stripped out by simplify()
     fn = fn.replaceAll("mod", " mod ");
 
@@ -3293,6 +3306,9 @@ class Utility {
    * adjustForDecimalPlaces(4.145214, 3) -> 4.145
    */
   static adjustForDecimalPlaces(number, places) {
+    if (typeof number == "string") {
+      number = parseFloat(number);
+    }
     if (places === 0) return Math.round(number);
     if (places == undefined) places = 5;
 
@@ -4674,6 +4690,96 @@ class Utility {
       return parseInt(arr[0].replace("char ", ""));
     }
     return -1;
+  }
+
+  static adjustExpForDecimalPlaces(exp, places) {
+    let m_exp = exp;
+
+    for (let i = 0; i < exp.length; i++) {
+      let c = exp[i];
+      let num = "";
+      if (c == "." || Utility.isDigit(c)) {
+        while (c == "." || Utility.isDigit(c)) {
+          num += c;
+          i++;
+          c = exp[i];
+        }
+        m_exp = m_exp.replace(num, Utility.adjustForDecimalPlaces(num, places));
+      }
+    }
+
+    return m_exp;
+  }
+
+  static reduceTerms(exp, variable = "x", eps = 1e-16) {
+    const node = math.parse(exp);
+    node.map(function (_node) {
+      if (_node.type === "ConstantNode") {
+        _node.value = Utility.adjustForDecimalPlaces(_node.value, 2);
+      }
+      return _node;
+    });
+    let filtered = node.filter(function (node) {
+      if (node.op && (node.op === "+" || node.op === "-")) {
+        return true;
+      }
+      return false;
+    });
+    if (!filtered.length) {
+      return node.toString();
+    }
+    const scope = new Map();
+    scope.set(variable, 1);
+    let values = [];
+    for (let i = 0; i < filtered.length; i++) {
+      const el = filtered[i];
+      const L = el.args[0].toString();
+      const R = el.args[1].toString();
+      let p = math.parse(L);
+      values.push(math.abs(p.evaluate(scope)));
+      p = math.parse(R);
+      values.push(math.abs(p.evaluate(scope)));
+    }
+
+    const max = math.max(...values);
+    if (eps == 1e-16) {
+      eps = math.min(1e-16, max / 1e16);
+    }
+
+    for (let i = 0; i < filtered.length; i++) {
+      const el = filtered[i];
+      const L = el.args[0].toString();
+      const R = el.args[1].toString();
+      let p = math.parse(L);
+      const vL = math.abs(p.evaluate(scope));
+      if (vL <= eps) {
+        exp = exp.replace(L.replaceAll(" ", ""), "0");
+      }
+      p = math.parse(R);
+      const vR = math.abs(p.evaluate(scope));
+      if (vR <= eps) {
+        exp = exp.replace(R.replaceAll(" ", ""), "0");
+      }
+    }
+    return math.simplify(exp).toString().replaceAll(" ", "");
+  }
+
+  static isValidExpression(exp, variable = "x") {
+    if (!exp || exp.length == 0) {
+      return false;
+    }
+    if (exp.indexOf("=") !== -1) {
+      throw new Error(
+        "Expected an expression as first argument. Got an equation."
+      );
+    }
+    if (nerdamer.deg(exp, variable).toString() > 3) {
+      return false;
+    }
+    if (nerdamer.deg(exp, "y").toString() > 3) {
+      return false;
+    }
+    return true;
   }
 
   static adjustLatexLogBaseDecimalPlaces(decimalPlaces) {

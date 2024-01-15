@@ -129,7 +129,13 @@ class AddRemovePointPicker extends PlotPicker {
       if (!selection) return;
       if (prevPoint.isEqual(selection)) return;
       prevPoint = selection;
-      if (curve)
+      if (curve) {
+        if (curve.relation) {
+          alert(
+            "Curve does not represent a function. Adding points to relations that are not functions not yet supported."
+          );
+          return;
+        }
         enterPoint(
           ScaleMap.invTransform(
             plot.axisScaleDraw(curve.xAxis()).scaleMap(),
@@ -137,7 +143,7 @@ class AddRemovePointPicker extends PlotPicker {
             selection
           )
         );
-      else
+      } else {
         enterPoint(
           ScaleMap.invTransform(
             plot.axisScaleDraw(Axis.AxisId.xBottom).scaleMap(),
@@ -145,6 +151,7 @@ class AddRemovePointPicker extends PlotPicker {
             selection
           )
         );
+      }
     });
 
     var f = this.trackerFont();

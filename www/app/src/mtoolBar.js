@@ -746,6 +746,14 @@ class MToolBar extends ToolBar {
           ],
         },
         {
+          name: "Inverse",
+          //img: "images/brush.png",
+          title: "Create the inverse if it exists.",
+          fun: function () {
+            operationPrep("Inverse");
+          },
+        },
+        {
           name: "Create table",
           //img: "images/brush.png",
           title: "Create a points table for the curve",

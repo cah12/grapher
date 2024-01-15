@@ -816,7 +816,7 @@ class Defines {
         n++;
       }
       // }
-      console.log(n);
+
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };
 

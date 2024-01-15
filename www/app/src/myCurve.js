@@ -30,6 +30,7 @@ class MyCurve extends Curve {
     this.setAxis = false;
     this.rc = null;
     this.axesSwapped = false;
+    this.relation = false;
 
     this.parameterLimits = []; //Array of object: {minimum, maximum}
 
