@@ -621,7 +621,7 @@ class MFunctionDlg {
 
       function negativeRootFn() {
         let fn = [];
-        if (!self.expandedFn) return fn;
+        if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
         const degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
         //console.log(self.expandedFn, degOfPoly);
         if (degOfPoly % 2 != 0) {

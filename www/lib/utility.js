@@ -2056,8 +2056,10 @@ class Utility {
     if (!obj.threeD) {
       //samples = Utility.removeNonNumericPoints(samples);
       let _points = Utility.curveInflectionPoint(fx, indepVar, samples);
+      let points = Utility.curveTurningPoint(fx, indepVar, samples);
 
       obj.inflectionPoints = _points; //return inflection points to makeSamples() caller
+      obj.turningPoints = points; //return turning points to makeSamples() caller
 
       if (_points.length) {
         for (let i = 0; i < _points.length; i++) {
@@ -2065,10 +2067,10 @@ class Utility {
         }
       }
 
-      let points = Utility.curveTurningPoint(fx, indepVar, samples);
+      //let points = Utility.curveTurningPoint(fx, indepVar, samples);
       //console.log("Add Turning points", points);
 
-      obj.turningPoints = points; //return turning points to makeSamples() caller
+      //obj.turningPoints = points; //return turning points to makeSamples() caller
 
       //console.time("object");
       if (points.length) {
@@ -2204,7 +2206,7 @@ class Utility {
     });
   }
 
-  static curveTurningPoint(
+  static curveTurningPoint1(
     fn,
     variable,
     samples,
@@ -2351,6 +2353,88 @@ class Utility {
     return false;
   }
 
+  static curveTurningPoint(
+    fn,
+    variable,
+    samples,
+    curve = null,
+    decimalPlacesX = 200,
+    decimalPlacesY = 400
+  ) {
+    let result = [];
+    if (samples.length < 2) {
+      return result;
+    }
+
+    let slopes = getSlopes(samples);
+
+    let indices = getIndices(slopes);
+    //console.log(indices);
+
+    const parser = math.parse(fn);
+    const scope = new Map();
+
+    for (let i = 0; i < indices.length; i++) {
+      const ind = indices[i];
+      if (ind <= 0) continue;
+
+      let x = samples[ind].x;
+      let y = samples[ind].y;
+      const numOfSteps = 20000000;
+      const step = (samples[ind + 1].x - x) / numOfSteps;
+      let increasing = true;
+      let prevY = y;
+      scope.set(variable, x + step);
+      if (y > parser.evaluate(scope)) {
+        increasing = false;
+      }
+      let n = 0;
+      while (n < numOfSteps + 1) {
+        x = x + n * step;
+        scope.set(variable, x + step);
+        y = parser.evaluate(scope);
+        if (increasing && y < prevY) {
+          break;
+        }
+        if (!increasing && y > prevY) {
+          break;
+        }
+        prevY = y;
+        n++;
+      }
+
+      result.push(new Misc.Point(x - step, prevY));
+      //result.push(new Misc.Point(samples[ind].x, samples[ind].y));
+    }
+    return result;
+
+    function getIndices(_slopes, brk = false) {
+      let indices = [];
+      let sign1;
+      let sign = math.sign(_slopes[0]);
+      for (let i = 1; i < _slopes.length; i++) {
+        sign1 = math.sign(_slopes[i]);
+        //sign = math.sign(_slopes[i - 1]);
+        //console.log(sign, sign1);
+        if (sign == sign1) {
+          continue;
+        }
+        sign *= -1;
+        indices.push(i - 1);
+        if (brk) break;
+      }
+      return indices;
+    }
+
+    function getSlopes(_samples) {
+      let slopes = [];
+      for (let i = 1; i < _samples.length; i++) {
+        slopes.push(Utility.slope(_samples[i], _samples[i - 1]));
+      }
+      return slopes;
+    }
+  }
+
   static curveInflectionPoint(
     fn,
     variable,
@@ -2360,106 +2444,101 @@ class Utility {
     decimalPlacesY = 400
   ) {
     let result = [];
-    let m_fn = fn;
-    //let m_fn = fn.replaceAll("abs", "");
-
-    let derivative = null;
-    if (!samples || samples.length == 0) {
-      return result;
-    }
-    try {
-      derivative = math.derivative(m_fn, variable);
-    } catch (error) {
-      return result;
-    }
-    //Do derivative have dependent variable?
-    if (isFinite(derivative.toString())) {
-      //No
+    if (samples.length < 2) {
       return result;
     }
 
-    try {
-      //Second derivative
-      derivative = math.derivative(derivative.toString(), variable);
-    } catch (error) {
-      return result;
-    }
-    //Do second derivative have dependent variable?
-    if (isFinite(derivative.toString())) {
-      //No
-      return result;
-    }
+    let slopes = getSlopes(samples);
 
-    if (curve) {
-      let tempSamples = [];
-      while (samples.length > 160) {
-        const tps = curve.turningPoints;
-        for (let i = 0; i < samples.length; i++) {
-          if (i % 2 == 0 || Utility.isPointATurningPoint(tps, samples[i])) {
-            tempSamples.push(samples[i]);
-          }
-        }
-        if (
-          tempSamples[tempSamples.length - 1].x !==
-          samples[samples.length - 1].x
-        ) {
-          tempSamples.push(samples[samples.length - 1]);
-        }
-        samples = tempSamples;
+    let indices = getIndices(slopes);
+
+    const parser = math.parse(fn);
+    const scope = new Map();
+
+    for (let i = 0; i < indices.length; i++) {
+      const ind = indices[i];
+      if (ind == 0) continue;
+
+      let n = 0;
+      let innerSamples = [];
+      const numOfSteps = 50000;
+      const xEnd = samples[ind + 1].x;
+      const step = (xEnd - samples[ind].x) / numOfSteps;
+      let x = samples[ind].x;
+
+      let y;
+      innerSamples.push({ x: samples[ind].x, y: samples[ind].y });
+      while (/* x <= xEnd &&  */ n < numOfSteps) {
+        x += step;
+        scope.set(variable, x);
+        y = parser.evaluate(scope);
+        innerSamples.push({ x, y });
+        n++;
       }
-    }
+      innerSamples[innerSamples.length - 1] = {
+        x: xEnd,
+        y: samples[ind + 1].y,
+      };
 
-    //derivative = math.derivative(derivative, variable);
-    const parser = new EvaluateExp(derivative.toString());
-    //const parser = new EvaluateExp(m_fn);
-    /* 1 when x > 0
-      -1 when x < 0
-      0 when x == 0 */
-    // console.log("m_fn", m_fn);
+      const innerSlopes = getSlopes(innerSamples);
+      const innerIndices = getIndices(innerSlopes, true);
+      const innerInd = innerIndices[innerIndices.length - 1];
+      if (!innerInd) {
+        continue;
+      }
+      let endPoint1Line1 = [innerSamples[innerInd].x, innerSamples[innerInd].y];
+      let endPoint2Line1 = [
+        innerSamples[innerInd + 1].x,
+        innerSamples[innerInd + 1].y,
+      ];
+      let endPoint1Line2 = [
+        innerSamples[innerInd].x,
+        (innerSamples[innerInd].y + innerSamples[innerInd + 1].y) / 2,
+      ];
+      let endPoint2Line2 = [
+        innerSamples[innerInd + 1].x,
+        (innerSamples[innerInd].y + innerSamples[innerInd + 1].y) / 2,
+      ];
 
-    let sign = math.sign(parser.eval({ x: samples[0].x }));
-    if (sign == 0) {
-      sign = 1;
-    }
+      const res = math.intersect(
+        endPoint1Line1,
+        endPoint2Line1,
+        endPoint1Line2,
+        endPoint2Line2
+      );
 
-    for (let i = 1; i < samples.length; i++) {
-      const m = math.sign(parser.eval({ x: samples[i].x }));
-      if ($.isNumeric(m) && $.isNumeric(sign) && m != 0 && sign != 0) {
-        if (m !== sign) {
-          const numOfSteps = 200;
-          let minMax;
-          const step = (samples[i].x - samples[i - 1].x) / numOfSteps;
-          //console.log(step);
-          let xVal;
-
-          let arr = [];
-          for (let n = 0; n < numOfSteps; n++) {
-            xVal = samples[i - 1].x + n * step;
-            arr.push(Math.abs(parser.eval({ x: xVal })));
-          }
-          //console.log("arr:", arr);
-          if (arr.length > 1) {
-            if (arr[1] < arr[0] || arr[0] < 1e-100) {
-              minMax = Math.min(...arr);
-            } else {
-              minMax = Math.max(...arr);
-            }
-          }
-
-          sign *= -1;
-          xVal = samples[i - 1].x + arr.indexOf(minMax) * step;
-          result.push(
-            new Misc.Point(
-              Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
-              Utility.adjustForDecimalPlaces(math.evaluate(m_fn, { x: xVal })),
-              decimalPlacesY
-            )
-          );
-        }
+      if (res) {
+        result.push(new Misc.Point(res[0], res[1]));
       }
     }
     return result;
+
+    function getIndices(_slopes, brk = false) {
+      let indices = [];
+      let polarity = true;
+      for (let i = 1; i < _slopes.length; i++) {
+        if (
+          polarity ? _slopes[i] < _slopes[i - 1] : _slopes[i] > _slopes[i - 1]
+        ) {
+          polarity = !polarity;
+          indices.push(i - 1);
+          if (i > 1 && brk) {
+            break;
+          }
+        }
+      }
+      return indices;
+    }
+
+    function getSlopes(_samples) {
+      let slopes = [];
+      for (let i = 1; i < _samples.length; i++) {
+        slopes.push(Utility.slope(_samples[i], _samples[i - 1]));
+      }
+      return slopes;
+    }
   }
+
   //Utility.mode
 
   static mathMode() {
@@ -3261,8 +3340,8 @@ class Utility {
   }
 
   static grapherDeterminedDecimalPlaces(curve) {
-    let decimalPlacesX = 2;
-    let decimalPlacesY = 2;
+    let decimalPlacesX = 1;
+    let decimalPlacesY = 1;
 
     const sample0 = curve.sample(0);
     const sample1 = curve.sample(1);
@@ -3277,6 +3356,7 @@ class Utility {
         x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
         n++;
       }
+      //decimalPlacesX--;
 
       //const parser = math.parse(curve.fn);
       n = 0;
@@ -3288,6 +3368,7 @@ class Utility {
         y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
         n++;
       }
+      //decimalPlacesY--;
 
       if (decimalPlacesY == 302) {
         decimalPlacesY = 2;

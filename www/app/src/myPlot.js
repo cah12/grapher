@@ -1010,14 +1010,15 @@ class MyPlot extends Plot {
               pt.y = pt.y / scaleY;
               return pt;
             }
-            pt.x = Utility.adjustForDecimalPlaces(
-              pt.x,
-              math.max(4, (decimalPlacesX + 1) * 2)
-            );
-            pt.y = Utility.adjustForDecimalPlaces(
-              pt.y,
-              math.max(4, decimalPlacesY * 2)
-            );
+
+            // pt.x = Utility.adjustForDecimalPlaces(
+            //   pt.x,
+            //   math.max(4, (decimalPlacesX + 1) * 2)
+            // );
+            // pt.y = Utility.adjustForDecimalPlaces(
+            //   pt.y,
+            //   math.max(4, decimalPlacesY * 2)
+            // );
             return pt;
           });
 
@@ -2596,26 +2597,25 @@ class MyPlot extends Plot {
                     2;
                 }
 
-                pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-                pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+                // pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+                // pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
                 return pt;
               }
             }
             return pt;
           }
 
-          res = res.map((pt) => {
-            //pt = adjustIp(pt);
-            pt.x = Utility.adjustForDecimalPlaces(
-              parseFloat(pt.x),
-              decimalPlacesX - 1
-            );
-            pt.y = Utility.adjustForDecimalPlaces(
-              parseFloat(pt.y),
-              decimalPlacesY - 1
-            );
-            return pt;
-          });
+          // res = res.map((pt) => {
+          //   pt.x = Utility.adjustForDecimalPlaces(
+          //     parseFloat(pt.x),
+          //     decimalPlacesX - 1
+          //   );
+          //   pt.y = Utility.adjustForDecimalPlaces(
+          //     parseFloat(pt.y),
+          //     decimalPlacesY - 1
+          //   );
+          //   return pt;
+          // });
 
           if (prefix == "x~") {
             const variable = curves[0].variable;
@@ -2654,11 +2654,9 @@ class MyPlot extends Plot {
             }
           }
 
-          //console.time("adjustIp");
           res = arr.map((e) => {
             return adjustIp(e);
           });
-          //console.timeEnd("adjustIp");
 
           res = res.filter((item, index) => {
             if (index > 0) {
@@ -2671,7 +2669,6 @@ class MyPlot extends Plot {
 
           let str = "";
           for (let i = 0; i < res.length; i++) {
-            //const element = adjustIp(res[i]);
             const element = res[i];
             const { spacing, align } = getArrowSymbolProperties();
             const ipName = Utility.generateCurveName(self, prefix);
