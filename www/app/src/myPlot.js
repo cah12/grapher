@@ -1011,14 +1011,14 @@ class MyPlot extends Plot {
               return pt;
             }
 
-            // pt.x = Utility.adjustForDecimalPlaces(
-            //   pt.x,
-            //   math.max(4, (decimalPlacesX + 1) * 2)
-            // );
-            // pt.y = Utility.adjustForDecimalPlaces(
-            //   pt.y,
-            //   math.max(4, decimalPlacesY * 2)
-            // );
+            pt.x = Utility.adjustForDecimalPlaces(
+              pt.x,
+              math.max(4, (decimalPlacesX + 1) * 2)
+            );
+            pt.y = Utility.adjustForDecimalPlaces(
+              pt.y,
+              math.max(4, decimalPlacesY * 2)
+            );
             return pt;
           });
 
