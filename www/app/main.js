@@ -822,5 +822,5 @@ require([
   //f(x)=x^2
   //x=f(y)
   //x=y^2
-  //console.log(Utility.reduceTerms("4x*1e-20+2x^2"));
+  //console.log(Utility.isLinear("6x+4"));
 });

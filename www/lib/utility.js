@@ -1243,7 +1243,7 @@ class Utility {
     // fn += c.toString();
 
     var fn = `${m}x+${c}`;
-    console.log("fn:", fn);
+    //console.log("fn:", fn);
     return fn;
   }
 
@@ -1917,7 +1917,7 @@ class Utility {
             });
             samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
-              new Misc.Point(d - step * 0.01, math.sign(yVal) * 1e300)
+              new Misc.Point(d - step * 0.0001, math.sign(yVal) * 1e300)
             ); //point before but close to discontinuity
           }
           if (d + step * 0.01 < upperX) {
@@ -1925,10 +1925,10 @@ class Utility {
               x: d + step * 0.01,
             });
             samples.push(
-              new Misc.Point(d + step * 0.01, math.sign(yVal) * 1e300)
+              new Misc.Point(d + step * 0.0001, math.sign(yVal) * 1e300)
             ); //point after but close to discontinuity
 
-            samples.push(new Misc.Point(d + step * 0.0001, yVal)); //point after but close to discontinuity
+            samples.push(new Misc.Point(d + step * 0.01, yVal)); //point after but close to discontinuity
           }
           yVal = NaN;
           indexInDiscontinuity++;
@@ -2055,8 +2055,12 @@ class Utility {
     }
     if (!obj.threeD) {
       //samples = Utility.removeNonNumericPoints(samples);
-      let _points = Utility.curveInflectionPoint(fx, indepVar, samples);
-      let points = Utility.curveTurningPoint(fx, indepVar, samples);
+      let _points = [];
+      let points = [];
+      if (!obj.discontinuity.length) {
+        _points = Utility.curveInflectionPoint(fx, indepVar, samples);
+        points = Utility.curveTurningPoint(fx, indepVar, samples);
+      }
 
       obj.inflectionPoints = _points; //return inflection points to makeSamples() caller
       obj.turningPoints = points; //return turning points to makeSamples() caller
@@ -2451,6 +2455,10 @@ class Utility {
     let slopes = getSlopes(samples);
 
     let indices = getIndices(slopes);
+    if (indices.length * 3 > slopes.length) {
+      //we need at least 3 slopes to determine inflection.
+      return result;
+    }
 
     const parser = math.parse(fn);
     const scope = new Map();
@@ -4780,7 +4788,12 @@ class Utility {
       let c = exp[i];
       let num = "";
       if (c == "." || Utility.isDigit(c)) {
-        while (c == "." || Utility.isDigit(c)) {
+        while (
+          c == "." ||
+          Utility.isDigit(c) ||
+          (c == "e" && i > 0 && Utility.isDigit(exp[i - 1])) ||
+          ((c == "-" || c == "+") && i > 0 && exp[i - 1] == "e")
+        ) {
           num += c;
           i++;
           c = exp[i];
@@ -4792,57 +4805,39 @@ class Utility {
     return m_exp;
   }
 
-  static reduceTerms(exp, variable = "x", eps = 1e-16) {
-    const node = math.parse(exp);
-    node.map(function (_node) {
-      if (_node.type === "ConstantNode") {
-        _node.value = Utility.adjustForDecimalPlaces(_node.value, 2);
-      }
-      return _node;
-    });
-    let filtered = node.filter(function (node) {
-      if (node.op && (node.op === "+" || node.op === "-")) {
-        return true;
-      }
-      return false;
-    });
-    if (!filtered.length) {
-      return node.toString();
-    }
+  static isLinear(exp, variable = "x", eps = 1e-6) {
+    if (!exp || exp.indexOf(variable) == -1) return null;
+
+    const xArr = math.range(-50, 50, 1, true);
+    const p = math.parse(exp);
     const scope = new Map();
     scope.set(variable, 1);
-    let values = [];
-    for (let i = 0; i < filtered.length; i++) {
-      const el = filtered[i];
-      const L = el.args[0].toString();
-      const R = el.args[1].toString();
-      let p = math.parse(L);
-      values.push(math.abs(p.evaluate(scope)));
-      p = math.parse(R);
-      values.push(math.abs(p.evaluate(scope)));
+
+    try {
+      p.evaluate(scope);
+    } catch (error) {
+      return null;
     }
 
-    const max = math.max(...values);
-    if (eps == 1e-16) {
-      eps = math.min(1e-16, max / 1e16);
+    const points = xArr.map((val) => {
+      scope.set(variable, val);
+      return { x: val, y: p.evaluate(scope) };
+    });
+    const data = points._data;
+    const testSlope = Utility.slope(data[data.length - 1], data[0]);
+    for (let i = 1; i < data.length; i++) {
+      if (
+        !Utility.mFuzzyCompare(
+          Utility.slope(data[i - 1], data[i]),
+          testSlope,
+          eps
+        )
+      ) {
+        return null;
+      }
     }
 
-    for (let i = 0; i < filtered.length; i++) {
-      const el = filtered[i];
-      const L = el.args[0].toString();
-      const R = el.args[1].toString();
-      let p = math.parse(L);
-      const vL = math.abs(p.evaluate(scope));
-      if (vL <= eps) {
-        exp = exp.replace(L.replaceAll(" ", ""), "0");
-      }
-      p = math.parse(R);
-      const vR = math.abs(p.evaluate(scope));
-      if (vR <= eps) {
-        exp = exp.replace(R.replaceAll(" ", ""), "0");
-      }
-    }
-    return math.simplify(exp).toString().replaceAll(" ", "");
+    return Utility.linearEquationFromPoints(data[data.length - 1], data[0]);
   }
 
   static isValidExpression(exp, variable = "x") {

@@ -1954,16 +1954,18 @@ class MFunctionDlg {
             self.color2 = $("#fnDlg_color2").val();
           }
           //console.time("timer");
-          cb();
+          const _newCurve = cb();
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
-          const fn = negativeRootFn();
-          if (Static.negativeRoot && fn) {
-            const title = self.title;
-            for (let i = 0; i < fn.length; i++) {
-              self.fn = self.expandedFn = fn[i];
-              self.title = i + "~" + title;
-              cb();
+          if (_newCurve && _newCurve.data().size()) {
+            const fn = negativeRootFn();
+            if (Static.negativeRoot && fn) {
+              const title = self.title;
+              for (let i = 0; i < fn.length; i++) {
+                self.fn = self.expandedFn = fn[i];
+                self.title = i + "~" + title;
+                cb();
+              }
             }
           }
           if (

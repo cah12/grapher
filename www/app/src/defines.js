@@ -816,7 +816,8 @@ class Defines {
         n++;
       }
       // }
-
+      const _fn = Utility.isLinear(str, variable);
+      if (_fn) str = _fn;
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };
 

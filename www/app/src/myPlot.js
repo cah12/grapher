@@ -974,7 +974,10 @@ class MyPlot extends Plot {
         const ips = newCurve.inflectionPoints;
         let scaleX = 1;
         let scaleY = 1;
-        if ((tps && tps.length) || (ips && ips.length)) {
+        if (
+          !newCurve.discontinuity.length &&
+          ((tps && tps.length) || (ips && ips.length))
+        ) {
           const width =
             math.max(
               math.abs(newCurve.minXValue()),
@@ -1057,6 +1060,7 @@ class MyPlot extends Plot {
 
         return newCurve;
       }
+      return newCurve;
     };
 
     this._functionDlg.init(self.functionDlgCb);
@@ -1541,6 +1545,14 @@ class MyPlot extends Plot {
               .replaceAll("+-", "-");
             //Replace the whitespace delimiters stripped out by simplify()
             combinedFn = combinedFn.replaceAll("mod", " mod ");
+
+            //console.log(Utility.isLinear(combinedFn, variable, 1e-10));
+            const _combinedFn = Utility.isLinear(combinedFn, variable);
+            if (_combinedFn)
+              combinedFn = Utility.adjustExpForDecimalPlaces(
+                _combinedFn,
+                decimalPlacesX
+              );
           }
 
           function doJoin() {
@@ -1590,6 +1602,13 @@ class MyPlot extends Plot {
           }
 
           //self.curveSelector.abortSelection();
+          let numOfPoints = -1;
+          for (let i = 0; i < curves.length; i++) {
+            const sz = curves[i].data().size();
+            if (sz > numOfPoints) {
+              numOfPoints = sz;
+            }
+          }
           functions = [];
           curves = [];
 
@@ -1605,7 +1624,8 @@ class MyPlot extends Plot {
             variable, //String
             fn: combinedFn, //String
             expandedFn: combinedFn, //String
-            numOfPoints: undefined, //Number
+            //numOfPoints: undefined, //Number
+            numOfPoints, //Number
             unboundedRange: false, //Boolean
             coeffs, //: null, //Array
             threeDType: null, //String e.g. "spectrocurve"
