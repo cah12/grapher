@@ -2621,6 +2621,25 @@ class Utility {
     return res;
   }
 
+  static getInverseDeclaration(str) {
+    //f^(-1)(x)
+    let m_str = Utility.purgeAndMarkKeywords(str);
+    for (let i = 6; i < m_str.length; i++) {
+      if (
+        m_str[i] === "(" &&
+        m_str[i - 2] == "1" &&
+        m_str[i - 3] == "-" &&
+        Utility.isAlpha(m_str[i - 6])
+      ) {
+        const res = m_str.substring(i - 6, i + 1);
+        Utility.replaceKeywordMarkers(m_str);
+        return res;
+      }
+    }
+    Utility.replaceKeywordMarkers(m_str);
+    return null;
+  }
+
   static getFunctionDeclaration(str) {
     //f(x)
     let m_str = Utility.purgeAndMarkKeywords(str);
