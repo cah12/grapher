@@ -2621,10 +2621,13 @@ class Utility {
     return res;
   }
 
-  static getInverseDeclaration(str) {
+  static getInverseDeclaration(str, index = 0) {
     //f^(-1)(x)
+    if (!str || str.length < 9) {
+      return null;
+    }
     let m_str = Utility.purgeAndMarkKeywords(str);
-    for (let i = 6; i < m_str.length; i++) {
+    for (let i = index + 6; i < m_str.length; i++) {
       if (
         m_str[i] === "(" &&
         m_str[i - 2] == "1" &&
@@ -2633,7 +2636,27 @@ class Utility {
       ) {
         const res = m_str.substring(i - 6, i + 1);
         Utility.replaceKeywordMarkers(m_str);
-        return res;
+
+        let n = str.indexOf(res) + 7;
+
+        let bracket = 1;
+        let arg = "";
+        for (n; n < str.length; n++) {
+          const c = str[n];
+
+          if (c == "(") {
+            bracket++;
+          }
+          if (c == ")") {
+            bracket--;
+          }
+          if (bracket == 0) {
+            break;
+          }
+          arg += c;
+        }
+
+        return { dec: `${res}${arg})`, arg };
       }
     }
     Utility.replaceKeywordMarkers(m_str);
@@ -3171,10 +3194,12 @@ class Utility {
       try {
         eq = nerdamer(`${e}=0`);
         solution = eq.solveFor("x");
-        nerdamer.flush();
+        //nerdamer.flush();
       } catch (error) {
         console.log("Error in discontinuity()");
       }
+      nerdamer.clear("all");
+      nerdamer.flush();
 
       let periodic = false;
       let coeff = 1;

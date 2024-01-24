@@ -508,6 +508,7 @@ class MyPlot extends Plot {
           for (var i = 0; i < coeffs.length; ++i) {
             while (_fn.indexOf(coeffs[i]) != -1) {
               _fn = _fn.replace(coeffs[i], 1 + 1e-15); //log(x,a) don't work with a==1;
+              //_fn = _fn.replace(coeffs[i], 1);
             }
           }
           m_fn = Utility.replaceKeywordMarkers(_fn);

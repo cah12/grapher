@@ -488,64 +488,53 @@ class Defines {
       let dec;
 
       if (str.indexOf("^(-1)") !== -1) {
-        dec = Utility.getInverseDeclaration(str);
+        let obj = Utility.getInverseDeclaration(str);
         let n = 0;
-        while (dec && n < 100) {
-          // const _dec = dec.replace("^(-1)", "");
-          let _dec = `${dec}${variable})`;
-          _dec = _dec.replace("^(-1)", "");
-          let _defn = m_defines.get(_dec);
-          if (!_defn) {
-            return null;
-          }
-          _defn = _defn.value.replaceAll(variable, "y");
-          _defn = `${_defn}=x`;
-          let eq = null;
+        let _index = 0;
+        while (obj && obj.dec && obj.arg && n < 100) {
           let solution = null;
-          try {
-            eq = nerdamer(`${_defn}`);
-            solution = eq.solveFor("y");
+
+          const { dec, arg } = obj;
+          // const _dec = dec.replace("^(-1)", "");
+          let _dec = dec.replace(arg, variable).replace("^(-1)", "");
+          let _defn = m_defines.get(_dec);
+          if (_defn) {
+            _defn = _defn.value.replaceAll(variable, "y");
+            _defn = `x=${_defn}`;
+            let eq = null;
+
+            try {
+              //eq = nerdamer(_defn);
+              //solution = eq.solveFor("y");
+              solution = nerdamer.solveEquations(_defn, "y");
+            } catch (error) {
+              console.log("Error in discontinuity()");
+            }
+            nerdamer.clear("all");
             nerdamer.flush();
-          } catch (error) {
-            console.log("Error in discontinuity()");
+            console.log(typeof solution);
+            if (typeof solution != "object") {
+              solution = [solution];
+            }
+            //console.log(solution[0]);
+            solution = solution[0].toString().replaceAll("abs", "1*");
+            solution = math
+              .simplify(solution, {}, { exactFractions: false })
+              .toString()
+              .replaceAll(" ", "");
+
+            solution = solution.replaceAll(variable, `(${arg})`);
+
+            str = str.replace(dec, `(${solution})`);
+            //console.log(solution);
           }
-          console.log(typeof solution);
-          if (typeof solution != "object") {
-            solution = [solution];
-          }
-          solution = solution[0].toString().replaceAll("abs", "");
-          solution = math
-            .simplify(solution, {}, { exactFractions: false })
-            .toString()
-            .replaceAll(" ", "");
-
-          //f^(-1)(
-          let i = 7;
-
-          let bracket = 1;
-          let arg = "";
-          for (let i = 7; i < str.length; i++) {
-            const c = str[i];
-
-            if (c == "(") {
-              bracket++;
-            }
-            if (c == ")") {
-              bracket--;
-            }
-            if (bracket == 0) {
-              break;
-            }
-            arg += c;
+          if (solution) {
+            obj = Utility.getInverseDeclaration(str, _index);
+          } else {
+            _index += str.indexOf(dec) + 8;
+            obj = Utility.getInverseDeclaration(str, _index);
           }
 
-          dec = `${dec}${arg})`;
-
-          solution = solution.replaceAll(variable, `(${arg})`);
-
-          str = str.replace(dec, solution);
-          console.log(solution);
-          dec = Utility.getInverseDeclaration(str);
           n++;
         }
       }

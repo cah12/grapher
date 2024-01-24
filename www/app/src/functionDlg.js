@@ -622,7 +622,16 @@ class MFunctionDlg {
       function negativeRootFn() {
         let fn = [];
         if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
-        const degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
+        let degOfPoly;
+        try {
+          degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
+          nerdamer.clear("all");
+          nerdamer.flush();
+        } catch (error) {
+          nerdamer.clear("all");
+          nerdamer.flush();
+          return fn;
+        }
         //console.log(self.expandedFn, degOfPoly);
         if (degOfPoly % 2 != 0) {
           return fn;
@@ -817,6 +826,7 @@ class MFunctionDlg {
             } else {
               res = solution.toString();
             }
+            nerdamer.clear("all");
             nerdamer.flush();
           }
           if (res) {
@@ -1130,6 +1140,7 @@ class MFunctionDlg {
               arr = ["y", solution.toString().replaceAll("abs", "")];
               //arr = ["y", solution.toString()];
             }
+            nerdamer.clear("all");
             nerdamer.flush();
             fnDlgFunctionVal = `y=${arr[1]}`;
           }
@@ -1373,6 +1384,7 @@ class MFunctionDlg {
                   } else {
                     arr = [solution.toString()];
                   }
+                  nerdamer.clear("all");
                   nerdamer.flush();
                   fnDlgFunctionVal = arr[0];
                   if (plot.defines.getDefine(dec)) {
@@ -1410,6 +1422,7 @@ class MFunctionDlg {
                     } else {
                       arr = [solution.toString()];
                     }
+                    nerdamer.clear("all");
                     nerdamer.flush();
                   }
                   fnDlgFunctionVal = arr[0];
@@ -1485,6 +1498,7 @@ class MFunctionDlg {
                   arr[0] = "y";
                   arr[1] = solution.toString();
                 }
+                nerdamer.clear("all");
                 nerdamer.flush();
 
                 fnDlgFunctionVal = arr[1];
