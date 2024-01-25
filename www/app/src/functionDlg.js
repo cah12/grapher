@@ -621,8 +621,10 @@ class MFunctionDlg {
 
       function negativeRootFn() {
         let fn = [];
+        let noNegativeRoot = false;
+        //return fn;
         if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
-        let degOfPoly;
+        /* let degOfPoly;
         try {
           degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
           nerdamer.clear("all");
@@ -630,12 +632,12 @@ class MFunctionDlg {
         } catch (error) {
           nerdamer.clear("all");
           nerdamer.flush();
-          return fn;
+          //return fn;
         }
         //console.log(self.expandedFn, degOfPoly);
-        if (degOfPoly % 2 != 0) {
+        if (degOfPoly && degOfPoly % 2 != 0) {
           return fn;
-        }
+        } */
         const node = math.parse(self.expandedFn);
         let filtered = node.filter(function (node) {
           if (
@@ -652,11 +654,16 @@ class MFunctionDlg {
               if (denom % 2 == 0) {
                 return true;
               }
-              //console.log(fr);
+              noNegativeRoot = true;
+              return false;
             }
           }
           return false;
         });
+
+        if (noNegativeRoot) {
+          filtered = [];
+        }
 
         // filtered = filtered.concat(
         //   node.filter(function (node) {
@@ -910,7 +917,12 @@ class MFunctionDlg {
                   s.substring(lastIndex + 1);
                 s = s.replaceAll(",", ", ");
               }
-              alert(
+              // alert(
+              //   `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
+              // );
+
+              Utility.displayErrorMessage(
+                mf,
                 `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
               );
               return;
@@ -1552,10 +1564,10 @@ class MFunctionDlg {
                 // alert(
                 //   `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
                 // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
-                );
+                // Utility.displayErrorMessage(
+                //   mf,
+                //   `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
+                // );
                 return;
               }
             } else {

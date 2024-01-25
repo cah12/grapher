@@ -415,6 +415,7 @@ class Defines {
     let self = this;
     let m_defines = new Map();
     let m_simplify = true;
+    const mf = $("#fnDlg_function")[0];
 
     this.getDefinesDlg = function () {
       return null; //subclass reimplement to return something useful.
@@ -498,9 +499,21 @@ class Defines {
           // const _dec = dec.replace("^(-1)", "");
           let _dec = dec.replace(arg, variable).replace("^(-1)", "");
           let _defn = m_defines.get(_dec);
+          let degOfPoly = nerdamer.deg(_defn.value);
+
           if (_defn) {
             _defn = _defn.value.replaceAll(variable, "y");
+
             _defn = `x=${_defn}`;
+
+            if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
+              Utility.displayErrorMessage(
+                mf,
+                `Degree of polynomial in "y" greater than 3 not yet supported - "${_defn}".`
+              );
+              return null;
+            }
+
             let eq = null;
 
             try {
