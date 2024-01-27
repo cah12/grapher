@@ -2370,6 +2370,8 @@ class Utility {
       return result;
     }
 
+    //console.time("CurveTurning");
+
     let slopes = getSlopes(samples);
 
     let indices = getIndices(slopes);
@@ -2384,7 +2386,7 @@ class Utility {
 
       let x = samples[ind].x;
       let y = samples[ind].y;
-      const numOfSteps = 20000000;
+      const numOfSteps = 200000;
       const step = (samples[ind + 1].x - x) / numOfSteps;
       let increasing = true;
       let prevY = y;
@@ -2406,10 +2408,12 @@ class Utility {
         prevY = y;
         n++;
       }
+      //console.log(n);
 
       result.push(new Misc.Point(x - step, prevY));
       //result.push(new Misc.Point(samples[ind].x, samples[ind].y));
     }
+    //console.timeEnd("CurveTurning");
     return result;
 
     function getIndices(_slopes, brk = false) {
@@ -2451,6 +2455,7 @@ class Utility {
     if (samples.length < 2) {
       return result;
     }
+    //console.time("CurveInflection");
 
     let slopes = getSlopes(samples);
 
@@ -2469,7 +2474,7 @@ class Utility {
 
       let n = 0;
       let innerSamples = [];
-      const numOfSteps = 50000;
+      const numOfSteps = 1000;
       const xEnd = samples[ind + 1].x;
       const step = (xEnd - samples[ind].x) / numOfSteps;
       let x = samples[ind].x;
@@ -2519,6 +2524,7 @@ class Utility {
         result.push(new Misc.Point(res[0], res[1]));
       }
     }
+    //console.timeEnd("CurveInflection");
     return result;
 
     function getIndices(_slopes, brk = false) {

@@ -525,7 +525,7 @@ class Defines {
             }
             nerdamer.clear("all");
             nerdamer.flush();
-            console.log(typeof solution);
+            //console.log(typeof solution);
             if (typeof solution != "object") {
               solution = [solution];
             }
