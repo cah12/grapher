@@ -3898,6 +3898,9 @@ class Utility {
   }
 
   static isMathematicalEqual(exp1, exp2) {
+    if (exp1 === exp2) {
+      return true;
+    }
     exp1 = Utility.purgeAndMarkKeywords(exp1);
     let scope = new Map();
     for (let i = 0; i < exp1.length; i++) {
@@ -4847,6 +4850,95 @@ class Utility {
     }
 
     return m_exp;
+  }
+
+  static inverseRelationSamples(
+    relationFn,
+    lowerLimit,
+    upperLimit,
+    numOfPoints,
+    variable,
+    plot
+  ) {
+    let str = relationFn;
+    const mf = $("#fnDlg_function")[0];
+    let obj = Utility.getInverseDeclaration(str);
+    let n = 0;
+    let _index = 0;
+    let decObjs = [];
+    while (obj && obj.dec && obj.arg && n < 100) {
+      let solution = null;
+
+      decObjs.push(obj);
+
+      if (solution) {
+        obj = Utility.getInverseDeclaration(str, _index);
+      } else {
+        _index += str.indexOf(obj.dec) + 8;
+        obj = Utility.getInverseDeclaration(str, _index);
+      }
+      n++;
+    } //
+
+    const xArr = math.range(
+      lowerLimit,
+      upperLimit,
+      (upperLimit - lowerLimit) / numOfPoints,
+      true
+    );
+
+    if (decObjs.length > 1) {
+      let decStr = "";
+      for (let i = 0; i < decObjs.length; i++) {
+        decStr += decObjs[i].dec;
+        if (i < decObjs.length - 1) {
+          decStr += ", ";
+        }
+      }
+      Utility.displayErrorMessage(
+        mf,
+        `Tried but failed to plot inverse relation. Cannot handle multiple inverse declaration, ${decStr}.`
+      );
+      return;
+    }
+    const { dec, arg } = decObjs[0];
+    if (dec !== relationFn) {
+      Utility.displayErrorMessage(
+        mf,
+        `Tried but failed to plot inverse relation. Found ${relationFn}. Expected ${dec}.`
+      );
+      return;
+    }
+
+    if (arg !== variable) {
+      let _dec = dec.replace(arg, variable);
+      Utility.displayErrorMessage(
+        mf,
+        `Tried but failed to plot inverse relation. Unable to resolve independent variable. Found ${relationFn}. Expected ${_dec}.`
+      );
+      return;
+    }
+
+    let m_defn = plot.defines.getDefine(
+      dec.replace("^(-1)", "").replace(arg, variable)
+    );
+    //m_defn = m_defn.replaceAll(variable, `(${arg})`);
+    const p = math.parse(m_defn);
+    const scope = new Map();
+
+    scope.set(variable, 1);
+
+    try {
+      p.evaluate(scope);
+    } catch (error) {
+      return null;
+    }
+    const samples = xArr._data.map((val) => {
+      scope.set(variable, val);
+      return new Misc.Point(p.evaluate(scope), val);
+    });
+
+    return samples;
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {

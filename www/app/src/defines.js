@@ -498,20 +498,20 @@ class Defines {
           const { dec, arg } = obj;
           // const _dec = dec.replace("^(-1)", "");
           let _dec = dec.replace(arg, variable).replace("^(-1)", "");
-          let _defn = m_defines.get(_dec);
-          let degOfPoly = nerdamer.deg(_defn.value);
+          const m_defn = m_defines.get(_dec);
+          let degOfPoly = nerdamer.deg(m_defn.value);
 
-          if (_defn) {
-            _defn = _defn.value.replaceAll(variable, "y");
+          if (m_defn) {
+            let _defn = m_defn.value.replaceAll(variable, "y");
 
             _defn = `x=${_defn}`;
 
             if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
-              Utility.displayErrorMessage(
-                mf,
-                `Degree of polynomial in "y" greater than 3 not yet supported - "${_defn}".`
-              );
-              return null;
+              // Utility.displayErrorMessage(
+              //   mf,
+              //   `Degree of polynomial in "y" greater than 3 not yet supported - "${_defn}".`
+              // );
+              return "failedInverse";
             }
 
             let eq = null;
@@ -549,7 +549,7 @@ class Defines {
           }
 
           n++;
-        }
+        } //
       }
 
       if (derive) {
@@ -811,7 +811,12 @@ class Defines {
       let prevExpanded = str;
 
       str = doExpandDefines(str, variable, derive);
-      if (!str) return null;
+      if (!str) {
+        return str;
+      }
+      if (str == "failedInverse") {
+        return { fn: prevExpanded, failedInverse: true };
+      }
       //let prevExpanded = null;
 
       let n = 0;
@@ -850,8 +855,15 @@ class Defines {
           .toString()
           .replaceAll("*", "")
           .replaceAll(" ", ""); */
-      while (!Utility.isMathematicalEqual(str, prevExpanded) && n < 100) {
-        prevExpanded = str;
+      while (
+        prevExpanded !== str &&
+        !Utility.isMathematicalEqual(str, prevExpanded) &&
+        n < 100
+      ) {
+        prevExpanded = math
+          .simplify(str, {}, { exactFractions: false })
+          .toString()
+          .replaceAll(" ", "");
         str = doExpandDefines(str, variable, derive);
         //prevExpanded = str;
         /* s1 = str;
@@ -880,6 +892,7 @@ class Defines {
             .replaceAll(" ", ""); */
         n++;
       }
+      //console.log("expandDefines() iteration:", n);
       // }
       const _fn = Utility.isLinear(str, variable);
       if (_fn) str = _fn;

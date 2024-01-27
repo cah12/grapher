@@ -1561,13 +1561,32 @@ class MFunctionDlg {
                   );
               //console.timeEnd("timer");
               if (!self.expandedFn) {
-                // alert(
-                //   `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
-                // );
-                // Utility.displayErrorMessage(
-                //   mf,
-                //   `Failed to retrieve a valid define for expanding "${fnDlgFunctionVal}".`
-                // );
+                return;
+              }
+              if (typeof self.expandedFn == "object") {
+                console.log("do relation");
+                const relationFn = self.expandedFn.fn;
+                self.expandedFn = self.fn = fnDlgFunctionVal = null;
+
+                const { lowerLimit, upperLimit, numOfPoints, variable } = self;
+
+                const samples = Utility.inverseRelationSamples(
+                  relationFn,
+                  lowerLimit,
+                  upperLimit,
+                  numOfPoints,
+                  variable,
+                  plot
+                );
+
+                if (samples && samples.length) {
+                  const c = new MyCurve(
+                    Utility.generateCurveName(plot, "Inv_")
+                  );
+                  c.setSamples(samples);
+                  c.attach(plot);
+                }
+
                 return;
               }
             } else {

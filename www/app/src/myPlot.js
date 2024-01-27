@@ -788,6 +788,29 @@ class MyPlot extends Plot {
           return;
         }
         if (samples.length == 0) {
+          const mf = $("#fnDlg_function")[0];
+          const fn = mf.getValue();
+          const decObj = Utility.getInverseDeclaration(fn);
+          if (decObj) {
+            const { lowerX, upperX, numOfSamples, variable } = makeSamplesData;
+
+            const samples = Utility.inverseRelationSamples(
+              fn,
+              lowerX,
+              upperX,
+              numOfSamples,
+              variable,
+              self
+            );
+
+            if (samples && samples.length) {
+              const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
+              c.setSamples(samples);
+              c.attach(self);
+            }
+            return;
+          }
+
           Utility.alert(
             `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
               fn,
@@ -1430,7 +1453,7 @@ class MyPlot extends Plot {
               Utility.alert(
                 `Your selection, "${curves[
                   i
-                ].title()}", is not described by a know function.`
+                ].title()}", is not described by a known function.`
               );
               self.curveSelector.abortSelection();
               functions = [];
@@ -1456,7 +1479,7 @@ class MyPlot extends Plot {
             Utility.alert(
               `Your selection, "${curves[
                 i
-              ].title()}", is not described by a know function.`
+              ].title()}", is not described by a known function.`
             );
             functions = [];
             curves = [];
