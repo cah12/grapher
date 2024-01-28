@@ -789,11 +789,22 @@ class MyPlot extends Plot {
         }
         if (samples.length == 0) {
           const mf = $("#fnDlg_function")[0];
-          const fn = mf.getValue();
+          let fn = mf.getValue();
+          const arr = fn.split("=");
+          const { lowerX, upperX, numOfSamples, variable } = makeSamplesData;
+          if (
+            arr.length == 2 &&
+            arr[0].length == 1 &&
+            arr[0] == variable &&
+            arr[1].length == 4
+          ) {
+            const s = arr[1];
+            if (Utility.isAlpha(s[0]) && s[1] == "(" && s[3] == ")") {
+              fn = `${s[0]}^(-1)(${variable})`;
+            }
+          }
           const decObj = Utility.getInverseDeclaration(fn);
           if (decObj) {
-            const { lowerX, upperX, numOfSamples, variable } = makeSamplesData;
-
             const samples = Utility.inverseRelationSamples(
               fn,
               lowerX,
@@ -811,11 +822,19 @@ class MyPlot extends Plot {
             return;
           }
 
-          Utility.alert(
-            `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
+          // Utility.alert(
+          //   `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
+          //     fn,
+          //     decimalPlacesX
+          //   )}"</b>.\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
+          // );
+
+          Utility.displayErrorMessage(
+            mf,
+            `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
               fn,
               decimalPlacesX
-            )}"</b>.\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300]. (4) Check that the syntax for "inverse" is correct.`
           );
           return;
         }
