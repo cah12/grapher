@@ -2166,7 +2166,7 @@ class Utility {
             scope.set(indepVar, x);
             num = parser.eval(scope);
           }
-          console.log("test2", n);
+          //console.log("test2", n);
 
           x_upper = samples[sz - 1].x + step - n * inc;
           samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
