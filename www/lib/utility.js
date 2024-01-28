@@ -2474,7 +2474,7 @@ class Utility {
 
       let n = 0;
       let innerSamples = [];
-      const numOfSteps = 1000;
+      const numOfSteps = 5000;
       const xEnd = samples[ind + 1].x;
       const step = (xEnd - samples[ind].x) / numOfSteps;
       let x = samples[ind].x;
@@ -5149,6 +5149,7 @@ class Utility {
       latex = latex.replaceAll("+\\cdot", "+").replaceAll("\\cdot +", "+");
       latex = latex.replaceAll("-\\cdot", "-").replaceAll("\\cdot -", "-");
       latex = latex.replaceAll("{\\cdot", "{");
+      latex = latex.replaceAll("=\\cdot", "=");
       if (latex.indexOf("\\cdot") == 0) {
         latex = latex.replace("\\cdot", "");
       }
@@ -5283,6 +5284,7 @@ class Utility {
 
       //Add whitespace delimiters to mod (i.e modulus ooperator)
       result = result.replaceAll("mod", "%");
+      //.replaceAll("=*", "=");
 
       //console.log(result);
 
