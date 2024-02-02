@@ -818,6 +818,15 @@ class MyPlot extends Plot {
               const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
               c.setSamples(samples);
               c.attach(self);
+            } else {
+              const arr = fn.split("=");
+              if (arr.length == 2) {
+                const dec = arr[0];
+                if (dec.length == 4 && dec[1] == "(" && dec[3] == ")") {
+                  //g(x)
+                  self.defines.removeDefine(dec);
+                }
+              }
             }
             return;
           }

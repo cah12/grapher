@@ -823,5 +823,8 @@ require([
   //x=f(y)
   //x=y^2
 
-  //y^3=27
+  // const _defn = `x=${nerdamer("(y-4)^0.33333333").expand().toString()}`;
+  // console.log(nerdamer("(y-4)^0.33333333").expand().toString());
+
+  // const s = nerdamer.solveEquations(_defn, "y");
 });

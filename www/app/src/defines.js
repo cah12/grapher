@@ -500,11 +500,14 @@ class Defines {
           let _dec = dec.replace(arg, variable).replace("^(-1)", "");
           const m_defn = m_defines.get(_dec);
           let degOfPoly = nerdamer.deg(m_defn.value);
+          console.log(degOfPoly.toString());
 
           if (m_defn) {
             let _defn = m_defn.value.replaceAll(variable, "y");
 
-            _defn = `x=${_defn}`;
+            //_defn = nerdamer(`simplify(${_defn})`).toString();
+
+            //_defn = `${_defn}=x`;
 
             if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
               // Utility.displayErrorMessage(
@@ -514,14 +517,37 @@ class Defines {
               return "failedInverse";
             }
 
+            console.log(math.evaluate(degOfPoly.toString()));
+            let exponent = null;
+            let lhs = null;
+            if (degOfPoly && math.evaluate(degOfPoly.toString()) < 1) {
+              exponent = math.evaluate(degOfPoly.toString());
+              exponent = math.inv(exponent);
+              lhs = `x^${exponent}`;
+              //const rhs = math.simplify(`(${_defn})^${exponent}`).toString();
+              const rhs = nerdamer(
+                `simplify((${_defn})^${exponent})`
+              ).toString();
+              _defn = `${lhs}=${rhs}`;
+            } else {
+              _defn = `${_defn}=x`;
+            }
+
             let eq = null;
 
             try {
-              //eq = nerdamer(_defn);
-              //solution = eq.solveFor("y");
-              solution = nerdamer.solveEquations(_defn, "y");
+              eq = nerdamer(_defn);
+              solution = eq.solveFor("y");
+              //solution = nerdamer.solveEquations(_defn, "y");
+              if (
+                !solution ||
+                (typeof solution == "object" && solution.length == 0)
+              ) {
+                return "failedInverse";
+              }
             } catch (error) {
-              console.log("Error in discontinuity()");
+              //console.log("Error in discontinuity()");
+              return "failedInverse";
             }
             nerdamer.clear("all");
             nerdamer.flush();
@@ -530,7 +556,17 @@ class Defines {
               solution = [solution];
             }
             //console.log(solution[0]);
+            if (exponent && solution[0].toString().indexOf("^2") != -1) {
+              return "failedInverse";
+            }
+
             solution = solution[0].toString().replaceAll("abs", "1*");
+
+            if (exponent && solution.indexOf("^") == -1) {
+              //solution = `${lhs}+${solution}`;
+              return "failedInverse";
+            }
+
             solution = math
               .simplify(solution, {}, { exactFractions: false })
               .toString()

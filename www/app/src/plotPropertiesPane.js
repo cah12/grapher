@@ -275,7 +275,9 @@ class PlotPropertiesPane extends PropertiesPane {
 
     mf.addEventListener("beforeinput", (e) => {
       if (e.data == "insertLineBreak" && mf.caretPoint) {
-        $("#executeButton").trigger("mousedown");
+        //$("#executeButton").trigger("mousedown"); //show wait cursor
+        //$("body").trigger("click");
+        Utility.progressWait();
       }
     });
 
@@ -329,9 +331,10 @@ class PlotPropertiesPane extends PropertiesPane {
           t.parent().parent()[0].scrollLeft = c - w + 80;
         }
         if (e.key === "Enter" || e.keyCode === 13) {
-          $("#executeButton").click();
+          // $("#executeButton").click();
 
           mathVirtualKeyboard.hide();
+          $("#executeButton").click();
         }
       }
     });
