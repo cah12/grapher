@@ -2306,47 +2306,50 @@ class MyPlot extends Plot {
             samples1_maxY = temp_samples2_maxY;
           }
 
-          let parallelToXAxis_1 = false;
-          let parallelToXAxis_2 = false;
+          // let parallelToXAxis_1 = false;
+          // let parallelToXAxis_2 = false;
           let parallelToXAxis = false;
 
-          if (
-            samples1[0].y === samples1[1].y &&
-            (samples2_minY <= samples1[0].y || samples2_maxY >= samples1[0].y)
-          ) {
-            //console.log("samples1 parallel to x-axis");
-            parallelToXAxis_1 = true;
-          }
+          // if (
+          //   samples1[0].y === samples1[1].y &&
+          //   (samples2_minY <= samples1[0].y || samples2_maxY >= samples1[0].y)
+          // ) {
+          //   //console.log("samples1 parallel to x-axis");
+          //   parallelToXAxis_1 = true;
+          // }
 
-          if (
-            samples2[0].y === samples2[1].y &&
-            (samples1_minY <= samples2[0].y || samples1_maxY >= samples2[0].y)
-          ) {
-            //console.log("samples2 parallel to x-axis");
-            parallelToXAxis_2 = true;
-          }
+          // if (
+          //   samples2[0].y === samples2[1].y &&
+          //   (samples1_minY <= samples2[0].y || samples1_maxY >= samples2[0].y)
+          // ) {
+          //   //console.log("samples2 parallel to x-axis");
+          //   parallelToXAxis_2 = true;
+          // }
 
-          if (parallelToXAxis_1 && !parallelToXAxis_2) {
-            const y = samples1[0].y;
-            for (let i = 0; i < samples2.length; i++) {
-              if (samples2[i].y == y) {
-                res.push(samples2[i]);
-                parallelToXAxis = true;
-              }
-            }
-          }
-          if (parallelToXAxis_2 && !parallelToXAxis_1) {
-            const y = samples2[0].y;
-            for (let i = 0; i < samples1.length; i++) {
-              if (samples1[i].y == y) {
-                res.push(samples1[i]);
-                parallelToXAxis = true;
-              }
-            }
-          }
+          // parallelToXAxis_1 = false;
+          // parallelToXAxis_2 = false;
+
+          // if (parallelToXAxis_1 && !parallelToXAxis_2) {
+          //   const y = samples1[0].y;
+          //   for (let i = 0; i < samples2.length; i++) {
+          //     if (samples2[i].y == y) {
+          //       res.push(samples2[i]);
+          //       parallelToXAxis = true;
+          //     }
+          //   }
+          // }
+          // if (parallelToXAxis_2 && !parallelToXAxis_1) {
+          //   const y = samples2[0].y;
+          //   for (let i = 0; i < samples1.length; i++) {
+          //     if (samples1[i].y == y) {
+          //       res.push(samples1[i]);
+          //       parallelToXAxis = true;
+          //     }
+          //   }
+          // }
 
           //console.log(samples2);
-          else if (
+          /* else */ if (
             /* (samples1.length == 2 && samples2.length == 2) ||
             (samples1.length == 2 &&
               Utility.linearEquationFromPoints(
