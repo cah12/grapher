@@ -5133,7 +5133,11 @@ class Utility {
           index = latex.indexOf("\\frac", index + 5);
         }
       } //}\cdot \{0\le
-      latex = latex.replaceAll("}\\cdot \\{", "} \\{");
+      latex = latex.trim().replaceAll("  ", " ");
+
+      latex = latex
+        .replaceAll("\\cdot \\{", " \\{")
+        .replaceAll("\\cdot\\{", "\\{");
       latex = latex.replaceAll("\\cdot }", " }");
       latex = latex.replaceAll("\\cdot \\cdot ", "\\cdot ");
       latex = latex.replaceAll("\\cdot \\cdot", "\\cdot ");
@@ -5145,15 +5149,19 @@ class Utility {
         }
       }
       latex = latex.replaceAll("\\frac", "\\cdot \\frac");
+      if (latex.indexOf("\\cdot") == 0) {
+        latex = latex.replace("\\cdot", "");
+      }
+
       latex = latex.replaceAll("\\cdot\\cdot ", "\\cdot ");
       latex = latex.replaceAll("\\left(\\cdot ", "\\left(");
       latex = latex.replaceAll("+\\cdot", "+").replaceAll("\\cdot +", "+");
       latex = latex.replaceAll("-\\cdot", "-").replaceAll("\\cdot -", "-");
       latex = latex.replaceAll("{\\cdot", "{");
       latex = latex.replaceAll("=\\cdot", "=");
-      if (latex.indexOf("\\cdot") == 0) {
-        latex = latex.replace("\\cdot", "");
-      }
+      // if (latex.indexOf("\\cdot") == 0) {
+      //   latex = latex.replace("\\cdot", "");
+      // }
       //latex = latex.replaceAll(" ", "");
       //Handle \frac end
 
