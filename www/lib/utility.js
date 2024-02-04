@@ -2135,7 +2135,7 @@ class Utility {
             num = parser.eval(scope);
             //console.log("test1", n);
           }
-          console.log("test1", n);
+          //console.log("test1", n);
 
           x_lower = samples[0].x - step + n * inc;
           samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
@@ -5132,7 +5132,8 @@ class Utility {
           latex = latex.insert(index + 1, "\\cdot ");
           index = latex.indexOf("\\frac", index + 5);
         }
-      }
+      } //}\cdot \{0\le
+      latex = latex.replaceAll("}\\cdot \\{", "} \\{");
       latex = latex.replaceAll("\\cdot }", " }");
       latex = latex.replaceAll("\\cdot \\cdot ", "\\cdot ");
       latex = latex.replaceAll("\\cdot \\cdot", "\\cdot ");
