@@ -3309,8 +3309,8 @@ class MyPlot extends Plot {
       //zIndex: 2000,
       enableNotepad: true,
       //For Dev. Uncomment the following line.
-      fsServerUrl: "https://easy-grapher.herokuapp.com", //only necessary for cross domain
       //fsServerUrl: "http://localhost:5000",
+      fsServerUrl: "https://easy-grapher.herokuapp.com/", //only necessary for cross domain
 
       listOfFileTypes: [
         {
