@@ -792,9 +792,8 @@ class MToolBar extends ToolBar {
       cb: function () {
         //console.log("Callback called")
       },
-      //href: 'C:\\Users\\anthony\\Documents\\helpFiles\\_tmphhp\\grapher.chm',
-      href: "grapherHelp/Grapher.html",
-      //href: 'help.html',
+      href: "https://easy-grapher.herokuapp.com/grapherHelp/Grapher.html",
+      //href: "grapherHelp/Grapher.html",
       target: "_blank",
       class: "noSelect",
       tooltip: "Launches online help.",
