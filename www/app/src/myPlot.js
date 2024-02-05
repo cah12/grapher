@@ -3310,7 +3310,7 @@ class MyPlot extends Plot {
       enableNotepad: true,
       //For Dev. Uncomment the following line.
       //fsServerUrl: "http://localhost:5000",
-      fsServerUrl: "https://easy-grapher.herokuapp.com", //only necessary for cross domain
+      //fsServerUrl: "https://easy-grapher.herokuapp.com", //only necessary for cross domain
 
       listOfFileTypes: [
         {
