@@ -795,7 +795,7 @@ class MToolBar extends ToolBar {
       //href: "https://easy-grapher.herokuapp.com/grapherHelp/Grapher.html",
       //href: "https://easy-grapher.herokuapp.com/grapherHelp/Grapher.html",
       //href: "pdf/Grapher.pdf",
-      href: "grapherHelp/Grapher.html",
+      href: "Grapher.html",
       target: "_blank",
       class: "noSelect",
       tooltip: "Launches online help.",
