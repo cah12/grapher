@@ -1,0 +1,496 @@
+/* ========== Text Styles ========== */
+hr { color: #000000}
+.main-content, .main-content table span.rvts0 /* Normal text */
+{
+ font-size: 10pt;
+ font-family: 'Arial', 'Helvetica', sans-serif;
+ font-style: normal;
+ font-weight: normal;
+ color: #000000;
+ text-decoration: none;
+}
+span.rvts1 /* Heading */
+{
+ font-weight: bold;
+ color: #0000ff;
+}
+span.rvts2 /* Subheading */
+{
+ font-weight: bold;
+ color: #000080;
+}
+span.rvts3 /* Keywords */
+{
+ font-style: italic;
+ color: #800000;
+}
+a.rvts4, span.rvts4 /* Jump 1 */
+{
+ color: #008000;
+ text-decoration: underline;
+}
+a.rvts5, span.rvts5 /* Jump 2 */
+{
+ color: #008000;
+ text-decoration: underline;
+}
+span.rvts6
+{
+}
+span.rvts7
+{
+ font-weight: bold;
+ color: #0000ff;
+}
+span.rvts8
+{
+ font-weight: bold;
+ color: #000080;
+}
+span.rvts9
+{
+ font-style: italic;
+ color: #800000;
+}
+a.rvts10, span.rvts10
+{
+ color: #008000;
+ text-decoration: underline;
+}
+span.rvts11
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #000000;
+}
+span.rvts12
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-weight: bold;
+ color: #000000;
+}
+span.rvts13 /* Font Style */
+{
+ font-family: 'Tahoma', 'Geneva', sans-serif;
+ font-style: italic;
+ color: #c0c0c0;
+}
+a.rvts14, span.rvts14 /* Font Style */
+{
+ font-family: 'Tahoma', 'Geneva', sans-serif;
+ font-style: italic;
+ color: #6666ff;
+ text-decoration: underline;
+}
+a.rvts15, span.rvts15
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts15:hover { color: #22527b; }
+a.rvts16, span.rvts16
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts16:hover { color: #22527b; }
+span.rvts17
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ font-weight: bold;
+ color: #000000;
+}
+span.rvts18
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #000000;
+ background-color: #ffffff;
+}
+a.rvts19, span.rvts19
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #190000;
+ background-color: #ffffff;
+ text-decoration: none;
+}
+a.rvts19:hover { color: #22527b; text-decoration: underline; }
+a.rvts20, span.rvts20
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #0000ff;
+ background-color: #ffffff;
+ text-decoration: none;
+}
+a.rvts20:hover { color: #22527b; text-decoration: underline; }
+span.rvts21
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #000000;
+}
+span.rvts22
+{
+ font-size: 11pt;
+ color: #000000;
+ background-color: #ffffff;
+}
+a.rvts23, span.rvts23
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #0000ff;
+ background-color: #ffffff;
+ text-decoration: underline;
+}
+a.rvts23:hover { color: #22527b; }
+span.rvts24
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #494747;
+}
+span.rvts25
+{
+ font-size: 11pt;
+ color: #333333;
+}
+span.rvts26
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #3f3f3f;
+}
+a.rvts27, span.rvts27
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #3f3f3f;
+ text-decoration: none;
+}
+a.rvts27:hover { color: #22527b; text-decoration: underline; }
+a.rvts28, span.rvts28
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #0000ff;
+ text-decoration: none;
+}
+a.rvts28:hover { color: #22527b; text-decoration: underline; }
+span.rvts29
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #333333;
+ background-color: #ffffff;
+}
+span.rvts30
+{
+ font-size: 12pt;
+ font-family: 'Verdana', 'Geneva', sans-serif;
+ color: #333333;
+}
+a.rvts31, span.rvts31
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ font-weight: bold;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts31:hover { color: #22527b; }
+span.rvts32
+{
+ color: #000000;
+}
+span.rvts33
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #190000;
+}
+span.rvts34
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-weight: bold;
+ color: #190000;
+}
+a.rvts35, span.rvts35
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #190000;
+ text-decoration: none;
+}
+a.rvts35:hover { color: #22527b; text-decoration: underline; }
+a.rvts36, span.rvts36
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #190000;
+ text-decoration: none;
+}
+a.rvts36:hover { color: #22527b; text-decoration: underline; }
+span.rvts37
+{
+ font-size: 12pt;
+ font-style: italic;
+ color: #000000;
+ background-color: #f9fbdd;
+}
+a.rvts38, span.rvts38
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts38:hover { color: #22527b; }
+span.rvts39
+{
+ font-size: 12pt;
+ font-family: 'Verdana', 'Geneva', sans-serif;
+ color: #333333;
+ background-color: #ffffd0;
+}
+a.rvts40, span.rvts40
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ font-weight: bold;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts40:hover { color: #22527b; }
+a.rvts41, span.rvts41
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #337ab7;
+ text-decoration: underline;
+}
+a.rvts41:hover { color: #22527b; }
+span.rvts42
+{
+ font-size: 12pt;
+ color: #000000;
+}
+a.rvts43, span.rvts43
+{
+ font-size: 12pt;
+ color: #337ab7;
+ text-decoration: none;
+}
+a.rvts43:hover { color: #22527b; text-decoration: underline; }
+a.rvts44, span.rvts44
+{
+ font-size: 12pt;
+ font-weight: bold;
+ color: #4665a2;
+ text-decoration: none;
+}
+a.rvts44:hover { color: #22527b; text-decoration: underline; }
+span.rvts45
+{
+ font-size: 12pt;
+ color: #000000;
+ background-color: #ffffff;
+}
+span.rvts46
+{
+ font-style: italic;
+ color: #000000;
+}
+span.rvts47
+{
+ color: #000000;
+ background-color: #ffffff;
+}
+span.rvts48
+{
+ font-family: '@yu gothic ui';
+ color: #000000;
+}
+a.rvts49, span.rvts49
+{
+ font-family: '@yu gothic ui';
+ font-style: italic;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts49:hover { color: #22527b; }
+a.rvts50, span.rvts50
+{
+ font-family: '@yu gothic ui';
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts50:hover { color: #22527b; }
+a.rvts51, span.rvts51
+{
+ color: #0000ff;
+ background-color: #ffffff;
+ text-decoration: underline;
+}
+a.rvts51:hover { color: #22527b; }
+span.rvts52
+{
+ font-size: 12pt;
+ font-family: 'Courier New', 'Courier', monospace;
+ color: #000000;
+}
+span.rvts53
+{
+ font-size: 12pt;
+ color: #190000;
+ background-color: #ffffff;
+}
+a.rvts54, span.rvts54
+{
+ font-size: 12pt;
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts54:hover { color: #22527b; }
+span.rvts55
+{
+ font-size: 12pt;
+ font-style: italic;
+ color: #000000;
+}
+a.rvts56, span.rvts56
+{
+ font-size: 12pt;
+ font-family: '@yu gothic ui';
+ color: #3333ff;
+ background-color: #ffffff;
+ text-decoration: underline;
+}
+a.rvts56:hover { color: #22527b; }
+span.rvts57
+{
+ font-size: 12pt;
+ font-family: 'yu gothic ui';
+ color: #000000;
+}
+a.rvts58, span.rvts58
+{
+ font-size: 12pt;
+ font-family: 'yu gothic ui';
+ color: #0000ff;
+ text-decoration: underline;
+}
+a.rvts58:hover { color: #22527b; }
+a.rvts59, span.rvts59
+{
+ font-size: 12pt;
+ font-family: 'yu gothic ui';
+ color: #190000;
+ text-decoration: none;
+}
+a.rvts59:hover { color: #22527b; text-decoration: underline; }
+a.rvts60, span.rvts60
+{
+ font-size: 12pt;
+ font-family: 'yu gothic ui';
+ color: #3f3f3f;
+ text-decoration: none;
+}
+a.rvts60:hover { color: #22527b; text-decoration: underline; }
+a.rvts61, span.rvts61
+{
+ font-size: 12pt;
+ font-family: 'yu gothic ui';
+ color: #0000ff;
+ text-decoration: none;
+}
+a.rvts61:hover { color: #22527b; }
+/* ========== Para Styles ========== */
+p,ul,ol /* Paragraph Style */
+{
+ text-align: left;
+ text-indent: 0px;
+ padding: 0px 0px 0px 0px;
+ margin: 0px 0px 0px 0px;
+}
+.rvps1 /* Centered */
+{
+ text-align: center;
+}
+.rvps2
+{
+}
+.rvps3
+{
+ text-align: center;
+}
+.rvps4 /* Paragraph Style */
+{
+ text-align: center;
+ border-color: #c0c0c0;
+ border-style: solid;
+ border-width: 1px;
+ border-right: none;
+ border-left: none;
+ padding: 2px 0px 2px 0px;
+ margin: 7px 0px 7px 0px;
+}
+.rvps5
+{
+ background: #ffffff;
+ margin: 24px 0px 24px 0px;
+}
+.rvps6
+{
+ background: #ffffff;
+}
+.rvps7
+{
+ background: #ffffff;
+ margin: 7px 0px 7px 0px;
+}
+.rvps8
+{
+ background: #ffffff;
+ margin: 0px 0px 0px 24px;
+}
+.rvps9
+{
+ text-align: left;
+ text-indent: 0px;
+ padding: 0px 0px 0px 0px;
+ margin: 16px 0px 4px 0px;
+}
+.rvps10
+{
+ margin: 0px 0px 0px 24px;
+}
+.rvps11
+{
+ margin: 0px 0px 0px 48px;
+}
+/* ========== Lists ========== */
+.list0 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: disc;}
+.list1 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: circle;}
+.list2 {text-indent: 0px; padding: 0; margin: 0 0 0 48px; list-style-position: outside; list-style-type: square;}
+.list3 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: disc;}
+.list4 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: circle;}
+.list5 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: square;}
+.list6 {text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside; list-style-type: decimal;}
