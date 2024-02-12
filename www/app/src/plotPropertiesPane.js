@@ -2370,7 +2370,7 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
 
-    function aspectRatio(checked) {
+    function aspectRatio(checked, trigger = true) {
       var doReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       //padding-top: 100%;
@@ -2420,14 +2420,26 @@ class PlotPropertiesPane extends PropertiesPane {
         //   .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
         // if (L.length); //plot.rightSidebar.showSidebar(true);
       }
-      Static.trigger("aspectRatioChanged", checked);
+      if (trigger) {
+        Static.trigger("aspectRatioChanged", checked);
+      }
       if (sb_visible) {
         plot.rightSidebar.showSidebar(true);
       }
       plot.setAutoReplot(doReplot);
     }
 
+    Static.bind("callAspectRatioFunction", (e, checked, trigger) => {
+      aspectRatio(checked, trigger);
+    });
+
     $(window).resize(function () {
+      /* if (Static.aspectRatioOneToOne) {
+        plot.leftSidebar
+          .html()
+          .css("width", parseFloat($(".plotContainer").css("left")));
+        return false;
+      } */
       if (Static.aspectRatioOneToOne) {
         const visible = plot.rightSidebar.isSideBarVisible();
         if (visible) {
@@ -2441,6 +2453,7 @@ class PlotPropertiesPane extends PropertiesPane {
         if (L.length) plot.rightSidebar.showSidebar(visible);
 
         aspectRatio(true);
+        //console.log(102);
       }
     });
 

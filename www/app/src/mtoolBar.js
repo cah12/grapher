@@ -251,6 +251,9 @@ class MToolBar extends ToolBar {
       disabled: true,
     });
 
+    const plotContainerSelector = $(".plotContainer");
+    let plotContainerWidth = parseFloat(plotContainerSelector.css("width"));
+    let plotContainerLeft = parseFloat(plotContainerSelector.css("left"));
     var pProp = this.addToolButton("checkbox", {
       label: "&P-Prop",
       checked: true,

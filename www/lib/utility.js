@@ -5064,7 +5064,7 @@ class Utility {
             );
             result = result.replace(
               `${prefix}^${oprnd.operand}`,
-              `(${prefix}${oprnd.operand})^${obj.operand}`
+              `(${prefix}${oprnd.operand})#${obj.operand}` //
             );
           }
         }
@@ -5098,8 +5098,8 @@ class Utility {
           const replacementStr = `${prefix}${operand}^(${operandOfExponent})`;
           result = result.replace(strToReplace, replacementStr);
           index = result.indexOf(
-            "^",
-            result.indexOf(operand, index) + operand.length + 2
+            "^" /* ,
+            result.indexOf(operand, index) + operand.length + 2 */
           );
         } else {
           if (bracketAdded) {
@@ -5109,7 +5109,9 @@ class Utility {
           }
           bracketAdded = false;
         }
+        //result = result.replace("^", "#");
       }
+      result = result.replaceAll("#", "^");
       return result;
     }
 
@@ -5217,7 +5219,6 @@ class Utility {
 
       //console.log(457, result);
 
-      result = exponentOnKeyword(result);
       //console.log(456, result);
 
       if (Utility.missingClosingPar(result)) {
@@ -5225,6 +5226,10 @@ class Utility {
       }
 
       //console.log(result);
+      //result = exponentOnKeyword(result);
+      result = Utility.parametizeKeywordArg(result);
+
+      result = exponentOnKeyword(result);
 
       index = result.indexOf("log");
       if (index !== -1) {
@@ -5311,8 +5316,87 @@ class Utility {
         index = result.indexOf("|");
       }
 
+      // result = Utility.parametizeKeywordArg(result);
+
       return result;
     };
+  }
+
+  static parametizeKeywordArg(str) {
+    if (!str || $.isNumeric(str) || str.length < 4) {
+      return str;
+    }
+    const arr = Static.trigKeywords;
+
+    let purgeStr = Utility.purgeAndMarkKeywords(str);
+
+    let result = "";
+    let delimiter = 0;
+    let unbalance = false;
+    for (let i = 0; i < purgeStr.length; i++) {
+      let c = purgeStr[i];
+      result += c;
+      if (c == "%") {
+        delimiter++;
+        if (delimiter == 2) {
+          delimiter = 0;
+          if (purgeStr[i + 1] === "^") {
+            i++;
+            result += "^";
+            i++;
+            let bracket = 0;
+            if (purgeStr[i] === "(") {
+              //bracket++;
+              // result += "(";
+              // i++;
+              let itr = 0;
+              while (itr < 100) {
+                itr++;
+                const c = purgeStr[i];
+                if (c === "(") {
+                  bracket++;
+                }
+                if (c === ")") {
+                  bracket--;
+                }
+                result += c;
+                i++;
+                if (bracket == 0) {
+                  break;
+                }
+              }
+            } else {
+              result += purgeStr[i];
+              i++;
+            }
+            i--;
+          }
+          if (purgeStr[i + 1] !== "(") {
+            result += "(";
+            unbalance = true;
+            i++;
+            for (i; i < purgeStr.length; i++) {
+              c = purgeStr[i];
+              if (c == "+" || c == "-" /*  || purgeStr[i - 1] === "^" */) {
+                result += ")";
+                result += c;
+                unbalance = false;
+                break;
+              }
+              result += purgeStr[i];
+            }
+            if (unbalance) {
+              unbalance = false;
+              result += ")";
+            }
+          }
+        }
+      }
+    }
+
+    result = Utility.replaceKeywordMarkers(result);
+
+    return result;
   }
 
   static parametricTex(_curve, fnStr) {

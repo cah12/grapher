@@ -3704,5 +3704,194 @@ class MyPlot extends Plot {
     self.grapherEditor.initEditor();
 
     self.plotPropertiesPane.setPlotPropertiesSettings();
+
+    ///////////////////////////////////Drag Sidebar Code///////////////////
+    const leftSidebarSelector = this.leftSidebar.html();
+    const rightSidebarSelector = this.rightSidebar.html();
+    const plotContainerSelector = $(".plotContainer");
+
+    let leftDividerPos = parseFloat(leftSidebarSelector.css("width"));
+
+    let rightDividerPos;
+
+    const originalCursor = leftSidebarSelector.css("cursor");
+    const originalBorder = leftSidebarSelector.css("border");
+
+    let onLeftDividerDrag = false;
+    let onLeftDivider = false;
+    let onRightDividerDrag = false;
+    let onRightDivider = false;
+
+    let originalLeftDividerPos = leftDividerPos;
+
+    $("body").on("mousemove", (e) => {
+      if (Static.aspectRatioOneToOne) {
+        return;
+      }
+      e.preventDefault();
+      // if (Static.aspectRatioOneToOne) {
+      //   return;
+      // }
+      //////Left Sidebar Code////////
+      if (!onLeftDividerDrag) {
+        if (Math.abs(e.clientX - leftDividerPos) < 6) {
+          leftSidebarSelector.css("cursor", "ew-resize");
+          onLeftDivider = true;
+        } else {
+          leftSidebarSelector.css("cursor", originalCursor);
+          onLeftDivider = false;
+        }
+      }
+      if (onLeftDividerDrag) {
+        const oldWidth = parseFloat(leftSidebarSelector.css("width"));
+        const delta = e.clientX - oldWidth;
+        leftSidebarSelector.css("width", oldWidth + delta);
+        plotContainerSelector.css(
+          "left",
+          parseFloat(plotContainerSelector.css("left")) + delta
+        );
+        plotContainerSelector.css(
+          "width",
+          parseFloat(plotContainerSelector.css("width")) - delta
+        );
+        leftDividerPos = oldWidth + delta;
+      }
+
+      //////Right Sidebar Code////////
+      if (!onRightDividerDrag) {
+        //console.log(e.clientX, rightDividerPos);
+        if (Math.abs(e.clientX - rightDividerPos) < 6) {
+          rightSidebarSelector.css("cursor", "ew-resize");
+          onRightDivider = true;
+        } else {
+          rightSidebarSelector.css("cursor", originalCursor);
+          onRightDivider = false;
+        }
+      }
+      if (onRightDividerDrag) {
+        const delta = rightDividerPos - e.clientX;
+        rightSidebarSelector.css(
+          "left",
+          parseFloat(rightSidebarSelector.css("left")) - delta
+        );
+        rightSidebarSelector.css(
+          "width",
+          parseFloat(rightSidebarSelector.css("width")) + delta
+        );
+
+        plotContainerSelector.css(
+          "width",
+          parseFloat(plotContainerSelector.css("width")) - delta
+        );
+        rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
+      }
+    });
+
+    leftSidebarSelector.on("mousedown", (e) => {
+      e.preventDefault();
+      // if (Static.aspectRatioOneToOne) {
+      //   return;
+      // }
+      if (onLeftDivider) {
+        leftSidebarSelector.css({ "border-right": "3px solid #f0F" });
+        onLeftDividerDrag = true;
+      }
+    });
+
+    rightSidebarSelector.on("mousedown", (e) => {
+      e.preventDefault();
+      // if (Static.aspectRatioOneToOne) {
+      //   return;
+      // }
+      if (onRightDivider) {
+        rightSidebarSelector.css({ "border-left": "3px solid #f0F" });
+        onRightDividerDrag = true;
+      }
+    });
+
+    let originalRightDividerPos;
+    Static.bind("showGridItem", (e, m_anchorPosition, gridIndex, on) => {
+      if (m_anchorPosition === "left") {
+        leftDividerPos = self.leftSidebar.sidebarOriginalWidth;
+        // if (!originalLeftDividerPos) {
+        //   originalLeftDividerPos = leftDividerPos;
+        // }
+      }
+      if (m_anchorPosition === "right") {
+        //rightDividerPos = self.rightSidebar.sidebarOriginalWidth;
+        self.rightSidebar.html().css("left", originalRightDividerPos);
+        if (on) {
+          rightDividerPos = parseFloat(
+            parseFloat(rightSidebarSelector.css("left"))
+          );
+          if (!originalRightDividerPos) {
+            originalRightDividerPos = rightDividerPos;
+          }
+        }
+      }
+      if (Static.aspectRatioOneToOne && !on) {
+        Static.trigger("callAspectRatioFunction", [true, false]);
+      }
+    });
+
+    //plot.rightSidebar.showSidebar(true);
+    /* Static.bind("aspectRatioChanged", (e, checked) => {
+       if (checked) {
+        if (self.rightSidebar.isSideBarVisible()) {
+          self.rightSidebar.showSidebar(false);
+          self.rightSidebar.showSidebar(true);
+        }
+        if (self.leftSidebar.isSideBarVisible()) {
+          self.leftSidebar.showSidebar(false);
+          self.leftSidebar.showSidebar(true);
+        }
+        //Static.trigger("callAspectRatioFunction", [checked, false]);
+        leftDividerPos = self.leftSidebar.sidebarOriginalWidth;
+        self.rightSidebar.html().css("left", originalRightDividerPos);
+        rightDividerPos = parseFloat(
+          parseFloat(rightSidebarSelector.css("left"))
+        );
+        Static.trigger("callAspectRatioFunction", [checked, false]);
+      } 
+    });*/
+
+    Static.bind("aspectRatioChanged", (e, checked) => {
+      if (!Static.aspectRatioOneToOne) {
+        if (self.leftSidebar.isSideBarVisible()) {
+          leftDividerPos = parseFloat(leftSidebarSelector.css("width"));
+        }
+        if (self.rightSidebar.isSideBarVisible()) {
+          rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
+        }
+        // plotContainerSelector.css(
+        //   "left",
+        //   parseFloat(leftSidebarSelector.css("width")) + 2
+        // );
+      } else {
+        //Static.trigger("callAspectRatioFunction", [checked, false]);
+        //leftSidebarSelector.css("width", originalLeftDividerPos);
+      }
+      // const delta =
+      //   parseFloat(leftSidebarSelector.css("width")) - originalLeftDividerPos;
+      // console.log(originalLeftDividerPos, delta);
+
+      // plotContainerSelector.css(
+      //   "width",
+      //   parseFloat(plotContainerSelector.css("width")) - delta
+      // );
+
+      //Static.trigger("callAspectRatioFunction", [checked, false]);
+    });
+
+    $("body").on("mouseup", (e) => {
+      e.preventDefault();
+      // if (Static.aspectRatioOneToOne) {
+      //   return;
+      // }
+      leftSidebarSelector.css({ "border-right": originalBorder });
+      onLeftDividerDrag = false;
+      rightSidebarSelector.css({ "border-left": originalBorder });
+      onRightDividerDrag = false;
+    });
   }
 }

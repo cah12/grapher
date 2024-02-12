@@ -1629,6 +1629,7 @@ class Plot {
       plotDivContainerWidth = parseFloat(plotDivContainer.css("width"));
       plotDivContainerHeight = parseFloat(plotDivContainer.css("height"));
       self.autoRefresh();
+      //console.log(100);
     });
 
     this.plotDivContainerSize = function () {
