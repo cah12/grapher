@@ -2872,6 +2872,47 @@ class MyPlot extends Plot {
     );
     this.plotPropertiesPane = m_settings;
 
+    ///////////////////////////Handle Sidebars//////////////////
+    Static.bind("sidebarShown", (e, anchorPosition, on) => {
+      //console.log(anchorPosition, on);
+      const plotDivContainerSize = self.plotDivContainerSize();
+      if (anchorPosition === "left") {
+        if (on) {
+          if (!self.rightSidebar || !self.rightSidebar.isSideBarVisible()) {
+            const percentW =
+              (100 * parseFloat(self.leftSidebar.html().css("width"))) /
+              plotDivContainerSize.width;
+            plotDiv.css("width", 98 - percentW + "%");
+            plotDiv.css("left", percentW + "%");
+          } else {
+            const leftSidebarPercentW =
+              (100 * parseFloat(self.leftSidebar.html().css("width"))) /
+              plotDivContainerSize.width;
+            const rightSidebarPercentW =
+              (100 * parseFloat(self.rightSidebar.html().css("width"))) /
+              plotDivContainerSize.width;
+            plotDiv.css(
+              "width",
+              98 - leftSidebarPercentW - rightSidebarPercentW + "%"
+            );
+            plotDiv.css("left", leftSidebarPercentW + "%");
+          }
+        } else {
+          if (!self.rightSidebar || !self.rightSidebar.isSideBarVisible()) {
+            plotDiv.css("width", 98 + "%");
+            plotDiv.css("left", "0%");
+          } else {
+            const rightSidebarPercentW =
+              (100 * parseFloat(self.rightSidebar.html().css("width"))) /
+              plotDivContainerSize.width;
+            plotDiv.css("width", 98 - rightSidebarPercentW + "%");
+            plotDiv.css("left", "0%");
+          }
+        }
+      }
+    });
+    /////////////////////////////////////////////////////////
+
     this.leftSidebar.showGridItem(1, true);
 
     this.rightSidebar = new InfoSideBar(this, self.plotDiv);
@@ -3729,6 +3770,7 @@ class MyPlot extends Plot {
         return;
       }
       e.preventDefault();
+      const plotDivContainerSize = self.plotDivContainerSize();
       // if (Static.aspectRatioOneToOne) {
       //   return;
       // }
@@ -3745,15 +3787,16 @@ class MyPlot extends Plot {
       if (onLeftDividerDrag) {
         const oldWidth = parseFloat(leftSidebarSelector.css("width"));
         const delta = e.clientX - oldWidth;
-        leftSidebarSelector.css("width", oldWidth + delta);
-        plotContainerSelector.css(
-          "left",
-          parseFloat(plotContainerSelector.css("left")) + delta
-        );
-        plotContainerSelector.css(
-          "width",
-          parseFloat(plotContainerSelector.css("width")) - delta
-        );
+        let percentW = (100 * (oldWidth + delta)) / plotDivContainerSize.width;
+        leftSidebarSelector.css("width", percentW + "%");
+        percentW =
+          (100 * (parseFloat(plotContainerSelector.css("left")) + delta)) /
+          plotDivContainerSize.width;
+        plotContainerSelector.css("left", percentW + "%");
+        percentW =
+          (100 * (parseFloat(plotContainerSelector.css("width")) - delta)) /
+          plotDivContainerSize.width;
+        plotContainerSelector.css("width", percentW + "%");
         leftDividerPos = oldWidth + delta;
       }
 
@@ -3770,19 +3813,18 @@ class MyPlot extends Plot {
       }
       if (onRightDividerDrag) {
         const delta = rightDividerPos - e.clientX;
-        rightSidebarSelector.css(
-          "left",
-          parseFloat(rightSidebarSelector.css("left")) - delta
-        );
-        rightSidebarSelector.css(
-          "width",
-          parseFloat(rightSidebarSelector.css("width")) + delta
-        );
-
-        plotContainerSelector.css(
-          "width",
-          parseFloat(plotContainerSelector.css("width")) - delta
-        );
+        let percentW =
+          (100 * (parseFloat(rightSidebarSelector.css("left")) - delta)) /
+          plotDivContainerSize.width;
+        rightSidebarSelector.css("left", percentW + "%");
+        percentW =
+          (100 * (parseFloat(rightSidebarSelector.css("width")) + delta)) /
+          plotDivContainerSize.width;
+        rightSidebarSelector.css("width", percentW + "%");
+        percentW =
+          (100 * (parseFloat(plotContainerSelector.css("width")) - delta)) /
+          plotDivContainerSize.width;
+        plotContainerSelector.css("width", percentW + "%");
         rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
       }
     });
@@ -3812,14 +3854,12 @@ class MyPlot extends Plot {
     let originalRightDividerPos;
     Static.bind("showGridItem", (e, m_anchorPosition, gridIndex, on) => {
       if (m_anchorPosition === "left") {
-        leftDividerPos = self.leftSidebar.sidebarOriginalWidth;
-        // if (!originalLeftDividerPos) {
-        //   originalLeftDividerPos = leftDividerPos;
-        // }
+        if (on) {
+          leftDividerPos = parseFloat(leftSidebarSelector.css("width"));
+        }
       }
       if (m_anchorPosition === "right") {
-        //rightDividerPos = self.rightSidebar.sidebarOriginalWidth;
-        self.rightSidebar.html().css("left", originalRightDividerPos);
+        //self.rightSidebar.html().css("left", originalRightDividerPos);
         if (on) {
           rightDividerPos = parseFloat(
             parseFloat(rightSidebarSelector.css("left"))
@@ -3829,9 +3869,9 @@ class MyPlot extends Plot {
           }
         }
       }
-      if (Static.aspectRatioOneToOne && !on) {
-        Static.trigger("callAspectRatioFunction", [true, false]);
-      }
+      // if (Static.aspectRatioOneToOne && !on) {
+      //   Static.trigger("callAspectRatioFunction", [true, false]);
+      // }
     });
 
     //plot.rightSidebar.showSidebar(true);

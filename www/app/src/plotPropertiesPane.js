@@ -2371,6 +2371,125 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     function aspectRatio(checked, trigger = true) {
+      Static.aspectRatioOneToOne = checked;
+      const plotDivContainerSize = plot.plotDivContainerSize();
+      let leftSidebarWidth = 0;
+      if (plot.leftSidebar.isSideBarVisible()) {
+        leftSidebarWidth = parseFloat(plot.leftSidebar.html().css("width")) + 8;
+      }
+      let rightSidebarWidth = 0;
+      if (plot.rightSidebar.isSideBarVisible()) {
+        rightSidebarWidth =
+          parseFloat(plot.rightSidebar.html().css("width")) + 8;
+      }
+
+      let leftAxisWidth = 0;
+      if (plot.axisEnabled(Axis.AxisId.yLeft)) {
+        leftAxisWidth = parseFloat($("#leftScaleDiv").css("width"));
+      }
+      let rightAxisWidth = 0;
+      if (plot.axisEnabled(Axis.AxisId.yRight)) {
+        rightAxisWidth = parseFloat($("#rightScaleDiv").css("width"));
+      }
+      let bottomAxisHeight = 0;
+      if (plot.axisEnabled(Axis.AxisId.xBottom)) {
+        bottomAxisHeight = parseFloat($("#bottomScaleDiv").css("height"));
+      }
+      let topAxisHeight = 0;
+      if (plot.axisEnabled(Axis.AxisId.xTop)) {
+        topAxisHeight = parseFloat($("#topScaleDiv").css("height"));
+      }
+      //console.log(plot)
+
+      let footerHeight = 0;
+      if (plot.footer().length) {
+        footerHeight = parseFloat($("#footerDiv").css("height"));
+      }
+      let titleHeight = 0;
+      if (plot.title().length) {
+        titleHeight = parseFloat($("#titleDiv").css("height"));
+      }
+
+      if (checked) {
+        const availableCentralDivWidth =
+          parseFloat($(".plotDivPrint").css("width")) -
+          leftSidebarWidth -
+          rightSidebarWidth -
+          leftAxisWidth -
+          rightAxisWidth;
+
+        const availableCentralDivHeight =
+          parseFloat($(".plotDivPrint").css("height")) -
+          footerHeight -
+          bottomAxisHeight -
+          topAxisHeight -
+          titleHeight -
+          plot.tbar.tbarHeight;
+        -bottomAxisHeight - topAxisHeight - footerHeight - titleHeight;
+        let centralDivOneToOneDimension = availableCentralDivHeight;
+        if (availableCentralDivHeight > availableCentralDivWidth) {
+          centralDivOneToOneDimension = availableCentralDivWidth;
+        }
+        const percentW =
+          (100 *
+            (centralDivOneToOneDimension + leftAxisWidth + rightAxisWidth)) /
+          plotDivContainerSize.width;
+        const percentH =
+          (100 *
+            (centralDivOneToOneDimension +
+              footerHeight +
+              bottomAxisHeight +
+              topAxisHeight +
+              titleHeight)) /
+          plotDivContainerSize.height;
+        plotDiv.css("width", percentW + "%");
+        plotDiv.css("height", percentH + "%");
+        // plotDiv.css("width", centralDivOneToOneDimension + leftAxisWidth + rightAxisWidth);
+        // plotDiv.css("height", centralDivOneToOneDimension + footerHeight + bottomAxisHeight + topAxisHeight + titleHeight);
+      } else {
+        const availablePlotDivWidth =
+          parseFloat($(".plotDivPrint").css("width")) -
+          leftSidebarWidth -
+          rightSidebarWidth -
+          12;
+
+        let percentW =
+          (100 * availablePlotDivWidth) / plotDivContainerSize.width;
+        plotDiv.css("width", percentW + "%");
+        percentW =
+          98 - (100 * plot.tbar.tbarHeight) / plotDivContainerSize.width;
+        plotDiv.css("height", percentW + "%");
+
+        //plotDiv.css("height", "98%");
+        // plotDiv.css(
+        //   "height",
+        //   parseFloat(plotDiv.css("height")) - plot.tbar.tbarHeight + "px"
+        // );
+      }
+      plot.autoRefresh();
+    }
+
+    Static.bind("showGridItem", (e, m_anchorPosition, gridIndex, on) => {
+      if (plot.leftSidebar && plot.rightSidebar) {
+        //   plot.leftSidebar.html().css("width", "20.5%");
+        //aspectRatio(Static.aspectRatioOneToOne);
+        // }
+        if (m_anchorPosition === "left") {
+          plot.rightSidebar.html().css("width", "20.5%");
+        }
+        if (m_anchorPosition === "right") {
+          plot.rightSidebar.html().css("width", "20.5%");
+          plot.rightSidebar.html().css("left", "79%");
+        }
+      }
+    });
+
+    $(window).resize(function () {
+      //console.log(plot.plotDivContainerSize());
+      aspectRatio(Static.aspectRatioOneToOne);
+    });
+
+    /* function aspectRatio(checked, trigger = true) {
       var doReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       //padding-top: 100%;
@@ -2403,9 +2522,7 @@ class PlotPropertiesPane extends PropertiesPane {
         restorePlotItemAxis();
         plot.enableAxis(1, self.rightAxisEnabled);
         plot.enableAxis(3, self.topAxisEnabled);
-        doAdjust = false;
-        //plot.rightSidebar.showSidebar(false);
-        //console.log(plot.rightSidebar);
+        doAdjust = false;        
         plotDiv.css("width", "77.9653%");
         plotDiv.css("height", "98%");
 
@@ -2413,12 +2530,7 @@ class PlotPropertiesPane extends PropertiesPane {
           "height",
           parseFloat(plotDiv.css("height")) - plot.tbar.tbarHeight + "px"
         );
-        //plot.autoRefresh();
-        // let L = plot
-        //   .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
-        //   .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
-        //   .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
-        // if (L.length); //plot.rightSidebar.showSidebar(true);
+        
       }
       if (trigger) {
         Static.trigger("aspectRatioChanged", checked);
@@ -2427,35 +2539,39 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.rightSidebar.showSidebar(true);
       }
       plot.setAutoReplot(doReplot);
-    }
+    }// */
 
-    Static.bind("callAspectRatioFunction", (e, checked, trigger) => {
-      aspectRatio(checked, trigger);
-    });
+    // Static.bind("callAspectRatioFunction", (e, checked, trigger) => {
+    //   aspectRatio(checked, trigger);
+    // });
 
-    $(window).resize(function () {
-      /* if (Static.aspectRatioOneToOne) {
-        plot.leftSidebar
-          .html()
-          .css("width", parseFloat($(".plotContainer").css("left")));
-        return false;
-      } */
-      if (Static.aspectRatioOneToOne) {
-        const visible = plot.rightSidebar.isSideBarVisible();
-        if (visible) {
-          plot.rightSidebar.showSidebar(false);
-        }
-        aspectRatio(false);
-        let L = plot
-          .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
-          .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
-          .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
-        if (L.length) plot.rightSidebar.showSidebar(visible);
+    // $(window).resize(function (){
+    //   aspectRatio(Static.aspectRatioOneToOne);
+    // });
 
-        aspectRatio(true);
-        //console.log(102);
-      }
-    });
+    // $(window).resize(function () {
+    //   /* if (Static.aspectRatioOneToOne) {
+    //     plot.leftSidebar
+    //       .html()
+    //       .css("width", parseFloat($(".plotContainer").css("left")));
+    //     return false;
+    //   } */
+    //   if (Static.aspectRatioOneToOne) {
+    //     const visible = plot.rightSidebar.isSideBarVisible();
+    //     if (visible) {
+    //       plot.rightSidebar.showSidebar(false);
+    //     }
+    //     aspectRatio(false);
+    //     let L = plot
+    //       .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
+    //       .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
+    //       .concat(plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram));
+    //     if (L.length) plot.rightSidebar.showSidebar(visible);
+
+    //     aspectRatio(true);
+    //     //console.log(102);
+    //   }
+    // });
 
     Static.bind("aspectRatioChanged", function () {
       var doReplot = plot.autoReplot();

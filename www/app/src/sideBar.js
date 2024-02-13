@@ -230,6 +230,22 @@ class SideBar {
   }
 
   showSidebar(on) {
+    if (this.isSideBarVisible() == on) {
+      return;
+    }
+    //const plotDivContainerSize = plot.plotDivContainerSize();
+    this.sideBarVisible = on;
+
+    if (on) {
+      this.html().show();
+    } else {
+      this.html().hide();
+    }
+
+    Static.trigger("sidebarShown", [this.anchorPosition(), on]);
+  }
+
+  /* showSidebar(on) {
     if (this.isSideBarVisible() == on) return;
     this.sideBarVisible = on;
     //Static.trigger("showSidebar", on);
@@ -278,7 +294,7 @@ class SideBar {
       }
     }
     Static.trigger("showSidebar", [this.anchorPosition(), on]);
-  }
+  } */
 
   /* showSidebar(on) {
         if (this.isSideBarVisible() == on)
