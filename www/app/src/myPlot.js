@@ -3810,10 +3810,7 @@ class MyPlot extends Plot {
       const doAutoReplot = self.autoReplot();
       self.setAutoReplot(false);
       const oneToOne = Static.aspectRatioOneToOne;
-      if (oneToOne) {
-        Static.aspectRatioOneToOne = false;
-        self.plotPropertiesPane.aspectRatioUpdate();
-      }
+
       e.preventDefault();
 
       //////Left Sidebar Code////////
@@ -3827,6 +3824,10 @@ class MyPlot extends Plot {
         }
       }
       if (onLeftDividerDrag) {
+        if (oneToOne) {
+          Static.aspectRatioOneToOne = false;
+          self.plotPropertiesPane.aspectRatioUpdate();
+        }
         const oldWidth = parseFloat(leftSidebarSelector.css("width"));
         const delta = e.clientX - oldWidth;
         let percentW = self.elementWidthToPercentage(oldWidth + delta);
@@ -3855,6 +3856,10 @@ class MyPlot extends Plot {
         }
       }
       if (onRightDividerDrag) {
+        if (oneToOne) {
+          Static.aspectRatioOneToOne = false;
+          self.plotPropertiesPane.aspectRatioUpdate();
+        }
         const delta = rightDividerPos - e.clientX;
         let percentW = self.elementWidthToPercentage(
           parseFloat(rightSidebarSelector.css("left")) - delta
@@ -3904,7 +3909,7 @@ class MyPlot extends Plot {
     Static.bind("sidebarShown", (e, m_anchorPosition, on) => {
       if (m_anchorPosition === "left") {
         if (on) {
-          leftDividerPos = parseFloat(plotDiv.css("width"));
+          //leftDividerPos = parseFloat(plotDiv.css("width"));
         }
       }
       if (m_anchorPosition === "right") {
@@ -3913,8 +3918,19 @@ class MyPlot extends Plot {
             self.plotDivContainerSize().width -
             2 -
             parseFloat(rightSidebarSelector.css("width"));
-          console.log(rightDividerPos);
         }
+      }
+    });
+
+    Static.bind("resize", () => {
+      if (self.leftSidebar.isSideBarVisible()) {
+        leftDividerPos = parseFloat(self.leftSidebar.html().css("width"));
+      }
+      if (self.rightSidebar.isSideBarVisible()) {
+        rightDividerPos =
+          self.plotDivContainerSize().width -
+          2 -
+          parseFloat(rightSidebarSelector.css("width"));
       }
     });
 

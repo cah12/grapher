@@ -2303,6 +2303,8 @@ class PlotPropertiesPane extends PropertiesPane {
     //let aspectRatioAutoScale = false;
 
     function adjustScales() {
+      //We ensure the scales are updated.
+      plot.updateAxes();
       const yAxisInterval = plot.axisInterval(0);
       const xAxisInterval = plot.axisInterval(2);
       const yAxisInverted =
@@ -2505,12 +2507,12 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.enableAxis(3, self.topAxisEnabled);
         doAdjust = false;
 
-        const autoScale = plot.tbar.isButtonChecked(plot.tbar.auto);
-        if (autoScale) {
-          Utility.setAutoScale(plot, false);
-          Utility.setAutoScale(plot, true);
-          plot.tbar.setButtonCheck(plot.tbar.auto, true);
-        }
+        // const autoScale = plot.tbar.isButtonChecked(plot.tbar.auto);
+        // if (autoScale) {
+        //   Utility.setAutoScale(plot, false);
+        //   Utility.setAutoScale(plot, true);
+        //   plot.tbar.setButtonCheck(plot.tbar.auto, true);
+        // }
       }
       if (trigger) {
         Static.trigger("aspectRatioChanged", checked);
@@ -2538,6 +2540,9 @@ class PlotPropertiesPane extends PropertiesPane {
         aspectRatio(true);
       }
     });
+    ///////////
+    ///////////////
+    //////////////////
 
     Static.bind("aspectRatioChanged", function () {
       var doReplot = plot.autoReplot();
@@ -2554,6 +2559,7 @@ class PlotPropertiesPane extends PropertiesPane {
         adjustScales();
       }
       plot.setAutoReplot(doReplot);
+      plot.autoRefresh();
     });
 
     Static.bind("autoScalingEnabled", function (e, auto) {
