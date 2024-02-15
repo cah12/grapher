@@ -112,6 +112,9 @@ class Plot {
 
     var plotDivContainer = this.plotDiv.parent();
 
+    let titleVisible = true;
+    let footerVisible = true;
+
     var plotDivContainerWidth = parseFloat(plotDivContainer.css("width"));
     var plotDivContainerHeight = parseFloat(plotDivContainer.css("height"));
 
@@ -663,6 +666,7 @@ class Plot {
         if (tf) d_axisData[axisId].scaleWidget.show();
         else d_axisData[axisId].scaleWidget.hide();
         this.autoRefresh();
+        Static.trigger("axisEnabled", [axisId, tf]);
       }
     };
 
@@ -866,6 +870,8 @@ class Plot {
       layout.getTitleDiv().hide();
       layout.updateLayout();
       this.autoRefresh();
+      titleVisible = false;
+      Static.trigger("titleVisible", false);
     };
 
     /**
@@ -877,6 +883,8 @@ class Plot {
       layout.getTitleDiv().show();
       layout.updateLayout();
       this.autoRefresh();
+      titleVisible = true;
+      Static.trigger("titleVisible", true);
     };
 
     /**
@@ -891,15 +899,21 @@ class Plot {
 
         if (_title !== "") {
           layout.getTitleDiv().show(); //ensure the div is visible
+          titleVisible = true;
           Static.trigger("titleAdded", true);
         } else {
           layout.getTitleDiv().hide();
+          titleVisible = false;
           Static.trigger("titleAdded", false);
         }
         layout.updateLayout();
         this.autoRefresh();
         //console.log("setTitle called")
       }
+    };
+
+    this.titleVisible = function () {
+      return titleVisible;
     };
 
     /**
@@ -931,6 +945,10 @@ class Plot {
       return m_footer;
     };
 
+    this.footerVisible = function () {
+      return footerVisible;
+    };
+
     /**
      * Hides the widget that displays the footer
      * @see {@link Plot#showFooter showFooter()}
@@ -940,6 +958,8 @@ class Plot {
       layout.getFooterDiv().hide();
       layout.updateLayout();
       this.autoRefresh();
+      footerVisible = false;
+      Static.trigger("footerVisible", false);
     };
 
     /**
@@ -951,6 +971,8 @@ class Plot {
       layout.getFooterDiv().show();
       layout.updateLayout();
       this.autoRefresh();
+      footerVisible = true;
+      Static.trigger("footerVisible", true);
     };
 
     /**
@@ -963,9 +985,11 @@ class Plot {
         if (ftr.trim(" ").length == 0) m_footer = "";
         if (m_footer !== "") {
           layout.getFooterDiv().show(); //ensure the div is visible
+          footerVisible = true;
           Static.trigger("footerAdded", true);
         } else {
           layout.getFooterDiv().hide();
+          footerVisible = false;
           Static.trigger("footerAdded", false);
         }
         layout.updateLayout();
@@ -1016,6 +1040,7 @@ class Plot {
         m_legend.legendDiv().hide();
       }
       this.autoRefresh();
+      Static.trigger("legendEnabled", on);
     };
 
     /**
@@ -1634,6 +1659,24 @@ class Plot {
 
     this.plotDivContainerSize = function () {
       return new Misc.Size(plotDivContainerWidth, plotDivContainerHeight);
+    };
+
+    /**
+     *
+     * @param {Number} val
+     * @returns {String} A string e.g 45%
+     */
+    this.elementWidthToPercentage = function (val) {
+      return (100 * val) / plotDivContainerWidth + "%";
+    };
+
+    /**
+     *
+     * @param {Number} val
+     * @returns {String} A string e.g 45%
+     */
+    this.elementHeightToPercentage = function (val) {
+      return (100 * val) / plotDivContainerHeight + "%";
     };
 
     var _prevH = parseFloat(plotDivContainer.css("height"));

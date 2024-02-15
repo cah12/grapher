@@ -556,3 +556,11 @@ input.noInputBorders {
     transform: rotate(360deg);
   }
 }
+
+
+body.ewResizeCursor,
+body.ewResizeCursor a:hover,
+body.ewResizeCursor *
+{
+    cursor: ew-resize !important;
+}

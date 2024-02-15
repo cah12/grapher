@@ -243,6 +243,7 @@ class SideBar {
     }
 
     Static.trigger("sidebarShown", [this.anchorPosition(), on]);
+    Static.trigger("showSidebar", [this.anchorPosition(), on]);
   }
 
   /* showSidebar(on) {
