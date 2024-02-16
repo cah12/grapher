@@ -2303,8 +2303,10 @@ class PlotPropertiesPane extends PropertiesPane {
     //let aspectRatioAutoScale = false;
 
     function adjustScales() {
+      if (!Utility.isAutoScale(plot)) return;
       //We ensure the scales are updated.
       plot.updateAxes();
+
       const yAxisInterval = plot.axisInterval(0);
       const xAxisInterval = plot.axisInterval(2);
       const yAxisInverted =
@@ -2339,7 +2341,6 @@ class PlotPropertiesPane extends PropertiesPane {
       } else {
         plot.setAxisScale(2, minX, minX + maxWidth);
       }
-
       plot.tbar.setButtonCheck(plot.tbar.auto, true);
     }
 
@@ -2366,9 +2367,11 @@ class PlotPropertiesPane extends PropertiesPane {
       if (Static.aspectRatioOneToOne) {
         var doReplot = plot.autoReplot();
         plot.setAutoReplot(false);
-        aspectRatioChkBx.click();
-        aspectRatioChkBx.click();
+        // aspectRatioChkBx.click();
+        // aspectRatioChkBx.click();
+        self.aspectRatioUpdate();
         plot.setAutoReplot(doReplot);
+        plot.autoRefresh();
       }
     });
 
