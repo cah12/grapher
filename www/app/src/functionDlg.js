@@ -2002,7 +2002,11 @@ class MFunctionDlg {
           const _newCurve = cb();
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
-          if (_newCurve && _newCurve.data().size()) {
+          if (
+            _newCurve.rtti === PlotItem.RttiValues.Rtti_PlotCurve &&
+            _newCurve &&
+            _newCurve.data().size()
+          ) {
             const fn = negativeRootFn();
             if (Static.negativeRoot && fn) {
               const title = self.title;

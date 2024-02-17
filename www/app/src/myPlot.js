@@ -2849,7 +2849,11 @@ class MyPlot extends Plot {
     this.magnifier = new Magnifier(this);
 
     Static.bind("magnifyingStart", function () {
-      self.setAxesAutoScale(false);
+      if (Utility.isAutoScale(self)) {
+        self.setAxesAutoScale(false);
+        self.tbar.setButtonCheck(self.tbar.pan, true);
+        self.pan.setEnabled(true);
+      }
     });
 
     this.pan = new Panner(this);
@@ -3884,7 +3888,7 @@ class MyPlot extends Plot {
     });
 
     leftSidebarSelector.on("mousedown", (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       // if (Static.aspectRatioOneToOne) {
       //   return;
       // }
@@ -3895,7 +3899,7 @@ class MyPlot extends Plot {
     });
 
     rightSidebarSelector.on("mousedown", (e) => {
-      e.preventDefault();
+      //e.preventDefault();
       // if (Static.aspectRatioOneToOne) {
       //   return;
       // }
@@ -3971,7 +3975,7 @@ class MyPlot extends Plot {
     // });
 
     $("body").on("mouseup", (e) => {
-      e.preventDefault();
+      //e.preventDefault();
       // if (Static.aspectRatioOneToOne) {
       //   return;
       // }

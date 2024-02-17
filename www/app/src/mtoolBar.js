@@ -291,7 +291,7 @@ class MToolBar extends ToolBar {
       name: "viewMode",
       cb: radioButtonCb,
     });
-    this.addToolButton("radio", {
+    self.pan = this.addToolButton("radio", {
       label: "Pa&n",
       tooltip:
         "Allow dragging of all plot items to new positions. Press the mouse left button and drag.",

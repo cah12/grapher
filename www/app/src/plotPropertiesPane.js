@@ -2602,12 +2602,12 @@ class PlotPropertiesPane extends PropertiesPane {
         if (
           plot.itemList(/* PlotItem.RttiValues.Rtti_PlotCurve */).length == 1
         ) {
-          aspectRatio(false);
-          aspectRatio(true);
+          // aspectRatio(false);
+          // aspectRatio(true);
         }
 
         //if (plotItem instanceof MyCurve) {
-        Utility.setAutoScale(plot, true);
+        //Utility.setAutoScale(plot, true);
         adjustScales();
         //}
       }

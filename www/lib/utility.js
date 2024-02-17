@@ -3401,6 +3401,10 @@ class Utility {
     let decimalPlacesX = 1;
     let decimalPlacesY = 1;
 
+    if (!curve || !curve.sample) {
+      return { decimalPlacesX: 2, decimalPlacesY: 2 };
+    }
+
     const sample0 = curve.sample(0);
     const sample1 = curve.sample(1);
     if (sample0 && sample1) {
@@ -5377,7 +5381,11 @@ class Utility {
             i++;
             for (i; i < purgeStr.length; i++) {
               c = purgeStr[i];
-              if (c == "+" || c == "-" /*  || purgeStr[i - 1] === "^" */) {
+              if (
+                c == "+" ||
+                c == "-" ||
+                c == "{" /*  || purgeStr[i - 1] === "^" */
+              ) {
                 result += ")";
                 result += c;
                 unbalance = false;
