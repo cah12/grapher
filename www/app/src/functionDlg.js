@@ -2003,8 +2003,8 @@ class MFunctionDlg {
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
           if (
-            _newCurve.rtti === PlotItem.RttiValues.Rtti_PlotCurve &&
             _newCurve &&
+            _newCurve.rtti === PlotItem.RttiValues.Rtti_PlotCurve &&
             _newCurve.data().size()
           ) {
             const fn = negativeRootFn();

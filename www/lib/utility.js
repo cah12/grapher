@@ -5238,9 +5238,10 @@ class Utility {
       index = result.indexOf("log");
       if (index !== -1) {
         while (index !== -1 && result[index + 3] !== "_") {
-          result = result.replace("log", "log_(10)");
-          index = result.indexOf("log", index + 3);
+          result = result.replace("log", "#_(10)");
+          index = result.indexOf("log", index + 7);
         }
+        result = result.replaceAll("#", "log");
 
         index = result.indexOf("log_(");
         while (index !== -1) {
@@ -5384,7 +5385,8 @@ class Utility {
               if (
                 c == "+" ||
                 c == "-" ||
-                c == "{" /*  || purgeStr[i - 1] === "^" */
+                c == "{" ||
+                c == "," /*  || purgeStr[i - 1] === "^" */
               ) {
                 result += ")";
                 result += c;

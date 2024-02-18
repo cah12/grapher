@@ -1694,7 +1694,9 @@ class MyPlot extends Plot {
           const curve = self.functionDlgCb(functionDlgData);
           lowerLimit = undefined;
           upperLimit = undefined;
-          curve.attach(self);
+          if (curve) {
+            curve.attach(self);
+          }
         } //
       }
 
