@@ -1052,7 +1052,7 @@ class MyPlot extends Plot {
             const tp = Utility.isPointATurningPoint(tps, pt);
             const ip = Utility.isPointATurningPoint(ips, pt);
 
-            if (tp || ip) {
+            if ((tp || ip) && scaleX != 1) {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x * scaleX,
                 decimalPlacesX + 1
@@ -3817,7 +3817,7 @@ class MyPlot extends Plot {
       self.setAutoReplot(false);
       const oneToOne = Static.aspectRatioOneToOne;
 
-      e.preventDefault();
+      //e.preventDefault();
 
       //////Left Sidebar Code////////
       if (!onLeftDividerDrag) {

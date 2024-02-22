@@ -2107,8 +2107,9 @@ class Utility {
       lastPt.x = upperX;
       lastPt.y = parser.eval({ x: upperX });
       if (!obj.adjustingCurve) {
-        const places = Math.min(60, obj.xDecimalPlaces);
+        const places = 10; //Math.min(60, obj.xDecimalPlaces);
         const inc = step / 1000;
+        const iteratn = 20000;
         let reSample = false;
         let x_lower;
         let x_upper;
@@ -2121,21 +2122,21 @@ class Utility {
           scope.set(indepVar, samples[0].x - step);
           let num = parser.eval(scope);
 
-          scope.set(indepVar, samples[0].x - step);
-          num = parser.eval(scope);
+          // scope.set(indepVar, samples[0].x - step);
+          // num = parser.eval(scope);
 
           let n = 0;
 
           let x = 0;
 
-          while (!isFinite(num) && n < 1020) {
+          while (!isFinite(num) && n < iteratn) {
             n++;
             x = samples[0].x - step + n * inc;
             scope.set(indepVar, x);
             num = parser.eval(scope);
             //console.log("test1", n);
           }
-          //console.log("test1", n);
+          console.log("test1", n);
 
           x_lower = samples[0].x - step + n * inc;
           samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
@@ -2160,7 +2161,7 @@ class Utility {
           let n = 0;
 
           let x = 0;
-          while (!isFinite(num) && n < 1020) {
+          while (!isFinite(num) && n < iteratn) {
             n++;
             x = samples[sz - 1].x + step - n * inc;
             scope.set(indepVar, x);
@@ -2184,20 +2185,34 @@ class Utility {
           if (obj.xDecimalPlaces) {
             lowerX = Utility.adjustForDecimalPlaces(
               x_lower,
-              obj.xDecimalPlaces
+              places
+              /* obj.xDecimalPlaces */
             );
             upperX = Utility.adjustForDecimalPlaces(
               x_upper,
-              obj.xDecimalPlaces
+              places
+              /* obj.xDecimalPlaces */
             );
           }
-
           return Utility.makeSamples(obj, { lowerX, upperX });
         }
       }
     }
 
     samples = Utility.removeNonNumericPoints(samples);
+    if (limits_x) {
+      let { lowerX, upperX } = limits_x;
+      samples[0].x = lowerX = Utility.adjustForDecimalPlaces(
+        lowerX,
+        obj.xDecimalPlaces
+      );
+      samples[0].y = parser.eval({ x: lowerX });
+      samples[samples.length - 1].x = upperX = Utility.adjustForDecimalPlaces(
+        upperX,
+        obj.xDecimalPlaces
+      );
+      samples[samples.length - 1].y = parser.eval({ x: upperX });
+    }
 
     return samples;
   }
