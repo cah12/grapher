@@ -1867,7 +1867,7 @@ class PlotPropertiesPane extends PropertiesPane {
       title: "Set the maximum decimal places used in calculations",
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
-      //disabled: true,
+      disabled: true,
       type: "number",
       value: "1",
       min: "0",
@@ -1878,7 +1878,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      //disabled: true,
+      disabled: true,
       value: "1",
       min: "0",
     });
@@ -1888,7 +1888,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      //disabled: true,
+      disabled: true,
       value: "1",
       min: "0",
     });
@@ -1898,7 +1898,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePositionBottomBottom",
       parentId: "decimalPlacesForCalculationy",
       type: "number",
-      //disabled: true,
+      disabled: true,
       value: "1",
       min: "0",
     });
@@ -2037,10 +2037,10 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.autoRefresh();
       } else {
         if (!userDecimalPlacesForCalculation[0].checked) {
-          bottom_decimalPlaces.val(300);
-          top_decimalPlaces.val(300);
-          left_decimalPlaces.val(300);
-          right_decimalPlaces.val(300);
+          bottom_decimalPlaces.val(20);
+          top_decimalPlaces.val(20);
+          left_decimalPlaces.val(20);
+          right_decimalPlaces.val(20);
         }
       }
     }

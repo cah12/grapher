@@ -2107,16 +2107,17 @@ class Utility {
       lastPt.x = upperX;
       lastPt.y = parser.eval({ x: upperX });
       if (!obj.adjustingCurve) {
-        const places = 10; //Math.min(60, obj.xDecimalPlaces);
-        const inc = step / 1000;
-        const iteratn = 20000;
+        const places = 300; //Math.min(60, obj.xDecimalPlaces);
+        const inc = step / 30000;
+        const iteratn = 40000;
         let reSample = false;
         let x_lower;
         let x_upper;
         if (
           samples[0] &&
-          Utility.adjustForDecimalPlaces(samples[0].x, places) >
-            Utility.adjustForDecimalPlaces(lowerX, places)
+          samples[0].x > lowerX
+          // Utility.adjustForDecimalPlaces(samples[0].x, places) >
+          //   Utility.adjustForDecimalPlaces(lowerX, places)
         ) {
           let scope = new Map();
           scope.set(indepVar, samples[0].x - step);
@@ -2139,10 +2140,10 @@ class Utility {
           console.log("test1", n);
 
           x_lower = samples[0].x - step + n * inc;
-          samples[0].x = x_lower = Utility.adjustForDecimalPlaces(
+          samples[0].x = x_lower /*  = Utility.adjustForDecimalPlaces(
             x_lower,
             places
-          );
+          ) */;
           reSample = true;
         } else {
           x_lower = samples[0].x;
@@ -2151,8 +2152,9 @@ class Utility {
         const sz = samples.length;
         if (
           samples[sz - 1] &&
-          Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
-            Utility.adjustForDecimalPlaces(upperX, places)
+          samples[sz - 1].x < upperX
+          /* Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
+            Utility.adjustForDecimalPlaces(upperX, places) */
         ) {
           let scope = new Map();
           scope.set(indepVar, samples[sz - 1].x + step);
@@ -2170,10 +2172,10 @@ class Utility {
           //console.log("test2", n);
 
           x_upper = samples[sz - 1].x + step - n * inc;
-          samples[sz - 1].x = x_upper = Utility.adjustForDecimalPlaces(
+          samples[sz - 1].x = x_upper /*  = Utility.adjustForDecimalPlaces(
             x_upper,
             places
-          );
+          ) */;
           reSample = true;
         } else {
           x_upper = samples[sz - 1].x;
@@ -2182,18 +2184,18 @@ class Utility {
         if (reSample) {
           let lowerX = x_lower;
           let upperX = x_upper;
-          if (obj.xDecimalPlaces) {
-            lowerX = Utility.adjustForDecimalPlaces(
-              x_lower,
-              places
-              /* obj.xDecimalPlaces */
-            );
-            upperX = Utility.adjustForDecimalPlaces(
-              x_upper,
-              places
-              /* obj.xDecimalPlaces */
-            );
-          }
+          // if (obj.xDecimalPlaces) {
+          //   lowerX = Utility.adjustForDecimalPlaces(
+          //     x_lower,
+          //     places
+          //     /* obj.xDecimalPlaces */
+          //   );
+          //   upperX = Utility.adjustForDecimalPlaces(
+          //     x_upper,
+          //     places
+          //     /* obj.xDecimalPlaces */
+          //   );
+          // }
           return Utility.makeSamples(obj, { lowerX, upperX });
         }
       }
@@ -2202,16 +2204,19 @@ class Utility {
     samples = Utility.removeNonNumericPoints(samples);
     if (limits_x) {
       let { lowerX, upperX } = limits_x;
-      samples[0].x = lowerX = Utility.adjustForDecimalPlaces(
-        lowerX,
-        obj.xDecimalPlaces
-      );
-      samples[0].y = parser.eval({ x: lowerX });
-      samples[samples.length - 1].x = upperX = Utility.adjustForDecimalPlaces(
-        upperX,
-        obj.xDecimalPlaces
-      );
-      samples[samples.length - 1].y = parser.eval({ x: upperX });
+      let xRound = math.round(lowerX);
+      let yRound = parser.eval({ x: xRound });
+      if ($.isNumeric(yRound)) {
+        samples[0].x = xRound;
+        samples[0].y = yRound;
+      }
+
+      xRound = math.round(upperX);
+      yRound = parser.eval({ x: xRound });
+      if ($.isNumeric(yRound)) {
+        samples[samples.length - 1].x = xRound;
+        samples[samples.length - 1].y = yRound;
+      }
     }
 
     return samples;
@@ -5026,7 +5031,7 @@ class Utility {
       node.traverse(function (node, path, parent) {
         //console.log(node, path, parent); //args[1]
         if (node.type === "ConstantNode" && path === "args[1]") {
-          node.value = math.round(node.value, decimalPlaces);
+          node.value = math.round(node.value, math.min(15, decimalPlaces));
         }
         return node;
       });
