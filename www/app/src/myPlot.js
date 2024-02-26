@@ -2851,7 +2851,7 @@ class MyPlot extends Plot {
     this.magnifier = new Magnifier(this);
 
     Static.bind("magnifyingStart", function () {
-      if (Utility.isAutoScale(self)) {
+      if (self.tbar.isButtonChecked(self.tbar.auto)) {
         self.setAxesAutoScale(false);
         self.tbar.setButtonCheck(self.tbar.pan, true);
         self.pan.setEnabled(true);
