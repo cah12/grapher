@@ -2855,6 +2855,13 @@ class MyPlot extends Plot {
         self.setAxesAutoScale(false);
         self.tbar.setButtonCheck(self.tbar.pan, true);
         self.pan.setEnabled(true);
+        self.zm.setEnabled(false);
+      }
+    });
+
+    Static.bind("rescaled", (e, auto) => {
+      if (auto) {
+        self.zm.setEnabled(false);
       }
     });
 
