@@ -3819,12 +3819,6 @@ class MyPlot extends Plot {
 
       //e.preventDefault();
 
-      if (onLeftDividerDrag || onRightDividerDrag) {
-        $("*").addClass("prevent-select");
-      } else {
-        $("*").removeClass("prevent-select");
-      }
-
       //////Left Sidebar Code////////
       if (!onLeftDividerDrag) {
         if (Math.abs(e.clientX + 3 - leftDividerPos) < 6) {
