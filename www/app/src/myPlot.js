@@ -470,7 +470,7 @@ class MyPlot extends Plot {
 
       if (m_fn) {
         m_fn = m_fn.replace(/\s/g, "");
-        let fnc = Utility.purgeAndMarkKeywords(m_fn);
+        let fnc = Utility.purgeAndMarkKeywords(m_fn, true);
         for (var i = 0; i < coeffs.length; ++i) {
           let n = fnc.indexOf(coeffs[i]);
           while (

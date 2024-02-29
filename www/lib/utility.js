@@ -4439,9 +4439,12 @@ class Utility {
     return str;
   }
 
-  static purgeAndMarkKeywords(str) {
+  static purgeAndMarkKeywords(str, exclude_e = false) {
     let result = str;
     for (var i = 0; i < Static.keywords.length; ++i) {
+      if (Static.keywords[i] == "e" && exclude_e) {
+        continue;
+      }
       while (result.indexOf(Static.keywords[i]) != -1) {
         var _marker = "%" + Utility.keywordMarkers.length + "%";
         result = result.replace(Static.keywords[i], _marker);
@@ -4463,12 +4466,15 @@ class Utility {
     if (!str || str.length == 0) {
       return "";
     }
+    str = Utility.purgeAndMarkKeywords(str, true);
     let indexOfe = str.indexOf("e");
     while (indexOfe !== -1) {
       let replaced = false;
       if (
         indexOfe > 0 &&
-        (Utility.isAlpha(str[indexOfe - 1]) || str[indexOfe - 1] === "~")
+        (Utility.isDigit(str[indexOfe - 1]) ||
+          Utility.isAlpha(str[indexOfe - 1]) ||
+          str[indexOfe - 1] === "~")
       ) {
         str = str.replace("e", "*~");
         replaced = true;
@@ -4488,6 +4494,7 @@ class Utility {
       indexOfe = str.indexOf("e");
     }
     str = str.replaceAll("~", "e");
+    str = Utility.replaceKeywordMarkers(str, true);
     return str;
   }
 
@@ -5006,6 +5013,36 @@ class Utility {
     return Utility.linearEquationFromPoints(data[data.length - 1], data[0]);
   }
 
+  static isValidCharInExpression(str) {
+    if (!str) return 0;
+    str = str.replaceAll(" ", "");
+    for (let i = 0; i < str.length; i++) {
+      const c = str[i];
+      if (
+        c == "+" ||
+        c == "-" ||
+        c == "*" ||
+        c == "/" ||
+        c == "^" ||
+        c == "=" ||
+        c == "," ||
+        c == "(" ||
+        c == ")" ||
+        c == "{" ||
+        c == "}" ||
+        c == "<" ||
+        Utility.isAlpha(c) ||
+        Utility.isDigit(c)
+      ) {
+        continue;
+      } else {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
   static isValidExpression(exp, variable = "x") {
     if (!exp || exp.length == 0) {
       return false;
@@ -5058,6 +5095,7 @@ class Utility {
       Helper functions    */
 
     function exponentOnKeyword(result) {
+      result = result.replaceAll("#", "~");
       let index = result.indexOf("^");
       let bracketAdded = false;
       while (index !== -1) {
@@ -5136,6 +5174,7 @@ class Utility {
         //result = result.replace("^", "#");
       }
       result = result.replaceAll("#", "^");
+      result = result.replaceAll("~", "#");
       return result;
     }
 
@@ -5353,7 +5392,8 @@ class Utility {
     }
     const arr = Static.trigKeywords;
 
-    let purgeStr = Utility.purgeAndMarkKeywords(str);
+    let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+    //purgeStr = purgeStr.replaceAll("%e%", "e");
 
     let result = "";
     let delimiter = 0;
@@ -5403,6 +5443,7 @@ class Utility {
             for (i; i < purgeStr.length; i++) {
               c = purgeStr[i];
               if (
+                c == "=" ||
                 c == "+" ||
                 c == "-" ||
                 c == "{" ||
@@ -5423,7 +5464,6 @@ class Utility {
         }
       }
     }
-
     result = Utility.replaceKeywordMarkers(result);
 
     return result;

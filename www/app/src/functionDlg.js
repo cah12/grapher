@@ -409,14 +409,16 @@ class MFunctionDlg {
             return result;
         } */
 
-    function getCoeffs(fnStr) {
+    function getCoeffs(fnStr, indepVar) {
       var result = [];
 
       var fn = fnStr;
 
       fn = Utility.purgeKewords(fn).str;
+      if (!indepVar) {
+        indepVar = $("#fnDlg_variable").val();
+      }
 
-      var indepVar = $("#fnDlg_variable").val();
       while (fn.indexOf(indepVar) != -1) fn = fn.replace(indepVar, "");
       for (var i = 0; i < fn.length; ++i) {
         if (Utility.isAlpha(fn[i])) {
@@ -778,6 +780,17 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (fnDlgFunctionVal, closeDlg) {
+        const ind = Utility.isValidCharInExpression(fnDlgFunctionVal);
+        if (ind != -1) {
+          const mf = $("#fnDlg_function")[0];
+          Utility.displayErrorMessage(
+            mf,
+            `Invalid chararacter, "${fnDlgFunctionVal[ind]}", at position ${
+              ind + 1
+            }.`
+          );
+          return;
+        }
         let forceDefined = false;
         let expanded = false;
         let defineName = null;
@@ -1087,6 +1100,14 @@ class MFunctionDlg {
             self.domainRangeRestriction = domainRangeRestriction;
           }
           let arr = fnDlgFunctionVal.split("=");
+          // for (let i = 0; i < arr.length; i++) {
+          //   try {
+          //     math.parse(arr[i]);
+          //   } catch (error) {
+          //     Utility.displayErrorMessage(mf, error.message);
+          //     return;
+          //   }
+          // }
 
           if (
             arr.length == 2 &&
@@ -1706,10 +1727,14 @@ class MFunctionDlg {
             ) {
               $("#cont_parametric_variable").show();
               //self.parametric_variable = $("#fnDlg_parametric_variable").val();
+              // self.coeffs = getCoeffs(
+              //   (
+              //     self.expandedParametricFnX + self.expandedParametricFnY
+              //   ).replaceAll(self.parametric_variable, "")
+              // );
               self.coeffs = getCoeffs(
-                (
-                  self.expandedParametricFnX + self.expandedParametricFnY
-                ).replaceAll(self.parametric_variable, "")
+                self.expandedParametricFnX + self.expandedParametricFnY,
+                self.parametric_variable
               );
 
               if (self.coeffs.length > 5) {
