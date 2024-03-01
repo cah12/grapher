@@ -796,6 +796,8 @@ class MFunctionDlg {
         let defineName = null;
         let defineValue = null;
         self.coeffs = [];
+        let domainGap_lower = [];
+        let domainGap_upper = [];
 
         self.expandedParametricFnX = null;
         self.expandedParametricFnY = null;
@@ -908,6 +910,7 @@ class MFunctionDlg {
           }
 
           self.variable = $("#fnDlg_variable").val();
+          self.parametric_variable = $("#fnDlg_parametric_variable").val();
 
           if (fnDlgFunctionVal.indexOf("=") === -1) {
             let m_str = fnDlgFunctionVal;
@@ -952,6 +955,66 @@ class MFunctionDlg {
             fnDlgFunctionVal.indexOf("{"),
             fnDlgFunctionVal.indexOf("}") + 1
           );
+          const s = domainRangeRestriction.replaceAll("<=", "");
+          if (
+            s &&
+            s.length &&
+            (s.indexOf("<") !== -1 ||
+              s.indexOf(">") !== -1 ||
+              s.indexOf(">=") !== -1)
+          ) {
+            // alert(
+            //   `Only "less than or equal" (i.e <=) permitted in defining the domain.`
+            // );
+            Utility.displayErrorMessage(
+              mf,
+              `Only "less than or equal" (i.e <=) permitted in defining the domain.`
+            );
+            return;
+          }
+          let variablePlusExpanded = null;
+          let variablePlus = domainRangeRestriction.substring(
+            domainRangeRestriction.indexOf("=") + 1,
+            domainRangeRestriction.indexOf(
+              "<",
+              domainRangeRestriction.indexOf("=")
+            )
+          );
+          if (variablePlus.length > 1) {
+            if (
+              variablePlus.indexOf(self.variable) == -1 &&
+              variablePlus.indexOf(self.parametric_variable) == -1
+            ) {
+              Utility.displayErrorMessage(
+                mf,
+                `The domain, ${domainRangeRestriction}, is improperly declared.`
+              );
+              return false;
+            }
+
+            let variable = self.variable;
+
+            if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+              variable = self.parametric_variable;
+            }
+
+            variablePlusExpanded = plot.defines.expandDefines(
+              variablePlus,
+              variable /* ,
+              true */
+            );
+            const match = variablePlusExpanded
+              .replaceAll(variable, "")
+              .replaceAll("^", "")
+              .match(/[a-zA-z]/);
+            if (match && match.length) {
+              Utility.displayErrorMessage(
+                mf,
+                `The domain, ${domainRangeRestriction}, is improperly declared. Try defining "${match[0]}".`
+              );
+              return false;
+            }
+          }
           fnDlgFunctionVal = fnDlgFunctionVal.replace(
             domainRangeRestriction,
             ""
@@ -969,16 +1032,15 @@ class MFunctionDlg {
             return false;
           }
 
-          self.parametric_variable = $("#fnDlg_parametric_variable").val();
           //self.xIsDependentVariable
           if (domainRangeRestriction.length && self.variable) {
             domainRangeRestriction = domainRangeRestriction
               .replaceAll("<=", "")
               .replace("{", "")
               .replace("}", "");
-            if (
-              domainRangeRestriction.indexOf("<") !== -1 ||
-              domainRangeRestriction.indexOf(">") !== -1 ||
+            /* if (
+              domainRangeRestriction.indexOf("<") !== -1 &&
+              domainRangeRestriction.indexOf(">") !== -1 &&
               domainRangeRestriction.indexOf(">=") !== -1
             ) {
               // alert(
@@ -989,12 +1051,17 @@ class MFunctionDlg {
                 `Only "less than or equal" (i.e <=) permitted in defining the domain.`
               );
               return;
-            }
+            } */
             if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+              // domainRangeRestriction = domainRangeRestriction.replace(
+              //   self.variable,
+              //   "~"
+              // );
               domainRangeRestriction = domainRangeRestriction.replace(
-                self.variable,
+                variablePlus,
                 "~"
               );
+
               domainRangeRestriction = domainRangeRestriction.split("~");
               if (domainRangeRestriction.length != 2) {
                 // Utility.alert(
@@ -1006,6 +1073,99 @@ class MFunctionDlg {
                 );
                 return false;
               }
+
+              if (variablePlusExpanded && variablePlusExpanded.length > 1) {
+                let eq = nerdamer(
+                  `${variablePlusExpanded}=${domainRangeRestriction[0]}`
+                );
+                let solution = eq.solveFor(self.variable);
+                let sol;
+                console.log(solution);
+                if (typeof solution === "object" && solution[0]) {
+                  for (let i = 0; i < solution.length; i++) {
+                    sol = math
+                      .simplify(solution[i].toString().replaceAll("abs", ""))
+                      .toString();
+                    if ($.isNumeric(sol)) {
+                      domainGap_lower.push(sol);
+                    }
+                  }
+                } else {
+                  sol = solution.toString().replaceAll("abs", "");
+                  if ($.isNumeric(sol)) {
+                    domainGap_lower.push(sol);
+                  }
+                }
+                nerdamer.clear("all");
+                nerdamer.flush();
+                //domainRangeRestriction[0] = sol;
+
+                eq = nerdamer(
+                  `${variablePlusExpanded}=${domainRangeRestriction[1]}`
+                );
+                console.log(eq.toString());
+                solution = eq.solveFor(self.variable);
+                sol;
+                console.log(solution);
+                if (typeof solution === "object" && solution[0]) {
+                  for (let i = 0; i < solution.length; i++) {
+                    sol = math
+                      .simplify(solution[i].toString().replaceAll("abs", ""))
+                      .toString();
+                    if ($.isNumeric(sol)) {
+                      domainGap_upper.push(sol);
+                    }
+                  }
+                } else {
+                  sol = solution.toString().replaceAll("abs", "");
+                  if ($.isNumeric(sol)) {
+                    domainGap_upper.push(sol);
+                  }
+                }
+                nerdamer.clear("all");
+                nerdamer.flush();
+                //domainRangeRestriction[1] = sol;
+              }
+
+              if (domainGap_lower.length == 1 && domainGap_upper.length == 1) {
+                domainRangeRestriction = [
+                  domainGap_lower[0],
+                  domainGap_upper[0],
+                ];
+              }
+
+              if (domainGap_lower.length == 2 && domainGap_upper.length == 2) {
+                domainRangeRestriction = [
+                  domainGap_lower[0],
+                  domainGap_upper[0],
+                ];
+              }
+
+              if (domainGap_lower.length == 0 && domainGap_upper.length == 2) {
+                let l = parseFloat(domainGap_upper[0]);
+                let u = parseFloat(domainGap_upper[1]);
+
+                if (l > u) {
+                  const temp = u;
+                  u = l;
+                  l = temp;
+                }
+                domainRangeRestriction = [l + "", u + ""];
+              }
+
+              if (domainGap_lower.length == 2 && domainGap_upper.length == 0) {
+                let l = parseFloat(domainGap_lower[0]);
+                let u = parseFloat(domainGap_lower[1]);
+
+                if (l > u) {
+                  const temp = u;
+                  u = l;
+                  l = temp;
+                }
+                domainRangeRestriction = [l + "", u + ""];
+              }
+              ///////////////////////////////////////////////////////////////////
+
               let dmLimit = domainRangeRestriction[0];
               domainRangeRestriction[0] = plot.defines.expandDefines(
                 domainRangeRestriction[0],
@@ -1052,7 +1212,8 @@ class MFunctionDlg {
               }
             } else {
               domainRangeRestriction = domainRangeRestriction.replace(
-                self.parametric_variable,
+                //self.parametric_variable,
+                variablePlus,
                 "~"
               );
               domainRangeRestriction = domainRangeRestriction.split("~");
@@ -2040,6 +2201,42 @@ class MFunctionDlg {
                 self.title = i + "~" + title;
                 cb();
               }
+            }
+            const degOfPoly = nerdamer.deg(variablePlus).toString();
+            if (
+              domainGap_lower.length > 1 &&
+              domainGap_upper.length > 1 &&
+              degOfPoly &&
+              parseFloat(degOfPoly) % 2 == 0
+            ) {
+              //$$ x^2\{2\le x^2\le10\} $$
+              //console.log(456);
+              let l_lmt = domainGap_lower[1];
+              let u_lmt = domainGap_upper[1];
+              let scope = new Map();
+              scope.set(self.variable, 1);
+              self.lowerLimit = math.evaluate(l_lmt, scope);
+              self.upperLimit = math.evaluate(u_lmt, scope);
+              if (self.lowerLimit > self.upperLimit) {
+                let temp = u_lmt;
+                u_lmt = l_lmt;
+                l_lmt = temp;
+                temp = self.upperLimit;
+                self.upperLimit = self.lowerLimit;
+                self.lowerLimit = temp;
+              }
+              self.domainRangeRestriction = [l_lmt, u_lmt];
+
+              $("#fnDlg_lowerLimit")[0].setValue(
+                Utility.toLatex(self.lowerLimit + ""),
+                { suppressChangeNotifications: true }
+              );
+              $("#fnDlg_upperLimit")[0].setValue(
+                Utility.toLatex(self.upperLimit + ""),
+                { suppressChangeNotifications: true }
+              );
+              self.title = "dmn-" + self.title;
+              cb();
             }
           }
           if (

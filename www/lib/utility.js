@@ -4299,13 +4299,21 @@ class Utility {
   }
 
   static isParametricFunction(str) {
+    if (!str && str.length) {
+      return false;
+    }
+    const indOfCurly = str.indexOf("{");
+    if (indOfCurly != -1) {
+      str = str.substring(0, indOfCurly);
+    }
     if (!(str[0] == "(" && str[str.length - 1] == ")")) {
       return false;
     }
+
     str = str.replace("(", "");
     str = str.replace(/.$/, "");
     const arr = str.split(",");
-    if (arr.length < 2 || arr[0].length < 1 || arr[1].length < 1) {
+    if (arr.length != 2 || arr[0].length < 1 || arr[1].length < 1) {
       return false;
     }
 
@@ -5010,12 +5018,19 @@ class Utility {
       }
     }
 
-    return Utility.linearEquationFromPoints(data[data.length - 1], data[0]);
+    return Utility.linearEquationFromPoints(
+      data[data.length - 1],
+      data[0]
+    ).replaceAll("x", variable);
   }
 
   static isValidCharInExpression(str) {
     if (!str) return 0;
     str = str.replaceAll(" ", "");
+    let comma = 0;
+    let openCurly = 0;
+    let closedCurly = 0;
+
     for (let i = 0; i < str.length; i++) {
       const c = str[i];
       if (
@@ -5034,6 +5049,24 @@ class Utility {
         Utility.isAlpha(c) ||
         Utility.isDigit(c)
       ) {
+        if (c == ",") {
+          comma++;
+        }
+        if (c == "{") {
+          openCurly++;
+        }
+        if (c == "}") {
+          closedCurly++;
+        }
+        if (comma > 1) {
+          return i;
+        }
+        if (openCurly > 1) {
+          return i;
+        }
+        if (closedCurly > 1) {
+          return i;
+        }
         continue;
       } else {
         return i;
