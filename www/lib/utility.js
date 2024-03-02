@@ -5026,6 +5026,27 @@ class Utility {
 
   static isValidCharInExpression(str) {
     if (!str) return 0;
+    const mf = $("#fnDlg_function")[0];
+    let count = Utility.countString(str, "{");
+    if (count > 1) {
+      return str.indexOf("{");
+    }
+    if (count == 1 && str.indexOf(",") > str.indexOf("{")) {
+      return str.indexOf(",");
+    }
+    count = Utility.countString(str, "}");
+    if (count > 1) {
+      return str.indexOf("}");
+    }
+    count = Utility.countString(str, "<=");
+    if (count > 2) {
+      return str.indexOf("<=");
+    }
+    count = Utility.countString(str, ",");
+    let logCount = Utility.countString(str, "log");
+    if (!Utility.isParametricFunction(str) && count != logCount) {
+      return str.indexOf(",");
+    }
     str = str.replaceAll(" ", "");
     let comma = 0;
     let openCurly = 0;

@@ -798,6 +798,7 @@ class MFunctionDlg {
         self.coeffs = [];
         let domainGap_lower = [];
         let domainGap_upper = [];
+        let variable = self.variable;
 
         self.expandedParametricFnX = null;
         self.expandedParametricFnY = null;
@@ -805,6 +806,10 @@ class MFunctionDlg {
         self.expandedFn = null;
         self.xIsDependentVariable = false;
         self.domainRangeRestriction = [];
+
+        if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+          variable = self.parametric_variable;
+        }
 
         function forceDefine(fn, dec) {
           fn = fn.replaceAll(dec, "U");
@@ -992,11 +997,11 @@ class MFunctionDlg {
               return false;
             }
 
-            let variable = self.variable;
+            // variable = self.variable;
 
-            if (Utility.isParametricFunction(fnDlgFunctionVal)) {
-              variable = self.parametric_variable;
-            }
+            // if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+            //   variable = self.parametric_variable;
+            // }
 
             variablePlusExpanded = plot.defines.expandDefines(
               variablePlus,
@@ -1052,24 +1057,27 @@ class MFunctionDlg {
               );
               return;
             } */
-            if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-              // domainRangeRestriction = domainRangeRestriction.replace(
-              //   self.variable,
-              //   "~"
-              // );
+            function handleDomain() {
+              // if(variablePlus && variablePlus.length==1){
+              //   return;
+              // }
               domainRangeRestriction = domainRangeRestriction.replace(
                 variablePlus,
                 "~"
               );
 
               domainRangeRestriction = domainRangeRestriction.split("~");
-              if (domainRangeRestriction.length != 2) {
+              if (
+                domainRangeRestriction.length != 2 ||
+                domainRangeRestriction[0].length == 0 ||
+                domainRangeRestriction[1].length == 0
+              ) {
                 // Utility.alert(
                 //   `Improperly declared domain. Expected "${self.variable}" as the variable.`
                 // );
                 Utility.displayErrorMessage(
                   mf,
-                  `Improperly declared domain. Expected "${self.variable}" as the variable.`
+                  `Improperly declared domain. Expected "${variable}" as the variable.`
                 );
                 return false;
               }
@@ -1078,7 +1086,7 @@ class MFunctionDlg {
                 let eq = nerdamer(
                   `${variablePlusExpanded}=${domainRangeRestriction[0]}`
                 );
-                let solution = eq.solveFor(self.variable);
+                let solution = eq.solveFor(variable);
                 let sol;
                 console.log(solution);
                 if (typeof solution === "object" && solution[0]) {
@@ -1104,7 +1112,7 @@ class MFunctionDlg {
                   `${variablePlusExpanded}=${domainRangeRestriction[1]}`
                 );
                 console.log(eq.toString());
-                solution = eq.solveFor(self.variable);
+                solution = eq.solveFor(variable);
                 sol;
                 console.log(solution);
                 if (typeof solution === "object" && solution[0]) {
@@ -1164,6 +1172,70 @@ class MFunctionDlg {
                 }
                 domainRangeRestriction = [l + "", u + ""];
               }
+
+              if (domainGap_lower.length == 1 && domainGap_upper.length == 2) {
+                let l = parseFloat(domainGap_lower[0]);
+                let l_0, u;
+
+                if (
+                  parseFloat(domainGap_upper[0]) <
+                  parseFloat(domainGap_upper[1])
+                ) {
+                  l_0 = parseFloat(domainGap_upper[0]);
+                  if (l_0 < l) {
+                    l = l_0;
+                  }
+                  u = parseFloat(domainGap_upper[1]);
+                } else {
+                  l_0 = parseFloat(domainGap_upper[1]);
+                  if (l_0 < l) {
+                    l = l_0;
+                  }
+                  u = parseFloat(domainGap_upper[0]);
+                }
+
+                if (l > u) {
+                  const temp = u;
+                  u = l;
+                  l = temp;
+                }
+                domainRangeRestriction = [l + "", u + ""];
+              }
+
+              if (domainGap_lower.length == 2 && domainGap_upper.length == 1) {
+                if (
+                  parseFloat(domainGap_lower[0]) >
+                  parseFloat(domainGap_lower[1])
+                ) {
+                  let temp = domainGap_lower[0];
+                  domainGap_lower[0] = domainGap_lower[1];
+                  domainGap_lower[1] = temp;
+                }
+
+                let l = parseFloat(domainGap_lower[0]);
+                let u = parseFloat(domainGap_lower[1]);
+                if (
+                  parseFloat(domainGap_upper[0]) <
+                  parseFloat(domainGap_lower[0])
+                ) {
+                  l = parseFloat(domainGap_upper[0]);
+                }
+
+                if (
+                  parseFloat(domainGap_upper[0]) >
+                  parseFloat(domainGap_lower[1])
+                ) {
+                  u = parseFloat(domainGap_upper[0]);
+                }
+
+                if (l > u) {
+                  const temp = u;
+                  u = l;
+                  l = temp;
+                }
+                domainRangeRestriction = [l + "", u + ""];
+              }
+
               ///////////////////////////////////////////////////////////////////
 
               let dmLimit = domainRangeRestriction[0];
@@ -1209,9 +1281,49 @@ class MFunctionDlg {
                   `Upper limit must be greater than Lower limit.`
                 );
                 return;
+              } ///
+            }
+
+            if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+              if (variablePlus.indexOf(self.variable) == -1) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Improperly declared domain. Expected "${self.variable}" as the variable.`
+                );
+                return false;
+              }
+
+              handleDomain();
+              if (
+                variablePlus.length > 1 &&
+                domainGap_lower.length + domainGap_upper.length < 2
+              ) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to resolve the declared domain.`
+                );
+                return false;
               }
             } else {
-              domainRangeRestriction = domainRangeRestriction.replace(
+              if (variablePlus.indexOf(self.parametric_variable) == -1) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`
+                );
+                return false;
+              }
+              handleDomain();
+              if (
+                variablePlus.length > 1 &&
+                domainGap_lower.length + domainGap_upper.length < 2
+              ) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to resolve the declared domain.`
+                );
+                return false;
+              }
+              /*domainRangeRestriction = domainRangeRestriction.replace(
                 //self.parametric_variable,
                 variablePlus,
                 "~"
@@ -1230,12 +1342,12 @@ class MFunctionDlg {
               }
               domainRangeRestriction[0] = plot.defines.expandDefines(
                 domainRangeRestriction[0],
-                self.variable,
+                self.parametric_variable,
                 true
               );
               domainRangeRestriction[1] = plot.defines.expandDefines(
                 domainRangeRestriction[1],
-                self.variable,
+                self.parametric_variable,
                 true
               );
               if (
@@ -1247,7 +1359,7 @@ class MFunctionDlg {
                   `Upper limit must be greater than Lower limit.`
                 );
                 return;
-              }
+              }*/
             }
 
             $("#fnDlg_lowerLimit")[0].setValue(
