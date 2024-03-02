@@ -828,6 +828,6 @@ require([
 
   // const s = nerdamer.solveEquations(_defn, "y");
 
-  let equat = new algebra.Equation(algebra.parse("x^2+2x+4"), 2);
-  console.log(456, equat.solveFor("x").toString());
+  // let equat = new algebra.Equation(algebra.parse("x^2+2x+4"), 2);
+  // console.log(456, equat.solveFor("x").toString());
 });
