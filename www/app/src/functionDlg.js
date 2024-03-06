@@ -997,11 +997,11 @@ class MFunctionDlg {
               return false;
             }
 
-            // variable = self.variable;
+            variable = self.variable;
 
-            // if (Utility.isParametricFunction(fnDlgFunctionVal)) {
-            //   variable = self.parametric_variable;
-            // }
+            if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+              variable = self.parametric_variable;
+            }
 
             variablePlusExpanded = plot.defines.expandDefines(
               variablePlus,
@@ -1174,7 +1174,38 @@ class MFunctionDlg {
               }
 
               if (domainGap_lower.length == 1 && domainGap_upper.length == 2) {
-                let l = parseFloat(domainGap_lower[0]);
+                if (
+                  parseFloat(domainGap_upper[0]) >
+                  parseFloat(domainGap_upper[1])
+                ) {
+                  let temp = domainGap_upper[0];
+                  domainGap_upper[0] = domainGap_upper[1];
+                  domainGap_upper[1] = temp;
+                } //
+                let l = parseFloat(domainGap_upper[0]);
+                let u = parseFloat(domainGap_upper[1]);
+                if (
+                  parseFloat(domainGap_lower[0]) <
+                  parseFloat(domainGap_upper[0])
+                ) {
+                  l = parseFloat(domainGap_lower[0]);
+                }
+
+                if (
+                  parseFloat(domainGap_lower[0]) >
+                  parseFloat(domainGap_upper[1])
+                ) {
+                  u = parseFloat(domainGap_lower[0]);
+                }
+
+                if (l > u) {
+                  const temp = u;
+                  u = l;
+                  l = temp;
+                }
+                domainRangeRestriction = [l + "", u + ""];
+
+                /* let l = parseFloat(domainGap_lower[0]);
                 let l_0, u;
 
                 if (
@@ -1199,7 +1230,7 @@ class MFunctionDlg {
                   u = l;
                   l = temp;
                 }
-                domainRangeRestriction = [l + "", u + ""];
+                domainRangeRestriction = [l + "", u + ""]; */
               }
 
               if (domainGap_lower.length == 2 && domainGap_upper.length == 1) {

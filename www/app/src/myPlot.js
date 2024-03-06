@@ -2859,11 +2859,11 @@ class MyPlot extends Plot {
       }
     });
 
-    Static.bind("rescaled", (e, auto) => {
-      if (auto) {
-        self.zm.setEnabled(false);
-      }
-    });
+    // Static.bind("rescaled", (e, auto) => {
+    //   if (auto) {
+    //     self.zm.setEnabled(false);
+    //   }
+    // });
 
     this.pan = new Panner(this);
     this.pan.setCursor("move");

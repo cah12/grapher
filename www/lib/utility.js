@@ -2067,7 +2067,12 @@ class Utility {
 
       if (_points.length) {
         for (let i = 0; i < _points.length; i++) {
-          samples.push(_points[i]);
+          if (
+            _points[i].x > samples[0].x &&
+            _points[i].x < samples[samples.length - 1].x
+          ) {
+            samples.push(_points[i]);
+          }
         }
       }
 
@@ -2078,8 +2083,14 @@ class Utility {
 
       //console.time("object");
       if (points.length) {
+        //$$ x^2\{2\le x^3-2x^2+4\le10\} $$
         for (let i = 0; i < points.length; i++) {
-          samples.push(points[i]);
+          if (
+            points[i].x > samples[0].x &&
+            points[i].x < samples[samples.length - 1].x
+          ) {
+            samples.push(points[i]);
+          }
         }
       }
       if (lowerX < 0 && upperX > 0) {
@@ -2115,9 +2126,9 @@ class Utility {
         let x_upper;
         if (
           samples[0] &&
-          samples[0].x > lowerX
-          // Utility.adjustForDecimalPlaces(samples[0].x, places) >
-          //   Utility.adjustForDecimalPlaces(lowerX, places)
+          //samples[0].x > lowerX
+          Utility.adjustForDecimalPlaces(samples[0].x, 12) >
+            Utility.adjustForDecimalPlaces(lowerX, 12)
         ) {
           let scope = new Map();
           scope.set(indepVar, samples[0].x - step);
@@ -2152,9 +2163,9 @@ class Utility {
         const sz = samples.length;
         if (
           samples[sz - 1] &&
-          samples[sz - 1].x < upperX
-          /* Utility.adjustForDecimalPlaces(samples[sz - 1].x, places) <
-            Utility.adjustForDecimalPlaces(upperX, places) */
+          //samples[sz - 1].x < upperX
+          Utility.adjustForDecimalPlaces(samples[sz - 1].x, 12) <
+            Utility.adjustForDecimalPlaces(upperX, 12)
         ) {
           let scope = new Map();
           scope.set(indepVar, samples[sz - 1].x + step);

@@ -316,7 +316,7 @@ class PlotSpectrogram extends PlotRasterItem {
 
       if (d_data.colorMap.format() == ColorMap.Format.RGB) {
         for (y = top; y < bottom; y += incrementH) {
-          ty = yMap.invTransform(y);
+          ty = yMap.invTransform1(y);
 
           for (x = left; x < right; x += incrementW) {
             tx = xMap.invTransform(x);
