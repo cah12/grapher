@@ -35,8 +35,7 @@ Misc.Image = function (w, h /* , a */) {
   var _h = h;
 
   var _colorTable = null;
-  //var _a = 255;
-  //var m_ctx = ctx;
+
   if (typeof w === "object" && _.has(w, "width") && _.has(w, "height")) {
     _w = w.width;
     _h = w.height;
@@ -52,9 +51,6 @@ Misc.Image = function (w, h /* , a */) {
             _a = a;
     } */
 
-  var cnvs = $("<canvas/>");
-  var m_ctx = cnvs[0].getContext("2d");
-
   /*
     For every pixel in an ImageData object there are four pieces of information, the RGBA values:
     R - The color red (from 0-255)
@@ -65,7 +61,7 @@ Misc.Image = function (w, h /* , a */) {
     */
   var m_data = null;
   if (_w !== 0 && _h !== 0) {
-    m_data = m_ctx.createImageData(_w, _h);
+    m_data = new ImageData(_w, _h);
   }
 
   /**
@@ -84,11 +80,8 @@ Misc.Image = function (w, h /* , a */) {
    */
   this.scaleImageData = function (scale) {
     if (!m_data) return;
-    var scaled = m_ctx.createImageData(
-      m_data.width * scale,
-      m_data.height * scale
-    );
-    var subLine = m_ctx.createImageData(scale, 1).data;
+    var scaled = new ImageData(m_data.width * scale, m_data.height * scale);
+    var subLine = new ImageData(scale, 1).data;
     for (var row = 0; row < m_data.height; row++) {
       for (var col = 0; col < m_data.width; col++) {
         var sourcePixel = m_data.data.subarray(
