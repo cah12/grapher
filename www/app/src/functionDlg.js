@@ -1082,6 +1082,14 @@ class MFunctionDlg {
                 return false;
               }
 
+              domainRangeRestriction[0] = plot.defines.expandDefines(
+                domainRangeRestriction[0],
+                self.variable
+              );
+              domainRangeRestriction[1] = plot.defines.expandDefines(
+                domainRangeRestriction[1],
+                self.variable
+              );
               if (variablePlusExpanded && variablePlusExpanded.length > 1) {
                 let eq = nerdamer(
                   `${variablePlusExpanded}=${domainRangeRestriction[0]}`
