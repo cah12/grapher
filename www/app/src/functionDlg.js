@@ -1108,6 +1108,22 @@ class MFunctionDlg {
                 nerdamer.flush();
                 //domainRangeRestriction[0] = sol;
 
+                domainGap_lower = domainGap_lower.sort((a, b) => {
+                  return parseFloat(a) - parseFloat(b);
+                });
+
+                if (domainGap_lower.length > 2) {
+                  let arr = [];
+                  for (let i = 0; i < domainGap_lower.length; i++) {
+                    if ((i + 1) % 2 == 0) {
+                      domainGap_upper.push(domainGap_lower[i]);
+                    } else {
+                      arr.push(domainGap_lower[i]);
+                    }
+                  }
+                  domainGap_lower = arr;
+                }
+
                 eq = nerdamer(
                   `${variablePlusExpanded}=${domainRangeRestriction[1]}`
                 );
@@ -1268,6 +1284,14 @@ class MFunctionDlg {
               }
 
               ///////////////////////////////////////////////////////////////////
+              if (
+                parseFloat(domainRangeRestriction[0]) >
+                parseFloat(domainRangeRestriction[1])
+              ) {
+                const temp = domainRangeRestriction[0];
+                domainRangeRestriction[0] = domainRangeRestriction[1];
+                domainRangeRestriction[1] = temp;
+              }
 
               let dmLimit = domainRangeRestriction[0];
               domainRangeRestriction[0] = plot.defines.expandDefines(
@@ -1393,6 +1417,14 @@ class MFunctionDlg {
               }*/
             }
 
+            if (
+              parseFloat(domainRangeRestriction[0]) >
+              parseFloat(domainRangeRestriction[1])
+            ) {
+              const temp = domainRangeRestriction[0];
+              domainRangeRestriction[0] = domainRangeRestriction[1];
+              domainRangeRestriction[1] = temp;
+            }
             $("#fnDlg_lowerLimit")[0].setValue(
               Utility.toLatex(domainRangeRestriction[0]),
               { suppressChangeNotifications: true }
@@ -2349,8 +2381,8 @@ class MFunctionDlg {
             if (
               domainGap_lower.length > 1 &&
               domainGap_upper.length > 1 &&
-              degOfPoly &&
-              parseFloat(degOfPoly) % 2 == 0
+              degOfPoly /* &&
+              parseFloat(degOfPoly) % 2 == 0 */
             ) {
               //$$ x^2\{2\le x^2\le10\} $$
               //console.log(456);
@@ -2369,6 +2401,12 @@ class MFunctionDlg {
                 self.lowerLimit = temp;
               }
               self.domainRangeRestriction = [l_lmt, u_lmt];
+
+              if (parseFloat(self.lowerLimit) > parseFloat(self.upperLimit)) {
+                const temp = self.lowerLimit;
+                domainRangeRestriction[0] = self.upperLimit;
+                self.upperLimit = temp;
+              }
 
               $("#fnDlg_lowerLimit")[0].setValue(
                 Utility.toLatex(self.lowerLimit + ""),
