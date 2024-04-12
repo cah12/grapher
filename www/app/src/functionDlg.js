@@ -785,7 +785,7 @@ class MFunctionDlg {
           const mf = $("#fnDlg_function")[0];
           Utility.displayErrorMessage(
             mf,
-            `Invalid chararacter, "${fnDlgFunctionVal[ind]}", at position ${
+            `Invalid character, "${fnDlgFunctionVal[ind]}", at position ${
               ind + 1
             }.`
           );
@@ -2098,21 +2098,6 @@ class MFunctionDlg {
           if (domainRangeRestriction.length) {
             handleCoeffs(domainRangeRestriction[0]);
             handleCoeffs(domainRangeRestriction[1]);
-
-            // s = Utility.purgeAndMarkKeywords(domainRangeRestriction[1]);
-            // for (let index = 0; index < s.length; index++) {
-            //   if (
-            //     Utility.isAlpha(s[index]) &&
-            //     !plot.defines.hasDefine(s[index])
-            //   ) {
-            //     if (self.coeffs.indexOf(s[index]) == -1) {
-            //       self.coeffs.push(s[index]);
-            //     }
-            //   }
-            // }
-            // domainRangeRestriction[1] = Utility.replaceKeywordMarkers(s);
-
-            //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
           }
 
           function replaceParameterWith_1(str) {
