@@ -8,3 +8,4 @@ www-built/
 *.ini
 node_modules/
 .env
+Notes/

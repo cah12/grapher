@@ -619,7 +619,7 @@
       if (ext) this.#extWithDot = `.${ext}`;
       else this.#extWithDot = "";
       arr = this.#selectedName.split(this.#sep);
-      const name = arr[arr.length - 1].("." + ext, "");
+      const name = arr[arr.length - 1].replace("." + ext, "");
       this.#shortName = name;
       let folder = this.#selectedName.replace("." + ext, "").replace(name, "");
       if (folder[folder.length - 1] == this.#sep) {
