@@ -831,17 +831,17 @@ class MFunctionDlg {
           );
           if (!expandedLHS) return null;
           fn = `${expandedLHS}=${expandedRHS}`;
-          fn = `${expandedLHS}=${expandedRHS}`;
+          //fn = `${expandedLHS}=${expandedRHS}`;
           fn = Utility.insertProductSign(fn, plot.defines);
 
           let res = null;
           //fn = fn.replaceAll(dec, "U");
 
-          if (expandedLHS == "U") {
+          if (expandedLHS == "U" && expandedRHS.indexOf() != -1) {
             res = expandedRHS;
           }
 
-          if (expandedRHS == "U") {
+          if (expandedRHS == "U" && expandedLHS.indexOf() != -1) {
             res = expandedLHS;
           }
 
