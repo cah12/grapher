@@ -292,6 +292,7 @@ Static.keywords = [
   // "E",
   "abs",
   "mod",
+  "U",
 ]; //"deg" comes before "e", deliberately.
 
 ///Prevent default right click menu
