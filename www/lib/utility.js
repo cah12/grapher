@@ -5038,7 +5038,11 @@ class Utility {
   static isValidCharInExpression(str) {
     if (!str) return 0;
     const mf = $("#fnDlg_function")[0];
-    let count = Utility.countString(str, "{");
+    let count = Utility.countString(str, "\\.");
+    if (count > 1) {
+      return str.indexOf(".");
+    }
+    count = Utility.countString(str, "{");
     if (count > 1) {
       return str.indexOf("{");
     }
@@ -5063,48 +5067,54 @@ class Utility {
     let openCurly = 0;
     let closedCurly = 0;
 
-    for (let i = 0; i < str.length; i++) {
-      const c = str[i];
-      if (
-        c == "'" ||
-        c == "+" ||
-        c == "-" ||
-        c == "*" ||
-        c == "/" ||
-        c == "^" ||
-        c == "=" ||
-        c == "," ||
-        c == "(" ||
-        c == ")" ||
-        c == "{" ||
-        c == "}" ||
-        c == "<" ||
-        Utility.isAlpha(c) ||
-        Utility.isDigit(c)
-      ) {
-        if (c == ",") {
-          comma++;
-        }
-        if (c == "{") {
-          openCurly++;
-        }
-        if (c == "}") {
-          closedCurly++;
-        }
-        if (comma > 1) {
+    if (str)
+      for (let i = 0; i < str.length; i++) {
+        const c = str[i];
+        if (
+          c == "'" ||
+          c == "+" ||
+          c == "-" ||
+          c == "*" ||
+          c == "/" ||
+          c == "^" ||
+          c == "=" ||
+          c == "," ||
+          c == "(" ||
+          c == ")" ||
+          c == "{" ||
+          c == "}" ||
+          c == "." ||
+          c == "<" ||
+          Utility.isAlpha(c) ||
+          Utility.isDigit(c)
+        ) {
+          if (c == ",") {
+            comma++;
+          }
+          if (c == "{") {
+            openCurly++;
+          }
+          if (c == "}") {
+            closedCurly++;
+          }
+          if (c == "." && i >= str.length - 1 && !Utility.isDigit(str[i + 1])) {
+            return i;
+          }
+
+          if (comma > 1) {
+            return i;
+          }
+          if (openCurly > 1) {
+            return i;
+          }
+          if (closedCurly > 1) {
+            return i;
+          }
+          continue;
+        } else {
           return i;
         }
-        if (openCurly > 1) {
-          return i;
-        }
-        if (closedCurly > 1) {
-          return i;
-        }
-        continue;
-      } else {
-        return i;
       }
-    }
 
     return -1;
   }
@@ -5531,6 +5541,8 @@ class Utility {
       }
     }
     result = Utility.replaceKeywordMarkers(result);
+
+    result = result.replaceAll("()", "");
 
     return result;
   }
