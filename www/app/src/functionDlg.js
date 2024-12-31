@@ -1507,19 +1507,21 @@ class MFunctionDlg {
               return;
             }
 
-            let eq = nerdamer(fnDlgFunctionVal);
-            let solution = eq.solveFor("y");
-            //console.log(solution);
-            if (typeof solution === "object" && solution[0]) {
-              //arr = ["y", solution[0].toString()];
-              arr = ["y", solution[0].toString().replaceAll("abs", "")];
-            } else {
-              arr = ["y", solution.toString().replaceAll("abs", "")];
-              //arr = ["y", solution.toString()];
+            if (lhs != "y") {
+              let eq = nerdamer(fnDlgFunctionVal);
+              let solution = eq.solveFor("y");
+              //console.log(solution);
+              if (typeof solution === "object" && solution[0]) {
+                //arr = ["y", solution[0].toString()];
+                arr = ["y", solution[0].toString().replaceAll("abs", "")];
+              } else {
+                arr = ["y", solution.toString().replaceAll("abs", "")];
+                //arr = ["y", solution.toString()];
+              }
+              nerdamer.clear("all");
+              nerdamer.flush();
+              fnDlgFunctionVal = `y=${arr[1]}`;
             }
-            nerdamer.clear("all");
-            nerdamer.flush();
-            fnDlgFunctionVal = `y=${arr[1]}`;
           }
 
           /* const mf = document.getElementById('formula');

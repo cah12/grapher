@@ -830,4 +830,8 @@ require([
 
   // let equat = new algebra.Equation(algebra.parse("x^2+2x+4"), 2);
   // console.log(456, equat.solveFor("x").toString());
+
+  // let eq = nerdamer("y=x^0.3");
+  // let solution = eq.solveFor("y");
+  // console.log(solution[0].toString());
 });
