@@ -846,6 +846,37 @@ class MFunctionDlg {
           }
 
           if (!res) {
+            //need to account for nerdamer's inability to deal with polynomials
+            // whose abs is <1 (with the exception of 0.5)
+            let deg_of_poly_LHS = math.abs(
+              parseFloat(
+                math.simplify(
+                  nerdamer(`deg(${expandedLHS},${self.variable})`).toString()
+                )
+              )
+            );
+            if (
+              deg_of_poly_LHS < 1 &&
+              deg_of_poly_LHS != 0 &&
+              deg_of_poly_LHS != 0.5
+            ) {
+              return false;
+            }
+            let deg_of_poly_RHS = math.abs(
+              parseFloat(
+                math.simplify(
+                  nerdamer(`deg(${expandedRHS},${self.variable})`).toString()
+                )
+              )
+            );
+            if (
+              deg_of_poly_RHS < 1 &&
+              deg_of_poly_RHS != 0 &&
+              deg_of_poly_RHS != 0.5
+            ) {
+              return false;
+            }
+
             var eq = nerdamer(fn);
             var solution = eq.solveFor("U");
             if (typeof solution === "array" && solution[0]) {
@@ -1453,12 +1484,14 @@ class MFunctionDlg {
           //   }
           // }
 
+          let lhs, rhs;
+
           if (
             arr.length == 2 &&
             fnDlgFunctionVal.indexOf("y") !== -1 &&
             self.variable !== "y"
           ) {
-            const lhs = plot.defines.expandDefines(arr[0], self.variable, true);
+            lhs = plot.defines.expandDefines(arr[0], self.variable, true);
             if (!Utility.isValidExpression(lhs, "y")) {
               Utility.displayErrorMessage(
                 mf,
@@ -1476,7 +1509,7 @@ class MFunctionDlg {
               );
               return;
             }
-            const rhs = plot.defines.expandDefines(arr[1], self.variable, true);
+            rhs = plot.defines.expandDefines(arr[1], self.variable, true);
             if (!Utility.isValidExpression(rhs, "y")) {
               Utility.displayErrorMessage(
                 mf,
@@ -1507,20 +1540,68 @@ class MFunctionDlg {
               return;
             }
 
+            if (rhs == "y") {
+              rhs = lhs;
+              lhs = "y";
+            }
+
             if (lhs != "y") {
-              let eq = nerdamer(fnDlgFunctionVal);
-              let solution = eq.solveFor("y");
-              //console.log(solution);
-              if (typeof solution === "object" && solution[0]) {
-                //arr = ["y", solution[0].toString()];
-                arr = ["y", solution[0].toString().replaceAll("abs", "")];
-              } else {
-                arr = ["y", solution.toString().replaceAll("abs", "")];
-                //arr = ["y", solution.toString()];
+              let validForNerdamer = true;
+              let invalidExponent = null;
+
+              let deg_of_poly_LHS = math.abs(
+                parseFloat(
+                  math.simplify(
+                    nerdamer(`deg(${lhs},${self.variable})`).toString()
+                  )
+                )
+              );
+              if (
+                deg_of_poly_LHS < 1 &&
+                deg_of_poly_LHS != 0 &&
+                deg_of_poly_LHS != 0.5
+              ) {
+                validForNerdamer = false;
+                invalidExponent = lhs;
               }
-              nerdamer.clear("all");
-              nerdamer.flush();
-              fnDlgFunctionVal = `y=${arr[1]}`;
+
+              let deg_of_poly_RHS = math.abs(
+                parseFloat(
+                  math.simplify(
+                    nerdamer(`deg(${rhs},${self.variable})`).toString()
+                  )
+                )
+              );
+              if (
+                deg_of_poly_RHS < 1 &&
+                deg_of_poly_RHS != 0 &&
+                deg_of_poly_RHS != 0.5
+              ) {
+                validForNerdamer = false;
+                invalidExponent = rhs;
+              }
+
+              if (validForNerdamer) {
+                let eq = nerdamer(fnDlgFunctionVal);
+                let solution = eq.solveFor("y");
+                //console.log(solution);
+                if (typeof solution === "object" && solution[0]) {
+                  //arr = ["y", solution[0].toString()];
+                  arr = ["y", solution[0].toString().replaceAll("abs", "")];
+                } else {
+                  arr = ["y", solution.toString().replaceAll("abs", "")];
+                  //arr = ["y", solution.toString()];
+                }
+                nerdamer.clear("all");
+                nerdamer.flush();
+                fnDlgFunctionVal = `y=${arr[1]}`;
+              } else {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater that 1 or equal to 0.5`
+                );
+                return;
+              }
             }
           }
 
@@ -1608,6 +1689,12 @@ class MFunctionDlg {
                     forceDefined = true;
                     fnDlgFunctionVal = m_rhs = m_rhs_fnDec;
                     arr = [m_rhs];
+                  } else {
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Failed to define "${m_rhs_fnDec}" on the right-hand-side.`
+                    );
+                    return;
                   }
                 }
               }
@@ -1653,6 +1740,12 @@ class MFunctionDlg {
                     if (forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
                       fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
                       arr = [m_lhs];
+                    } else {
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Failed to define "${m_lhs_fnDec}" on the left-hand-side.`
+                      );
+                      return;
                     }
                   } else {
                     if (
