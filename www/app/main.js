@@ -845,8 +845,5 @@ require([
 /*
 TODO
 
-2. function forceDefine(fn, dec) in "functionDlg.js" need to account for nerdamer's inability to deal with polynomials whose abs is <1 (with the exception of 0.5) 
 
-3. function doEnter() in "functionDlg.js" need to account for nerdamer's inability to deal with polynomials whose abs is <1 (with the exception of 0.5).
-y=x^0.33, 2y=x^0.33, etc. cannot be solved.
 */

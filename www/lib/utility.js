@@ -5052,11 +5052,11 @@ class Utility {
   static isValidCharInExpression(str) {
     if (!str) return 0;
     const mf = $("#fnDlg_function")[0];
-    let count = Utility.countString(str, "\\.");
-    if (count > 1) {
-      return str.indexOf(".");
-    }
-    count = Utility.countString(str, "{");
+    // let count = Utility.countString(str, "\\.");
+    // if (count > 1) {
+    //   return str.indexOf(".");
+    // }
+    let count = Utility.countString(str, "{");
     if (count > 1) {
       return str.indexOf("{");
     }

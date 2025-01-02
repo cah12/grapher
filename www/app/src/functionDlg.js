@@ -1632,7 +1632,7 @@ class MFunctionDlg {
               } else {
                 Utility.displayErrorMessage(
                   mf,
-                  `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater that 1 or equal to 0.5`
+                  `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                 );
                 return;
               }
@@ -1726,7 +1726,7 @@ class MFunctionDlg {
                   } else {
                     Utility.displayErrorMessage(
                       mf,
-                      `Unable to resolve for "${m_rhs_fnDec}". The absolute value of the degree of polynomial must be greater that 1 or equal to 0.5`
+                      `Unable to resolve for "${m_rhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                     );
                     return;
                   }
@@ -1777,7 +1777,7 @@ class MFunctionDlg {
                     } else {
                       Utility.displayErrorMessage(
                         mf,
-                        `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater that 1 or equal to 0.5`
+                        `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                       );
                       return;
                     }
