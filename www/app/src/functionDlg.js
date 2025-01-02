@@ -837,11 +837,11 @@ class MFunctionDlg {
           let res = null;
           //fn = fn.replaceAll(dec, "U");
 
-          if (expandedLHS == "U" && expandedRHS.indexOf() != -1) {
+          if (expandedLHS == "U" && expandedRHS.indexOf("U") === -1) {
             res = expandedRHS;
           }
 
-          if (expandedRHS == "U" && expandedLHS.indexOf() != -1) {
+          if (expandedRHS == "U" && expandedLHS.indexOf("U") === -1) {
             res = expandedLHS;
           }
 

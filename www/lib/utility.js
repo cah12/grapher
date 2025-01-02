@@ -2112,6 +2112,10 @@ class Utility {
         return true;
       });
 
+      samples = samples.filter((item, index) => {
+        return _.isFinite(samples[index].y);
+      });
+
       let lastPt = new Misc.Point();
 
       //let lastPt = samples[samples.length - 1];
@@ -2120,7 +2124,7 @@ class Utility {
       if (!obj.adjustingCurve) {
         const places = 300; //Math.min(60, obj.xDecimalPlaces);
         const inc = step / 30000;
-        const iteratn = 40000;
+        const iteratn = 20000; //40000;
         let reSample = false;
         let x_lower;
         let x_upper;
@@ -2147,6 +2151,9 @@ class Utility {
             scope.set(indepVar, x);
             num = parser.eval(scope);
             //console.log("test1", n);
+          }
+          if (n === iteratn) {
+            obj.adjustingCurve = true;
           }
           console.log("test1", n);
 
@@ -2179,6 +2186,9 @@ class Utility {
             x = samples[sz - 1].x + step - n * inc;
             scope.set(indepVar, x);
             num = parser.eval(scope);
+          }
+          if (n === iteratn) {
+            obj.adjustingCurve = true;
           }
           //console.log("test2", n);
 
@@ -4229,6 +4239,9 @@ class Utility {
   }
 
   // /\b(log)\b/g
+  /*
+  subStr is a regular expression. Look-out for special characters.
+  */
   static countString(str, subStr, wholeWord = false) {
     let pattern = null;
     if (wholeWord) {

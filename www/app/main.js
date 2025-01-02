@@ -834,4 +834,21 @@ require([
   // let eq = nerdamer("y=x^0.3");
   // let solution = eq.solveFor("y");
   // console.log(solution[0].toString());
+
+  let indepVar = "x";
+  var x = nerdamer(`deg(x^(-0.4),${indepVar})`);
+  console.log(x.toString());
+  // var y = nerdamer("deg(a*x^7+2*x+1,x)");
+  // console.log(y.toString());
 });
+
+/*
+TODO
+1. "obj.adjustingCurve" in "utility.js" has a bug that causes an endless loop with 2f(x)=x^-0.5.
+samples arr has infinity.
+
+2. function forceDefine(fn, dec) in "functionDlg.js" need to account for nerdamer's inability to deal with polynomials whose abs is <1 (with the exception of 0.5) 
+
+3. function doEnter() in "functionDlg.js" need to account for nerdamer's inability to deal with polynomials whose abs is <1 (with the exception of 0.5).
+y=x^0.33, 2y=x^0.33, etc. cannot be solved.
+*/
