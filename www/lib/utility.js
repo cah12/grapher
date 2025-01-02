@@ -4638,6 +4638,7 @@ class Utility {
 
     result = Utility.insertProductSignOnPi(result);
     result = Utility.insertProductSignOn_e(result);
+
     return result;
   }
 

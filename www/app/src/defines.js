@@ -932,6 +932,8 @@ class Defines {
       // }
       const _fn = Utility.isLinear(str, variable);
       if (_fn) str = _fn;
+
+      str = str.replaceAll(`${variable}${variable}`, `${variable}*${variable}`);
       return Utility.insertProductSign(str).replaceAll("mod", " mod ");
     };
 
