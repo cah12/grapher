@@ -500,7 +500,7 @@ class Defines {
           let _dec = dec.replace(arg, variable).replace("^(-1)", "");
           const m_defn = m_defines.get(_dec);
           let degOfPoly = nerdamer.deg(m_defn.value);
-          console.log(degOfPoly.toString());
+          //console.log(degOfPoly.toString());
 
           if (m_defn) {
             let _defn = m_defn.value.replaceAll(variable, "y");

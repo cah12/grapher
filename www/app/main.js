@@ -835,11 +835,15 @@ require([
   // let solution = eq.solveFor("y");
   // console.log(solution[0].toString());
 
-  let indepVar = "x";
-  var x = nerdamer(`deg(x^(-0.4),${indepVar})`);
-  console.log(parseFloat(math.simplify(x.toString())));
+  // let indepVar = "x";
+  // var x = nerdamer(`deg(x^(-0.4),${indepVar})`);
+  // console.log(parseFloat(math.simplify(x.toString())));
   // var y = nerdamer("deg(a*x^7+2*x+1,x)");
   // console.log(y.toString());
+
+  //let str = math.simplify("sqrt(x)^2").toString();
+  // var x = nerdamer("simplify(sqrt(x)^2)").toString();
+  // console.log(x);
 });
 
 /*

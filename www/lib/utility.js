@@ -2155,7 +2155,7 @@ class Utility {
           if (n === iteratn) {
             obj.adjustingCurve = true;
           }
-          console.log("test1", n);
+          //console.log("test1", n);
 
           x_lower = samples[0].x - step + n * inc;
           samples[0].x = x_lower /*  = Utility.adjustForDecimalPlaces(
@@ -5013,6 +5013,12 @@ class Utility {
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
     if (!exp || exp.indexOf(variable) == -1) return null;
+    exp = nerdamer(exp).toString();
+    // let deg_of_poly = parseFloat(
+    //   math.simplify(nerdamer(`deg(${exp},${variable})`).toString())
+    // );
+
+    // if (deg_of_poly === 1) return exp;
 
     const xArr = math.range(-50, 50, 1, true);
     const p = math.parse(exp);
