@@ -5326,6 +5326,12 @@ class Utility {
       //latex = latex.replaceAll(" ", "");
       //Handle \frac end
 
+      //x^2\{ \frac{a}{4}\cdot \le x\le\cdot \frac{a}{2}\cdot \}
+      latex = latex
+        .replaceAll("\\cdot \\le", "\\le")
+        .replaceAll("\\le\\cdot", "\\le")
+        .replaceAll("\\cdot \\}", "\\}");
+
       let result = latex
         .replace(/\\times/g, "\\cdot")
         .replaceAll("\\prime", "primePlaceHolder")
