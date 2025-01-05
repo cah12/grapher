@@ -1138,6 +1138,13 @@ class MFunctionDlg {
                 domainRangeRestriction[1],
                 self.variable
               );
+              if(parseFloat(domainRangeRestriction[0])>=parseFloat(domainRangeRestriction[1])){
+                Utility.displayErrorMessage(
+                  mf,
+                  `Invalid domain declaration. Lower limit must be less than the upper limit.`
+                );
+                return false;
+              }
               if (variablePlusExpanded && variablePlusExpanded.length > 1) {
                 let eq = nerdamer(
                   `${variablePlusExpanded}=${domainRangeRestriction[0]}`
@@ -1391,8 +1398,9 @@ class MFunctionDlg {
                   mf,
                   `Upper limit must be greater than Lower limit.`
                 );
-                return;
+                return false;
               } ///
+              return true;
             }
 
             if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
@@ -1404,7 +1412,7 @@ class MFunctionDlg {
                 return false;
               }
 
-              handleDomain();
+              if(!handleDomain()) return false;
               if (
                 variablePlus.length > 1 &&
                 domainGap_lower.length + domainGap_upper.length < 2
