@@ -1876,19 +1876,7 @@ class MyPlot extends Plot {
 
             const minX = curve.minXValue();
             const maxX = curve.maxXValue();
-            /* const numberOfSteps = 200;
-            const step = (maxX - minX) / numberOfSteps;
-            let samples = [];
 
-            for (let i = 0; i < numberOfSteps; i++) {
-              samples.push(new Misc.Point(minX + i * step, 0));
-            }
-
-            if (samples[numberOfSteps - 1].x !== maxX) {
-              samples[numberOfSteps - 1] = new Misc.Point(maxX, 0);
-            }
-            tempCurve.setSamples(samples);
-            */
             tempCurve.setSamples([
               new Misc.Point(minX, 0),
               new Misc.Point(maxX, 0),
@@ -1899,23 +1887,6 @@ class MyPlot extends Plot {
             self.curveSelector.operationType = null;
             tempCurve = null;
 
-            /* var eq = nerdamer(`${curve.fn}=0`);
-            var solution = eq.solveFor(curve.variable);
-            let values = solution.toString().split(",");
-            // if (typeof solution === "object" && solution[0]) {
-            //   arr[0] = "y";
-            //   arr[1] = solution[0].toString();
-            // } else {
-            //   arr[0] = "y";
-            //   arr[1] = solution.toString();
-            // }
-            nerdamer.flush();
-
-            values = values.map((val) => {
-              return math.evaluate(val);
-            });
-            console.log(values); */
-
             if (i < curves.length) {
               continue;
             }
@@ -1925,18 +1896,46 @@ class MyPlot extends Plot {
             const curve = curves[i];
 
             let pt = null;
-
-            try {
-              pt = new Misc.Point(
-                0,
-                math.evaluate(
-                  curve.expandedFn.replaceAll(curve.variable, "U"),
-                  { U: 0 }
-                )
-              );
-            } catch (error) {
-              console.log(error);
+            // parametricFnX:"cos(t)"
+            //parametricFnY:"sin(t)"
+            //parametric_variable:"t"
+            if (curve.expandedFn) {
+              try {
+                pt = new Misc.Point(
+                  0,
+                  math.evaluate(
+                    curve.expandedFn.replaceAll(curve.variable, "U"),
+                    { U: 0 }
+                  )
+                );
+              } catch (error) {
+                console.log(error);
+              }
             }
+
+            /* if (curve.parametricFnX && curve.parametricFnY) {
+              let res;
+              var eq = nerdamer(`${curve.parametricFnX}=0`);
+              var solution = eq.solveFor(curve.parametric_variable);
+              if (Array.isArray(solution)) {
+                res = solution[0].toString();
+              } else {
+                res = solution.toString();
+              }
+              nerdamer.clear("all");
+              nerdamer.flush();
+
+              if (res) {
+                let _fn = curve.parametricFnY.replaceAll(
+                  curve.parametric_variable,
+                  `(${res})`
+                );
+                var _y = nerdamer(_fn);
+                _y = _y.evaluate().toString();
+                pt = new Misc.Point(0, _y);
+              }
+              //here
+            } */
 
             if (pt) {
               const { spacing, align } = getArrowSymbolProperties();
@@ -2043,9 +2042,13 @@ class MyPlot extends Plot {
           let pointType = "turning";
           if (operationType == "Inflection point") pointType = "inflection";
           if (curves[i].parametricFnX) {
-            str += `${
-              pointType === "turning" ? "Turning" : "Inflection"
-            } points for parametric functions not yet supported.\n`;
+            // str += `${
+            //   pointType === "turning" ? "Turning" : "Inflection"
+            // } points for parametric functions not yet supported.\n`;
+            str += `${operationType.replace(
+              " point",
+              ""
+            )} points for parametric functions not yet supported.\n`;
           } else if (!curves[i].expandedFn) {
             str += `No function expression found to determine ${pointType} points for ${curves[
               i
@@ -2547,12 +2550,12 @@ class MyPlot extends Plot {
             const p = math.parse(fn);
             const scope = new Map();
 
-            if (
-              res.length > 1 &&
-              math.sign(res[0].x) != math.sign(res[res.length - 1].x)
-            ) {
-              res.push(new Misc.Point(0, 0));
-            }
+            // if (
+            //   res.length > 1 &&
+            //   math.sign(res[0].x) != math.sign(res[res.length - 1].x)
+            // ) {
+            //    res.push(new Misc.Point(0, 0));
+            // }
             if (p) {
               res = res.filter((pt) => {
                 scope.set(variable, pt.x);
