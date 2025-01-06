@@ -2068,21 +2068,12 @@ class MyPlot extends Plot {
         if (!prefix) {
           prefix = "X";
         }
-        // console.log(
-        //   "xAxis decimalPlaces:" + self.axisDecimalPlaces(curves[0].xAxis())
-        // );
-        // console.log(
-        //   "yAxis decimalPlaces:" + self.axisDecimalPlaces(curves[0].yAxis())
-        // );
+
         if (curves.length > 1) {
           if (curves[0].title() == curves[1].title()) {
             alert("Cannot find the intersection of a curve with itself.");
             return;
           }
-          // if (curves[1].axesSwapped || curves[0].axesSwapped) {
-          //   alert("One or more curves are swapped.\nYou cannot find intersectoin of swapped and unswapped functions.");
-          //   return;
-          // }
 
           if (curves[0].xAxis() !== curves[1].xAxis()) {
             alert(
@@ -2099,143 +2090,7 @@ class MyPlot extends Plot {
           }
 
           let res = [];
-
           let imaginary = false;
-
-          /*if (
-            curves[0].expandedFn &&
-            curves[1].expandedFn &&
-            !curves[1].axesSwapped &&
-            !curves[0].axesSwapped
-          ) {
-            let expandedFn1 = curves[0].expandedFn;
-            let expandedFn2 = curves[1].expandedFn;
-            if (curves[0].variable != curves[1].variable) {
-              expandedFn2 = expandedFn2.replaceAll(
-                curves[1].variable,
-                curves[0].variable
-              );
-            }
-            let simplifiedExp = math
-              .simplify(
-                `(${expandedFn1})-(${expandedFn2})`,
-                {},
-                { exactFractions: false }
-              )
-              .toString();
-            //Replace the whitespace delimiters stripped out by simplify()
-            simplifiedExp = simplifiedExp.replaceAll("mod", " mod ");
-            if (simplifiedExp.indexOf(curves[0].variable) == -1) {
-              alert(`0 points of intersection:\n`);
-              return;
-            }
-
-            var eq = nerdamer(`(${simplifiedExp})=0`);
-            //Static.expression = `(${simplifiedExp})=0`;
-            var solution = eq.solveFor(curves[0].variable);
-            nerdamer.flush();
-
-            if (solution && solution.length < 20) {
-              const fn = expandedFn1.replaceAll(curves[0].variable, "Z");
-
-              for (let i = 0; i < solution.length; i++) {
-                //console.log(solution.at(i).toString());
-                const val = math.evaluate(solution.at(i).toString());
-
-                res.push({
-                  x: val,
-                  y: math.evaluate(fn, {
-                    Z: val,
-                  }),
-                });
-              }
-
-              const xLower = Math.max(curves[0].lowerX, curves[1].lowerX);
-              const xUpper = Math.min(curves[0].upperX, curves[1].upperX);
-              //console.log(xLower, xUpper);
-
-              const m_l = res.length;
-
-              res = res.filter(function (e) {
-                if (
-                  !imaginary &&
-                  (typeof e.x === "object" || typeof e.y === "object")
-                )
-                  imaginary = true;
-                return e.x >= xLower && e.x <= xUpper;
-              });
-              if (!imaginary) {
-                if (res.length == 0) {
-                  //Utility.logStep("info", `No solution(s) within domain [${xLower}, ${xUpper}]`);
-                }
-
-                if (m_l == res.length) {
-                  //Utility.logStep("info", `All solution(s) within domain [${xLower}, ${xUpper}]`);
-                }
-
-                const { spacing, align, angle } = getArrowSymbolProperties();
-
-                let str = "";
-                for (let i = 0; i < res.length; i++) {
-                  const element = res[i];
-                  const { spacing, align } = getArrowSymbolProperties();
-                  const ipName = Utility.generateCurveName(self, prefix);
-                  const marker = new PlotMarker(ipName);
-                  marker.setItemAttribute(
-                    PlotItem.ItemAttribute.AutoScale,
-                    true
-                  );
-                  marker.setXAxis(curves[0].xAxis());
-                  marker.setYAxis(curves[0].yAxis());
-
-                  
-
-                  marker.setSymbol(new PointMarkerSymbol());
-                  let toolTipName = "Intersection point:";
-                  if (ipName.indexOf("x~") !== -1) {
-                    toolTipName = "X-Intercept:";
-                  }
-                  marker.toolTipValueName = toolTipName;
-
-                  marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-                  marker.setLegendIconSize(new Misc.Size(10, 10));
-
-                  marker.setValue(element);
-                  marker.setLabel(ipName);
-                  var m_symbol = marker.symbol();
-                  m_symbol.setSize(new Misc.Size(10, 10));
-                  marker.setLabelAlignment(align | Static.AlignBottom);
-                  marker.setSpacing(spacing);
-
-                  marker.setLabelFont(
-                    new Misc.Font({
-                      fontColor: "#000000",
-                      name: "Times New Roman",
-                      style: "normal",
-                      th: 12,
-                      weight: "bold",
-                    })
-                  );
-
-                  marker.attach(self);
-                }
-
-                return;
-              }
-            }
-          }*/
-
-          //console.log(decimalPlacesX, decimalPlacesY);
-
-          /* function isPointATurningPoint(tps, pt) {
-            if (!tps) return false;
-            for (let i = 0; i < tps.length; i++) {
-              if (tps[i].x === pt.x && tps[i].y === pt.y) {
-                return true;
-              }
-            }
-            return false;
-          } */
 
           //const round = 30;
           const m_eps = 1e-300;
@@ -2244,6 +2099,7 @@ class MyPlot extends Plot {
           let samples2 = curves[1].data().samples();
 
           let tempSamples = [];
+
           while (samples1.length > 160) {
             const tps = curves[0].turningPoints;
             const ips = curves[0].inflectionPoints;
@@ -2308,98 +2164,10 @@ class MyPlot extends Plot {
             samples1_maxY = temp_samples2_maxY;
           }
 
-          // let parallelToXAxis_1 = false;
-          // let parallelToXAxis_2 = false;
           let parallelToXAxis = false;
 
-          // if (
-          //   samples1[0].y === samples1[1].y &&
-          //   (samples2_minY <= samples1[0].y || samples2_maxY >= samples1[0].y)
-          // ) {
-          //   //console.log("samples1 parallel to x-axis");
-          //   parallelToXAxis_1 = true;
-          // }
-
-          // if (
-          //   samples2[0].y === samples2[1].y &&
-          //   (samples1_minY <= samples2[0].y || samples1_maxY >= samples2[0].y)
-          // ) {
-          //   //console.log("samples2 parallel to x-axis");
-          //   parallelToXAxis_2 = true;
-          // }
-
-          // parallelToXAxis_1 = false;
-          // parallelToXAxis_2 = false;
-
-          // if (parallelToXAxis_1 && !parallelToXAxis_2) {
-          //   const y = samples1[0].y;
-          //   for (let i = 0; i < samples2.length; i++) {
-          //     if (samples2[i].y == y) {
-          //       res.push(samples2[i]);
-          //       parallelToXAxis = true;
-          //     }
-          //   }
-          // }
-          // if (parallelToXAxis_2 && !parallelToXAxis_1) {
-          //   const y = samples2[0].y;
-          //   for (let i = 0; i < samples1.length; i++) {
-          //     if (samples1[i].y == y) {
-          //       res.push(samples1[i]);
-          //       parallelToXAxis = true;
-          //     }
-          //   }
-          // }
-
-          //console.log(samples2);
-          /* else */ if (
-            /* (samples1.length == 2 && samples2.length == 2) ||
-            (samples1.length == 2 &&
-              Utility.linearEquationFromPoints(
-                samples2[0],
-                samples2[1],
-                decimalPlacesY / 2
-              ) ==
-                Utility.linearEquationFromPoints(
-                  samples2[1],
-                  samples2[2],
-                  decimalPlacesY / 2
-                )) ||
-            (samples2.length == 2 &&
-              Utility.linearEquationFromPoints(
-                samples1[0],
-                samples1[1],
-                decimalPlacesY / 2
-              ) ==
-                Utility.linearEquationFromPoints(
-                  samples1[1],
-                  samples1[2],
-                  decimalPlacesY / 2
-                )) */
-            0
-          ) {
-            if (
-              /* Utility.linearEquationFromPoints(
-                samples1[0],
-                samples1[1],
-                decimalPlacesY / 2
-              ) ==
-                Utility.linearEquationFromPoints(
-                  samples1[1],
-                  samples1[2],
-                  decimalPlacesY / 2
-                ) &&
-              Utility.linearEquationFromPoints(
-                samples2[0],
-                samples2[1],
-                decimalPlacesY / 2
-              ) ==
-                Utility.linearEquationFromPoints(
-                  samples2[1],
-                  samples2[2],
-                  decimalPlacesY / 2
-                ) */
-              1
-            ) {
+          if (0) {
+            if (1) {
               //Intersect line
               let point1Line1 = [samples1[0].x, samples1[0].y];
               let point2Line1 = [
@@ -2421,11 +2189,6 @@ class MyPlot extends Plot {
               );
 
               if (point) {
-                //   point = [0, 0];
-                //   // console.log(point);
-                //   //console.log(point1Line1, point2Line1, point1Line2, point2Line2);
-                // }
-
                 let x = Utility.adjustForDecimalPlaces(point[0]);
                 let y = Utility.adjustForDecimalPlaces(point[1]);
 
@@ -2442,12 +2205,6 @@ class MyPlot extends Plot {
                 marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
                 marker.setXAxis(curves[0].xAxis());
                 marker.setYAxis(curves[0].yAxis());
-
-                // const sym = new Symbol2();
-                // sym.setBrush(new Misc.Brush(Static.NoBrush));
-                // sym.setSize(new Misc.Size(10, 10));
-                // sym.setStyle(Symbol2.Style.Ellipse);
-                // marker.setSymbol(sym);
 
                 marker.setSymbol(new PointMarkerSymbol());
                 let toolTipName = "Intersection point:";
@@ -2559,25 +2316,104 @@ class MyPlot extends Plot {
                   }
                   let pt = new Misc.Point(point[0], point[1]);
 
-                  // function resHasPoint(pt) {
-                  //   for (let i = 0; i < res.length; i++) {
-                  //     //if (res[i].isEqual(pt)) return true;
-                  //     if (
-                  //       Utility.adjustForDecimalPlaces(
-                  //         res[i].x,
-                  //         decimalPlacesX
-                  //       ) ==
-                  //       Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
-                  //       Utility.adjustForDecimalPlaces(
-                  //         res[i].y,
-                  //         decimalPlacesY
-                  //       ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
-                  //     ) {
-                  //       return true;
-                  //     }
-                  //   }
-                  //   return false;
-                  // }
+                  if (
+                    (point &&
+                      rect2.contains(pt, false) &&
+                      rect1.contains(pt, false)) ||
+                    (rect1.height() == 0 && rect2.contains(pt, false)) ||
+                    (rect2.height() == 0 && rect1.contains(pt, false))
+                  ) {
+                    if (
+                      !Utility.arrayHasPoint(
+                        res,
+                        pt,
+                        decimalPlacesX,
+                        decimalPlacesY
+                      )
+                    ) {
+                      res.push(pt);
+                    }
+                  }
+                }
+              }
+            }
+
+            const temp_samples = samples1;
+            samples1 = samples2;
+            samples2 = temp_samples;
+            if (samples1.length >= samples2.length) {
+              for (let i = 0; i < samples1.length; i++) {
+                for (let n = 0; n < samples2.length; n++) {
+                  if (
+                    samples1[i].x == samples2[n].x &&
+                    samples1[i].y == samples2[n].y
+                  ) {
+                    res.push(samples2[n]);
+                  }
+                }
+              }
+            } else {
+              for (let i = 0; i < samples2.length; i++) {
+                for (let n = 0; n < samples1.length; n++) {
+                  if (
+                    samples2[i].x == samples1[n].x &&
+                    samples2[i].y == samples1[n].y
+                  ) {
+                    res.push(samples1[n]);
+                  }
+                }
+              }
+            }
+
+            for (let i = 1; i < samples1.length; i++) {
+              let point1Line1 = [
+                samples1[i - 1].x,
+                Math.abs(samples1[i - 1].y) < m_eps ? 0 : samples1[i - 1].y,
+              ];
+              let point2Line1 = [
+                samples1[i].x,
+                Math.abs(samples1[i].y) < m_eps ? 0 : samples1[i].y,
+              ];
+
+              let rect1 = new Misc.Rect(
+                point1Line1[0],
+                point1Line1[1],
+                point2Line1[0] - point1Line1[0],
+                point2Line1[1] - point1Line1[1]
+              ).normalized();
+
+              for (let j = 1; j < samples2.length; j++) {
+                let point1Line2 = [
+                  samples2[j - 1].x,
+                  Math.abs(samples2[j - 1].y) < m_eps ? 0 : samples2[j - 1].y,
+                ];
+                let point2Line2 = [
+                  samples2[j].x,
+                  Math.abs(samples2[j].y) < m_eps ? 0 : samples2[j].y,
+                ];
+
+                let rect2 = new Misc.Rect(
+                  point1Line2[0],
+                  point1Line2[1],
+                  point2Line2[0] - point1Line2[0],
+                  point2Line2[1] - point1Line2[1]
+                ).normalized();
+
+                if (rect1.intersects(rect2)) {
+                  let point = math.intersect(
+                    point1Line1,
+                    point2Line1,
+                    point1Line2,
+                    point2Line2
+                  );
+
+                  //console.log(point);
+                  if (!point) {
+                    continue;
+                    // point = [0, 0];
+                    // console.log(point);
+                  }
+                  let pt = new Misc.Point(point[0], point[1]);
 
                   if (
                     (point &&
@@ -2748,8 +2584,6 @@ class MyPlot extends Plot {
             }
             return true;
           });
-
-          //res = arr;
 
           let str = "";
           for (let i = 0; i < res.length; i++) {
