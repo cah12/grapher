@@ -965,16 +965,14 @@ class Utility {
     }
   }
 
-  static arrayHasPoint(arr, pt, decimalPlacesX = 8) {
+  static arrayHasPoint(arr, pt, decimalPlacesX = 8, decimalPlacesY = 8) {
     for (let i = 0; i < arr.length; i++) {
       //if (arr[i].isEqual(pt)) return true;
       if (
         Utility.adjustForDecimalPlaces(arr[i].x, decimalPlacesX) ==
-        Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) /* &&
-        Utility.adjustForDecimalPlaces(
-          arr[i].y,
-          decimalPlacesY
-        ) == Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY) */
+          Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX) &&
+        Utility.adjustForDecimalPlaces(arr[i].y, decimalPlacesY) ==
+          Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY)
       ) {
         return true;
       }

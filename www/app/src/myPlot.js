@@ -2586,7 +2586,14 @@ class MyPlot extends Plot {
                     (rect1.height() == 0 && rect2.contains(pt, false)) ||
                     (rect2.height() == 0 && rect1.contains(pt, false))
                   ) {
-                    if (!Utility.arrayHasPoint(res, pt, decimalPlacesX)) {
+                    if (
+                      !Utility.arrayHasPoint(
+                        res,
+                        pt,
+                        decimalPlacesX,
+                        decimalPlacesY
+                      )
+                    ) {
                       res.push(pt);
                     }
                   }
