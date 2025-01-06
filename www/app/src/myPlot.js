@@ -1895,49 +1895,74 @@ class MyPlot extends Plot {
           if (operationType == "Y-Intercept") {
             const curve = curves[i];
 
-            let pt = null;
+            let pts = [];
             // parametricFnX:"cos(t)"
             //parametricFnY:"sin(t)"
             //parametric_variable:"t"
             if (curve.expandedFn) {
               try {
-                pt = new Misc.Point(
+                let pt = new Misc.Point(
                   0,
                   math.evaluate(
                     curve.expandedFn.replaceAll(curve.variable, "U"),
                     { U: 0 }
                   )
                 );
+                pts.push(pt);
               } catch (error) {
                 console.log(error);
               }
             }
 
-            /* if (curve.parametricFnX && curve.parametricFnY) {
+            if (curve.parametricFnX && curve.parametricFnY) {
               let res;
               var eq = nerdamer(`${curve.parametricFnX}=0`);
               var solution = eq.solveFor(curve.parametric_variable);
               if (Array.isArray(solution)) {
-                res = solution[0].toString();
+                //res = solution[0].toString();
+                nerdamer.clear("all");
+                nerdamer.flush();
+                for (let i = 0; i < solution.length; i++) {
+                  res = solution[i].toString();
+                  let _fn = curve.parametricFnY.replaceAll(
+                    curve.parametric_variable,
+                    `(${res})`
+                  );
+                  var _y = nerdamer(_fn);
+                  _y = parseFloat(_y.evaluate().toString());
+                  let _pt = new Misc.Point(0, _y);
+                  if (
+                    !Utility.arrayHasPoint(
+                      pts,
+                      _pt,
+                      decimalPlacesX,
+                      decimalPlacesY
+                    )
+                  ) {
+                    pts.push(_pt);
+                  }
+                } //here2
               } else {
                 res = solution.toString();
+                if (res) {
+                  let _fn = curve.parametricFnY.replaceAll(
+                    curve.parametric_variable,
+                    `(${res})`
+                  );
+                  var _y = nerdamer(_fn);
+                  _y = parseFloat(_y.evaluate().toString());
+                  pts.push(new Misc.Point(0, _y));
+                }
+                nerdamer.clear("all");
+                nerdamer.flush();
               }
-              nerdamer.clear("all");
-              nerdamer.flush();
 
-              if (res) {
-                let _fn = curve.parametricFnY.replaceAll(
-                  curve.parametric_variable,
-                  `(${res})`
-                );
-                var _y = nerdamer(_fn);
-                _y = _y.evaluate().toString();
-                pt = new Misc.Point(0, _y);
-              }
               //here
-            } */
+            }
 
-            if (pt) {
+            let pt;
+            for (let i = 0; i < pts.length; ++i) {
+              pt = pts[i];
               const { spacing, align } = getArrowSymbolProperties();
 
               const tpName = Utility.generateCurveName(self, "y~");
@@ -2039,17 +2064,16 @@ class MyPlot extends Plot {
             }
           }
 
-          let pointType = "turning";
-          if (operationType == "Inflection point") pointType = "inflection";
-          if (curves[i].parametricFnX) {
-            // str += `${
-            //   pointType === "turning" ? "Turning" : "Inflection"
-            // } points for parametric functions not yet supported.\n`;
+          if (
+            curves[i].parametricFnX &&
+            (operationType == "Inflection point" ||
+              operationType == "Turning point")
+          ) {
             str += `${operationType.replace(
               " point",
               ""
             )} points for parametric functions not yet supported.\n`;
-          } else if (!curves[i].expandedFn) {
+          } else if (!curves[i].expandedFn && !curves[i].parametricFnX) {
             str += `No function expression found to determine ${pointType} points for ${curves[
               i
             ].title()}.\n`;
