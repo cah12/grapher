@@ -1895,6 +1895,32 @@ class MyPlot extends Plot {
           if (operationType == "Y-Intercept") {
             const curve = curves[i];
 
+            let m_curves = [curve];
+            let tempCurve = new MyCurve();
+            //tempCurve.fn = "0";
+            tempCurve.setAxes(curve.xAxis(), curve.yAxis());
+
+            const minY = curve.minYValue();
+            const maxY = curve.maxYValue();
+
+            tempCurve.setSamples([
+              new Misc.Point(0, minY - 0.1 * Math.abs(minY)),
+              new Misc.Point(0, maxY + 0.1 * maxY),
+            ]);
+            self.curveSelector.operationType = "Intersection";
+            m_curves.push(tempCurve);
+            doCombine(m_curves, "Y~");
+            self.curveSelector.operationType = null;
+            tempCurve = null;
+
+            if (i < curves.length) {
+              continue;
+            }
+          }
+
+          if (operationType == "Y-Intercept2") {
+            const curve = curves[i];
+
             let pts = [];
             // parametricFnX:"cos(t)"
             //parametricFnY:"sin(t)"
@@ -2297,6 +2323,9 @@ class MyPlot extends Plot {
               }
             }
 
+            const min_rect_width =
+              (curves[0].maxXValue() - curves[0].minXValue()) / 100;
+
             for (let i = 1; i < samples1.length; i++) {
               let point1Line1 = [
                 samples1[i - 1].x,
@@ -2310,8 +2339,8 @@ class MyPlot extends Plot {
               let rect1 = new Misc.Rect(
                 point1Line1[0],
                 point1Line1[1],
-                point2Line1[0] - point1Line1[0],
-                point2Line1[1] - point1Line1[1]
+                Math.max(point2Line1[0] - point1Line1[0], min_rect_width),
+                Math.max(point2Line1[1] - point1Line1[1], min_rect_width)
               ).normalized();
 
               for (let j = 1; j < samples2.length; j++) {
@@ -2327,8 +2356,8 @@ class MyPlot extends Plot {
                 let rect2 = new Misc.Rect(
                   point1Line2[0],
                   point1Line2[1],
-                  point2Line2[0] - point1Line2[0],
-                  point2Line2[1] - point1Line2[1]
+                  Math.max(point2Line2[0] - point1Line2[0], min_rect_width),
+                  Math.max(point2Line2[1] - point1Line2[1], min_rect_width)
                 ).normalized();
 
                 if (rect1.intersects(rect2)) {
@@ -2568,7 +2597,7 @@ class MyPlot extends Plot {
           //   return pt;
           // });
 
-          if (prefix == "x~") {
+          if (prefix == "x~" || prefix == "Y~") {
             const variable = curves[0].variable;
             let fn = curves[0].fn;
             if ($.isNumeric(fn)) {
@@ -2584,16 +2613,16 @@ class MyPlot extends Plot {
             // ) {
             //    res.push(new Misc.Point(0, 0));
             // }
-            if (p) {
-              res = res.filter((pt) => {
-                scope.set(variable, pt.x);
-                const v = p.evaluate(scope);
-                if (Utility.mFuzzyCompare(v, 0) || math.abs(pt.x) > 1) {
-                  return true;
-                }
-                return false;
-              });
-            }
+            /*if (p) {
+             res = res.filter((pt) => {
+              scope.set(variable, pt.x);
+              const v = p.evaluate(scope);
+              if (Utility.mFuzzyCompare(v, 0) || math.abs(pt.x) > 1) {
+                return true;
+              }
+              return false;
+            }); */
+            //}
           }
 
           //console.log(res);
@@ -2611,7 +2640,10 @@ class MyPlot extends Plot {
 
           res = res.filter((item, index) => {
             if (index > 0) {
-              return res[index - 1].x !== res[index].x;
+              return (
+                res[index - 1].x !== res[index].x ||
+                res[index - 1].y !== res[index].y
+              );
             }
             return true;
           });
@@ -2664,7 +2696,8 @@ class MyPlot extends Plot {
 
           if (res.length == 0) {
             //alert(`0 points of intersection:\n`);
-            if (prefix === "x~") alert(`No x-intercept:\n`);
+            if (prefix === "x~") alert(`No X-Intercept:\n`);
+            else if (prefix === "Y~") alert(`No Y-Intercept:\n`);
             else alert(`0 points of intersection:\n`);
           }
         }
