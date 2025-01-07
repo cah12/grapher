@@ -2074,15 +2074,19 @@ class MyPlot extends Plot {
               ""
             )} points for parametric functions not yet supported.\n`;
           } else if (!curves[i].expandedFn && !curves[i].parametricFnX) {
-            str += `No function expression found to determine ${pointType} points for ${curves[
-              i
-            ].title()}.\n`;
+            str += `No function expression found to determine ${operationType.replace(
+              " point",
+              ""
+            )} points for ${curves[i].title()}.\n`;
           } else if (
             operationType !== "Y-Intercept" &&
             operationType !== "X-Intercept"
           ) {
             if (!points || !points.length) {
-              str += `${curves[i].title()} has 0 ${pointType} point\n`;
+              str += `${curves[i].title()} has 0 ${operationType.replace(
+                " point",
+                ""
+              )} point\n`;
             }
           }
         }
