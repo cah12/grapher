@@ -2146,6 +2146,24 @@ class MyPlot extends Plot {
             return;
           }
 
+          if (curves[0].fn && curves[0].fn === curves[1].fn) {
+            alert(
+              "Cannot find the intersection of a curves of the same function."
+            );
+            return;
+          }
+
+          if (
+            curves[0].parametricFnX &&
+            curves[0].parametricFnX === curves[1].parametricFnX &&
+            curves[0].parametricFnY === curves[1].parametricFnY
+          ) {
+            alert(
+              "Cannot find the intersection of a curves with the same parametric functions."
+            );
+            return;
+          }
+
           let res = [];
           let imaginary = false;
 
