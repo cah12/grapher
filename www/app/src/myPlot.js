@@ -1598,13 +1598,25 @@ class MyPlot extends Plot {
             //Replace the whitespace delimiters stripped out by simplify()
             combinedFn = combinedFn.replaceAll("mod", " mod ");
 
-            //console.log(Utility.isLinear(combinedFn, variable, 1e-10));
-            const _combinedFn = Utility.isLinear(combinedFn, variable);
-            if (_combinedFn)
-              combinedFn = Utility.adjustExpForDecimalPlaces(
-                _combinedFn,
-                decimalPlacesX
-              );
+            var order = nerdamer(`deg(${combinedFn})`).toString();
+            if (order === "1") {
+              const combinedFnTest = combinedFn.replaceAll(variable, "U");
+              if (
+                math.abs(1 - math.evaluate(combinedFnTest, { U: 1 })) < 1e-10
+              ) {
+                combinedFn = variable;
+              }
+            }
+
+            if (combinedFn != variable) {
+              //console.log(Utility.isLinear(combinedFn, variable, 1e-10));
+              const _combinedFn = Utility.isLinear(combinedFn, variable);
+              if (_combinedFn)
+                combinedFn = Utility.adjustExpForDecimalPlaces(
+                  _combinedFn,
+                  decimalPlacesX
+                );
+            }
           }
 
           function doJoin() {

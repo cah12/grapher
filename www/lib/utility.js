@@ -5309,8 +5309,20 @@ class Utility {
       }
       latex = latex.replaceAll("\\frac", "\\cdot \\frac");
       if (latex.indexOf("\\cdot") == 0) {
-        latex = latex.replace("\\cdot", "");
+        latex = latex.replaceAt("\\cdot", "");
       }
+
+      const lastIndx = latex.lastIndexOf("\\cdot");
+      if (lastIndx != -1 && latex.length - 5 === lastIndx) {
+        latex = latex.substring(0, lastIndx);
+      }
+
+      if (latex.indexOf("\\cdot") === 0) {
+        latex = latex.substring(5);
+      }
+
+      latex = latex.replaceAll("\\cdot =", "=");
+      latex = latex.replaceAll("=\\cdot", "=");
 
       latex = latex.replaceAll("\\cdot\\cdot ", "\\cdot ");
       latex = latex.replaceAll("\\left(\\cdot ", "\\left(");
