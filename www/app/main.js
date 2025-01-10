@@ -848,6 +848,6 @@ require([
 
 /*
 TODO
-Inflection point of x^3+250 or x^3-250 not being found
+//Y-intercept computed independent of function not working for negative gradients
 
 */

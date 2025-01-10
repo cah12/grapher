@@ -907,6 +907,17 @@ Misc.Rect.prototype.normalized = function () {
     rc.setBottom(rc.top());
     rc.setTop(temp);
   }
+
+  /* if (rc.width() < 0 || rc.right() < rc.left()) {
+    var temp = rc.right();
+    rc.setRight(rc.left());
+    rc.setLeft(temp);
+  }
+  if (this.height() < 0 || rc.bottom() < rc.top()) {
+    var temp = rc.bottom();
+    rc.setBottom(rc.top());
+    rc.setTop(temp);
+  } */
   return rc;
 };
 

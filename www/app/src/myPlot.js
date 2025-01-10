@@ -1904,33 +1904,13 @@ class MyPlot extends Plot {
             }
           }
 
-          if (operationType == "Y-Intercept") {
-            const curve = curves[i];
-
-            let m_curves = [curve];
-            let tempCurve = new MyCurve();
-            //tempCurve.fn = "0";
-            tempCurve.setAxes(curve.xAxis(), curve.yAxis());
-
-            const minY = curve.minYValue();
-            const maxY = curve.maxYValue();
-
-            tempCurve.setSamples([
-              new Misc.Point(0, minY - 0.1 * Math.abs(minY)),
-              new Misc.Point(0, maxY + 0.1 * maxY),
-            ]);
-            self.curveSelector.operationType = "Intersection";
-            m_curves.push(tempCurve);
-            doCombine(m_curves, "Y~");
-            self.curveSelector.operationType = null;
-            tempCurve = null;
-
-            if (i < curves.length) {
-              continue;
-            }
-          }
-
-          if (operationType == "Y-Intercept2") {
+          /* Dependent on function */
+          if (
+            operationType == "Y-Intercept" &&
+            curves[i].expandedFn &&
+            curves[i].expandedFn.length
+          ) {
+            //Start
             const curve = curves[i];
 
             let pts = [];
@@ -2003,7 +1983,7 @@ class MyPlot extends Plot {
               pt = pts[i];
               const { spacing, align } = getArrowSymbolProperties();
 
-              const tpName = Utility.generateCurveName(self, "y~");
+              const tpName = Utility.generateCurveName(self, "Y~");
               const marker = new PlotMarker(tpName);
               marker.toolTipValueName = "Y-Intercept:";
               marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
@@ -2034,7 +2014,39 @@ class MyPlot extends Plot {
 
               marker.attach(self);
             }
-          }
+          } //End
+
+          /* Independent of function */
+          if (
+            (operationType == "Y-Intercept" && !curves[i].expandedFn) ||
+            !curves[i].expandedFn.length
+          ) {
+            //Start
+            const curve = curves[i];
+
+            let m_curves = [curve];
+            let tempCurve = new MyCurve();
+            //tempCurve.fn = "0";
+            tempCurve.setAxes(curve.xAxis(), curve.yAxis());
+
+            const minY = curve.minYValue();
+            const maxY = curve.maxYValue();
+
+            tempCurve.setSamples([
+              new Misc.Point(-1e-16, minY - 0.1 * Math.abs(minY)),
+              new Misc.Point(1e-16, maxY + 0.1 * maxY),
+            ]);
+            self.curveSelector.operationType = "Intersection";
+            //curves[i].toolTipValueName = "Y-Intercept";
+            m_curves.push(tempCurve);
+            doCombine(m_curves, "Y~");
+            self.curveSelector.operationType = null;
+            tempCurve = null;
+
+            if (i < curves.length) {
+              continue;
+            }
+          } //End
 
           if (operationType == "Inflection point") {
             const curve = curves[i];
@@ -2375,13 +2387,14 @@ class MyPlot extends Plot {
               let rect1 = new Misc.Rect(
                 point1Line1[0],
                 point1Line1[1],
-                Math.abs(point2Line1[0] - point1Line1[0]) < 1e-6
-                  ? 1e-6
+                Math.abs(point2Line1[0] - point1Line1[0]) < 1e-12
+                  ? 1e-12
                   : Math.abs(point2Line1[0] - point1Line1[0]),
-                Math.abs(point2Line1[1] - point1Line1[1]) < 1e-6
-                  ? 1e-6
+                Math.abs(point2Line1[1] - point1Line1[1]) < 1e-12
+                  ? 1e-12
                   : Math.abs(point2Line1[1] - point1Line1[1])
               ).normalized();
+              //console.log(rect1.toString());
 
               for (let j = 1; j < samples2.length; j++) {
                 let point1Line2 = [
@@ -2396,13 +2409,15 @@ class MyPlot extends Plot {
                 let rect2 = new Misc.Rect(
                   point1Line2[0],
                   point1Line2[1],
-                  Math.abs(point2Line2[0] - point1Line2[0]) < 1e-6
-                    ? 1e-6
+                  Math.abs(point2Line2[0] - point1Line2[0]) < 1e-12
+                    ? 1e-12
                     : Math.abs(point2Line2[0] - point1Line2[0]),
-                  Math.abs(point2Line2[1] - point1Line2[1]) < 1e-6
-                    ? 1e-6
+                  Math.abs(point2Line2[1] - point1Line2[1]) < 1e-12
+                    ? 1e-12
                     : Math.abs(point2Line2[1] - point1Line2[1])
                 ).normalized();
+
+                console.log(rect2.toString());
 
                 if (rect1.intersects(rect2)) {
                   let point = math.intersect(
@@ -2725,6 +2740,9 @@ class MyPlot extends Plot {
             let toolTipName = "Intersection point:";
             if (ipName.indexOf("x~") !== -1) {
               toolTipName = "X-Intercept:";
+            }
+            if (ipName.indexOf("Y~") !== -1) {
+              toolTipName = "Y-Intercept:";
             }
             marker.toolTipValueName = toolTipName;
 
