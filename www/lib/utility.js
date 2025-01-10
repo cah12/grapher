@@ -2561,6 +2561,8 @@ class Utility {
 
       if (res) {
         result.push(new Misc.Point(res[0], res[1]));
+      } else {
+        result.push(new Misc.Point(endPoint1Line1[0], endPoint1Line1[1]));
       }
     }
     //console.timeEnd("CurveInflection");
