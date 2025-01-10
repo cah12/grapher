@@ -2329,6 +2329,11 @@ class MyPlot extends Plot {
           /////////////////////////////////////////////////////////////
 
           if (!parallelToXAxis) {
+            /* if (samples2.length > samples1.length) {
+              const temp = samples2;
+              samples2 = samples1;
+              samples1 = temp;
+            } */
             if (samples1.length >= samples2.length) {
               for (let i = 0; i < samples1.length; i++) {
                 for (let n = 0; n < samples2.length; n++) {
@@ -2353,8 +2358,9 @@ class MyPlot extends Plot {
               }
             }
 
-            const min_rect_width =
-              (curves[0].maxXValue() - curves[0].minXValue()) / 100;
+            /* const min_rect_width =
+              (curves[0].maxXValue() - curves[0].minXValue()) / 150;
+            console.log(min_rect_width); */
 
             for (let i = 1; i < samples1.length; i++) {
               let point1Line1 = [
@@ -2369,8 +2375,12 @@ class MyPlot extends Plot {
               let rect1 = new Misc.Rect(
                 point1Line1[0],
                 point1Line1[1],
-                Math.max(point2Line1[0] - point1Line1[0], min_rect_width),
-                Math.max(point2Line1[1] - point1Line1[1], min_rect_width)
+                Math.abs(point2Line1[0] - point1Line1[0]) < 1e-6
+                  ? 1e-6
+                  : Math.abs(point2Line1[0] - point1Line1[0]),
+                Math.abs(point2Line1[1] - point1Line1[1]) < 1e-6
+                  ? 1e-6
+                  : Math.abs(point2Line1[1] - point1Line1[1])
               ).normalized();
 
               for (let j = 1; j < samples2.length; j++) {
@@ -2386,8 +2396,12 @@ class MyPlot extends Plot {
                 let rect2 = new Misc.Rect(
                   point1Line2[0],
                   point1Line2[1],
-                  Math.max(point2Line2[0] - point1Line2[0], min_rect_width),
-                  Math.max(point2Line2[1] - point1Line2[1], min_rect_width)
+                  Math.abs(point2Line2[0] - point1Line2[0]) < 1e-6
+                    ? 1e-6
+                    : Math.abs(point2Line2[0] - point1Line2[0]),
+                  Math.abs(point2Line2[1] - point1Line2[1]) < 1e-6
+                    ? 1e-6
+                    : Math.abs(point2Line2[1] - point1Line2[1])
                 ).normalized();
 
                 if (rect1.intersects(rect2)) {
@@ -2657,16 +2671,29 @@ class MyPlot extends Plot {
 
           //console.log(res);
 
+          res = res.map((e) => {
+            return adjustIp(e);
+          });
+
           let arr = [];
           for (let i = 0; i < res.length; i++) {
-            if (!Utility.arrayHasPoint(arr, res[i], decimalPlacesX)) {
+            if (
+              !Utility.arrayHasPoint(
+                arr,
+                res[i],
+                decimalPlacesX,
+                decimalPlacesY
+              )
+            ) {
               arr.push(res[i]);
             }
           }
 
-          res = arr.map((e) => {
+          res = arr;
+
+          /* res = arr.map((e) => {
             return adjustIp(e);
-          });
+          }); */
 
           res = res.filter((item, index) => {
             if (index > 0) {
