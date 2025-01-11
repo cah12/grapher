@@ -751,7 +751,8 @@ class MToolBar extends ToolBar {
         {
           name: "Inverse",
           //img: "images/brush.png",
-          title: "Create the inverse if it exists.",
+          title:
+            "If possible, plot the inverse function. Otherwise plot the inverse relation.",
           fun: function () {
             operationPrep("Inverse");
           },

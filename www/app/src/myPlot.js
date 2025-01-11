@@ -517,7 +517,7 @@ class MyPlot extends Plot {
       return m_fn;
     }
 
-    this.functionDlgCb = function (functionDlgData = null) {
+    this.functionDlgCb = function (functionDlgData = null, providedFn = null) {
       let newCurve = null;
 
       if (functionDlgData) {
@@ -790,6 +790,9 @@ class MyPlot extends Plot {
         if (samples.length == 0) {
           const mf = $("#fnDlg_function")[0];
           let fn = mf.getValue();
+          if (providedFn) {
+            fn = providedFn;
+          }
           const arr = fn.split("=");
           const { lowerX, upperX, numOfSamples, variable } = makeSamplesData;
           if (
@@ -803,16 +806,28 @@ class MyPlot extends Plot {
               fn = `${s[0]}^(-1)(${variable})`;
             }
           }
-          const decObj = Utility.getInverseDeclaration(fn);
-          if (decObj) {
-            const samples = Utility.inverseRelationSamples(
-              fn,
-              lowerX,
-              upperX,
-              numOfSamples,
-              variable,
-              self
-            );
+          let decObj = Utility.getInverseDeclaration(fn);
+          if (decObj || providedFn) {
+            let samples = null;
+            if (providedFn) {
+              makeSamplesData.fx = providedFn;
+              samples = Utility.makeSamples(makeSamplesData);
+              samples = samples.map(function (pt) {
+                const temp = pt.x;
+                pt.x = pt.y;
+                pt.y = temp;
+                return pt;
+              });
+            } else {
+              samples = Utility.inverseRelationSamples(
+                fn,
+                lowerX,
+                upperX,
+                numOfSamples,
+                variable,
+                self
+              );
+            }
 
             if (samples && samples.length) {
               const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
@@ -1846,10 +1861,23 @@ class MyPlot extends Plot {
             }
           }
 
+          /**
+           * This operation
+           */
           if (operationType == "Inverse") {
-            //const curve = curves[0];
-            //for (let i = 0; i < curves.length; i++) {
             const curve = curves[i];
+            if (curve.expandedFn) {
+              const invFn = Utility.inverseFunction(
+                curve.expandedFn,
+                curve.variable
+              );
+              if (invFn) {
+                self._functionDlg.expandedFn = invFn;
+                self._functionDlg.title = Utility.generateCurveName(self);
+                self.functionDlgCb(null, curve.expandedFn);
+              }
+            }
+            /*const curve = curves[i];
 
             console.log("Inverse", curve);
             const newCurve = new MyCurve(`Inv-${curve.title()}`);
@@ -1857,25 +1885,25 @@ class MyPlot extends Plot {
             const _samples = samples.map((pt) => {
               return new Misc.Point(pt.y, pt.x);
             });
-            newCurve.setAxes(curve.xAxis(), curve.yAxis());
+             newCurve.setAxes(curve.xAxis(), curve.yAxis());
             newCurve.setSamples(_samples);
-            if (curve.turningPoints) {
-              newCurve.turningPoints = curve.turningPoints.map((pt) => {
-                return new Misc.Point(pt.y, pt.x);
-              });
-            }
-            if (curve.inflectionPoints) {
-              newCurve.inflectionPoints = curve.inflectionPoints.map((pt) => {
-                return new Misc.Point(pt.y, pt.x);
-              });
-            }
+            // if (curve.turningPoints) {
+            //   newCurve.turningPoints = curve.turningPoints.map((pt) => {
+            //     return new Misc.Point(pt.y, pt.x);
+            //   });
+            // }
+            // if (curve.inflectionPoints) {
+            //   newCurve.inflectionPoints = curve.inflectionPoints.map((pt) => {
+            //     return new Misc.Point(pt.y, pt.x);
+            //   });
+            // } 
             newCurve.relation = true;
             newCurve.attach(self);
             if (i == curves.length - 1) {
               self.setAutoReplot(doAutoReplot);
               self.autoRefresh();
               return;
-            }
+            } */
           }
 
           if (operationType == "X-Intercept") {
@@ -2017,10 +2045,7 @@ class MyPlot extends Plot {
           } //End
 
           /* Independent of function */
-          if (
-            (operationType == "Y-Intercept" && !curves[i].expandedFn) ||
-            !curves[i].expandedFn.length
-          ) {
+          if (operationType == "Y-Intercept" && !curves[i].expandedFn) {
             //Start
             const curve = curves[i];
 
@@ -2130,7 +2155,8 @@ class MyPlot extends Plot {
             )} points for ${curves[i].title()}.\n`;
           } else if (
             operationType !== "Y-Intercept" &&
-            operationType !== "X-Intercept"
+            operationType !== "X-Intercept" &&
+            operationType !== "Inverse"
           ) {
             if (!points || !points.length) {
               str += `${curves[i].title()} has 0 ${operationType.replace(

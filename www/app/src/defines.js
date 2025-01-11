@@ -503,17 +503,11 @@ class Defines {
           //console.log(degOfPoly.toString());
 
           if (m_defn) {
-            let _defn = m_defn.value.replaceAll(variable, "y");
-
-            //_defn = nerdamer(`simplify(${_defn})`).toString();
-
-            //_defn = `${_defn}=x`;
+            solution = Utility.inverseFunction(m_defn.value, variable);
+            ////
+            /*let _defn = m_defn.value.replaceAll(variable, "y");
 
             if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
-              // Utility.displayErrorMessage(
-              //   mf,
-              //   `Degree of polynomial in "y" greater than 3 not yet supported - "${_defn}".`
-              // );
               return "failedInverse";
             }
 
@@ -524,7 +518,6 @@ class Defines {
               exponent = math.evaluate(degOfPoly.toString());
               exponent = math.inv(exponent);
               lhs = `x^${exponent}`;
-              //const rhs = math.simplify(`(${_defn})^${exponent}`).toString();
               const rhs = nerdamer(
                 `simplify((${_defn})^${exponent})`
               ).toString();
@@ -538,7 +531,6 @@ class Defines {
             try {
               eq = nerdamer(_defn);
               solution = eq.solveFor("y");
-              //solution = nerdamer.solveEquations(_defn, "y");
               if (
                 !solution ||
                 (typeof solution == "object" && solution.length == 0)
@@ -571,12 +563,12 @@ class Defines {
               .simplify(solution, {}, { exactFractions: false })
               .toString()
               .replaceAll(" ", "");
-
+*/
             solution = solution.replaceAll(variable, `(${arg})`);
 
             str = str.replace(dec, `(${solution})`);
             //console.log(solution);
-          }
+          } /////
           if (solution) {
             obj = Utility.getInverseDeclaration(str, _index);
           } else {

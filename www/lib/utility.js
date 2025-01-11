@@ -2241,6 +2241,66 @@ class Utility {
     return samples;
   }
 
+  static inverseFunction(fn, variable) {
+    let degOfPoly = nerdamer.deg(fn);
+    let solution = null;
+    let _defn = fn.replaceAll(variable, "y");
+
+    if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
+      return "failedInverse";
+    }
+
+    console.log(math.evaluate(degOfPoly.toString()));
+    let exponent = null;
+    let lhs = null;
+    if (degOfPoly && math.evaluate(degOfPoly.toString()) < 1) {
+      exponent = math.evaluate(degOfPoly.toString());
+      exponent = math.inv(exponent);
+      lhs = `x^${exponent}`;
+      const rhs = nerdamer(`simplify((${_defn})^${exponent})`).toString();
+      _defn = `${lhs}=${rhs}`;
+    } else {
+      _defn = `${_defn}=${variable}`;
+    }
+
+    let eq = null;
+
+    try {
+      eq = nerdamer(_defn);
+      solution = eq.solveFor("y");
+      if (!solution || (typeof solution == "object" && solution.length == 0)) {
+        return "failedInverse";
+      }
+    } catch (error) {
+      //console.log("Error in discontinuity()");
+      return "failedInverse";
+    }
+    nerdamer.clear("all");
+    nerdamer.flush();
+    //console.log(typeof solution);
+    if (typeof solution != "object") {
+      solution = [solution];
+    }
+    //console.log(solution[0]);
+    if (exponent && solution[0].toString().indexOf("^2") != -1) {
+      return "failedInverse";
+    }
+
+    solution = solution[0].toString().replaceAll("abs", "1*");
+
+    if (exponent && solution.indexOf("^") == -1) {
+      //solution = `${lhs}+${solution}`;
+      return "failedInverse";
+    }
+
+    solution = math
+      .simplify(solution, {}, { exactFractions: false })
+      .toString()
+      .replaceAll(" ", "");
+
+    return solution;
+  }
+
   static removeNonNumericPoints(samples) {
     if (!samples) return [];
     return samples.filter((pt) => {

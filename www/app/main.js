@@ -850,4 +850,6 @@ require([
 TODO
 //Y-intercept computed independent of function not working for negative gradients
 
+//myPlot.functionDlgCb = function (functionDlgData = null)
+
 */
