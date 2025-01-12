@@ -1811,6 +1811,15 @@ class Utility {
       obj.upperX = limits_x.upperX;
     }
 
+    if (obj.fx === "failedInverse") {
+      this.alert(
+        "Grapher tried but failed to get the inverse function. This happens if an inverse of the function does not exist or the order of the polynomial is greater than 3. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
+        null,
+        "failedInverse"
+      );
+      return [];
+    }
+
     var fx = obj.fx;
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;

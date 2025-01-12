@@ -532,7 +532,10 @@ class MyPlot extends Plot {
 
       //console.log(self._functionDlg.domainRangeRestriction);
 
-      if (self._functionDlg.threeD) {
+      if (
+        self._functionDlg.threeD &&
+        self._functionDlg.expandedFn != "failedInverse"
+      ) {
         //console.log("do 3d")
         if (self._functionDlg.threeDType === "spectrocurve") {
           var s = Utility.makeSamples({
@@ -646,14 +649,18 @@ class MyPlot extends Plot {
         }
       } */
       let parametricFnX, parametricFnY;
-      if (self._functionDlg.expandedFn) {
+      if (
+        self._functionDlg.expandedFn &&
+        self._functionDlg.expandedFn != "failedInverse"
+      ) {
         fn = /* self._functionDlg.expandedFn = */ initializeCoeff(
           self._functionDlg.expandedFn
         );
       } else if (
         !functionDlgData &&
         self._functionDlg.expandedParametricFnX &&
-        self._functionDlg.expandedParametricFnY
+        self._functionDlg.expandedParametricFnY &&
+        self._functionDlg.expandedFn != "failedInverse"
       ) {
         parametricFnX = initializeCoeff(
           self._functionDlg.expandedParametricFnX
@@ -697,7 +704,7 @@ class MyPlot extends Plot {
       };
 
       let discont = [];
-
+      ///////////////////////
       try {
         discont = Utility.discontinuity(
           fn,
@@ -782,7 +789,7 @@ class MyPlot extends Plot {
           Axis.AxisId.yLeft
         );
 
-        const samples = Utility.makeSamples(makeSamplesData); //////////////
+        const samples = Utility.makeSamples(makeSamplesData);
 
         if (!samples) {
           return;
@@ -921,7 +928,6 @@ class MyPlot extends Plot {
           decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
         } */
 
-        /////////////////////////////////////////////////////////////
         /* const tps = newCurve.turningPoints;
         if (tps && tps.length) {
           let scaleX = 1;
@@ -2443,7 +2449,7 @@ class MyPlot extends Plot {
                     : Math.abs(point2Line2[1] - point1Line2[1])
                 ).normalized();
 
-                console.log(rect2.toString());
+                //console.log(rect2.toString());
 
                 if (rect1.intersects(rect2)) {
                   let point = math.intersect(
@@ -2652,14 +2658,17 @@ class MyPlot extends Plot {
                 pt.x = pt.x - 0.5 * step;
 
                 if (fn1.indexOf("^") === -1) {
-                  pt.y = math.evaluate(fn1, { x: pt.x });
+                  const pt_y = math.evaluate(fn1, { x: pt.x });
+                  pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
                 } else if (fn2.indexOf("^") === -1) {
-                  pt.y = math.evaluate(fn2, { x: pt.x });
+                  const pt_y = math.evaluate(fn2, { x: pt.x });
+                  pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
                 } else {
-                  pt.y =
-                    (math.evaluate(fn1, { x: pt.x }) +
-                      math.evaluate(fn2, { x: pt.x })) /
-                    2;
+                  let pt_y_1 = math.evaluate(fn1, { x: pt.x });
+                  pt_y_1 = math.isNumeric(pt_y_1) ? pt_y_1 : pt.y;
+                  let pt_y_2 = math.evaluate(fn2, { x: pt.x });
+                  pt_y_2 = math.isNumeric(pt_y_2) ? pt_y_2 : pt.y;
+                  pt.y = (pt_y_1 + pt_y_2) / 2;
                 }
 
                 // pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
@@ -2923,7 +2932,7 @@ class MyPlot extends Plot {
             const rightSidebarPercentW =
               (100 * parseFloat(self.rightSidebar.html().css("width"))) /
               plotDivContainerSize.width;
-            console.log(rightSidebarPercentW);
+            //console.log(rightSidebarPercentW);
             plotDiv.css("width", 98 - rightSidebarPercentW + "%");
             plotDiv.css("left", "0%");
           }
