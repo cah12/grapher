@@ -851,5 +851,6 @@ TODO
 //Y-intercept computed independent of function not working for negative gradients
 
 //myPlot.functionDlgCb = function (functionDlgData = null)
+x^2+2x-4
 
 */

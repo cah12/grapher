@@ -5095,16 +5095,65 @@ class Utility {
     scope.set(variable, 1);
 
     try {
-      p.evaluate(scope);
+      const val = p.evaluate(scope);
+      // if (math.abs(1 - math.abs(val)) < 1e-12) {
+      //   const sign = math.sign(val);
+      //   if (sign == 0) {
+      //     return 0;
+      //   }
+      //   if (sign == 1) {
+      //     return variable;
+      //   }
+      //   if (sign == -1) {
+      //     return `-${variable}`;
+      //   }
+      // }
     } catch (error) {
       return null;
     }
 
     const points = xArr.map((val) => {
       scope.set(variable, val);
-      return { x: val, y: p.evaluate(scope) };
+      return { x: val, y: this.adjustForDecimalPlaces(p.evaluate(scope), 6) };
     });
     const data = points._data;
+
+    let linr = true;
+    for (let index = 0; index < data.length; index++) {
+      const element = data[index];
+      if (
+        element.y.re &&
+        this.adjustForDecimalPlaces(element.y.re, 8) != element.x
+      ) {
+        linr = false;
+        break;
+      } else if (!element.y.re && element.y != element.x) {
+        linr = false;
+        break;
+      }
+    }
+    if (linr) {
+      return variable;
+    }
+
+    for (let index = 0; index < data.length; index++) {
+      const element = data[index];
+      if (
+        element.y.re &&
+        this.adjustForDecimalPlaces(element.y.re, 8) * -1 != element.x
+      ) {
+        linr = false;
+        break;
+      } else if (!element.y.re && element.y * -1 != element.x) {
+        linr = false;
+        break;
+      }
+    }
+
+    if (linr) {
+      return `-${variable}`;
+    }
+
     const testSlope = Utility.slope(data[data.length - 1], data[0]);
     for (let i = 1; i < data.length; i++) {
       if (

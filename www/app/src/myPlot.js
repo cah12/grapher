@@ -517,7 +517,12 @@ class MyPlot extends Plot {
       return m_fn;
     }
 
-    this.functionDlgCb = function (functionDlgData = null, providedFn = null) {
+    this.functionDlgCb = function (
+      functionDlgData = null,
+      providedFn = null,
+      provided_m_lowerX = null,
+      provided_m_upperX = null
+    ) {
       let newCurve = null;
 
       if (functionDlgData) {
@@ -694,6 +699,8 @@ class MyPlot extends Plot {
         parametricFnY,
         parametric_variable: self._functionDlg.parametric_variable,
         variable: self._functionDlg.variable,
+        // lowerX: provided_m_lowerX || m_lowerX,
+        // upperX: provided_m_upperX || m_upperX,
         lowerX: m_lowerX,
         upperX: m_upperX,
         numOfSamples: self._functionDlg.numOfPoints,
@@ -1880,7 +1887,9 @@ class MyPlot extends Plot {
               if (invFn) {
                 self._functionDlg.expandedFn = invFn;
                 self._functionDlg.title = Utility.generateCurveName(self);
-                self.functionDlgCb(null, curve.expandedFn);
+                const min_x = curve.minYValue();
+                const max_x = curve.maxYValue();
+                self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
               }
             }
             /*const curve = curves[i];
