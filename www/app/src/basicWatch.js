@@ -206,7 +206,7 @@ class WatchBottomRulerPosition extends Watch {
       else {
         this._value = Utility.adjustForDecimalPlaces(
           this._rulerBottom,
-          this._curve.plot().axisDecimalPlaces(this._curve.xAxis())
+          this._curve.plot().axisDecimalPlaces(this._curve.yAxis())
         ); //this._rulerBottom;
         if (isNaN(this._value)) Static.watchUpdateError = true;
         this._value = Utility.toPrecision(
@@ -246,7 +246,7 @@ class WatchTopRulerPosition extends Watch {
       else {
         this._value = Utility.adjustForDecimalPlaces(
           this._rulerTop,
-          this._curve.plot().axisDecimalPlaces(this._curve.xAxis())
+          this._curve.plot().axisDecimalPlaces(this._curve.yAxis())
         ); //this._rulerTop;
         if (isNaN(this._value)) Static.watchUpdateError = true;
         this._value = Utility.toPrecision(

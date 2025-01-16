@@ -2043,6 +2043,7 @@ class PlotPropertiesPane extends PropertiesPane {
           right_decimalPlaces.val(20);
         }
       }
+      Static.trigger("updateCalculationDecimalPlaces");
     }
 
     this.updateCalculationDecimalPlaces = function (curve) {

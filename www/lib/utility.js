@@ -2259,7 +2259,7 @@ class Utility {
       return "failedInverse";
     }
 
-    console.log(math.evaluate(degOfPoly.toString()));
+    //console.log(math.evaluate(degOfPoly.toString()));
     let exponent = null;
     let lhs = null;
     if (degOfPoly && math.evaluate(degOfPoly.toString()) < 1) {
@@ -4560,7 +4560,7 @@ class Utility {
   }
 
   static insertProductSignOn_e(str) {
-    if ($.isNumeric(str)) {
+    /*if ($.isNumeric(str)) {
       return str;
     }
     if (str.indexOf(",") != -1) return str;
@@ -4595,7 +4595,7 @@ class Utility {
       indexOfe = str.indexOf("e");
     }
     str = str.replaceAll("~", "e");
-    str = Utility.replaceKeywordMarkers(str, true);
+    str = Utility.replaceKeywordMarkers(str, true);*/
     return str;
   }
 
@@ -5081,6 +5081,7 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
+    //return exp;
     if (!exp || exp.indexOf(variable) == -1) return null;
     exp = nerdamer(exp).toString();
     // let deg_of_poly = parseFloat(
@@ -5114,7 +5115,7 @@ class Utility {
 
     const points = xArr.map((val) => {
       scope.set(variable, val);
-      return { x: val, y: this.adjustForDecimalPlaces(p.evaluate(scope), 6) };
+      return { x: val, y: this.adjustForDecimalPlaces(p.evaluate(scope), 12) };
     });
     const data = points._data;
 
@@ -5123,7 +5124,7 @@ class Utility {
       const element = data[index];
       if (
         element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, 8) != element.x
+        this.adjustForDecimalPlaces(element.y.re, 12) != element.x
       ) {
         linr = false;
         break;
@@ -5140,7 +5141,7 @@ class Utility {
       const element = data[index];
       if (
         element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, 8) * -1 != element.x
+        this.adjustForDecimalPlaces(element.y.re, 12) * -1 != element.x
       ) {
         linr = false;
         break;

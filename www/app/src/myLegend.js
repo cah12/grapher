@@ -163,6 +163,22 @@ class MyLegend extends Legend {
       self.updateLegendToolTip(_curve);
     });
 
+    Static.bind("updateCalculationDecimalPlaces", function (e) {
+      const L = self.plot().itemList();
+      for (let index = 0; index < L.length; index++) {
+        const plotItem = L[index];
+        if (
+          plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve ||
+          plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve ||
+          plotItem.rtti == PlotItem.RttiValues.Rtti_PlotZone ||
+          plotItem.rtti == PlotItem.RttiValues.Rtti_PlotMarker ||
+          plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram
+        ) {
+          self.updateLegendToolTip(plotItem);
+        }
+      }
+    });
+
     Static.bind("itemAttached", function (e, plotItem, on) {
       if (
         on &&

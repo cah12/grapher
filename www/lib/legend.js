@@ -192,6 +192,13 @@ class AbstractLegend {
     };
 
     /**
+     * Return the plot associated with the legend or null.
+     */
+    this.plot = function () {
+      return m_plot;
+    };
+
+    /**
      * Returns true if the legend contains no items.
      * @returns {Boolean} true / false
      */

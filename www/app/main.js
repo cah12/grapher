@@ -854,3 +854,10 @@ TODO
 x^2+2x-4
 
 */
+// const cnf = math.config();
+// cnf.relTol = 1e-36;
+// cnf.absTol = 1e-38;
+// cnf.epsilon = undefined;
+// math.config(cnf);
+// console.log(math.config());
+// console.log(math.equal(2.000000000000001, 2));
