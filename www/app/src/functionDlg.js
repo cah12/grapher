@@ -1138,7 +1138,10 @@ class MFunctionDlg {
                 domainRangeRestriction[1],
                 self.variable
               );
-              if(parseFloat(domainRangeRestriction[0])>=parseFloat(domainRangeRestriction[1])){
+              if (
+                parseFloat(domainRangeRestriction[0]) >=
+                parseFloat(domainRangeRestriction[1])
+              ) {
                 Utility.displayErrorMessage(
                   mf,
                   `Invalid domain declaration. Lower limit must be less than the upper limit.`
@@ -1190,10 +1193,10 @@ class MFunctionDlg {
                 eq = nerdamer(
                   `${variablePlusExpanded}=${domainRangeRestriction[1]}`
                 );
-                console.log(eq.toString());
+                //console.log(eq.toString());
                 solution = eq.solveFor(variable);
                 sol;
-                console.log(solution);
+                //console.log(solution);
                 if (typeof solution === "object" && solution[0]) {
                   for (let i = 0; i < solution.length; i++) {
                     sol = math
@@ -1412,7 +1415,7 @@ class MFunctionDlg {
                 return false;
               }
 
-              if(!handleDomain()) return false;
+              if (!handleDomain()) return false;
               if (
                 variablePlus.length > 1 &&
                 domainGap_lower.length + domainGap_upper.length < 2

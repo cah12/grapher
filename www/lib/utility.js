@@ -16,7 +16,7 @@ class AlertDlg {
 		<h4 class="modal-title"><b>Alert</b></h4>\
 		</div>\
 		<div class="modal-body">\
-		<p id="msg" style="word-break: break-all;"></p>\
+		<p id="msg" style=""></p>\
     <!--div id="msg"></div-->\
 		</div>\
 		<div id="alertDlgFooter1" class="modal-footer">\
@@ -1813,7 +1813,7 @@ class Utility {
 
     if (obj.fx === "failedInverse") {
       this.alert(
-        "Grapher tried but failed to get the inverse function. This happens if an inverse of the function does not exist or the order of the polynomial is greater than 3. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
+        "Grapher tried but failed to get the inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
         null,
         "failedInverse"
       );
@@ -3258,7 +3258,15 @@ class Utility {
       let denom = [];
       const node = math.parse(exp);
       const filtered = node.filter(function (node) {
-        return node.op === "/";
+        return (
+          node.op === "/" ||
+          (node.op === "^" &&
+            node.args &&
+            node.args[1] &&
+            node.args[1].content &&
+            node.args[1].content.fn &&
+            node.args[1].content.fn === "unaryMinus")
+        );
       });
 
       // let filtered_constant = node.filter(function (node) {
@@ -3266,7 +3274,17 @@ class Utility {
       // });
 
       for (let i = 0; i < filtered.length; i++) {
-        denom.push(filtered[i].args[1].getContent().toString());
+        if (filtered[i].op === "/") {
+          denom.push(filtered[i].args[1].getContent().toString());
+        } else {
+          const s1 = filtered[i].args[0].getContent().toString();
+          const s2 = filtered[i].args[1]
+            .getContent()
+            .toString()
+            .replace("-", "");
+
+          denom.push(`(${s1})^${s2}`);
+        }
       }
 
       denom = denom.filter(function (e) {
@@ -3290,6 +3308,7 @@ class Utility {
     exp = adjustConstantForMode(exp);
 
     let factors = [];
+    //const _exp = math.parse(exp).toString();
     denominators = denominators.concat(getDenominators(exp));
     denominators.forEach(function (d) {
       factors = factors.concat(getFactors(d));
@@ -4968,6 +4987,9 @@ class Utility {
   }
 
   static adjustExpForDecimalPlaces(exp, places) {
+    if (!$.isNumeric(exp)) {
+      return exp;
+    }
     let m_exp = exp;
 
     for (let i = 0; i < exp.length; i++) {
@@ -5081,14 +5103,9 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
-    //return exp;
     if (!exp || exp.indexOf(variable) == -1) return null;
-    exp = nerdamer(exp).toString();
-    // let deg_of_poly = parseFloat(
-    //   math.simplify(nerdamer(`deg(${exp},${variable})`).toString())
-    // );
 
-    // if (deg_of_poly === 1) return exp;
+    // exp = nerdamer(exp).toString();
 
     const xArr = math.range(-50, 50, 1, true);
     const p = math.parse(exp);

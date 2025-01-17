@@ -842,7 +842,7 @@ require([
   // console.log(y.toString());
 
   //let str = math.simplify("sqrt(x)^2").toString();
-  // var x = nerdamer("simplify(sqrt(x)^2)").toString();
+  // var x = nerdamer("simplify(0.5(sqrt(4x+20)-2))").toString();
   // console.log(x);
 });
 
@@ -860,4 +860,4 @@ x^2+2x-4
 // cnf.epsilon = undefined;
 // math.config(cnf);
 // console.log(math.config());
-// console.log(math.equal(2.000000000000001, 2));
+//console.log(math.simplify("0.5(sqrt(4x+20)-2)").toString());
