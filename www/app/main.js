@@ -848,16 +848,7 @@ require([
 
 /*
 TODO
-//Y-intercept computed independent of function not working for negative gradients
-
-//myPlot.functionDlgCb = function (functionDlgData = null)
-x^2+2x-4
+discontinuity
+(x^2)^-2
 
 */
-// const cnf = math.config();
-// cnf.relTol = 1e-36;
-// cnf.absTol = 1e-38;
-// cnf.epsilon = undefined;
-// math.config(cnf);
-// console.log(math.config());
-//console.log(math.simplify("0.5(sqrt(4x+20)-2)").toString());

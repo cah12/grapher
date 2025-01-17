@@ -3352,12 +3352,10 @@ class Utility {
           //console.log(solution.at(i).valueOf());
 
           let val = adjustForMode(e, solution.at(i).valueOf());
-          //val = Utility.adjustForDecimalPlaces(val, 10);
+          val = Utility.adjustForDecimalPlaces(math.evaluate(`${val}`), 8);
           m_result.push(val);
         }
-        m_result = m_result.map(function (e) {
-          return math.evaluate(e);
-        });
+
         m_result = _.uniq(m_result);
         m_result = m_result.sort(function (a, b) {
           return a - b;
