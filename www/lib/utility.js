@@ -3355,6 +3355,9 @@ class Utility {
           //val = Utility.adjustForDecimalPlaces(val, 10);
           m_result.push(val);
         }
+        m_result = m_result.map(function (e) {
+          return math.evaluate(e);
+        });
         m_result = _.uniq(m_result);
         m_result = m_result.sort(function (a, b) {
           return a - b;
