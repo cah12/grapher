@@ -3494,7 +3494,7 @@ class Utility {
   /**
    * Adjust the precision of a number.
    *
-   * In most cases, round-off errors donÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢t matter: they have no significant impact on the results. However,
+   * In most cases, round-off errors donÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢t matter: they have no significant impact on the results. However,
    * it looks ugly when displaying output to a user. A solution is to limit the precision just below
    * the actual precision of 16 digits in the displayed output:
    * @param {number} value number to be adjusted.
@@ -5335,7 +5335,11 @@ class Utility {
         const prefix = Utility.getExponentTokenPrefix(result, index);
 
         let obj = Utility.getOperandOfExponentToken(result, index);
-        if (obj.operand.length > 1 && obj.operand[0] !== "(") {
+        if (
+          obj.operand.length > 1 &&
+          obj.operand[0] !== "(" &&
+          obj.operand[0] !== "-"
+        ) {
           result = result.replace(
             `${prefix}^${obj.operand[0]}`,
             `(${prefix}^${obj.operand[0]})`

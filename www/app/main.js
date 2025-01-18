@@ -848,7 +848,5 @@ require([
 
 /*
 TODO
-discontinuity
-(x^2)^-2
 
 */
