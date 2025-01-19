@@ -848,5 +848,5 @@ require([
 
 /*
 TODO
-
+lnxlog(x)
 */

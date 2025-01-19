@@ -57,8 +57,9 @@ Array.prototype.mid = function (pos, length = -1) {
   return this.slice(pos, pos + length);
 };
 
-String.prototype.insertAt = function (idx, rem, str) {
-  return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+String.prototype.replaceAt = function (idx, rem, str) {
+  //return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+  return this.slice(0, idx) + str + this.slice(idx + rem.length);
 };
 
 String.prototype.insert = function (index, string) {
@@ -70,13 +71,13 @@ String.prototype.insert = function (index, string) {
   return string + this;
 };
 
-String.prototype.replaceAt = function (index, replacement) {
-  return (
-    this.substring(0, index) +
-    replacement +
-    this.substring(index + replacement.length)
-  );
-};
+// String.prototype.replaceAt = function (index, replacement) {
+//   return (
+//     this.substring(0, index) +
+//     replacement +
+//     this.substring(index + replacement.length)
+//   );
+// };
 
 Array.prototype.resize = function (newSize, init = undefined) {
   while (newSize > this.length) this.push(init);

@@ -5216,7 +5216,7 @@ class Utility {
     }
     count = Utility.countString(str, ",");
     let logCount = Utility.countString(str, "log");
-    if (!Utility.isParametricFunction(str) && count != logCount) {
+    if (!Utility.isParametricFunction(str) && count > logCount) {
       return str.indexOf(",");
     }
     str = str.replaceAll(" ", "");
@@ -5258,7 +5258,7 @@ class Utility {
             return i;
           }
 
-          if (comma > 1) {
+          if (comma > 1 && comma > logCount) {
             return i;
           }
           if (openCurly > 1) {
@@ -5435,6 +5435,11 @@ class Utility {
           index = latex.indexOf("\\frac", index + 5);
         }
       } //}\cdot \{0\le
+      const lasIndx = latex.lastIndexOf("\\cdot ");
+      if (lasIndx === latex.length - 6) {
+        latex = latex.replaceAt(lasIndx, "\\cdot ", "");
+      }
+
       latex = latex.trim().replaceAll("  ", " ");
 
       latex = latex
@@ -5452,7 +5457,7 @@ class Utility {
       }
       latex = latex.replaceAll("\\frac", "\\cdot \\frac");
       if (latex.indexOf("\\cdot") == 0) {
-        latex = latex.replaceAt("\\cdot", "");
+        latex = latex.replace("\\cdot", "").trim();
       }
 
       const lastIndx = latex.lastIndexOf("\\cdot");
@@ -5650,6 +5655,7 @@ class Utility {
     let purgeStr = Utility.purgeAndMarkKeywords(str, true);
     //purgeStr = purgeStr.replaceAll("%e%", "e");
 
+    let closingPar = 0;
     let result = "";
     let delimiter = 0;
     let unbalance = false;
@@ -5691,7 +5697,31 @@ class Utility {
             }
             i--;
           }
-          if (purgeStr[i + 1] !== "(") {
+          let _bracket = 0;
+          if (purgeStr[i + 1] === "_") {
+            i++;
+            result += "_";
+            i++;
+            if (purgeStr[i] === "(") {
+              _bracket++;
+              result += purgeStr[i];
+              i++;
+              while (_bracket) {
+                result += purgeStr[i];
+                i++;
+                if (purgeStr[i] === ")") {
+                  _bracket--;
+                  result += ")";
+                }
+              }
+            } else {
+              if ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) {
+                result += purgeStr[i];
+                //i++;
+              }
+            }
+          }
+          if (purgeStr[i + 1] !== "(" /* && purgeStr[i + 1] !== "_" */) {
             result += "(";
             unbalance = true;
             i++;
@@ -5702,11 +5732,15 @@ class Utility {
                 c == "+" ||
                 c == "-" ||
                 c == "{" ||
+                c == "(" ||
+                c == ")" ||
+                c == "*" ||
                 c == "," /*  || purgeStr[i - 1] === "^" */
               ) {
                 result += ")";
                 result += c;
                 unbalance = false;
+                closingPar++;
                 break;
               }
               result += purgeStr[i];
@@ -5714,11 +5748,39 @@ class Utility {
             if (unbalance) {
               unbalance = false;
               result += ")";
+              closingPar++;
             }
           }
         }
       }
     }
+
+    // const regex = /\(*\)/g;
+    // const found = result.match(regex);
+
+    let c = Utility.countString(result, "\\)");
+
+    if (Utility.keywordMarkers.length && c < Utility.keywordMarkers.length) {
+      const arr = Utility.keywordMarkers;
+      let m_arr = [];
+      for (let index = 0; index < arr.length; index++) {
+        m_arr.push(arr[index].keyword);
+      }
+      let m_arr_str = _.uniq(m_arr).join().replaceAll(",", ", ");
+      const _ind_last = m_arr_str.lastIndexOf(", ");
+      if (_ind_last != -1 && m_arr.length > 1) {
+        m_arr_str = m_arr_str.replaceAt(_ind_last, ", ", " and ");
+      }
+
+      const mf = $("#fnDlg_function")[0];
+      Utility.displayErrorMessage(
+        mf,
+        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`
+      );
+      result = Utility.replaceKeywordMarkers(result);
+      return;
+    }
+
     result = Utility.replaceKeywordMarkers(result);
 
     result = result.replaceAll("()", "");
