@@ -5436,7 +5436,7 @@ class Utility {
         }
       } //}\cdot \{0\le
       const lasIndx = latex.lastIndexOf("\\cdot ");
-      if (lasIndx === latex.length - 6) {
+      if (lasIndx != -1 && lasIndx === latex.length - 6) {
         latex = latex.replaceAt(lasIndx, "\\cdot ", "");
       }
 
@@ -5666,17 +5666,15 @@ class Utility {
         delimiter++;
         if (delimiter == 2) {
           delimiter = 0;
-          if (purgeStr[i + 1] === "^") {
-            i++;
+          i++;
+          if (purgeStr[i] === "^") {
             result += "^";
             i++;
             let bracket = 0;
             if (purgeStr[i] === "(") {
-              //bracket++;
-              // result += "(";
-              // i++;
               let itr = 0;
-              while (itr < 100) {
+              /* while (itr < 100) {
+                console.log(455);
                 itr++;
                 const c = purgeStr[i];
                 if (c === "(") {
@@ -5690,16 +5688,15 @@ class Utility {
                 if (bracket == 0) {
                   break;
                 }
-              }
+              } */
             } else {
               result += purgeStr[i];
               i++;
             }
-            i--;
+            //i--;
           }
           let _bracket = 0;
-          if (purgeStr[i + 1] === "_") {
-            i++;
+          if (purgeStr[i] === "_") {
             result += "_";
             i++;
             if (purgeStr[i] === "(") {
@@ -5707,49 +5704,58 @@ class Utility {
               result += purgeStr[i];
               i++;
               while (_bracket) {
-                result += purgeStr[i];
-                i++;
                 if (purgeStr[i] === ")") {
                   _bracket--;
                   result += ")";
+                } else if (purgeStr[i] === "(") {
+                  _bracket++;
+                  result += "(";
+                } else {
+                  result += purgeStr[i];
                 }
+                i++;
               }
             } else {
               if ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) {
                 result += purgeStr[i];
-                //i++;
+                i++;
               }
             }
           }
-          if (purgeStr[i + 1] !== "(" /* && purgeStr[i + 1] !== "_" */) {
+          if (purgeStr[i] !== "(" /* && purgeStr[i + 1] !== "_" */) {
             result += "(";
             unbalance = true;
-            i++;
-            for (i; i < purgeStr.length; i++) {
-              c = purgeStr[i];
-              if (
-                c == "=" ||
-                c == "+" ||
-                c == "-" ||
-                c == "{" ||
-                c == "(" ||
-                c == ")" ||
-                c == "*" ||
-                c == "," /*  || purgeStr[i - 1] === "^" */
-              ) {
-                result += ")";
-                result += c;
-                unbalance = false;
-                closingPar++;
-                break;
-              }
+            //i++;
+            // for (i; i < purgeStr.length; i++) {
+            c = purgeStr[i];
+            if (
+              c == "=" ||
+              c == "+" ||
+              c == "-" ||
+              c == "{" ||
+              c == "(" ||
+              c == ")" ||
+              c == "*" ||
+              c == "/" ||
+              //c == "%" ||
+              c == "," /*  || purgeStr[i - 1] === "^" */
+            ) {
+              result += ")";
+              result += c;
+              unbalance = false;
+              closingPar++;
+              //break;
+            } else {
               result += purgeStr[i];
             }
+            // }
             if (unbalance) {
               unbalance = false;
               result += ")";
               closingPar++;
             }
+          } else {
+            result += purgeStr[i];
           }
         }
       }
@@ -5760,8 +5766,19 @@ class Utility {
 
     let c = Utility.countString(result, "\\)");
 
+    const arr_ = Utility.keywordMarkers;
+    let m_arr = [];
+    for (let index = 0; index < arr_.length; index++) {
+      m_arr.push(arr_[index].keyword);
+    }
+    let m_arr_str = _.uniq(m_arr).join().replaceAll(",", ", ");
+    const _ind_last = m_arr_str.lastIndexOf(", ");
+    if (_ind_last != -1 && m_arr.length > 1) {
+      m_arr_str = m_arr_str.replaceAt(_ind_last, ", ", " and ");
+    }
+
     if (Utility.keywordMarkers.length && c < Utility.keywordMarkers.length) {
-      const arr = Utility.keywordMarkers;
+      /* const arr = Utility.keywordMarkers;
       let m_arr = [];
       for (let index = 0; index < arr.length; index++) {
         m_arr.push(arr[index].keyword);
@@ -5770,7 +5787,7 @@ class Utility {
       const _ind_last = m_arr_str.lastIndexOf(", ");
       if (_ind_last != -1 && m_arr.length > 1) {
         m_arr_str = m_arr_str.replaceAt(_ind_last, ", ", " and ");
-      }
+      } */
 
       const mf = $("#fnDlg_function")[0];
       Utility.displayErrorMessage(
@@ -5780,6 +5797,17 @@ class Utility {
       result = Utility.replaceKeywordMarkers(result);
       return;
     }
+    //if (c === Utility.keywordMarkers.length) {
+    if (result.indexOf("%)") != -1) {
+      const mf = $("#fnDlg_function")[0];
+      Utility.displayErrorMessage(
+        mf,
+        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`
+      );
+      result = Utility.replaceKeywordMarkers(result);
+      return;
+    }
+    // }
 
     result = Utility.replaceKeywordMarkers(result);
 
@@ -5833,11 +5861,15 @@ class Utility {
       while (ind !== -1) {
         let operand = Utility.getOperand(m_fn, "log", ind).operand;
         const obj = Utility.splitParametricFunction(operand);
-        m_fn = m_fn.replace(
-          `log${operand}`,
-          `\\mathrm{log_{${obj.base}}}\\left(${obj.operand}\\right)`
-        );
-        ind = m_fn.indexOf("log(");
+        if (obj) {
+          m_fn = m_fn.replace(
+            `log${operand}`,
+            `\\mathrm{log_{${obj.base}}}\\left(${obj.operand}\\right)`
+          );
+        } else {
+          m_fn = m_fn.replaceAt(ind, "log", "ln");
+        }
+        ind = m_fn.indexOf("log(", ind + 3);
       }
 
       if (parametricArr.length > 1) {
