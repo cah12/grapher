@@ -4691,9 +4691,9 @@ class Utility {
     if (hasKeyword(str)) {
       str = Utility.purgeAndMarkKeywords(str);
       res = str.match(/%(.*?)%/g);
-      for (let i = 0; i < res.length; i++) {
-        // str = str.replace(res[i], `(${res[i]}`);
-      }
+      //for (let i = 0; i < res.length; i++) {
+      // str = str.replace(res[i], `(${res[i]}`);
+      //}
     }
 
     var result = "";
@@ -4712,9 +4712,9 @@ class Utility {
           result += "*";
         }
       }
-      // if (_.isFinite(str[i - 1]) && Utility.isAlpha(str[i])) {
-      //   result += "*";
-      // }
+      if (Utility.isAlpha(str[i - 1]) && str[i] == "%") {
+        result += "*";
+      }
       result += str[i];
     }
 
