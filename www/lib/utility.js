@@ -5730,6 +5730,9 @@ class Utility {
         bracketAdded &&
         (purgeStr[i + 1] === "+" ||
           purgeStr[i + 1] === "-" ||
+          (purgeStr[i + 1] === "(" &&
+            i + 2 < purgeStr.length &&
+            purgeStr[i + 2] === "%") ||
           purgeStr[i + 1] === "%")
       ) {
         bracketAdded = false;
@@ -5743,6 +5746,7 @@ class Utility {
     result = Utility.replaceKeywordMarkers(result);
     //result = Utility.insertProductSign(result);
 
+    result = result.replaceAll("()", "");
     result = result.replaceAll("*)", ")");
     result = result.replaceAll("(*", "(");
     //result = Utility.removeUnwantedParentheses(result);
@@ -5752,7 +5756,7 @@ class Utility {
   }
 
   static parametizeKeywordArg2(str) {
-    //return str;
+    return str;
     if (!str || $.isNumeric(str) || str.length < 4) {
       return str;
     }
