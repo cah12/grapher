@@ -5721,7 +5721,14 @@ class Utility {
       if (c === "%") {
         delimiter++;
       }
-      if (delimiter === 2) {
+      if (
+        delimiter === 2 &&
+        purgeStr[i + 1] != "_" &&
+        purgeStr[i] != "_" &&
+        !Utility.isAlpha(purgeStr[i]) &&
+        !$.isNumeric(purgeStr[i]) &&
+        purgeStr[i] != "("
+      ) {
         delimiter = 0;
         result += "(";
         bracketAdded = true;
