@@ -2494,6 +2494,9 @@ class MFunctionDlg {
           }
           //console.time("timer");
           const _newCurve = cb();
+          if (!_newCurve) {
+            return false;
+          }
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
           if (

@@ -530,6 +530,7 @@ class MyPlot extends Plot {
       }
 
       var title = self._functionDlg.title,
+        //fn = Utility.insertProductSign(self._functionDlg.expandedFn),
         fn = self._functionDlg.expandedFn,
         lowerLimit = self._functionDlg.lowerLimit,
         upperLimit = self._functionDlg.upperLimit,
@@ -799,6 +800,14 @@ class MyPlot extends Plot {
         const samples = Utility.makeSamples(makeSamplesData);
 
         if (!samples) {
+          const mf = $("#fnDlg_function")[0];
+          Utility.displayErrorMessage(
+            mf,
+            `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+              fn,
+              decimalPlacesX
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct.`
+          );
           return;
         }
         if (samples.length == 0) {
@@ -872,7 +881,7 @@ class MyPlot extends Plot {
             `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
               fn,
               decimalPlacesX
-            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300]. (4) Check that the syntax for "inverse" is correct.`
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct.`
           );
           return;
         }

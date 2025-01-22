@@ -148,6 +148,7 @@ class MyLegend extends Legend {
         title += "\n" + `${arr[0]}:` + m_fnConcat;
         title = title
           .replaceAll("log_{undefined}", "ln")
+          .replaceAll("*", "\\cdot")
           .replaceAll("+-", "-")
           .replaceAll("-+", "-");
       }

@@ -1871,7 +1871,7 @@ class Utility {
     var samples = [];
 
     if (parser.error) {
-      Utility.alert(parser.errorMessage);
+      //Utility.alert(parser.errorMessage);
       return null;
     }
 
@@ -2043,7 +2043,7 @@ class Utility {
         }
       }
       if (parser.error) {
-        Utility.alert(parser.errorMessage);
+        //Utility.alert(parser.errorMessage);
         return null;
       }
       if (obj.threeD) {
@@ -2811,6 +2811,9 @@ class Utility {
     let operand = "";
     let lBracket = 0;
     for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
+      if (!lBracket && (exp[i] === "+" || exp[i] === "-")) {
+        break;
+      }
       if (exp[i] == "(") {
         operand += "(";
         lBracket++;
@@ -4579,6 +4582,40 @@ class Utility {
     return result;
   }
 
+  ///////////
+  static replaceTrigKeywordMarkers(str) {
+    for (var i = 0; i < Utility.trigKeywordMarkers.length; ++i) {
+      while (str.indexOf(Utility.trigKeywordMarkers[i].marker) != -1) {
+        str = str.replace(
+          Utility.trigKeywordMarkers[i].marker,
+          Utility.trigKeywordMarkers[i].keyword
+        );
+        // console.log("replaceKey");
+      }
+    }
+    Utility.trigKeywordMarkers = [];
+    return str;
+  }
+
+  static purgeAndMarkTrigKeywords(str, exclude_e = false) {
+    let result = str;
+    for (var i = 0; i < Static.trigKeywords.length; ++i) {
+      if (Static.keywords[i] == "e" && exclude_e) {
+        continue;
+      }
+      while (result.indexOf(Static.trigKeywords[i]) != -1) {
+        var _marker = "%" + Utility.trigKeywordMarkers.length + "%";
+        result = result.replace(Static.trigKeywords[i], _marker);
+        Utility.trigKeywordMarkers.push({
+          marker: _marker,
+          keyword: Static.trigKeywords[i],
+        });
+        //console.log("purgeKey");
+      }
+    }
+    return result;
+  }
+
   static insertProductSignOn_e(str) {
     /*if ($.isNumeric(str)) {
       return str;
@@ -4704,15 +4741,19 @@ class Utility {
         (Utility.isAlpha(str[i - 1]) && str[i] == "(")
       ) {
         if (
-          defines &&
-          !defines.isCharPartOfAdefine(str[i - 1]) &&
-          str[i - 1] !== ","
+          1
+          // defines &&
+          // !defines.isCharPartOfAdefine(str[i - 1]) &&
+          // str[i - 1] !== ","
         ) {
           //if (!defines?.isCharPartOfAdefine(str[i - 1]) && str[i - 1] !== ",") {
           result += "*";
         }
       }
-      if (Utility.isAlpha(str[i - 1]) && str[i] == "%") {
+      if (
+        (Utility.isAlpha(str[i - 1]) || str[i - 1] === ")") &&
+        str[i] == "%"
+      ) {
         result += "*";
       }
       result += str[i];
@@ -5106,6 +5147,10 @@ class Utility {
   static isLinear(exp, variable = "x", eps = 1e-6) {
     if (!exp || exp.indexOf(variable) == -1) return null;
 
+    if (exp.indexOf("log") != -1 || exp.indexOf("ln") != -1) {
+      return null;
+    }
+
     // exp = nerdamer(exp).toString();
 
     const xArr = math.range(-50, 50, 1, true);
@@ -5455,7 +5500,23 @@ class Utility {
           latex = latex.substring(0, latex.lastIndexOf("\\cdot "));
         }
       }
-      latex = latex.replaceAll("\\frac", "\\cdot \\frac");
+      //latex = latex.replaceAll("\\frac", "\\cdot \\frac");
+
+      /* const kw = Static.keywords;
+      for (let i = 0; i < kw.length; i++) {
+        const kw_dot = kw[i] + "\\cdot ";
+        latex = latex.replaceAll(kw_dot, kw[i]);
+        let ind = latex.indexOf("\\" + kw[i] + "\\frac");
+        while (ind != -1) {
+          latex = latex.replace(kw[i] + "\\frac", kw[i] + "\\left(\\frac");
+          ind = latex.indexOf("}");
+          ind = latex.indexOf("}", ind + 1);
+          latex = latex.replaceAt(ind, "}", "}\\right)");
+          ind = latex.indexOf(kw[i] + "\\frac", ind + 1);
+        }
+      }*/
+      latex = latex.replaceAll("(\\cdot ", "(");
+      latex = latex.replaceAll("\\cdot )", ")");
       if (latex.indexOf("\\cdot") == 0) {
         latex = latex.replace("\\cdot", "").trim();
       }
@@ -5611,11 +5672,11 @@ class Utility {
           return null;
         }
         if (obj.unmodifiedOperand) {
-          result = result.replace(obj.unmodifiedOperand, obj.operand);
+          result = result.replace(obj.unmodifiedOperand, `${obj.operand}`);
         }
         let operand = obj.operand;
         result = result.replace(`ln${operand}`, `log(${operand})`);
-        index = result.indexOf("ln");
+        index = result.indexOf("ln", index + 2);
       }
 
       // result = result.replaceAll("ln", "log");
@@ -5640,13 +5701,58 @@ class Utility {
         index = result.indexOf("|");
       }
 
-      // result = Utility.parametizeKeywordArg(result);
+      result = Utility.insertProductSign(result);
 
       return result;
     };
   }
 
   static parametizeKeywordArg(str) {
+    if (!str || $.isNumeric(str) || str.length < 4) {
+      return str;
+    }
+    let delimiter = 0;
+    let result = "";
+    let bracketAdded = false;
+    let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+    for (let i = 0; i < purgeStr.length; i++) {
+      let c = purgeStr[i];
+      result += c;
+      if (c === "%") {
+        delimiter++;
+      }
+      if (delimiter === 2) {
+        delimiter = 0;
+        result += "(";
+        bracketAdded = true;
+      }
+      if (
+        bracketAdded &&
+        (purgeStr[i + 1] === "+" ||
+          purgeStr[i + 1] === "-" ||
+          purgeStr[i + 1] === "%")
+      ) {
+        bracketAdded = false;
+        result += ")";
+      }
+    }
+    if (bracketAdded) {
+      bracketAdded = false;
+      result += ")";
+    }
+    result = Utility.replaceKeywordMarkers(result);
+    //result = Utility.insertProductSign(result);
+
+    result = result.replaceAll("*)", ")");
+    result = result.replaceAll("(*", "(");
+    //result = Utility.removeUnwantedParentheses(result);
+    result = Utility.insertProductSign(result);
+    //result = result.replaceAll("*", ")")
+    return result;
+  }
+
+  static parametizeKeywordArg2(str) {
+    //return str;
     if (!str || $.isNumeric(str) || str.length < 4) {
       return str;
     }
@@ -5749,7 +5855,12 @@ class Utility {
               result += purgeStr[i];
             }
             // }
-            if (unbalance) {
+            if (unbalance && $.isNumeric(purgeStr[i])) {
+              i++;
+              while ($.isNumeric(purgeStr[i])) {
+                result += purgeStr[i];
+                i++;
+              }
               unbalance = false;
               result += ")";
               closingPar++;
@@ -6338,6 +6449,7 @@ Utility.errorResponseChanged = false;
 //Utility.errorResponse = Utility.adjustDomain;
 Utility.errorResponse = Utility.silentIgnore;
 Utility.keywordMarkers = [];
+Utility.trigKeywordMarkers = [];
 
 Utility.mode = "deg";
 
