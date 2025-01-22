@@ -5724,11 +5724,18 @@ class Utility {
       if (
         delimiter === 2 &&
         purgeStr[i + 1] != "_" &&
+        purgeStr[i] != "^" &&
+        purgeStr[i + 1] != "^" &&
+        //purgeStr[i - 1] != "^" &&
         purgeStr[i] != "_" &&
         !Utility.isAlpha(purgeStr[i]) &&
         !$.isNumeric(purgeStr[i]) &&
         purgeStr[i] != "("
       ) {
+        delimiter = 0;
+        result += "(";
+        bracketAdded = true;
+      } else if ($.isNumeric(purgeStr[i]) && purgeStr[i - 1] === "^") {
         delimiter = 0;
         result += "(";
         bracketAdded = true;
