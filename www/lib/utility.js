@@ -5735,7 +5735,10 @@ class Utility {
         delimiter = 0;
         result += "(";
         bracketAdded = true;
-      } else if ($.isNumeric(purgeStr[i]) && purgeStr[i - 1] === "^") {
+      } else if (
+        ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
+        purgeStr[i - 1] === "^"
+      ) {
         delimiter = 0;
         result += "(";
         bracketAdded = true;
@@ -5765,7 +5768,7 @@ class Utility {
     result = result.replaceAll("(*", "(");
     //result = Utility.removeUnwantedParentheses(result);
     result = Utility.insertProductSign(result);
-    //result = result.replaceAll("*", ")")
+    result = result.replaceAll("*(", "(");
     return result;
   }
 
