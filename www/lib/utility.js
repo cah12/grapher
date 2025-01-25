@@ -2231,7 +2231,7 @@ class Utility {
 
     samples = Utility.removeNonNumericPoints(samples);
     if (limits_x) {
-      let { lowerX, upperX } = limits_x;
+      /* let { lowerX, upperX } = limits_x;
       let xRound = math.round(lowerX);
       let yRound = parser.eval({ x: xRound });
       if ($.isNumeric(yRound)) {
@@ -2244,7 +2244,7 @@ class Utility {
       if ($.isNumeric(yRound)) {
         samples[samples.length - 1].x = xRound;
         samples[samples.length - 1].y = yRound;
-      }
+      } */
     }
 
     return samples;
@@ -2811,7 +2811,7 @@ class Utility {
     let operand = "";
     let lBracket = 0;
     for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
-      if (!lBracket && (exp[i] === "+" || exp[i] === "-")) {
+      if (!lBracket && (exp[i] === "+" || exp[i] === "-" || exp[i] === ")")) {
         break;
       }
       if (exp[i] == "(") {
@@ -4067,7 +4067,11 @@ class Utility {
   }
 
   static removeUnwantedParentheses(str) {
-    while (str[0] === "(" && str[str.length - 1] === ")") {
+    while (
+      str[0] === "(" &&
+      str[str.length - 1] === ")" &&
+      str.indexOf("^") == -1
+    ) {
       str = str.replace("(", "").replace(/.$/, "");
     }
 
@@ -4110,6 +4114,14 @@ class Utility {
     let result = str[0];
 
     for (let i = 1; i < str.length; i++) {
+      if (
+        str[i] === "*" &&
+        Utility.isAlpha(str[i - 1]) &&
+        Utility.isAlpha(str[i + 1])
+      ) {
+        result += str[i];
+        continue;
+      }
       if (str[i] !== "*") {
         result += str[i];
         continue;
@@ -4692,7 +4704,7 @@ class Utility {
     return str;
   }
 
-  static insertProductSign(str, defines) {
+  static insertProductSign(str, variable = null, defines) {
     if (!str) return null;
     if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
@@ -4738,7 +4750,11 @@ class Utility {
     for (var i = 1; i < str.length; ++i) {
       if (
         (Utility.isAlpha(str[i - 1]) && Utility.isAlpha(str[i])) ||
-        (Utility.isAlpha(str[i - 1]) && str[i] == "(")
+        (Utility.isAlpha(str[i - 1]) && Utility.isDigit(str[i])) ||
+        (variable &&
+          Utility.isAlpha(str[i - 1]) &&
+          str[i - 1] != "variable" &&
+          str[i] == "(")
       ) {
         if (
           1
@@ -5723,6 +5739,7 @@ class Utility {
       }
       if (
         delimiter === 2 &&
+        i + 1 < purgeStr.length &&
         purgeStr[i + 1] != "_" &&
         purgeStr[i] != "^" &&
         purgeStr[i + 1] != "^" &&
@@ -5730,14 +5747,26 @@ class Utility {
         purgeStr[i] != "_" &&
         !Utility.isAlpha(purgeStr[i]) &&
         !$.isNumeric(purgeStr[i]) &&
-        purgeStr[i] != "("
+        purgeStr[i] != "(" &&
+        purgeStr[i] === "%" &&
+        purgeStr[i + 1] != "("
       ) {
         delimiter = 0;
         result += "(";
         bracketAdded = true;
       } else if (
+        delimiter === 2 &&
         ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
         purgeStr[i - 1] === "^"
+      ) {
+        delimiter = 0;
+        result += "(";
+        bracketAdded = true;
+      } else if (
+        delimiter === 2 &&
+        purgeStr[i] === ")" &&
+        ((i + 1 < purgeStr.length && Utility.isAlpha(purgeStr[i + 1])) ||
+          $.isNumeric(purgeStr[i + 1]))
       ) {
         delimiter = 0;
         result += "(";
@@ -5761,7 +5790,6 @@ class Utility {
       result += ")";
     }
     result = Utility.replaceKeywordMarkers(result);
-    //result = Utility.insertProductSign(result);
 
     result = result.replaceAll("()", "");
     result = result.replaceAll("*)", ")");

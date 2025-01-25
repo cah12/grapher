@@ -780,6 +780,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = function (fnDlgFunctionVal, closeDlg) {
+        let g_solution_arr = null;
         const ind = Utility.isValidCharInExpression(fnDlgFunctionVal);
         if (ind != -1) {
           const mf = $("#fnDlg_function")[0];
@@ -832,7 +833,7 @@ class MFunctionDlg {
           if (!expandedLHS) return null;
           fn = `${expandedLHS}=${expandedRHS}`;
           //fn = `${expandedLHS}=${expandedRHS}`;
-          fn = Utility.insertProductSign(fn, plot.defines);
+          fn = Utility.insertProductSign(fn, self.variable, plot.defines);
 
           let res = null;
           //fn = fn.replaceAll(dec, "U");
@@ -1633,6 +1634,7 @@ class MFunctionDlg {
                 if (typeof solution === "object" && solution[0]) {
                   //arr = ["y", solution[0].toString()];
                   arr = ["y", solution[0].toString().replaceAll("abs", "")];
+                  g_solution_arr = solution;
                 } else {
                   arr = ["y", solution.toString().replaceAll("abs", "")];
                   //arr = ["y", solution.toString()];
@@ -1858,7 +1860,6 @@ class MFunctionDlg {
                 }
               }
 
-              //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               m_rhs = arr[1];
               if (arr.length == 2) {
                 m_rhs = doExpandDefinesAndAdjustLogBase(
@@ -1881,11 +1882,6 @@ class MFunctionDlg {
                 //arr = fnDlgFunctionVal.split("=");
               }
 
-              //console.log("Implicit");
-              // fnDlgFunctionVal = Utility.insertProductSign(
-              //   fnDlgFunctionVal,
-              //   plot.defines
-              // );
               if (arr.length == 2) {
                 let dec = Utility.getFunctionDeclaration(arr[0]);
                 if (!dec) {
@@ -1926,7 +1922,7 @@ class MFunctionDlg {
                     );
                     return;
                   }
-                  if (m_lhs.length == 1) {
+                  if (m_lhs.length == 1 && m_rhs.indexOf("y") == -1) {
                     arr = [m_rhs];
                   } else {
                     var eq = nerdamer(fnDlgFunctionVal);
@@ -2021,7 +2017,6 @@ class MFunctionDlg {
                 fnDlgFunctionVal = arr[1];
               }
               ////////////////
-              //let m_rhs = Utility.insertProductSign(arr[1], plot.defines);
               fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
                 arr[1],
                 self.variable
@@ -2497,6 +2492,7 @@ class MFunctionDlg {
           if (!_newCurve) {
             return false;
           }
+
           //console.timeEnd("timer");
           ///Determine if a negative Root curve is required and add it
           if (
@@ -2505,7 +2501,8 @@ class MFunctionDlg {
             _newCurve.data().size()
           ) {
             const fn = negativeRootFn();
-            if (Static.negativeRoot && fn) {
+            if (Static.negativeRoot && fn && fn.length) {
+              g_solution_arr = null;
               const title = self.title;
               for (let i = 0; i < fn.length; i++) {
                 self.fn = self.expandedFn = fn[i];
@@ -2556,6 +2553,22 @@ class MFunctionDlg {
               cb();
             }
           }
+
+          if (g_solution_arr) {
+            for (let i = 1; i < g_solution_arr.length; i++) {
+              const m_fn = g_solution_arr[i].toString();
+              if (m_fn.indexOf("|") !== -1 || m_fn.indexOf("i") !== -1) {
+                continue;
+              }
+              self.expandedFn = self.fn = m_fn;
+              self.title = Utility.generateCurveName(plot);
+              const _newCurve2 = cb();
+              if (!_newCurve2) {
+                return false;
+              }
+            }
+          }
+
           if (
             self.coeffs &&
             self.coeffs.length &&

@@ -530,7 +530,6 @@ class MyPlot extends Plot {
       }
 
       var title = self._functionDlg.title,
-        //fn = Utility.insertProductSign(self._functionDlg.expandedFn),
         fn = self._functionDlg.expandedFn,
         lowerLimit = self._functionDlg.lowerLimit,
         upperLimit = self._functionDlg.upperLimit,
