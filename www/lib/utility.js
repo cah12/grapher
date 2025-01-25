@@ -2262,7 +2262,11 @@ class Utility {
     //console.log(math.evaluate(degOfPoly.toString()));
     let exponent = null;
     let lhs = null;
-    if (degOfPoly && math.evaluate(degOfPoly.toString()) < 1) {
+    if (
+      degOfPoly &&
+      degOfPoly.toString() != "0" &&
+      math.evaluate(degOfPoly.toString()) < 1
+    ) {
       exponent = math.evaluate(degOfPoly.toString());
       exponent = math.inv(exponent);
       lhs = `x^${exponent}`;
@@ -2295,7 +2299,37 @@ class Utility {
       return "failedInverse";
     }
 
-    solution = solution[0].toString().replaceAll("abs", "1*");
+    //const m_degOfPoly = parseInt(degOfPoly.toString());
+    const m_solution = [];
+    if (solution.length > 2) {
+      const s_sol = solution[0].toString();
+      if (s_sol.indexOf("^") == -1) {
+        m_failedInverse = true;
+      }
+      m_solution.push(s_sol);
+    } else {
+      let m_failedInverse = false;
+      for (let i = 0; i < solution.length; i++) {
+        let sol = solution[i];
+        sol = sol.toString().replaceAll("abs", "1*");
+        if (exponent && sol.indexOf("^") == -1) {
+          m_failedInverse = true;
+          continue;
+        }
+        m_solution.push(
+          math
+            .simplify(sol, {}, { exactFractions: false })
+            .toString()
+            .replaceAll(" ", "")
+        );
+      }
+    }
+
+    if (m_solution.length === 0 && m_failedInverse) {
+      return "failedInverse";
+    }
+
+    /* solution = solution[0].toString().replaceAll("abs", "1*");
 
     if (exponent && solution.indexOf("^") == -1) {
       //solution = `${lhs}+${solution}`;
@@ -2305,9 +2339,9 @@ class Utility {
     solution = math
       .simplify(solution, {}, { exactFractions: false })
       .toString()
-      .replaceAll(" ", "");
+      .replaceAll(" ", ""); */
 
-    return solution;
+    return m_solution;
   }
 
   static removeNonNumericPoints(samples) {

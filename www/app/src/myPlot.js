@@ -1892,12 +1892,24 @@ class MyPlot extends Plot {
                 curve.expandedFn,
                 curve.variable
               );
-              if (invFn) {
-                self._functionDlg.expandedFn = invFn;
-                self._functionDlg.title = Utility.generateCurveName(self);
-                const min_x = curve.minYValue();
-                const max_x = curve.maxYValue();
-                self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
+              if (invFn && invFn.length) {
+                for (let i = 0; i < invFn.length; i++) {
+                  if (i > 0 && !Static.negativeRoot) {
+                    break;
+                  }
+                  const fn = invFn[i];
+                  self._functionDlg.expandedFn = fn;
+                  self._functionDlg.title = Utility.generateCurveName(self);
+                  if (i > 0) {
+                    self._functionDlg.title = Utility.generateCurveName(
+                      self,
+                      "0~curve_"
+                    );
+                  }
+                  const min_x = curve.minYValue();
+                  const max_x = curve.maxYValue();
+                  self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
+                }
               }
             }
             /*const curve = curves[i];

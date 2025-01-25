@@ -571,7 +571,7 @@ class Defines {
               .toString()
               .replaceAll(" ", "");
 */
-            solution = solution.replaceAll(variable, `(${arg})`);
+            solution = solution[0].replaceAll(variable, `(${arg})`);
 
             str = str.replace(dec, `(${solution})`);
             //console.log(solution);
