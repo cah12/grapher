@@ -3,7 +3,7 @@
 "use strict";
 
 class MyCurve extends Curve {
-  static init() {
+  /* static init() {
     Static.bind("itemAttached", (e, item, on) => {
       if (item == this && on) {
         if (Static.swapAxes == 0) {
@@ -23,13 +23,13 @@ class MyCurve extends Curve {
         }
       }
     });
-  }
+  } */
   constructor(tle) {
     super(tle);
     const self = this;
     this.setAxis = false;
     this.rc = null;
-    this.axesSwapped = false;
+    //this.axesSwapped = false;
     this.relation = false;
 
     this.parameterLimits = []; //Array of object: {minimum, maximum}
@@ -62,7 +62,7 @@ class MyCurve extends Curve {
     //this.discontinuity = [0]; //-2, 2]; //0, Math.PI, 2 * Math.PI, 3 * Math.PI, 4 * Math.PI];
   }
 
-  //f(x) is horizontal and x is vertical
+  /* //f(x) is horizontal and x is vertical
   swapAxes() {
     if (!this.axesSwapped) {
       const self = this;
@@ -90,7 +90,7 @@ class MyCurve extends Curve {
         pt.y = x;
         return pt;
       });
-      if (self.turningPoints.length) {
+      if (self.turningPoints && self.turningPoints.length) {
         const points = self.turningPoints;
         for (let i = 0; i < points.length; i++) {
           const pt = points[i];
@@ -100,7 +100,7 @@ class MyCurve extends Curve {
           points[i] = pt;
         }
       }
-      if (self.inflectionPoints.length) {
+      if (self.inflectionPoints && self.inflectionPoints.length) {
         const points = self.inflectionPoints;
         for (let i = 0; i < points.length; i++) {
           const pt = points[i];
@@ -151,7 +151,7 @@ class MyCurve extends Curve {
       pt.y = x;
       return pt;
     });
-    if (self.turningPoints.length) {
+    if (self.turningPoints && self.turningPoints.length) {
       const points = self.turningPoints;
       for (let i = 0; i < points.length; i++) {
         const pt = points[i];
@@ -161,7 +161,7 @@ class MyCurve extends Curve {
         points[i] = pt;
       }
     }
-    if (self.inflectionPoints.length) {
+    if (self.inflectionPoints && self.inflectionPoints.length) {
       const points = self.inflectionPoints;
       for (let i = 0; i < points.length; i++) {
         const pt = points[i];
@@ -183,7 +183,7 @@ class MyCurve extends Curve {
     plot.rv.updateWatchesAndTable();
     plot.setAutoReplot(autoReplot);
     plot.rv.refresh();
-  }
+  } */
 
   drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
@@ -332,4 +332,4 @@ class MyCurve extends Curve {
     plot.autoRefresh();
   }
 }
-MyCurve.init();
+//MyCurve.init();

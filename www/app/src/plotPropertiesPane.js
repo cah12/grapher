@@ -49,7 +49,12 @@ class PlotPropertiesPane extends PropertiesPane {
           const rows = $("#pointTableTable")[0].rows;
           const _inputs = $(rows[rows.length - 1]).find("math-field");
           if (
+            _inputs &&
+            _inputs[0] &&
+            _inputs[0].value &&
             _inputs[0].value.replace(/\s/g, "").length &&
+            _inputs[1] &&
+            _inputs[1].value &&
             _inputs[1].value.replace(/\s/g, "").length
           ) {
             $("#pointTableTable").append(makePointTableRow());
@@ -132,7 +137,7 @@ class PlotPropertiesPane extends PropertiesPane {
 
     function validInput(str) {
       let result = false;
-      if (str.length) {
+      if (str && str.length) {
         result = true;
       }
       return result;
@@ -147,8 +152,14 @@ class PlotPropertiesPane extends PropertiesPane {
       let decimalPlacesY = plot.axisDecimalPlaces(newTableCurve.yAxis());
       for (let i = 1; i < rows.length; i++) {
         const inputs = $(rows[i]).find("math-field");
-        let x = inputs[0].value.replace(/\s/g, "");
-        let y = inputs[1].value.replace(/\s/g, "");
+        let x = "",
+          y = "";
+        if (inputs && inputs[0] && inputs[0].value) {
+          x = inputs[0].value.replace(/\s/g, "");
+        }
+        if (inputs && inputs[1] && inputs[1].value) {
+          y = inputs[1].value.replace(/\s/g, "");
+        }
         if (x.length) {
           x = Utility.logBaseAdjust(
             //plot.defines.expandDefines(Utility.latexToAscii(inputs[0]))
@@ -340,6 +351,9 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     Static.bind("itemAttached", function (e, curve, on) {
+      //const L = plot.itemList();
+      //console.log(L);
+      //axesOrientation.attr("disabled", false);
       if (curve === newTableCurve && !on) {
         //console.log(456);
         t.show();
@@ -767,11 +781,16 @@ class PlotPropertiesPane extends PropertiesPane {
     });
     var axesOrientation = this.addProperty({
       name: "Axes orientation",
+      title:
+        "Swap the bottom and left axes and redraw all plot items associated with them.",
       id: "axesOrientation",
       parentId: "drawingSettings",
       type: "select",
+      //disabled: true,
       selectorOptions: ["Implicit", "Don't/Undo swap axes", "Swap axes"],
     });
+    //axesOrientation.attr("disabled", false);
+
     var aspectRatioChkBx = this.addProperty({
       name: "1:1 aspect ratio",
       id: "aspectRatio",
@@ -2231,13 +2250,25 @@ class PlotPropertiesPane extends PropertiesPane {
         //Do not swap axes
         Static.swapAxes = 1;
         //console.log("Do not swap axes", Static.swapAxes);
-        plot.rv._curve.unSwapAxes();
+        if (plot.unSwapAxes()) {
+        }
       } else if (index == 2) {
         //Swap axes
         Static.swapAxes = 2;
         //console.log("Swap axes", Static.swapAxes);
-        plot.rv._curve.swapAxes();
+        if (!plot.swapAxes()) {
+          Static.swapAxes = 0;
+          $(this)[0].selectedIndex = 0;
+        }
       }
+      // if ((index === 1 || index === 2) && plot.rv._curve) {
+      //   if (index === 1) {
+      //     plot.rv._curve.unSwapAxes();
+      //   }
+      //   if (index === 2) {
+      //     plot.rv._curve.swapAxes();
+      //   }
+      // }
     });
 
     ///////////////////////////////////////////////

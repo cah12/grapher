@@ -2125,6 +2125,7 @@ class Utility {
 
       let lastPt = new Misc.Point();
 
+      // if (samples && samples.length) {
       //let lastPt = samples[samples.length - 1];
       lastPt.x = upperX;
       lastPt.y = parser.eval({ x: upperX });
@@ -2227,6 +2228,7 @@ class Utility {
           return Utility.makeSamples(obj, { lowerX, upperX });
         }
       }
+      //}
     }
 
     samples = Utility.removeNonNumericPoints(samples);
@@ -2253,6 +2255,7 @@ class Utility {
   static inverseFunction(fn, variable) {
     let degOfPoly = nerdamer.deg(fn);
     let solution = null;
+    let m_failedInverse = false;
     let _defn = fn.replaceAll(variable, "y");
 
     if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
@@ -2302,13 +2305,31 @@ class Utility {
     //const m_degOfPoly = parseInt(degOfPoly.toString());
     const m_solution = [];
     if (solution.length > 2) {
-      const s_sol = solution[0].toString();
+      for (let i = 0; i < solution.length; i++) {
+        const s_sol = math
+          .simplify(
+            solution[i].toString().replaceAll("abs", "1*"),
+            {},
+            { exactFractions: false }
+          )
+          .toString();
+        if (s_sol.indexOf("abs") !== -1 || s_sol.indexOf("i") !== -1) {
+          continue;
+        }
+        if (s_sol.indexOf("^") == -1) {
+          m_failedInverse = true;
+          continue;
+        }
+        m_solution.push(s_sol);
+        break;
+      }
+      /* const s_sol = solution[0].toString();
       if (s_sol.indexOf("^") == -1) {
         m_failedInverse = true;
       }
-      m_solution.push(s_sol);
+      m_solution.push(s_sol); */
     } else {
-      let m_failedInverse = false;
+      //let m_failedInverse = false;
       for (let i = 0; i < solution.length; i++) {
         let sol = solution[i];
         sol = sol.toString().replaceAll("abs", "1*");
@@ -2325,7 +2346,7 @@ class Utility {
       }
     }
 
-    if (m_solution.length === 0 && m_failedInverse) {
+    if (m_solution.length === 0 || m_failedInverse) {
       return "failedInverse";
     }
 

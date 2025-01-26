@@ -14,10 +14,32 @@
 }*/
 
 class MyPlot extends Plot {
+  static init() {
+    Static.bind("itemAttached", (e, item, on) => {
+      if (item == this && on) {
+        if (Static.swapAxes == 0) {
+          //Implicit
+          if (this.xIsDependentVariable) {
+            this.swapAxes();
+            Static.trigger("axesSwapped", item);
+          }
+        }
+        if (Static.swapAxes == 1) {
+          //Do not swap
+        }
+        if (Static.swapAxes == 2) {
+          //Swap
+          this.swapAxes();
+          Static.trigger("axesSwapped", item);
+        }
+      }
+    });
+  }
   constructor(plotDiv, plotTitle) {
     super(plotDiv, plotTitle);
 
     //fileSystemUIinit();
+    this.axesSwapped = false;
     var self = this;
     var m_curveShapeEnabledByPlotSettings = true;
 
@@ -1892,7 +1914,10 @@ class MyPlot extends Plot {
                 curve.expandedFn,
                 curve.variable
               );
-              if (invFn && invFn.length) {
+              //return "failedInverse";
+              const min_x = curve.minYValue();
+              const max_x = curve.maxYValue();
+              if (invFn && invFn != "failedInverse" && invFn.length) {
                 for (let i = 0; i < invFn.length; i++) {
                   if (i > 0 && !Static.negativeRoot) {
                     break;
@@ -1906,10 +1931,13 @@ class MyPlot extends Plot {
                       "0~curve_"
                     );
                   }
-                  const min_x = curve.minYValue();
-                  const max_x = curve.maxYValue();
                   self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
                 }
+              }
+              if (invFn === "failedInverse") {
+                self._functionDlg.expandedFn = "failedInverse";
+                self._functionDlg.title = Utility.generateCurveName(self);
+                self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
               }
             }
             /*const curve = curves[i];
@@ -4039,5 +4067,78 @@ class MyPlot extends Plot {
       rightSidebarSelector.css({ "border-left": originalBorder });
       onRightDividerDrag = false;
     });
+
+    //f(x) is horizontal and x is vertical
+    this.swapAxes = function () {
+      if (!this.axesSwapped) {
+        const self = this;
+        const plot = self;
+
+        const L = self.itemList();
+        let autoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
+        for (let i = 0; i < L.length; i++) {
+          const item = L[i];
+          const x_axis = item.xAxis();
+          const y_axis = item.yAxis();
+          const item_title = item.title();
+          if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
+            continue;
+          }
+
+          if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
+            let samples = item.data().samples();
+            this.axesSwapped = true;
+            samples = samples.map(function (pt) {
+              let x = pt.x;
+              pt.x = pt.y;
+              pt.y = x;
+              return pt;
+            });
+            item.setSamples(samples);
+          }
+          if (
+            item.rtti === PlotItem.RttiValues.Rtti_PlotMarker &&
+            item.title() != "ClosestPointMarker123@###"
+          ) {
+            this.axesSwapped = true;
+            item.setValue(item.yValue(), item.xValue());
+          }
+        }
+
+        if (this.axesSwapped) {
+          const x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+          let x_min = x_scaleDiv.lowerBound(),
+            x_max = x_scaleDiv.upperBound();
+
+          const y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+          let y_min = y_scaleDiv.lowerBound(),
+            y_max = y_scaleDiv.upperBound();
+
+          for (let i = 5; i < 8; i++) {
+            plot.rv.watch(i).setEnable(false);
+            plot.tbar.hideDropdownItem("Watch", i);
+          }
+
+          plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
+          plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
+          Static.trigger("invalidateWatch");
+          plot.rv.updateWatchesAndTable();
+          plot.setAutoReplot(autoReplot);
+          plot.rv.refresh();
+        }
+
+        return this.axesSwapped;
+      }
+    };
+
+    //x is horizontal and f(x) is vertical
+    this.unSwapAxes = function () {
+      if (!this.axesSwapped) return;
+      this.axesSwapped = false;
+      this.swapAxes();
+      this.axesSwapped = false;
+    };
   }
 }
+MyPlot.init();

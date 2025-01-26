@@ -571,9 +571,11 @@ class Defines {
               .toString()
               .replaceAll(" ", "");
 */
-            solution = solution[0].replaceAll(variable, `(${arg})`);
+            else {
+              solution = solution[0].replaceAll(variable, `(${arg})`);
 
-            str = str.replace(dec, `(${solution})`);
+              str = str.replace(dec, `(${solution})`);
+            }
             //console.log(solution);
           } /////
           if (solution) {
