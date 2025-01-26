@@ -4069,7 +4069,7 @@ class MyPlot extends Plot {
     });
 
     //f(x) is horizontal and x is vertical
-    this.swapAxes = function () {
+    this.swapAxes = function (enableWatch = false) {
       if (!this.axesSwapped) {
         const self = this;
         const plot = self;
@@ -4115,9 +4115,20 @@ class MyPlot extends Plot {
           let y_min = y_scaleDiv.lowerBound(),
             y_max = y_scaleDiv.upperBound();
 
-          for (let i = 5; i < 8; i++) {
-            plot.rv.watch(i).setEnable(false);
-            plot.tbar.hideDropdownItem("Watch", i);
+          if (!enableWatch) {
+            for (let i = 5; i < 8; i++) {
+              plot.rv.watch(i).setEnable(false);
+              plot.tbar.hideDropdownItem("Watch", i);
+            }
+          }
+
+          if (enableWatch) {
+            for (let i = 5; i < 8; i++) {
+              plot.tbar.showDropdownItem("Watch", i);
+              if (plot.tbar.isDropdownItemChecked("Watch", i)) {
+                plot.rv.watch(i).setEnable(true);
+              }
+            }
           }
 
           plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
@@ -4136,7 +4147,7 @@ class MyPlot extends Plot {
     this.unSwapAxes = function () {
       if (!this.axesSwapped) return;
       this.axesSwapped = false;
-      this.swapAxes();
+      this.swapAxes(true);
       this.axesSwapped = false;
     };
   }

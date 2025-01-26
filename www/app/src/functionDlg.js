@@ -626,7 +626,7 @@ class MFunctionDlg {
         let noNegativeRoot = false;
         //return fn;
         if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
-        /* let degOfPoly;
+        let degOfPoly;
         try {
           degOfPoly = nerdamer.deg(`${self.expandedFn}`).toString();
           nerdamer.clear("all");
@@ -639,7 +639,7 @@ class MFunctionDlg {
         //console.log(self.expandedFn, degOfPoly);
         if (degOfPoly && degOfPoly % 2 != 0) {
           return fn;
-        } */
+        }
         const node = math.parse(self.expandedFn);
         let filtered = node.filter(function (node) {
           if (
@@ -652,9 +652,11 @@ class MFunctionDlg {
             const val = node.args[1].value;
             if ($.isNumeric(val) && val < 1) {
               const fr = math.simplify(`${val}`, {}, { exactFractions: true });
-              const denom = fr.args[1].value;
-              if (denom % 2 == 0) {
-                return true;
+              if (fr && fr.args && fr.args[1]) {
+                const denom = fr.args[1].value;
+                if (denom % 2 == 0) {
+                  return true;
+                }
               }
               noNegativeRoot = true;
               return false;

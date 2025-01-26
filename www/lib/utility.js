@@ -1226,15 +1226,15 @@ class Utility {
    * @param {Misc.Point} p2 Second point
    * @returns {String} equation (e.g. "-15 x + 34")
    */
-  static linearEquationFromPoints(p1, p2, decimalPlaces = 400) {
+  static linearEquationFromPoints(p1, p2, decimalPlaces = 12) {
     var m = (p2.y - p1.y) / (p2.x - p1.x);
     var c = -m * p1.x + p1.y;
     const eps = 1e-20;
     // if (decimalPlaces) {
-    //   if (math.abs(m) < eps)
-    //     m = Utility.adjustForDecimalPlaces(m, decimalPlaces);
-    //   if (math.abs(c) < eps)
-    //     c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
+    //   //if (math.abs(m) < eps)
+    //   m = Utility.adjustForDecimalPlaces(m, decimalPlaces);
+    //   //if (math.abs(c) < eps)
+    //   c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
     // }
     // var fn = m.toString();
     // fn += "x+";
@@ -5217,6 +5217,11 @@ class Utility {
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
     if (!exp || exp.indexOf(variable) == -1) return null;
+
+    const ord = nerdamer(`deg(${exp},${variable})`).toString();
+    if (ord === "1") {
+      return exp;
+    }
 
     if (exp.indexOf("log") != -1 || exp.indexOf("ln") != -1) {
       return null;
