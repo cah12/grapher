@@ -853,6 +853,20 @@ require([
   } catch (error) {
     console.log(error);
   } */
+
+  /* let evaluator = new mathjslab.Evaluator();
+  console.log(evaluator);
+  let input = evaluator.Parse("x=sqrt(1+2*3)");
+
+  let result = evaluator.Evaluate(input);
+  //console.log(result.value());
+  let mathmlInput = evaluator.UnparseMathML(input);
+  let mathmlResult = evaluator.UnparseMathML(result);
+  console.log(mathmlInput);
+  console.log(mathmlResult);
+
+  $("#plotDiv").html(`${mathmlInput}, ${mathmlResult}`); */
+  ////////////////
 });
 
 /*

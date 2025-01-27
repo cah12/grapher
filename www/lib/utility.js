@@ -3316,7 +3316,7 @@ class Utility {
       let denom = [];
       const node = math.parse(exp);
       const filtered = node.filter(function (node) {
-        return (
+        if (
           node.op === "/" ||
           (node.op === "^" &&
             node.args &&
@@ -3324,7 +3324,33 @@ class Utility {
             node.args[1].content &&
             node.args[1].content.fn &&
             node.args[1].content.fn === "unaryMinus")
-        );
+        ) {
+          if (node.args && node.args[0]) {
+            const scope = new Map();
+            scope.set(indepVar, 0);
+            try {
+              const s = node.args[0].toString();
+              const v = math.evaluate(s, scope);
+              if (v === 0) {
+                return false;
+              }
+            } catch (error) {
+              return false;
+            }
+            return true;
+          }
+        } else {
+          return false;
+        }
+        /* return (
+          node.op === "/" ||
+          (node.op === "^" &&
+            node.args &&
+            node.args[1] &&
+            node.args[1].content &&
+            node.args[1].content.fn &&
+            node.args[1].content.fn === "unaryMinus")
+        ); */
       });
 
       // let filtered_constant = node.filter(function (node) {
