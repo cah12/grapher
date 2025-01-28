@@ -23,13 +23,13 @@ class MyCurve extends Curve {
         }
       }
     });
-  } */
+  }  */
   constructor(tle) {
     super(tle);
     const self = this;
     this.setAxis = false;
     this.rc = null;
-    //this.axesSwapped = false;
+    this.axesSwapped = false;
     this.relation = false;
 
     this.parameterLimits = []; //Array of object: {minimum, maximum}

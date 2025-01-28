@@ -683,26 +683,24 @@ class InfoPropertiesPane extends Pane {
 
         var coeffs = curCurve.coeffs;
 
-        let currentCurveCoeff = currentCurveCoeffs[selectorIndex];
-
         for (var i = 0; i < coeffs.length; ++i) {
           if (curCurve.fn) {
             var fn = Utility.purgeAndMarkKeywords(curCurve.fn);
-            if (coeffs.indexOf(currentCurveCoeff) != -1) {
-              if (
-                coeffs.indexOf(currentCurveCoeff) != -1 &&
-                fn.indexOf(currentCurveCoeff) != -1
+            if (coeffs.indexOf(currentCurveCoeffs[selectorIndex]) != -1) {
+              while (
+                coeffs.indexOf(currentCurveCoeffs[selectorIndex]) != -1 &&
+                fn.indexOf(currentCurveCoeffs[selectorIndex]) != -1
               ) {
-                fn = fn.replaceAll(currentCurveCoeff, `(${selector.val()})`);
+                fn = fn.replace(
+                  currentCurveCoeffs[selectorIndex],
+                  `(${selector.val()})`
+                );
               }
               for (let index = 0; index < coeffs.length; index++) {
                 const element = coeffs[index];
-                if (element === currentCurveCoeff) {
-                  continue;
-                }
                 fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
               }
-              //curCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
+              curCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
 
               curCurve.expandedFn = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
 

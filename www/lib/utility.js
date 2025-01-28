@@ -3325,7 +3325,7 @@ class Utility {
             node.args[1].content.fn &&
             node.args[1].content.fn === "unaryMinus")
         ) {
-          if (node.args && node.args[0]) {
+          if (node.args && node.args[0] && node.op != "^") {
             const scope = new Map();
             scope.set(indepVar, 0);
             try {
@@ -3337,6 +3337,9 @@ class Utility {
             } catch (error) {
               return false;
             }
+            return true;
+          }
+          if (node.op === "^") {
             return true;
           }
         } else {

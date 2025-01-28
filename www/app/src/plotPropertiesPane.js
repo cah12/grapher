@@ -2248,17 +2248,23 @@ class PlotPropertiesPane extends PropertiesPane {
         //console.log("Implicit", Static.swapAxes);
       } else if (index == 1) {
         //Do not swap axes
-        Static.swapAxes = 1;
+        //Static.swapAxes = 1;
         //console.log("Do not swap axes", Static.swapAxes);
-        if (plot.unSwapAxes()) {
+        if (!plot.unSwapAxes()) {
+          //Static.swapAxes = 1;
+          $(this)[0].selectedIndex = Static.swapAxes;
+        } else {
+          Static.swapAxes = 1;
         }
       } else if (index == 2) {
         //Swap axes
-        Static.swapAxes = 2;
+        //Static.swapAxes = 2;
         //console.log("Swap axes", Static.swapAxes);
         if (!plot.swapAxes()) {
-          Static.swapAxes = 0;
-          $(this)[0].selectedIndex = 0;
+          //Static.swapAxes = 0;
+          $(this)[0].selectedIndex = Static.swapAxes;
+        } else {
+          Static.swapAxes = 2;
         }
       }
       // if ((index === 1 || index === 2) && plot.rv._curve) {

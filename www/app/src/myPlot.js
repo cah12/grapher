@@ -111,6 +111,15 @@ class MyPlot extends Plot {
       if (!samples || samples.length == 0) {
         return null;
       }
+
+      if (self.axesSwapped) {
+        samples = samples.map(function (pt) {
+          let x = pt.x;
+          pt.x = pt.y;
+          pt.y = x;
+          return pt;
+        });
+      }
       if (self.findPlotCurve(title)) {
         Utility.alert(title + " already exist");
         return null;
@@ -4073,70 +4082,102 @@ class MyPlot extends Plot {
       if (!this.axesSwapped) {
         const self = this;
         const plot = self;
+        let swapable = true;
 
         const L = self.itemList();
-        let autoReplot = plot.autoReplot();
-        plot.setAutoReplot(false);
+
         for (let i = 0; i < L.length; i++) {
           const item = L[i];
           const x_axis = item.xAxis();
           const y_axis = item.yAxis();
-          const item_title = item.title();
           if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
-            continue;
-          }
-
-          if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
-            let samples = item.data().samples();
-            this.axesSwapped = true;
-            samples = samples.map(function (pt) {
-              let x = pt.x;
-              pt.x = pt.y;
-              pt.y = x;
-              return pt;
-            });
-            item.setSamples(samples);
-          }
-          if (
-            item.rtti === PlotItem.RttiValues.Rtti_PlotMarker &&
-            item.title() != "ClosestPointMarker123@###"
-          ) {
-            this.axesSwapped = true;
-            item.setValue(item.yValue(), item.xValue());
+            swapable = false;
+            let s = "swap";
+            if (enableWatch) {
+              s = "unswap";
+            }
+            Utility.alert(
+              `Axes ${s} failed because one or more plot item(s) is(are) associated with an axis other than the bottom or left axis.`,
+              null,
+              "swapAxisFailed"
+            );
+            break;
           }
         }
 
-        if (this.axesSwapped) {
-          const x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
-          let x_min = x_scaleDiv.lowerBound(),
-            x_max = x_scaleDiv.upperBound();
+        if (swapable) {
+          let autoReplot = plot.autoReplot();
+          plot.setAutoReplot(false);
+          for (let i = 0; i < L.length; i++) {
+            const item = L[i];
+            // const x_axis = item.xAxis();
+            // const y_axis = item.yAxis();
+            // const item_title = item.title();
+            // if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
+            //   continue;
+            // }
 
-          const y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
-          let y_min = y_scaleDiv.lowerBound(),
-            y_max = y_scaleDiv.upperBound();
+            if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
+              let samples = item.data().samples();
+              this.axesSwapped = true;
+              if (enableWatch) {
+                item.axesSwapped = false;
+              } else {
+                item.axesSwapped = true;
+              }
 
-          if (!enableWatch) {
-            for (let i = 5; i < 8; i++) {
-              plot.rv.watch(i).setEnable(false);
-              plot.tbar.hideDropdownItem("Watch", i);
+              samples = samples.map(function (pt) {
+                let x = pt.x;
+                pt.x = pt.y;
+                pt.y = x;
+                return pt;
+              });
+              item.setSamples(samples);
+              // if (item.discontinuity && item.discontinuity.length) {
+              //   item.discontinuity = item.discontinuity.reverse();
+              // }
+            }
+            if (
+              item.rtti === PlotItem.RttiValues.Rtti_PlotMarker &&
+              item.title() != "ClosestPointMarker123@###"
+            ) {
+              this.axesSwapped = true;
+              item.setValue(item.yValue(), item.xValue());
             }
           }
 
-          if (enableWatch) {
-            for (let i = 5; i < 8; i++) {
-              plot.tbar.showDropdownItem("Watch", i);
-              if (plot.tbar.isDropdownItemChecked("Watch", i)) {
-                plot.rv.watch(i).setEnable(true);
+          if (this.axesSwapped) {
+            const x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+            let x_min = x_scaleDiv.lowerBound(),
+              x_max = x_scaleDiv.upperBound();
+
+            const y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+            let y_min = y_scaleDiv.lowerBound(),
+              y_max = y_scaleDiv.upperBound();
+
+            if (!enableWatch) {
+              for (let i = 5; i < 8; i++) {
+                plot.rv.watch(i).setEnable(false);
+                plot.tbar.hideDropdownItem("Watch", i);
               }
             }
-          }
 
-          plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
-          plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
-          Static.trigger("invalidateWatch");
-          plot.rv.updateWatchesAndTable();
-          plot.setAutoReplot(autoReplot);
-          plot.rv.refresh();
+            if (enableWatch) {
+              for (let i = 5; i < 8; i++) {
+                plot.tbar.showDropdownItem("Watch", i);
+                if (plot.tbar.isDropdownItemChecked("Watch", i)) {
+                  plot.rv.watch(i).setEnable(true);
+                }
+              }
+            }
+
+            plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
+            plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
+            Static.trigger("invalidateWatch");
+            plot.rv.updateWatchesAndTable();
+            plot.setAutoReplot(autoReplot);
+            plot.rv.refresh();
+          }
         }
 
         return this.axesSwapped;
@@ -4147,8 +4188,13 @@ class MyPlot extends Plot {
     this.unSwapAxes = function () {
       if (!this.axesSwapped) return;
       this.axesSwapped = false;
-      this.swapAxes(true);
+      //this.swapAxes(true);
+      if (!this.swapAxes(true)) {
+        this.axesSwapped = true;
+        return false;
+      }
       this.axesSwapped = false;
+      return true;
     };
   }
 }
