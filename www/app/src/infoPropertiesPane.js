@@ -670,9 +670,8 @@ class InfoPropertiesPane extends Pane {
       //console.time();
       // const doReplot = plot.autoReplot();
       // plot.setAutoReplot(false);
-      const currentCurveCoeffs = plot.findPlotCurve(
-        self.currentCurveName()
-      ).coeffs;
+      const currentCurve = plot.findPlotCurve(self.currentCurveName());
+      const currentCurveCoeffs = currentCurve.coeffs;
 
       const selectorIndex = inputIds.indexOf(selector[0].id);
 
@@ -684,6 +683,8 @@ class InfoPropertiesPane extends Pane {
         var coeffs = curCurve.coeffs;
 
         let currentCurveCoeff = currentCurveCoeffs[selectorIndex];
+
+        currentCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
 
         for (var i = 0; i < coeffs.length; ++i) {
           if (curCurve.fn) {
