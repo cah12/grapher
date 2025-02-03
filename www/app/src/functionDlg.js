@@ -1631,8 +1631,9 @@ class MFunctionDlg {
 
               if (validForNerdamer) {
                 let eq = nerdamer(fnDlgFunctionVal);
+                console.log(eq.toString());
                 let solution = eq.solveFor("y");
-                //console.log(solution);
+                console.log(solution.toString());
                 if (typeof solution === "object" && solution[0]) {
                   //arr = ["y", solution[0].toString()];
                   arr = ["y", solution[0].toString().replaceAll("abs", "")];

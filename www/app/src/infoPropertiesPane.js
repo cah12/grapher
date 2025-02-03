@@ -670,10 +670,13 @@ class InfoPropertiesPane extends Pane {
       //console.time();
       // const doReplot = plot.autoReplot();
       // plot.setAutoReplot(false);
-      const currentCurve = plot.findPlotCurve(self.currentCurveName());
-      const currentCurveCoeffs = currentCurve.coeffs;
+      const currentCurveCoeffs = plot.findPlotCurve(
+        self.currentCurveName()
+      ).coeffs;
 
       const selectorIndex = inputIds.indexOf(selector[0].id);
+
+      const currentCurveCoeff = currentCurveCoeffs[selectorIndex];
 
       var array = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let index = 0; index < array.length; index++) {
@@ -681,10 +684,6 @@ class InfoPropertiesPane extends Pane {
         //console.log(curCurve.title(), self.currentCurveName());
 
         var coeffs = curCurve.coeffs;
-
-        let currentCurveCoeff = currentCurveCoeffs[selectorIndex];
-
-        currentCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
 
         for (var i = 0; i < coeffs.length; ++i) {
           if (curCurve.fn) {
@@ -698,12 +697,10 @@ class InfoPropertiesPane extends Pane {
               }
               for (let index = 0; index < coeffs.length; index++) {
                 const element = coeffs[index];
-                if (element === currentCurveCoeff) {
-                  continue;
-                }
                 fn = fn.replaceAll(element, curCurve.coeffsVal[index]);
               }
-              //curCurve.coeffsVal[selectorIndex] = parseFloat(selector.val());
+              curCurve.coeffsVal[coeffs.indexOf(currentCurveCoeff)] =
+                parseFloat(selector.val());
 
               curCurve.expandedFn = Utility.replaceKeywordMarkers(fn); //Added 6/17/2020
 

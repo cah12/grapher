@@ -5252,7 +5252,11 @@ class Utility {
       return exp;
     }
 
-    if (exp.indexOf("log") != -1 || exp.indexOf("ln") != -1) {
+    if (
+      exp.indexOf("sqrt") != -1 ||
+      exp.indexOf("log") != -1 ||
+      exp.indexOf("ln") != -1
+    ) {
       return null;
     }
 
@@ -5813,79 +5817,94 @@ class Utility {
   }
 
   static parametizeKeywordArg(str) {
-    if (!str || $.isNumeric(str) || str.length < 4) {
-      return str;
-    }
-    let delimiter = 0;
-    let result = "";
-    let bracketAdded = false;
-    let purgeStr = Utility.purgeAndMarkKeywords(str, true);
-    for (let i = 0; i < purgeStr.length; i++) {
-      let c = purgeStr[i];
-      result += c;
-      if (c === "%") {
-        delimiter++;
+    function doParametize(str) {
+      let delimiter = 0;
+      let result = "";
+      let bracketAdded = false;
+      let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+      for (let i = 0; i < purgeStr.length; i++) {
+        let c = purgeStr[i];
+        result += c;
+        if (c === "%") {
+          delimiter++;
+        }
+        if (
+          delimiter === 2 &&
+          i + 1 < purgeStr.length &&
+          purgeStr[i + 1] != "_" &&
+          purgeStr[i] != "^" &&
+          purgeStr[i + 1] != "^" &&
+          //purgeStr[i - 1] != "^" &&
+          purgeStr[i] != "_" &&
+          !Utility.isAlpha(purgeStr[i]) &&
+          !$.isNumeric(purgeStr[i]) &&
+          purgeStr[i] != "(" &&
+          purgeStr[i] === "%" /* &&
+          purgeStr[i + 1] != "(" */
+        ) {
+          delimiter = 0;
+          result += "(";
+          bracketAdded = true;
+        } else if (
+          delimiter === 2 &&
+          ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
+          purgeStr[i - 1] === "^"
+        ) {
+          delimiter = 0;
+          result += "(";
+          bracketAdded = true;
+        } else if (
+          delimiter === 2 &&
+          purgeStr[i] === ")" &&
+          ((i + 1 < purgeStr.length && Utility.isAlpha(purgeStr[i + 1])) ||
+            $.isNumeric(purgeStr[i + 1]))
+        ) {
+          delimiter = 0;
+          result += "(";
+          bracketAdded = true;
+        }
+        if (
+          bracketAdded &&
+          (purgeStr[i + 1] === "+" ||
+            purgeStr[i + 1] === "-" ||
+            (purgeStr[i + 1] === "(" &&
+              i + 2 < purgeStr.length &&
+              purgeStr[i + 2] === "%") ||
+            purgeStr[i + 1] === "%")
+        ) {
+          bracketAdded = false;
+          result += ")";
+        }
       }
-      if (
-        delimiter === 2 &&
-        i + 1 < purgeStr.length &&
-        purgeStr[i + 1] != "_" &&
-        purgeStr[i] != "^" &&
-        purgeStr[i + 1] != "^" &&
-        //purgeStr[i - 1] != "^" &&
-        purgeStr[i] != "_" &&
-        !Utility.isAlpha(purgeStr[i]) &&
-        !$.isNumeric(purgeStr[i]) &&
-        purgeStr[i] != "(" &&
-        purgeStr[i] === "%" &&
-        purgeStr[i + 1] != "("
-      ) {
-        delimiter = 0;
-        result += "(";
-        bracketAdded = true;
-      } else if (
-        delimiter === 2 &&
-        ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
-        purgeStr[i - 1] === "^"
-      ) {
-        delimiter = 0;
-        result += "(";
-        bracketAdded = true;
-      } else if (
-        delimiter === 2 &&
-        purgeStr[i] === ")" &&
-        ((i + 1 < purgeStr.length && Utility.isAlpha(purgeStr[i + 1])) ||
-          $.isNumeric(purgeStr[i + 1]))
-      ) {
-        delimiter = 0;
-        result += "(";
-        bracketAdded = true;
-      }
-      if (
-        bracketAdded &&
-        (purgeStr[i + 1] === "+" ||
-          purgeStr[i + 1] === "-" ||
-          (purgeStr[i + 1] === "(" &&
-            i + 2 < purgeStr.length &&
-            purgeStr[i + 2] === "%") ||
-          purgeStr[i + 1] === "%")
-      ) {
+      if (bracketAdded) {
         bracketAdded = false;
         result += ")";
       }
-    }
-    if (bracketAdded) {
-      bracketAdded = false;
-      result += ")";
-    }
-    result = Utility.replaceKeywordMarkers(result);
+      result = Utility.replaceKeywordMarkers(result);
 
-    result = result.replaceAll("()", "");
-    result = result.replaceAll("*)", ")");
-    result = result.replaceAll("(*", "(");
-    //result = Utility.removeUnwantedParentheses(result);
-    result = Utility.insertProductSign(result);
-    result = result.replaceAll("*(", "(");
+      result = result.replaceAll("()", "");
+      result = result.replaceAll("*)", ")");
+      result = result.replaceAll("(*", "(");
+      //result = Utility.removeUnwantedParentheses(result);
+      result = Utility.insertProductSign(result);
+      result = result.replaceAll("*(", "(");
+
+      return result;
+    }
+
+    if (!str || $.isNumeric(str) || str.length < 4) {
+      return str;
+    }
+    if (str.indexOf("=") != -1) {
+      const arr = str.split("=");
+      const left = doParametize(arr[0]);
+      const right = doParametize(arr[1]);
+      const result = `${left}=${right}`;
+      return result;
+    }
+
+    const result = doParametize(str);
+
     return result;
   }
 

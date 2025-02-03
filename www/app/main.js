@@ -845,14 +845,14 @@ require([
   // var x = nerdamer("simplify(0.5(sqrt(4x+20)-2))").toString();
   // console.log(x);
 
-  /* var eq = nerdamer(`x=y*sin(y)`);
-  console.log(eq.toString());
-  try {
-    const sol = eq.solveFor("y");
-    console.log(sol);
-  } catch (error) {
-    console.log(error);
-  } */
+  // var eq = nerdamer(`0=sin(x)*cos(x)+y`);
+  // console.log(eq.toString());
+  // try {
+  //   const sol = eq.solveFor("y");
+  //   console.log(sol);
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   /* let evaluator = new mathjslab.Evaluator();
   console.log(evaluator);
