@@ -432,7 +432,7 @@ class Rulers {
     var _menu = [
       {
         name: "hide...",
-        img: "images/hide.png",
+        img: Static.imagePath + "hide.png",
         title: "hide the ruler.",
         fun: function () {
           plot.rv.currentRuler.setVisible(false);
@@ -444,7 +444,7 @@ class Rulers {
       },
       {
         name: "lock...",
-        img: "images/lock.png",
+        img: Static.imagePath + "lock.png",
         title: "lock the ruler in its current position.",
         fun: function () {
           plot.rv.currentRuler.setLock(true);
@@ -456,7 +456,7 @@ class Rulers {
       },
       {
         name: "lock at...",
-        img: "images/lockAt.png",
+        img: Static.imagePath + "lockAt.png",
         title: "lock the ruler at a specific position.",
         fun: function () {
           var currentRulerPosition = 0;
@@ -482,7 +482,7 @@ class Rulers {
     var rulerDeselectMenu = [
       {
         name: "Hide rulers",
-        img: "images/hide.png",
+        img: Static.imagePath + "hide.png",
         title: "Hide all rulers",
         fun: function () {
           plot.rv.setVisible(false);
@@ -490,7 +490,7 @@ class Rulers {
       },
       {
         name: "Show rulers",
-        img: "images/show.png",
+        img: Static.imagePath + "show.png",
         title: "Show any hidden rulers",
         //disable: true,
         fun: function () {
@@ -499,7 +499,7 @@ class Rulers {
       },
       {
         name: "Unlock rulers",
-        img: "images/unlock.png",
+        img: Static.imagePath + "unlock.png",
         title: "Unlock any locked rulers",
         //disable: true,
         fun: function () {

@@ -109,7 +109,16 @@ class PlotPropertiesPane extends PropertiesPane {
       <td colspan="2" style="margin:0px; padding:0px;">\
         <div style="font-size: 14px;">\
         <math-field id="fnDlg_function" data-toggle="tooltip" data-trigger="hover" data-placement="bottom" data-original-title="Enter a function" title="" style="width:100%; padding-left: 2px; padding-right: 2px; font-size: 20px; border-style: solid; border-width: 1px">x^2</math-field><div>\
-        &nbspTitle: <input id="fnDlg_title" style="margin:1px; width:30%; height:26px;" type="text" value="curve_1"/><button id="executeButton" style="float: right" title="Add the defined curve to the plot"><img src="images/execute.png" width="20" height="20"></button><button id="settingsButton" style="float: right" title="Curve definition settings"><img src="images/wrench.png" width="20" height="20"></button><button id="tableButton" style="float: right" title="Point table"><img src="images/table.png" width="20" height="20"></button></div>\
+        &nbspTitle: <input id="fnDlg_title" style="margin:1px; width:30%; height:26px;" type="text" value="curve_1"/><button id="executeButton" style="float: right" title="Add the defined curve to the plot"><img src=' +
+        Static.imagePath +
+        "execute.png" +
+        ' width="20" height="20"></button><button id="settingsButton" style="float: right" title="Curve definition settings"><img src=' +
+        Static.imagePath +
+        "wrench.png" +
+        ' width="20" height="20"></button><button id="tableButton" style="float: right" title="Point table"><img src=' +
+        Static.imagePath +
+        "table.png" +
+        ' width="20" height="20"></button></div>\
         </div>\
       </td>\
     </tr>'

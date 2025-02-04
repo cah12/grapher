@@ -6,7 +6,7 @@ class InfoPropertiesPane extends Pane {
     super(_parent);
     var self = this;
     var m_sidebarReDisplay = false;
-    let playImgSrc = "images/play.png";
+    let playImgSrc = Static.imagePath + "play.png";
 
     let curCurve = null;
 

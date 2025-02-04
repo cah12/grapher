@@ -177,8 +177,14 @@ class PromptDlg {
 		<div class="modal-header">\
     \
 		<button type="button" class="close" data-dismiss="modal"></button>\
-		<img id="progressSpinner" class="progress" style="position:relative; width:4%; height:4%; top:8px;" src="images/imageLoader.png"></img>\
-    <img id="error" class="errorBlink" style="position:relative; width:4%; height:4%; top:-2px;" src="images/error.png"></img>\
+		<img id="progressSpinner" class="progress" style="position:relative; width:4%; height:4%; top:8px;" src=' +
+        Static.imagePath +
+        "imageLoader.png" +
+        '></img>\
+    <img id="error" class="errorBlink" style="position:relative; width:4%; height:4%; top:-2px;" src=' +
+        Static.imagePath +
+        "error.png" +
+        '></img>\
     <span class="modal-title" id="prompt_title" style="font-size: 125%;">Alert</span>\
 		</div>\
 		<div class="modal-body">\
@@ -195,7 +201,6 @@ class PromptDlg {
     );
 
     //console.log(dlg)
-    //prompt_dlg.append('<img id="progressSpinner" class="progress" style= "position: absolute;" src="images/imageLoader.png"></img>');
     $("body").append(prompt_dlg);
 
     var self = this;
@@ -6613,6 +6618,9 @@ Utility.mode = "deg";
 Utility.stepsData = null;
 
 Utility.progressSpinner2 = $(
-  '<img id="imageLoader" class="loader" style= "display:none; z-index:100000; width:40px;height:40px; position: absolute;" src="images/imageLoader.png">'
+  '<img id="imageLoader" class="loader" style= "display:none; z-index:100000; width:40px;height:40px; position: absolute;" src=' +
+    Static.imagePath +
+    "imageLoader.png" +
+    ">"
 );
 Utility.progressSpinnerInit = false;

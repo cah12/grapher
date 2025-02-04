@@ -3076,7 +3076,7 @@ class MyPlot extends Plot {
     legendMenu.modifyMenu(null, {
       pos: 2,
       name: "axis",
-      img: "images/axis.png",
+      img: Static.imagePath + "axis.png",
       title: "Sets the axes associated with the curve.",
       fun: axisDlgFn,
     });
@@ -3090,7 +3090,7 @@ class MyPlot extends Plot {
         legendMenu.modifyMenu(null, {
           pos: 2,
           name: "axis",
-          img: "images/axis.png",
+          img: Static.imagePath + "axis.png",
           title: "Sets the axes associated with the curve.",
           fun: axisDlgFn,
         });
@@ -3114,7 +3114,7 @@ class MyPlot extends Plot {
           {
             pos: 0,
             name: "curve brush",
-            img: "images/brush.png",
+            img: Static.imagePath + "brush.png",
             title: "Set the fill color.",
             fun: function () {
               Utility.setCurveBrush(m_curve, function (curve) {
@@ -3125,7 +3125,7 @@ class MyPlot extends Plot {
           {
             pos: 1,
             name: "curve style",
-            img: "images/style.png",
+            img: Static.imagePath + "style.png",
             title: "Sets the style of the curve.",
             fun: function () {
               var curve = legendMenu.getCurve();
@@ -3136,7 +3136,7 @@ class MyPlot extends Plot {
           {
             pos: 3,
             name: "legend attribute",
-            img: "images/attribute.png",
+            img: Static.imagePath + "attribute.png",
             title: "Sets how the curve is represented on the legend.",
             fun: function () {
               var curve = legendMenu.getCurve();
@@ -3147,7 +3147,7 @@ class MyPlot extends Plot {
           {
             pos: 6,
             name: "fit",
-            img: "images/fit.png",
+            img: Static.imagePath + "fit.png",
             title: "Defines a curve fitter.",
             fun: function () {
               var curve = legendMenu.getCurve();
@@ -3158,39 +3158,23 @@ class MyPlot extends Plot {
           {
             pos: 7,
             name: "symbol",
-            img: "images/symbol.png",
+            img: Static.imagePath + "symbol.png",
             title: "attach/modify curve symbol",
             subMenu: null,
           },
           {
             pos: 8,
             name: "pen",
-            img: "images/pen.png",
+            img: Static.imagePath + "pen.png",
             title: "modify/change curve pen",
             subMenu: legendMenu.getPenSubMenu(),
           },
-          /* {
-            pos: 9,
-            name: "Zone",
-            img: "images/zone.jfif",
-            title: "Adds a zone",
-            fun: function () {
-              var curve = legendMenu.getCurve();
-              if (!curve) {
-                alert("Must have at least one curve.");
-                return;
-              }
-              self.zoneDlg.zoneCb(curve.plot());
-            },
-          }, */
         ]);
       }
 
       if (curve.rtti === PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
         legendMenu.modifyMenu(null, {
           name: "pen width",
-          //title: 'It will replace row',
-          //img:'images/replace.png',
           subMenu: legendMenu.getPenWidthSubMenu(),
         });
       } else {
@@ -3253,7 +3237,7 @@ class MyPlot extends Plot {
     var menu = [
       {
         name: "Hide rulers",
-        img: "images/hide.png",
+        img: Static.imagePath + "hide.png",
         title: "Hide all rulers",
         fun: function () {
           self.rv.setVisible(false);
@@ -3261,7 +3245,7 @@ class MyPlot extends Plot {
       },
       {
         name: "Show rulers",
-        img: "images/show.png",
+        img: Static.imagePath + "show.png",
         title: "Show any hidden rulers",
         //disable: true,
         fun: function () {
@@ -3270,7 +3254,7 @@ class MyPlot extends Plot {
       },
       {
         name: "Unlock rulers",
-        img: "images/unlock.png",
+        img: Static.imagePath + "unlock.png",
         title: "Unlock any locked rulers",
         //disable: true,
         fun: function () {
@@ -3281,7 +3265,7 @@ class MyPlot extends Plot {
         name: "Remove all items",
         title: "Permanently remove all items",
         //disable: true,
-        img: "images/trashAll.png",
+        img: Static.imagePath + "trashAll.png",
         fun: function () {
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -3310,7 +3294,7 @@ class MyPlot extends Plot {
         name: "Remove all hidden items",
         title: "Permanently remove all hidden items",
         //disable: true,
-        img: "images/trashAllHidden.png",
+        img: Static.imagePath + "trashAllHidden.png",
         fun: function () {
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -3341,7 +3325,7 @@ class MyPlot extends Plot {
         name: "Hide all items",
         title: "Hide all items",
         //disable: true,
-        img: "images/hide.png",
+        img: Static.imagePath + "hide.png",
         fun: function () {
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -3370,7 +3354,7 @@ class MyPlot extends Plot {
         name: "Show all items",
         title: "Show all items",
         //disable: true,
-        img: "images/show.png",
+        img: Static.imagePath + "show.png",
         fun: function () {
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -3522,7 +3506,7 @@ class MyPlot extends Plot {
           options: { encoding: "utf8", flag: "r" } 
         }, */
         {
-          img: "images/favicon.ico",
+          img: Static.imagePath + "favicon.ico",
           name: "Grapher",
           options: { encoding: "utf8", flag: "r" },
         },

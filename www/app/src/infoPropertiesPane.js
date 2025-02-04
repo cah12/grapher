@@ -6,7 +6,7 @@ class InfoPropertiesPane extends Pane {
     super(_parent);
     var self = this;
     var m_sidebarReDisplay = false;
-    let playImgSrc = "images/play.png";
+    let playImgSrc = Static.imagePath + "play.png";
 
     let curCurve = null;
 
@@ -25,7 +25,10 @@ class InfoPropertiesPane extends Pane {
                 <select id="currentCurve" style="width:100%">\
                 </select></div>\
                 <!--div><input type="text" id="fnDisplay" style="width:100%; background-color:rgba(255, 255, 255, 0.8); padding-left:6px" readonly /></div-->\
-                <div><button id="copyText" title="Copy to clipboard"><img src="images/copy.png" style="width:15px;height:15px;padding=0px;margin=0px"></button><span id="fnDisplay" style="background-color:rgba(255, 255, 255, 0.8); margin:0px 4px 0px 4px; padding-left:6px;"></span></button></div>\
+                <div><button id="copyText" title="Copy to clipboard"><img src=' +
+        Static.imagePath +
+        "copy.png" +
+        ' style="width:15px;height:15px;padding=0px;margin=0px"></button><span id="fnDisplay" style="background-color:rgba(255, 255, 255, 0.8); margin:0px 4px 0px 4px; padding-left:6px;"></span></button></div>\
                 <!--div style="white-space: nowrap;"><label style="padding-left:6px">onchange: <input id="onchange" type="checkbox" readonly /> </label>\
 				damp: <input id="damp" style="width:30%" type="number" min="1" value="30000" step="500"/>\
 				</div-->\
@@ -35,7 +38,10 @@ class InfoPropertiesPane extends Pane {
                   <div style="">Parameter:<b><span id="coeff0">?</span></b></div>\
                   <div style="margin:0px">\
                   <div style="white-space: nowrap;">\
-                  <button id="coeff_val0_playButton" style="padding:0"><img src="images/play.png" alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val0_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val0" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val0_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
+                  <button id="coeff_val0_playButton" style="padding:0"><img src=' +
+        Static.imagePath +
+        "play.png" +
+        ' alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val0_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val0" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val0_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
                   </div>\
                   </div>\
                   </div>\
@@ -44,7 +50,10 @@ class InfoPropertiesPane extends Pane {
                   <div style="">Parameter:<b><span id="coeff1">?</span></b></div>\
                   <div style="margin:0px">\
                   <div style="white-space: nowrap;">\
-                  <button id="coeff_val1_playButton" style="padding:0"><img src="images/play.png" alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val1_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val1" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val1_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
+                  <button id="coeff_val1_playButton" style="padding:0"><img src=' +
+        Static.imagePath +
+        "play.png" +
+        ' alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val1_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val1" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val1_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
                   </div>\
                   </div>\
                   </div>\
@@ -53,7 +62,10 @@ class InfoPropertiesPane extends Pane {
                   <div style="">Parameter:<b><span id="coeff2">?</span></b></div>\
                   <div style="margin:0px">\
                   <div style="white-space: nowrap;">\
-                  <button id="coeff_val2_playButton" style="padding:0"><img src="images/play.png" alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val2_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val2" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val2_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
+                  <button id="coeff_val2_playButton" style="padding:0"><img src=' +
+        Static.imagePath +
+        "play.png" +
+        ' alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val2_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val2" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val2_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
                   </div>\
                   </div>\
                   </div>\
@@ -62,7 +74,10 @@ class InfoPropertiesPane extends Pane {
                   <div style="">Parameter:<b><span id="coeff3">?</span></b></div>\
                   <div style="margin:0px">\
                   <div style="white-space: nowrap;">\
-                  <button id="coeff_val3_playButton" style="padding:0"><img src="images/play.png" alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val3_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val3" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val3_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
+                  <button id="coeff_val3_playButton" style="padding:0"><img src=' +
+        Static.imagePath +
+        "play.png" +
+        ' alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val3_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val3" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val3_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
                   </div>\
                   </div>\
                   </div>\
@@ -71,7 +86,10 @@ class InfoPropertiesPane extends Pane {
                   <div style="">Parameter:<b><span id="coeff4">?</span></b></div>\
                   <div style="margin:0px">\
                   <div style="white-space: nowrap;">\
-                  <button id="coeff_val4_playButton" style="padding:0"><img src="images/play.png" alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val4_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val4" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val4_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
+                  <button id="coeff_val4_playButton" style="padding:0"><img src=' +
+        Static.imagePath +
+        "play.png" +
+        ' alt="play button" width="20" height="20" title="Animate the function over the domain"></button><input id="coeff_val4_min" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Minimum value of coefficient"/><input id="coeff_val4" style="width:52%" type="number" value="1" title="A coefficient in the function that could be ajusted"/><input id="coeff_val4_max" class="noInputArrows no-outline noInputBorders" type="number" style="width:20%" title="Maximum value of coefficient"/>\
                   </div>\
                   </div>\
                   </div>\
@@ -304,7 +322,7 @@ class InfoPropertiesPane extends Pane {
 
         $("#coeff_val" + i).stop(true);
         $("#coeff_val" + i + "_playButton")[0].children[0].src =
-          "images/play.png";
+          Static.imagePath + "play.png";
         $("#coeff_cont" + i).show();
       }
     }
@@ -347,21 +365,13 @@ class InfoPropertiesPane extends Pane {
 
       ///////////////////////////////////////////////////////
 
-      /* $("#onchange").change(function () {
-        for (let i = 0; i < 5; i++) {
-          $("#coeff_val" + i).stop(true);
-          $("#coeff_val" + i + "_playButton")[0].children[0].src =
-            "images/play.png";
-        }
-      }); */
-
       $(
         "#coeff_val0_max, #coeff_val1_max, #coeff_val2_max, #coeff_val3_max, #coeff_val4_max, #coeff_val0_min, #coeff_val1_min, #coeff_val2_min, #coeff_val3_min, #coeff_val4_min"
       ).on("input", function () {
         const c = $(this)[0].id.charAt(9);
         $("#coeff_val" + c).stop(true);
         $("#coeff_val" + c + "_playButton")[0].children[0].src =
-          "images/play.png";
+          Static.imagePath + "play.png";
         let curCurve = plot.findPlotCurve($("#currentCurve").val());
         if ($(this)[0].id.indexOf("_min") !== -1) {
           $(this).attr("title", `Minimum value: ${$(this).val()}`);
@@ -384,7 +394,7 @@ class InfoPropertiesPane extends Pane {
         if (imgSrc.indexOf("pause.png") !== -1) {
           //pause button pressed
           $("#coeff_val" + c).stop(true);
-          $(this)[0].children[0].src = "images/play.png";
+          $(this)[0].children[0].src = Static.imagePath + "play.png";
         } else {
           //play button pressed
           const minValue = parseFloat($("#coeff_val" + c + "_min").val());
@@ -421,7 +431,7 @@ class InfoPropertiesPane extends Pane {
               .val(parseFloat($("#coeff_val" + c + "_min").val()))
               .animate({ value: minValue }, option2);
           }
-          $(this)[0].children[0].src = "images/pause.png";
+          $(this)[0].children[0].src = Static.imagePath + "pause.png";
         }
       });
 
@@ -862,7 +872,7 @@ class InfoPropertiesPane extends Pane {
         for (var i = 0; i < 5; ++i) {
           $("#coeff_val" + i).stop(true);
           $("#coeff_val" + i + "_playButton")[0].children[0].src =
-            "images/play.png";
+            Static.imagePath + "play.png";
         }
       }
     });
@@ -871,7 +881,7 @@ class InfoPropertiesPane extends Pane {
       for (var i = 0; i < 5; ++i) {
         $("#coeff_val" + i).stop(true);
         $("#coeff_val" + i + "_playButton")[0].children[0].src =
-          "images/play.png";
+          Static.imagePath + "play.png";
       }
       if (
         plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve ||

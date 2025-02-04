@@ -92,8 +92,6 @@ class ToolBar {
 
       b.css("zIndex", tbDiv.css("zIndex"));
 
-      //b[0].innerHTML = '<img src=' + "images/save.png"+ ' alt="Img" width=20px/>'
-
       b.attr("title", obj.tooltip);
       var _cb =
         obj.cb ||
@@ -721,7 +719,10 @@ About Us
           '  type="file" name="files[]" multiple style="display:none" />'
       );
       var u = $(
-        '<button data-toggle="tooltip"><img src="images/upload.png"></button>'
+        '<button data-toggle="tooltip"><img src=' +
+          Static.imagePath +
+          "upload.png" +
+          "></button>"
       );
       inp.css("marginLeft", -8);
       inp.css("marginRight", -8);

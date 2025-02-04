@@ -527,7 +527,7 @@ class LegendMenu {
       {
         pos: 0,
         name: "curve brush",
-        img: "images/brush.png",
+        img: Static.imagePath + "brush.png",
         title: "Set the fill color.",
         fun: function () {
           Utility.setCurveBrush(m_curve, function (curve) {
@@ -538,7 +538,7 @@ class LegendMenu {
       {
         pos: 4,
         name: "remove",
-        img: "images/trash.png",
+        img: Static.imagePath + "trash.png",
         title: "Removes the curve from the plot.",
         fun: function () {
           if (!m_curve) return;
@@ -549,7 +549,7 @@ class LegendMenu {
       {
         pos: 5,
         name: "rename",
-        img: "images/rename.png",
+        img: Static.imagePath + "rename.png",
         title: "Renames the curve.",
         fun: function () {
           if (!m_curve) return;
@@ -559,21 +559,21 @@ class LegendMenu {
       {
         pos: 7,
         name: "symbol",
-        img: "images/symbol.png",
+        img: Static.imagePath + "symbol.png",
         title: "attach/modify curve symbol",
         subMenu: null,
       },
       {
         pos: 8,
         name: "pen",
-        img: "images/pen.png",
+        img: Static.imagePath + "pen.png",
         title: "modify/change curve pen",
         subMenu: penSubMenu,
       },
       {
         pos: 9,
         name: "copy",
-        img: "images/copy.png",
+        img: Static.imagePath + "copy.png",
         title: "Copy the curve.",
         fun: function () {
           if (!m_curve) return;

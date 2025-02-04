@@ -191,52 +191,52 @@ class MToolBar extends ToolBar {
       listElements: [
         {
           text: "Download",
-          icon: "images/download.png",
+          icon: Static.imagePath + "download.png",
           tooltip: "Download the current graph.",
         },
         {
           text: "Point entry",
-          icon: "images/pointEntry.png",
+          icon: Static.imagePath + "pointEntry.png",
           tooltip: "Launches the point entry dialog.",
         },
         {
           text: "Calculator",
-          icon: "images/calculator.png",
+          icon: Static.imagePath + "calculator.png",
           tooltip: "Launches the calculator.",
         },
         {
           text: "Defines",
-          icon: "images/defines.png",
+          icon: Static.imagePath + "defines.png",
           tooltip: "Launches the defines dialog.",
         },
         {
           text: "Marker",
-          icon: "images/marker.png",
+          icon: Static.imagePath + "marker.png",
           tooltip: "Launches the marker dialog.",
         },
         {
           text: "Zone",
-          icon: "images/zone.jfif",
+          icon: Static.imagePath + "zone.jfif",
           tooltip: "Adds a zone.",
         },
         {
           text: "Print",
-          icon: "images/print.png",
+          icon: Static.imagePath + "print.png",
           tooltip: "Print the current graph.",
         },
         {
           text: "Reserved words",
-          icon: "images/list.png",
+          icon: Static.imagePath + "list.png",
           tooltip: "Shows a list of reserved keywords.",
         },
         {
           text: "Recycle bin",
-          icon: "images/trash.png",
+          icon: Static.imagePath + "trash.png",
           tooltip: "Open the recycle bin.",
         },
         {
           text: "Restore defaults",
-          icon: "images/restoreDefaults.png",
+          icon: Static.imagePath + "restoreDefaults.png",
           tooltip: "Restores plot properties pane defaults.",
         },
       ],
@@ -328,67 +328,58 @@ class MToolBar extends ToolBar {
         Static.trigger("viewChanged", checked);
       },
       listElements: [
-        /* {
-                    text: "Point selection",
-                    icon: "images/pointSelection.png",
-                    tooltip: "Turn on point selection. This may affect response." //,
-                    //checkboxState: "checked"
-                },  */ {
+        {
           text: "Left axis",
-          icon: "images/axis.png",
+          icon: Static.imagePath + "axis.png",
           tooltip: "Enable left axis",
           checkboxState: "checked",
         },
         {
           text: "Bottom axis",
-          icon: "images/axis.png",
+          icon: Static.imagePath + "axis.png",
           tooltip: "Enable bottom axis",
           checkboxState: "checked",
         },
         {
           text: "Right axis",
-          icon: "images/axis.png",
+          icon: Static.imagePath + "axis.png",
           tooltip: "Enable right axis",
         },
         {
           text: "Top axis",
-          icon: "images/axis.png",
+          icon: Static.imagePath + "axis.png",
           tooltip: "Enable top axis",
         },
         {
           text: "Major gridlines",
-          icon: "images/major_grid.png",
+          icon: Static.imagePath + "major_grid.png",
           tooltip: "Enable major gridlines",
           checkboxState: "checked",
         },
         {
           text: "Minor gridlines",
-          icon: "images/minor_grid.png",
+          icon: Static.imagePath + "minor_grid.png",
           tooltip: "Enable minor gridlines",
           checkboxState: "checked",
         },
         {
           text: "Title",
-          icon: "images/title.png",
+          icon: Static.imagePath + "title.png",
           tooltip: "Enable title",
           checkboxState: "checked",
         },
         {
           text: "Footer",
-          icon: "images/footer.png",
+          icon: Static.imagePath + "footer.png",
           tooltip: "Enable footor",
           checkboxState: "checked",
         },
         {
           text: "Legend",
-          icon: "images/legend.png",
+          icon: Static.imagePath + "legend.png",
           tooltip: "Enable the legend (at least one curve should be present)",
           checkboxState: "checked",
-        } /* , {
-                    text: "Sidebar",
-                    icon: "images/side_bar.png",
-                    tooltip: "Display the sidebar"
-                } */,
+        },
       ],
     });
 
@@ -441,7 +432,7 @@ class MToolBar extends ToolBar {
 
     this.addToolButton("pushbutton", {
       text: "+",
-      icon: "images/zoom_in.png",
+      icon: Static.imagePath + "zoom_in.png",
       repeat: true,
       tooltip: "Zoom in.\tShift +",
       cb: function (e) {
@@ -457,7 +448,7 @@ class MToolBar extends ToolBar {
 
     this.addToolButton("pushbutton", {
       text: "-",
-      icon: "images/zoom_out.png",
+      icon: Static.imagePath + "zoom_out.png",
       repeat: true,
       tooltip: "Zoom out.\tShift -",
       cb: function (e) {
@@ -563,7 +554,6 @@ class MToolBar extends ToolBar {
           subMenu: [
             {
               name: "(f + g)(x)",
-              //img: "images/brush.png",
               title: "Add functions",
               fun: function () {
                 operationPrep("Add");
@@ -571,7 +561,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "(f - g)(x)",
-              //img: "images/brush.png",
               title: "Subtract functions",
               fun: function () {
                 operationPrep("Subtract");
@@ -579,7 +568,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "(f * g)(x)",
-              //img: "images/brush.png",
               title: "Multiply functions",
               fun: function () {
                 operationPrep("Multiply");
@@ -587,7 +575,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "(f / g)(x)",
-              //img: "images/brush.png",
               title: "Divide functions",
               fun: function () {
                 operationPrep("Divide");
@@ -595,7 +582,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "(f o g)(x)",
-              //img: "images/brush.png",
               title: "Composite function",
               fun: function () {
                 operationPrep("Composite");
@@ -606,7 +592,6 @@ class MToolBar extends ToolBar {
               subMenu: [
                 {
                   name: "Join and discard",
-                  //img: "images/brush.png",
                   title: "Join curves and discard segments",
                   fun: function () {
                     operationPrep("Join");
@@ -614,7 +599,6 @@ class MToolBar extends ToolBar {
                 },
                 {
                   name: "Join and keep",
-                  //img: "images/brush.png",
                   title: "Join curves and keep segments.",
                   fun: function () {
                     operationPrep("Join and keep");
@@ -629,7 +613,6 @@ class MToolBar extends ToolBar {
           subMenu: [
             {
               name: "Translate",
-              //img: "images/brush.png",
               title: "Translate the curve",
               fun: function () {
                 operationPrep("Translate");
@@ -637,7 +620,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "Scale",
-              //img: "images/brush.png",
               title: "Scale the function",
               fun: function () {
                 operationPrep("Scale");
@@ -648,7 +630,6 @@ class MToolBar extends ToolBar {
               subMenu: [
                 {
                   name: "over x-axis",
-                  //img: "images/brush.png",
                   title: "Reflect the curve over the x-axis",
                   fun: function () {
                     operationPrep("Reflect x-axis");
@@ -656,7 +637,6 @@ class MToolBar extends ToolBar {
                 },
                 {
                   name: "over y-axis",
-                  //img: "images/brush.png",
                   title: "Reflect the curve over the y-axis",
                   fun: function () {
                     operationPrep("Reflect y-axis");
@@ -665,7 +645,6 @@ class MToolBar extends ToolBar {
                 },
                 {
                   name: "over x and y-axes",
-                  //img: "images/brush.png",
                   title: "Reflect the curve over the x and y-axes",
                   fun: function () {
                     operationPrep("Reflect x and y-axes");
@@ -674,7 +653,6 @@ class MToolBar extends ToolBar {
                 },
                 {
                   name: "over line x=?",
-                  //img: "images/brush.png",
                   title: "Reflect the curve over the x equal to some value",
                   fun: function () {
                     operationPrep("Reflect x equal");
@@ -683,7 +661,6 @@ class MToolBar extends ToolBar {
                 },
                 {
                   name: "over line y=?",
-                  //img: "images/brush.png",
                   title: "Reflect the curve over the y equal to some value",
                   fun: function () {
                     operationPrep("Reflect y equal");
@@ -699,7 +676,6 @@ class MToolBar extends ToolBar {
           subMenu: [
             {
               name: "Y-Intercept",
-              //img: "images/brush.png",
               title: "Find the Y-Intercept",
               fun: function () {
                 operationPrep("Y-Intercept");
@@ -707,7 +683,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "X-Intercept",
-              //img: "images/brush.png",
               title: "Find the X-Intercept",
               fun: function () {
                 operationPrep("X-Intercept");
@@ -715,7 +690,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "Intersection",
-              //img: "images/brush.png",
               title:
                 "Find the point of intersection between two curves or two straight lines or a curve and straight line",
               fun: function () {
@@ -724,7 +698,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "Turning point(s)",
-              //img: "images/brush.png",
               title: "Find the turning point(s) in a curve.",
               fun: function () {
                 operationPrep("Turning point");
@@ -732,7 +705,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "Inflection point(s)",
-              //img: "images/brush.png",
               title: "Find the inflection point(s) in a curve.",
               fun: function () {
                 operationPrep("Inflection point");
@@ -740,7 +712,6 @@ class MToolBar extends ToolBar {
             },
             {
               name: "Discontinuity point(s)",
-              //img: "images/brush.png",
               title: "Find the abscissa values of any discontinuities.",
               fun: function () {
                 operationPrep("Discontinuity point");
@@ -750,7 +721,6 @@ class MToolBar extends ToolBar {
         },
         {
           name: "Inverse",
-          //img: "images/brush.png",
           title:
             "If possible, plot the inverse function. Otherwise plot the inverse relation.",
           fun: function () {
@@ -759,7 +729,6 @@ class MToolBar extends ToolBar {
         },
         {
           name: "Create table",
-          //img: "images/brush.png",
           title: "Create a points table for the curve",
           fun: function () {
             operationPrep("Create table");
@@ -767,7 +736,6 @@ class MToolBar extends ToolBar {
         },
         {
           name: "Copy curve",
-          //img: "images/brush.png",
           title: "Create a copyy of the curve",
           fun: function () {
             operationPrep("Copy curve");
@@ -796,10 +764,8 @@ class MToolBar extends ToolBar {
       cb: function () {
         console.log("Callback called");
       },
-      //href: "https://easy-grapher.herokuapp.com/grapherHelp/Grapher.html",
-      //href: "https://easy-grapher.herokuapp.com/grapherHelp/Grapher.html",
       //href: "pdf/Grapher.pdf",
-      href: "grapherHelp/Grapher.html",
+      href: Static.grapherHelp + "grapherHelp/Grapher.html",
       target: "_blank",
       class: "noSelect",
       tooltip: "Launches online help.",

@@ -470,3 +470,12 @@ const customPow = function (num, pow) {
 
 const originalPow = math.pow;
 math.pow = customPow;
+
+/////////easy-grapher.herokuapp.com//////////////
+Static.imagePath = "images/";
+Static.grapherHelp = "";
+//////////////////////////////////////
+
+////////////https://simplegrapher.onrender.com///////////////
+//Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+//Static.grapherHelp = "../static/"; //for SimpleGrapher in python
