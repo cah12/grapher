@@ -306,7 +306,7 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     $("#executeButton").on("mouseleave", () => {
-      if (!executeButtonClicked) Utility.progressWait(false);
+      // if (!executeButtonClicked) Utility.progressWait(false);
     });
 
     Static.enterButton = $("#executeButton");

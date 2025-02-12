@@ -477,5 +477,55 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 
 ////////////https://simplegrapher.onrender.com///////////////
-//Static.imagePath = "../static/images/"; //for SimpleGrapher in python
-//Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+// Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+// Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+
+Static.solveFor = function (exp, v) {
+  Utility.progressWait();
+  if (exp.indexOf("=") != -1) {
+    const arr = exp.split("=");
+    let lhs;
+    try {
+      lhs = math.evaluate(arr[0]).toString();
+    } catch (error) {
+      lhs = arr[0];
+    }
+    let rhs;
+    try {
+      rhs = math.evaluate(arr[1]).toString();
+    } catch (error) {
+      rhs = arr[1];
+    }
+    exp = `${lhs}=${rhs}`;
+  }
+
+  if (Static.imagePath === "images/") {
+    // console.log("Static.solveFor()");
+
+    let eq = nerdamer(exp);
+    //console.log(eq.toString());
+    let solution = eq.solveFor(v);
+    nerdamer.clear("all");
+    nerdamer.flush();
+    if (typeof solution != "object") {
+      Utility.progressWait(false);
+      return [solution.toString()];
+    }
+    const result = [];
+    if (Array.isArray(solution)) {
+      for (let i = 0; i < solution.length; i++) {
+        const sln = solution[i].toString();
+        if (sln.indexOf("i") == -1 /*  && sln.indexOf("abs") == -1 */) {
+          result.push(solution[i].toString().replaceAll("abs", ""));
+        }
+      }
+    } else {
+      result.push(solution.toString().replaceAll("abs", ""));
+    }
+    Utility.progressWait(false);
+    return result;
+  } else {
+    Utility.progressWait(false);
+    return solve_for(nerdamer(exp).toString(), v);
+  }
+};

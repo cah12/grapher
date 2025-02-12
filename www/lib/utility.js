@@ -291,11 +291,21 @@ class PromptDlg {
 
 class Utility {
   static progressWait(on = true) {
+    if (Utility.progressWaitOnCount < 0) {
+      Utility.progressWaitOnCount = 0;
+    }
+
     if (on) {
-      $("html").addClass("wait");
+      Utility.progressWaitOnCount++;
     } else {
+      Utility.progressWaitOnCount--;
+    }
+
+    if (Utility.progressWaitOnCount > 0) {
+      $("html").addClass("wait");
+    }
+    if (Utility.progressWaitOnCount == 0) {
       $("html").removeClass("wait");
-      Utility.inProgress = false;
     }
   }
 
@@ -1911,14 +1921,17 @@ class Utility {
       } else {
         let x = Utility.adjustForDecimalPlaces(xVal, 8);
 
-        let d = Utility.adjustForDecimalPlaces(
-          obj.discontinuity[indexInDiscontinuity],
-          8
-        );
+        let d;
+        if (obj.discontinuity.length > 0) {
+          d = Utility.adjustForDecimalPlaces(
+            obj.discontinuity[indexInDiscontinuity],
+            8
+          );
+        }
 
         //console.log(x, d);
         if (
-          obj.discontinuity.length &&
+          obj.discontinuity.length > 0 &&
           indexInDiscontinuity < obj.discontinuity.length &&
           x >= d
         ) {
@@ -1948,11 +1961,9 @@ class Utility {
           //i--;
         } else {
           yVal = parser.eval({ x: xVal });
-          if (math.isNaN(yVal)) {
-            // alert(
-            //   `Unable to plot the function. Perhaps the "Vertical Line Test!!" failed`
-            // );
-            return [];
+          if (math.isNaN(yVal) || !isFinite(yVal)) {
+            //return [];
+            continue;
           }
           const abs_yVal = Math.abs(yVal);
           if (abs_yVal !== 0) {
@@ -2176,7 +2187,7 @@ class Utility {
             places
           ) */;
           reSample = true;
-        } else {
+        } else if (samples && samples[0]) {
           x_lower = samples[0].x;
         }
 
@@ -2211,7 +2222,7 @@ class Utility {
             places
           ) */;
           reSample = true;
-        } else {
+        } else if (samples && samples[sz - 1]) {
           x_upper = samples[sz - 1].x;
         }
 
@@ -2257,7 +2268,7 @@ class Utility {
     return samples;
   }
 
-  static inverseFunction(fn, variable) {
+  static async inverseFunction(fn, variable) {
     let degOfPoly = nerdamer.deg(fn);
     let solution = null;
     let m_failedInverse = false;
@@ -2286,18 +2297,34 @@ class Utility {
 
     let eq = null;
 
+    //try {
     try {
-      eq = nerdamer(_defn);
-      solution = eq.solveFor("y");
-      if (!solution || (typeof solution == "object" && solution.length == 0)) {
+      Utility.progressWait();
+      solution = await Static.solveFor(_defn, "y");
+      Utility.progressWait(false);
+      if (!solution.length) {
+        const mf = $("#fnDlg_function")[0];
+        Utility.displayErrorMessage(
+          mf,
+          `Unable to find a solution for "${_defn}".`
+        );
+        Utility.progressWait(false);
         return "failedInverse";
       }
     } catch (error) {
-      //console.log("Error in discontinuity()");
+      console.log(error);
+      Utility.progressWait(false);
       return "failedInverse";
     }
-    nerdamer.clear("all");
-    nerdamer.flush();
+
+    // if (!solution || (typeof solution == "object" && solution.length == 0)) {
+    //   return "failedInverse";
+    // }
+    // } catch (error) {
+    //   //console.log("Error in discontinuity()");
+    //   return "failedInverse";
+    // }
+
     //console.log(typeof solution);
     if (typeof solution != "object") {
       solution = [solution];
@@ -3017,6 +3044,25 @@ class Utility {
     return { operand, unmodifiedOperand };
   }
 
+  /* static async discontinuity(exp, lower, upper, indepVar) {
+    Utility.progressWait();
+    let result = [];
+    if (Static.imagePath === "images/") {
+      result = this.discontinuity1(exp, lower, upper, indepVar);
+    } else {
+      try {
+        const _result = await points(exp, lower, upper, indepVar);
+        if (_result) {
+          result = _result.discontinuities;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    Utility.progressWait(false);
+    return result;
+  } */
+
   static discontinuity(exp, lower, upper, indepVar) {
     //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
@@ -3247,47 +3293,6 @@ class Utility {
 
     function isPeriodic(exp) {
       return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
-      /* exp = math.simplify(exp, {}, { exactFractions: false }).toString();
-      let keyWord = "sin";
-      if (exp.indexOf("cos") != -1) {
-        keyWord = "cos";
-      }
-      let operand = Utility.getOperand(exp, keyWord, exp.indexOf(keyWord));
-      operand = operand.replace("(", "").replace(")", "");
-      let periodic = true;
-      let _result = [];
-      if (operand.length) {
-        exp = exp.replaceAll(operand, "x");
-        //exp = exp.replaceAll("*", "");
-        let eq = nerdamer(`${exp}=0`);
-        var solution = eq.solveFor("x");
-
-        if (solution.length !== undefined && solution.length > 20) {
-          for (let i = 0; i < solution.length; i++) {
-            let val = Utility.adjustForDecimalPlaces(
-              adjustForMode(math.evaluate(solution.at(i).valueOf())),
-              10
-            );
-            _result.push(val);
-          }
-          _result = _.uniq(_result);
-          _result = _result.sort(function (a, b) {
-            return a - b;
-          });
-
-          //let periodic = true;
-          //if (solution.length > 20) {
-          let m_d = (_result[1] % 180) - (_result[0] % 180);
-          for (let i = 1; i < _result.length; i++) {
-            if (((_result[i] % 180) - (_result[i - 1] % 180)) % 180 != m_d) {
-              periodic = false;
-              break;
-            }
-          }
-          // }
-        }
-      }
-      return periodic; */
     }
 
     function getFactors(exp) {
@@ -3414,10 +3419,13 @@ class Utility {
     let result = [];
 
     let d = 0;
-    factors.forEach(function (e) {
+    for (let i = 0; i < factors.length; i++) {
+      const e = factors[i];
+
       let m_result = [];
       let eq = null;
       var solution = null;
+
       try {
         eq = nerdamer(`${e}=0`);
         solution = eq.solveFor("x");
@@ -3501,7 +3509,7 @@ class Utility {
           result.push(val);
         }
       }
-    });
+    }
 
     result = _.uniq(result);
     result = result.sort(function (a, b) {
@@ -5435,7 +5443,19 @@ class Utility {
     return -1;
   }
 
-  static isValidExpression(exp, variable = "x") {
+  static isValidExpression(
+    exp,
+    variable = "x",
+    otherSide = null,
+    dependentVariable = null
+  ) {
+    if (
+      dependentVariable &&
+      otherSide &&
+      otherSide.indexOf(dependentVariable) == -1
+    ) {
+      return true;
+    }
     if (!exp || exp.length == 0) {
       return false;
     }
@@ -5444,12 +5464,15 @@ class Utility {
         "Expected an expression as first argument. Got an equation."
       );
     }
-    if (nerdamer.deg(exp, variable).toString() > 3) {
+    if (
+      Static.imagePath == "images/" &&
+      parseInt(nerdamer.deg(exp, variable).toString()) > 3
+    ) {
       return false;
     }
-    if (nerdamer.deg(exp, "y").toString() > 3) {
+    /*if (nerdamer.deg(exp, "y").toString() > 3) {
       return false;
-    }
+    } */
     return true;
   }
 
@@ -5614,6 +5637,7 @@ class Utility {
           latex = latex.substring(0, latex.lastIndexOf("\\cdot "));
         }
       }
+      latex = latex.replaceAll("}\\cdot", "}");
       //latex = latex.replaceAll("\\frac", "\\cdot \\frac");
 
       /* const kw = Static.keywords;
@@ -6624,3 +6648,4 @@ Utility.progressSpinner2 = $(
     ">"
 );
 Utility.progressSpinnerInit = false;
+Utility.progressWaitOnCount = 0;

@@ -623,6 +623,7 @@ class MFunctionDlg {
 
       function negativeRootFn() {
         let fn = [];
+        return [];
         let noNegativeRoot = false;
         //return fn;
         if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
@@ -781,7 +782,7 @@ class MFunctionDlg {
         return Utility.logBaseAdjust(fnDlgFunctionVal);
       }
 
-      this.doEnter = function (fnDlgFunctionVal, closeDlg) {
+      this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
         let g_solution_arr = null;
         const ind = Utility.isValidCharInExpression(fnDlgFunctionVal);
         if (ind != -1) {
@@ -814,7 +815,7 @@ class MFunctionDlg {
           variable = self.parametric_variable;
         }
 
-        function forceDefine(fn, dec) {
+        async function forceDefine(fn, dec) {
           fn = fn.replaceAll(dec, "U");
           const arr = fn.split("=");
           if (arr.length !== 2) {
@@ -897,15 +898,26 @@ class MFunctionDlg {
 
             //////////////
 
-            var eq = nerdamer(fn);
-            var solution = eq.solveFor("U");
-            if (typeof solution === "array" && solution[0]) {
-              res = solution[0].toString();
-            } else {
-              res = solution.toString();
+            //var eq = nerdamer(fn);
+            var solution;
+
+            try {
+              Utility.progressWait();
+              solution = await Static.solveFor(fn, "U");
+              Utility.progressWait(false);
+              if (!solution.length) {
+                const mf = $("#fnDlg_function")[0];
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to find a solution for "${fn}".`
+                );
+                return;
+              }
+            } catch (error) {
+              console.log(error);
+              Utility.progressWait(false);
             }
-            nerdamer.clear("all");
-            nerdamer.flush();
+            res = solution[0];
           }
           if (res) {
             //res = `U=${res}`;
@@ -1108,7 +1120,7 @@ class MFunctionDlg {
               );
               return;
             } */
-            function handleDomain() {
+            async function handleDomain() {
               // if(variablePlus && variablePlus.length==1){
               //   return;
               // }
@@ -1152,30 +1164,35 @@ class MFunctionDlg {
                 return false;
               }
               if (variablePlusExpanded && variablePlusExpanded.length > 1) {
-                let eq = nerdamer(
-                  `${variablePlusExpanded}=${domainRangeRestriction[0]}`
-                );
-                let solution = eq.solveFor(variable);
-                let sol;
-                console.log(solution);
-                if (typeof solution === "object" && solution[0]) {
-                  for (let i = 0; i < solution.length; i++) {
-                    sol = math
-                      .simplify(solution[i].toString().replaceAll("abs", ""))
-                      .toString();
-                    if ($.isNumeric(sol)) {
-                      domainGap_lower.push(sol);
-                    }
+                let fn = `${variablePlusExpanded}=${domainRangeRestriction[0]}`;
+
+                let solution;
+                try {
+                  Utility.progressWait();
+                  solution = await Static.solveFor(fn, variable);
+                  Utility.progressWait(false);
+                  if (!solution.length) {
+                    const mf = $("#fnDlg_function")[0];
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Unable to find a solution for "${fn}".`
+                    );
+                    return;
                   }
-                } else {
-                  sol = solution.toString().replaceAll("abs", "");
+                } catch (error) {
+                  console.log(error);
+                  Utility.progressWait(false);
+                }
+
+                let sol;
+                for (let i = 0; i < solution.length; i++) {
+                  sol = math
+                    .simplify(solution[i].replaceAll("abs", ""))
+                    .toString();
                   if ($.isNumeric(sol)) {
                     domainGap_lower.push(sol);
                   }
                 }
-                nerdamer.clear("all");
-                nerdamer.flush();
-                //domainRangeRestriction[0] = sol;
 
                 domainGap_lower = domainGap_lower.sort((a, b) => {
                   return parseFloat(a) - parseFloat(b);
@@ -1193,31 +1210,39 @@ class MFunctionDlg {
                   domainGap_lower = arr;
                 }
 
-                eq = nerdamer(
-                  `${variablePlusExpanded}=${domainRangeRestriction[1]}`
-                );
+                fn = `${variablePlusExpanded}=${domainRangeRestriction[1]}`;
+
                 //console.log(eq.toString());
-                solution = eq.solveFor(variable);
+                //solution = eq.solveFor(variable);
+
+                try {
+                  Utility.progressWait();
+                  solution = await Static.solveFor(fn, variable);
+                  Utility.progressWait(false);
+                  if (!solution.length) {
+                    const mf = $("#fnDlg_function")[0];
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Unable to find a solution for "${fn}".`
+                    );
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
+                  Utility.progressWait(false);
+                }
+
                 sol;
                 //console.log(solution);
-                if (typeof solution === "object" && solution[0]) {
-                  for (let i = 0; i < solution.length; i++) {
-                    sol = math
-                      .simplify(solution[i].toString().replaceAll("abs", ""))
-                      .toString();
-                    if ($.isNumeric(sol)) {
-                      domainGap_upper.push(sol);
-                    }
-                  }
-                } else {
-                  sol = solution.toString().replaceAll("abs", "");
+
+                for (let i = 0; i < solution.length; i++) {
+                  sol = math
+                    .simplify(solution[i].replaceAll("abs", ""))
+                    .toString();
                   if ($.isNumeric(sol)) {
                     domainGap_upper.push(sol);
                   }
                 }
-                nerdamer.clear("all");
-                nerdamer.flush();
-                //domainRangeRestriction[1] = sol;
               }
 
               if (domainGap_lower.length == 1 && domainGap_upper.length == 1) {
@@ -1523,7 +1548,7 @@ class MFunctionDlg {
             self.variable !== "y"
           ) {
             lhs = plot.defines.expandDefines(arr[0], self.variable, true);
-            if (!Utility.isValidExpression(lhs, "y")) {
+            if (!Utility.isValidExpression(lhs, "y", arr[1], self.variable)) {
               Utility.displayErrorMessage(
                 mf,
                 `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`
@@ -1541,7 +1566,7 @@ class MFunctionDlg {
               return;
             }
             rhs = plot.defines.expandDefines(arr[1], self.variable, true);
-            if (!Utility.isValidExpression(rhs, "y")) {
+            if (!Utility.isValidExpression(rhs, "y", arr[0], self.variable)) {
               Utility.displayErrorMessage(
                 mf,
                 `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`
@@ -1630,20 +1655,34 @@ class MFunctionDlg {
               // }
 
               if (validForNerdamer) {
-                let eq = nerdamer(fnDlgFunctionVal);
-                console.log(eq.toString());
-                let solution = eq.solveFor("y");
-                console.log(solution.toString());
-                if (typeof solution === "object" && solution[0]) {
-                  //arr = ["y", solution[0].toString()];
-                  arr = ["y", solution[0].toString().replaceAll("abs", "")];
-                  g_solution_arr = solution;
-                } else {
-                  arr = ["y", solution.toString().replaceAll("abs", "")];
-                  //arr = ["y", solution.toString()];
+                // let eq = nerdamer(fnDlgFunctionVal);
+                // console.log(eq.toString());
+                let solution; // = eq.solveFor("y");
+
+                try {
+                  Utility.progressWait();
+                  solution = await Static.solveFor(fnDlgFunctionVal, "y");
+                  Utility.progressWait(false);
+                  if (!solution.length) {
+                    const mf = $("#fnDlg_function")[0];
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Unable to find a solution for "${fnDlgFunctionVal}".`
+                    );
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
+                  Utility.progressWait(false);
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Unable to find a solution for "${fnDlgFunctionVal}".`
+                  );
+                  return;
                 }
-                nerdamer.clear("all");
-                nerdamer.flush();
+                arr = ["y", solution[0].replaceAll("abs", "")];
+                g_solution_arr = solution;
+
                 fnDlgFunctionVal = `y=${arr[1]}`;
               } else {
                 Utility.displayErrorMessage(
@@ -1893,15 +1932,26 @@ class MFunctionDlg {
                 if (dec) {
                   fnDlgFunctionVal = `${arr[0]}=${arr[1]}`;
                   fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(dec, "U");
-                  var eq = nerdamer(fnDlgFunctionVal);
-                  var solution = eq.solveFor("U");
-                  if (typeof solution === "object" && solution[0]) {
-                    arr = [solution[0].toString()];
-                  } else {
-                    arr = [solution.toString()];
+                  var solution;
+                  try {
+                    Utility.progressWait();
+                    solution = await Static.solveFor(fnDlgFunctionVal, "U");
+                    Utility.progressWait(false);
+                    if (!solution.length) {
+                      const mf = $("#fnDlg_function")[0];
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Unable to find a solution for "${fnDlgFunctionVal}".`
+                      );
+                      return;
+                    }
+                  } catch (error) {
+                    console.log(error);
+                    Utility.progressWait(false);
                   }
-                  nerdamer.clear("all");
-                  nerdamer.flush();
+
+                  arr = [solution[0]];
+
                   fnDlgFunctionVal = arr[0];
                   if (plot.defines.getDefine(dec)) {
                     // alert(
@@ -1928,18 +1978,29 @@ class MFunctionDlg {
                   if (m_lhs.length == 1 && m_rhs.indexOf("y") == -1) {
                     arr = [m_rhs];
                   } else {
-                    var eq = nerdamer(fnDlgFunctionVal);
-                    var solution =
-                      self.variable == "y"
-                        ? eq.solveFor("x")
-                        : eq.solveFor("y");
-                    if (typeof solution === "object" && solution[0]) {
-                      arr = [solution[0].toString()];
-                    } else {
-                      arr = [solution.toString()];
+                    var solution;
+
+                    let _v = "y";
+                    if (self.variable == "y") {
+                      _v = "x";
                     }
-                    nerdamer.clear("all");
-                    nerdamer.flush();
+                    try {
+                      Utility.progressWait();
+                      solution = await Static.solveFor(fnDlgFunctionVal, _v);
+                      Utility.progressWait(false);
+                      if (!solution.length) {
+                        const mf = $("#fnDlg_function")[0];
+                        Utility.displayErrorMessage(
+                          mf,
+                          `Unable to find a solution for "${fnDlgFunctionVal}".`
+                        );
+                        return;
+                      }
+                    } catch (error) {
+                      console.log(error);
+                      Utility.progressWait(false);
+                    }
+                    arr = [solution[0]];
                   }
                   fnDlgFunctionVal = arr[0];
                 }
@@ -2004,18 +2065,33 @@ class MFunctionDlg {
                   m_arr[0],
                   self.variable
                 );
-                var eq = nerdamer(`${m_arr[0]}=${m_arr[1]}`);
-                var solution =
-                  self.variable == "y" ? eq.solveFor("x") : eq.solveFor("y");
-                if (typeof solution === "object" && solution[0]) {
-                  arr[0] = "y";
-                  arr[1] = solution[0].toString();
-                } else {
-                  arr[0] = "y";
-                  arr[1] = solution.toString();
+                var fn = `${m_arr[0]}=${m_arr[1]}`;
+                var solution;
+
+                let _v = "y";
+                if (self.variable == "y") {
+                  _v = "x";
                 }
-                nerdamer.clear("all");
-                nerdamer.flush();
+
+                try {
+                  Utility.progressWait();
+                  solution = await Static.solveFor(fn, _v);
+                  Utility.progressWait(false);
+                  if (!solution.length) {
+                    const mf = $("#fnDlg_function")[0];
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Unable to find a solution for "${fn}".`
+                    );
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
+                  Utility.progressWait(false);
+                }
+
+                arr[0] = "y";
+                arr[1] = solution[0].toString();
 
                 fnDlgFunctionVal = arr[1];
               }

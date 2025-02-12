@@ -871,5 +871,5 @@ require([
 
 /*
 TODO
-lnxlog(x)
+$$ 2y=\frac{1}{x^{0.5}-6} $$
 */

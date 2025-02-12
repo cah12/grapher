@@ -185,7 +185,7 @@ class MyCurve extends Curve {
     plot.rv.refresh();
   } */
 
-  drawCurve(painter, style, xMap, yMap, from, to) {
+  async drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
     let samples = null; //self.data().samples();
     //console.log(self.data());
@@ -268,12 +268,19 @@ class MyCurve extends Curve {
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
 
-        let discontinuity = Utility.discontinuity(
-          self.fn,
-          left,
-          right,
-          self.variable
-        );
+        let discontinuity = [];
+        try {
+          discontinuity = await Utility.discontinuity(
+            self.fn,
+            left,
+            right,
+            self.variable
+          );
+        } catch (error) {
+          console.log(error);
+          discontinuity = [];
+        }
+
         if (!discontinuity.length) {
           data.discontinuitySamples = null;
           return super.drawCurve(painter, style, xMap, yMap, from, to);

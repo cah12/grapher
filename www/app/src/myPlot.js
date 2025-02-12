@@ -548,7 +548,7 @@ class MyPlot extends Plot {
       return m_fn;
     }
 
-    this.functionDlgCb = function (
+    this.functionDlgCb = async function (
       functionDlgData = null,
       providedFn = null,
       provided_m_lowerX = null,
@@ -744,7 +744,7 @@ class MyPlot extends Plot {
       let discont = [];
       ///////////////////////
       try {
-        discont = Utility.discontinuity(
+        discont = await Utility.discontinuity(
           fn,
           makeSamplesData.lowerX,
           makeSamplesData.upperX,
@@ -769,34 +769,6 @@ class MyPlot extends Plot {
           //self._functionDlg.closeDlg = true;
         }
       } else {
-        /* let makeSamplesData = {
-          fx: fn,
-          variable: self._functionDlg.variable,
-          lowerX: parseFloat(self._functionDlg.lowerLimit),
-          upperX: parseFloat(self._functionDlg.upperLimit),
-          numOfSamples: self._functionDlg.numOfPoints,
-          //ok_fn: self._functionDlg.ok,
-          warnIgnoreCb: function () {
-            Static.enterButton.click();
-          },
-        }; */
-
-        /* let discont = [];
-
-        try {
-          discont = Utility.discontinuity(
-            fn,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX
-          );
-        } catch (error) {
-          //discont = [];
-        }
-        //console.log(discont)
-        discont = discont.sort(function (a, b) {
-          return a - b;
-        }); */
-
         if (discont.length && Utility.errorResponse == Utility.adjustDomain) {
           if (discont[0] == makeSamplesData.lowerX && discont.length == 1) {
             makeSamplesData.lowerX =
@@ -1238,7 +1210,7 @@ class MyPlot extends Plot {
       }
     });
 
-    function doCombine(curves, prefix) {
+    async function doCombine(curves, prefix) {
       let precisionY, precisionX, decimalPlacesY, decimalPlacesX;
       if (curves[0]) {
         precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
@@ -1919,7 +1891,7 @@ class MyPlot extends Plot {
           if (operationType == "Inverse") {
             const curve = curves[i];
             if (curve.expandedFn) {
-              const invFn = Utility.inverseFunction(
+              const invFn = await Utility.inverseFunction(
                 curve.expandedFn,
                 curve.variable
               );
@@ -2034,12 +2006,26 @@ class MyPlot extends Plot {
 
             if (curve.parametricFnX && curve.parametricFnY) {
               let res;
-              var eq = nerdamer(`${curve.parametricFnX}=0`);
-              var solution = eq.solveFor(curve.parametric_variable);
+              var fn = `${curve.parametricFnX}=0`;
+              var solution;
+
+              try {
+                Utility.progressWait();
+                solution = await Static.solveFor(fn, curve.parametric_variable);
+                Utility.progressWait(false);
+                if (!solution.length) {
+                  const mf = $("#fnDlg_function")[0];
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Unable to find a solution for "${fn}".`
+                  );
+                  return;
+                }
+              } catch (error) {
+                console.log(error);
+                Utility.progressWait(false);
+              }
               if (Array.isArray(solution)) {
-                //res = solution[0].toString();
-                nerdamer.clear("all");
-                nerdamer.flush();
                 for (let i = 0; i < solution.length; i++) {
                   res = solution[i].toString();
                   let _fn = curve.parametricFnY.replaceAll(
@@ -2060,22 +2046,7 @@ class MyPlot extends Plot {
                     pts.push(_pt);
                   }
                 } //here2
-              } else {
-                res = solution.toString();
-                if (res) {
-                  let _fn = curve.parametricFnY.replaceAll(
-                    curve.parametric_variable,
-                    `(${res})`
-                  );
-                  var _y = nerdamer(_fn);
-                  _y = parseFloat(_y.evaluate().toString());
-                  pts.push(new Misc.Point(0, _y));
-                }
-                nerdamer.clear("all");
-                nerdamer.flush();
               }
-
-              //here
             }
 
             let pt;
