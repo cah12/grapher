@@ -311,6 +311,16 @@ class ScaleMap {
   */
 
     //Deprecated
+    /* this.transform1 = function (s) {
+      if (d_transform) {
+        //alert(s)
+        s = d_transform.transform(s);
+        //alert(s)
+      }
+
+      return d_p1 + (s - d_ts1) * d_cnv;
+    }; */
+
     this.transform1 = function (s) {
       if (d_transform) {
         //alert(s)

@@ -105,7 +105,9 @@ Static.mToPoints = function (
       // }
 
       var x = xMap.transform(sample.x) - 1; //minus 1 why
+      if (x < 0) x = 0;
       var y = yMap.transform(sample.y) - 1; //minus 1 why
+      if (y < 0) y = 0;
 
       if (round) {
         //                points.push({x:Math.round( x ), y:Math.round( y )});

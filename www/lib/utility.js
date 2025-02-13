@@ -1816,6 +1816,7 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
+    const lmt = 1e35;
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
@@ -1942,7 +1943,7 @@ class Utility {
             });
             samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
-              new Misc.Point(d - step * 0.0001, math.sign(yVal) * 1e300)
+              new Misc.Point(d - step * 0.0001, math.sign(yVal) * lmt)
             ); //point before but close to discontinuity
           }
           if (d + step * 0.01 < upperX) {
@@ -1950,7 +1951,7 @@ class Utility {
               x: d + step * 0.01,
             });
             samples.push(
-              new Misc.Point(d + step * 0.0001, math.sign(yVal) * 1e300)
+              new Misc.Point(d + step * 0.0001, math.sign(yVal) * lmt)
             ); //point after but close to discontinuity
 
             samples.push(new Misc.Point(d + step * 0.01, yVal)); //point after but close to discontinuity
@@ -1967,7 +1968,7 @@ class Utility {
           }
           const abs_yVal = Math.abs(yVal);
           if (abs_yVal !== 0) {
-            if (abs_yVal < 1e-300 || abs_yVal > 1e300) {
+            if (abs_yVal < 1e-300 || abs_yVal > lmt) {
               return [];
             }
           }
@@ -3064,6 +3065,7 @@ class Utility {
   } */
 
   static discontinuity(exp, lower, upper, indepVar) {
+    Utility.progressWait();
     //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
       $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
@@ -3516,6 +3518,7 @@ class Utility {
       return a - b;
     });
     //console.timeEnd("discontinuity");
+    Utility.progressWait(false);
     return result;
   }
 

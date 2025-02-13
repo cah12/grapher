@@ -375,7 +375,7 @@ require([
   //Utility.toPrecision(,precisionX);
   //console.log(486, math.evaluate(1 / 1e-100));
 
-  /* function discontinuity(exp){    
+  /* function discontinuity(exp){
     let m_exp = math.parse(exp);
     let denominators = [];
     let result = [];
