@@ -2567,8 +2567,10 @@ class MFunctionDlg {
             self.color2 = $("#fnDlg_color2").val();
           }
           //console.time("timer");
-          const _newCurve = cb();
-          if (!_newCurve) {
+          let _newCurve = null;
+          try {
+            _newCurve = await cb();
+          } catch (error) {
             return false;
           }
 
@@ -2641,8 +2643,10 @@ class MFunctionDlg {
               }
               self.expandedFn = self.fn = m_fn;
               self.title = Utility.generateCurveName(plot);
-              const _newCurve2 = cb();
-              if (!_newCurve2) {
+              let _newCurve2 = null;
+              try {
+                _newCurve2 = cb();
+              } catch (error) {
                 return false;
               }
             }

@@ -132,7 +132,7 @@ class MyPlot extends Plot {
       if (!upload) self.addCurveInit(curve);
 
       curve.setSamples(samples);
-      curve.setPen(new Misc.Pen(Utility.randomColor()));
+      curve.setPen(new Misc.Pen(Utility.randomColor(), 2));
       self.curveAttributeDlg.defaultIconSize = new Misc.Size(
         curve.getLegendIconSize()
       );
@@ -317,8 +317,7 @@ class MyPlot extends Plot {
       curve.setData(
         curve.functionData /*  new FunctionData(fn, numOfPoints) */
       );
-      //curve.setPen(new Misc.Pen(colorList[numberOfCurves(self) % 6]))
-      curve.setPen(new Misc.Pen(Utility.randomColor()));
+      curve.setPen(new Misc.Pen(Utility.randomColor(), 2));
       self.curveAttributeDlg.defaultIconSize = new Misc.Size(
         curve.getLegendIconSize()
       );
