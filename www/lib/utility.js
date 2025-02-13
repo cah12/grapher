@@ -1816,7 +1816,7 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
-    const lmt = 1e35;
+    const lmt = 1e300;
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
@@ -1937,24 +1937,24 @@ class Utility {
           x >= d
         ) {
           d = obj.discontinuity[indexInDiscontinuity];
-          if (d - step * 0.01 >= lowerX) {
+          if (d - step * 0.0001 >= lowerX) {
             yVal = parser.eval({
-              x: d - step * 0.01,
+              x: d - step * 0.0001,
             });
             samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
               new Misc.Point(d - step * 0.0001, math.sign(yVal) * lmt)
             ); //point before but close to discontinuity
           }
-          if (d + step * 0.01 < upperX) {
+          if (d + step * 0.0001 < upperX) {
             yVal = parser.eval({
-              x: d + step * 0.01,
+              x: d + step * 0.0001,
             });
             samples.push(
               new Misc.Point(d + step * 0.0001, math.sign(yVal) * lmt)
             ); //point after but close to discontinuity
 
-            samples.push(new Misc.Point(d + step * 0.01, yVal)); //point after but close to discontinuity
+            samples.push(new Misc.Point(d + step * 0.0001, yVal)); //point after but close to discontinuity
           }
           yVal = NaN;
           indexInDiscontinuity++;
