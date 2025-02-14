@@ -757,6 +757,22 @@ class MyPlot extends Plot {
       //   return a - b;
       // });
 
+      if (self._functionDlg.coeffs.length && discont.length) {
+        const cfs = self._functionDlg.coeffs;
+        let unknowns = `${cfs[0]}`;
+        for (let i = 1; i < cfs.length; i++) {
+          unknowns += `, ${cfs[i]}`;
+        }
+        const n = unknowns.lastIndexOf(",");
+        unknowns = unknowns.replaceAt(n, ",", " and");
+        const mf = $("#fnDlg_function")[0];
+        Utility.displayErrorMessage(
+          mf,
+          `Too many variables. Try defining "${unknowns}"`
+        );
+        return;
+      }
+
       if (self._functionDlg.unboundedRange) {
         newCurve = addUnboundedCurve(title, fn, numOfPoints);
         newCurve.discontinuity = discont;

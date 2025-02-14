@@ -58,6 +58,7 @@ Array.prototype.mid = function (pos, length = -1) {
 };
 
 String.prototype.replaceAt = function (idx, rem, str) {
+  if (idx < 0) return this;
   //return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
   return this.slice(0, idx) + str + this.slice(idx + rem.length);
 };
@@ -477,8 +478,8 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 
 ////////////https://simplegrapher.onrender.com///////////////
-// Static.imagePath = "../static/images/"; //for SimpleGrapher in python
-// Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v) {
   Utility.progressWait();
