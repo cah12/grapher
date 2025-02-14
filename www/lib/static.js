@@ -478,8 +478,8 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 
 ////////////https://simplegrapher.onrender.com///////////////
-Static.imagePath = "../static/images/"; //for SimpleGrapher in python
-Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+// Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+// Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v) {
   Utility.progressWait();

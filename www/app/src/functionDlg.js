@@ -1605,34 +1605,34 @@ class MFunctionDlg {
               let validForNerdamer = true;
               let invalidExponent = null;
 
-              let deg_of_poly_LHS = math.abs(
-                parseFloat(
-                  math.simplify(
-                    nerdamer(`deg(${lhs},${self.variable})`).toString()
-                  )
-                )
-              );
-              if (
-                deg_of_poly_LHS < 1 &&
-                deg_of_poly_LHS != 0 &&
-                deg_of_poly_LHS != 0.5
-              ) {
-                validForNerdamer = false;
-                invalidExponent = lhs;
-              }
+              // let deg_of_poly_LHS = math.abs(
+              //   parseFloat(
+              //     math.simplify(
+              //       nerdamer(`deg(${lhs},${self.variable})`).toString()
+              //     )
+              //   )
+              // );
+              // if (
+              //   deg_of_poly_LHS < 1 &&
+              //   deg_of_poly_LHS != 0 &&
+              //   deg_of_poly_LHS != 0.5
+              // ) {
+              //   validForNerdamer = false;
+              //   invalidExponent = lhs;
+              // }
 
-              let poly = math.simplify(`${lhs}-${rhs}`).toString();
-              let deg_of_poly = math.abs(
-                parseFloat(
-                  math.simplify(
-                    nerdamer(`deg(${poly},${self.variable})`).toString()
-                  )
-                )
-              );
-              if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
-                validForNerdamer = false;
-                invalidExponent = rhs;
-              }
+              // let poly = math.simplify(`${lhs}-${rhs}`).toString();
+              // let deg_of_poly = math.abs(
+              //   parseFloat(
+              //     math.simplify(
+              //       nerdamer(`deg(${poly},${self.variable})`).toString()
+              //     )
+              //   )
+              // );
+              // if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
+              //   validForNerdamer = false;
+              //   invalidExponent = rhs;
+              // }
 
               // let deg_of_poly_RHS = math.abs(
               //   parseFloat(
