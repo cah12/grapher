@@ -320,7 +320,7 @@ class PlotPropertiesPane extends PropertiesPane {
       if (m_value) {
         plot._functionDlg.doEnter(m_value, true);
         executeButtonClicked = false;
-        Utility.progressWait(false);
+        // Utility.progressWait(false);
       } else {
         Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
       }
