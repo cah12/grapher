@@ -185,7 +185,7 @@ class MyCurve extends Curve {
     plot.rv.refresh();
   } */
 
-  async drawCurve(painter, style, xMap, yMap, from, to) {
+  drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
     let samples = null; //self.data().samples();
     //console.log(self.data());
@@ -270,7 +270,7 @@ class MyCurve extends Curve {
 
         let discontinuity = [];
         try {
-          discontinuity = await Utility.discontinuity(
+          discontinuity = Utility.discontinuity(
             self.fn,
             left,
             right,
