@@ -1937,24 +1937,30 @@ class Utility {
           x >= d
         ) {
           d = obj.discontinuity[indexInDiscontinuity];
-          if (d - step * 0.0001 >= lowerX) {
+          if (d - step * 0.000000000000000001 >= lowerX) {
             yVal = parser.eval({
-              x: d - step * 0.0001,
+              x: d - step * 0.000000000000000001,
             });
             samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
             samples.push(
-              new Misc.Point(d - step * 0.0001, math.sign(yVal) * lmt)
+              new Misc.Point(
+                d - step * 0.000000000000000001,
+                math.sign(yVal) * lmt
+              )
             ); //point before but close to discontinuity
           }
-          if (d + step * 0.0001 < upperX) {
+          if (d + step * 0.000000000000000001 < upperX) {
             yVal = parser.eval({
-              x: d + step * 0.0001,
+              x: d + step * 0.000000000000000001,
             });
             samples.push(
-              new Misc.Point(d + step * 0.0001, math.sign(yVal) * lmt)
+              new Misc.Point(
+                d + step * 0.000000000000000001,
+                math.sign(yVal) * lmt
+              )
             ); //point after but close to discontinuity
 
-            samples.push(new Misc.Point(d + step * 0.0001, yVal)); //point after but close to discontinuity
+            samples.push(new Misc.Point(d + step * 0.000000000000000001, yVal)); //point after but close to discontinuity
           }
           yVal = NaN;
           indexInDiscontinuity++;
