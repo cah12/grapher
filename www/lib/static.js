@@ -421,6 +421,7 @@ const customSimplify = function (str, scope, options) {
   if (str && str.im) return str;
   scope = scope || {};
   options = options || { exactFractions: false };
+  options.exactFractions = true;
   if (typeof str !== "string") str = str.toString();
   return originalSimplify(reduceMultiplyByZero(str), scope, options);
 };

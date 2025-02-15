@@ -4851,6 +4851,8 @@ class Utility {
       if (
         (Utility.isAlpha(str[i - 1]) && Utility.isAlpha(str[i])) ||
         (Utility.isAlpha(str[i - 1]) && Utility.isDigit(str[i])) ||
+        (str[i - 1] === ")" && Utility.isDigit(str[i])) ||
+        (str[i - 1] === ")" && Utility.isAlpha(str[i])) ||
         (variable &&
           Utility.isAlpha(str[i - 1]) &&
           str[i - 1] != "variable" &&
@@ -5899,6 +5901,7 @@ class Utility {
           bracketAdded &&
           (purgeStr[i + 1] === "+" ||
             purgeStr[i + 1] === "-" ||
+            purgeStr[i + 1] === ")" ||
             (purgeStr[i + 1] === "(" &&
               i + 2 < purgeStr.length &&
               purgeStr[i + 2] === "%") ||
