@@ -1816,7 +1816,7 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
-    const lmt = 1e300;
+    const lmt = 1e30;
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
@@ -1920,63 +1920,15 @@ class Utility {
         if (zVal < zMin) zMin = zVal;
         if (zVal > zMax) zMax = zVal;
       } else {
-        let x = Utility.adjustForDecimalPlaces(xVal, 8);
-
-        let d;
-        if (obj.discontinuity.length > 0) {
-          d = Utility.adjustForDecimalPlaces(
-            obj.discontinuity[indexInDiscontinuity],
-            8
-          );
+        yVal = parser.eval({ x: xVal });
+        if (math.isNaN(yVal) || !isFinite(yVal)) {
+          //return [];
+          continue;
         }
-
-        //console.log(x, d);
-        if (
-          obj.discontinuity.length > 0 &&
-          indexInDiscontinuity < obj.discontinuity.length &&
-          x >= d
-        ) {
-          d = obj.discontinuity[indexInDiscontinuity];
-          if (d - step * 0.000000000000000001 >= lowerX) {
-            yVal = parser.eval({
-              x: d - step * 0.000000000000000001,
-            });
-            samples.push(new Misc.Point(d - step * 0.01, yVal)); //point before but close to discontinuity
-            samples.push(
-              new Misc.Point(
-                d - step * 0.000000000000000001,
-                math.sign(yVal) * lmt
-              )
-            ); //point before but close to discontinuity
-          }
-          if (d + step * 0.000000000000000001 < upperX) {
-            yVal = parser.eval({
-              x: d + step * 0.000000000000000001,
-            });
-            samples.push(
-              new Misc.Point(
-                d + step * 0.000000000000000001,
-                math.sign(yVal) * lmt
-              )
-            ); //point after but close to discontinuity
-
-            samples.push(new Misc.Point(d + step * 0.000000000000000001, yVal)); //point after but close to discontinuity
-          }
-          yVal = NaN;
-          indexInDiscontinuity++;
-          //firstDiscontinuity = undefined;
-          //i--;
-        } else {
-          yVal = parser.eval({ x: xVal });
-          if (math.isNaN(yVal) || !isFinite(yVal)) {
-            //return [];
-            continue;
-          }
-          const abs_yVal = Math.abs(yVal);
-          if (abs_yVal !== 0) {
-            if (abs_yVal < 1e-300 || abs_yVal > lmt) {
-              return [];
-            }
+        const abs_yVal = Math.abs(yVal);
+        if (abs_yVal !== 0) {
+          if (abs_yVal < 1e-300 || abs_yVal > 1e300) {
+            return [];
           }
         }
       }
@@ -2271,6 +2223,64 @@ class Utility {
         samples[samples.length - 1].y = yRound;
       } */
     }
+    if (obj.discontinuity.length) {
+      const discont = obj.discontinuity;
+      const lmt_l = samples[0].x;
+      const lmt_u = samples[samples.length - 1].x;
+      const step = (samples[1].x - samples[0].x) * 0.001;
+      const scope = new Map();
+
+      //on the left boundary
+      if (
+        Utility.adjustForDecimalPlaces(discont[0], 4) ===
+        Utility.adjustForDecimalPlaces(lowerX, 4)
+      ) {
+        samples[0].y = math.sign(samples[0].y) * lmt;
+        discont[0] = "#";
+      }
+      //on the right boundary
+      if (
+        Utility.adjustForDecimalPlaces(discont[discont.length - 1], 4) ===
+        Utility.adjustForDecimalPlaces(upperX, 4)
+      ) {
+        samples[samples.length - 1].y =
+          math.sign(samples[samples.length - 1].y) * lmt;
+        discont[discont.length - 1] = "#";
+      }
+
+      let n = 0;
+      const _scope = new Map();
+      for (let i = 0; i < discont.length; i++) {
+        const d = discont[i];
+        if (d == "#") {
+          continue;
+        }
+
+        //Interior
+        // scope.set("x", d - step);
+        // yVal = parser.eval(scope);
+        // samples.push(new Misc.Point(d - step, math.sign(yVal) * lmt)); //point before
+        // scope.set("x", d + step);
+        // yVal = parser.eval(scope);
+        // samples.push(new Misc.Point(d + step, math.sign(yVal) * lmt)); //point before
+
+        for (; n < samples.length; n++) {
+          const x = samples[n].x;
+          if (x > d) {
+            scope.set("x", d - 1e-5);
+            yVal = parser.eval(scope);
+            samples[n - 1].y = math.sign(yVal) * lmt;
+            scope.set("x", d + 1e-5);
+            yVal = parser.eval(scope);
+            samples[n].y = math.sign(yVal) * lmt;
+            break;
+          }
+        }
+      }
+    }
+    // samples = samples.sort(function (a, b) {
+    //   return a.x - b.x;
+    // });
 
     return samples;
   }
@@ -3349,7 +3359,7 @@ class Utility {
             try {
               const s = node.args[0].toString();
               const v = math.evaluate(s, scope);
-              if (v === 0) {
+              if (s.indexOf(indepVar) == -1 && v === 0) {
                 return false;
               }
             } catch (error) {

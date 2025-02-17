@@ -867,6 +867,10 @@ require([
 
   $("#plotDiv").html(`${mathmlInput}, ${mathmlResult}`); */
   ////////////////
+
+  // var e = nerdamer("(x^2+1)/(x-1)+1/2");
+  // var denominator = e.denominator().toString();
+  // console.log(denominator);
 });
 
 /*
