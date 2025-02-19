@@ -796,6 +796,27 @@ class MFunctionDlg {
           Utility.progressWait(false);
           return;
         }
+
+        if (fnDlgFunctionVal.indexOf("=") == -1) {
+          try {
+            fnDlgFunctionVal = await Static.solveFor(
+              `y=${fnDlgFunctionVal}`,
+              "y"
+            );
+            if (fnDlgFunctionVal.length) {
+              fnDlgFunctionVal = fnDlgFunctionVal[0];
+            }
+          } catch (error) {
+            const mf = $("#fnDlg_function")[0];
+            Utility.displayErrorMessage(
+              mf,
+              `"${fnDlgFunctionVal}" is an invalid function.`
+            );
+            Utility.progressWait(false);
+            return;
+          }
+        }
+
         let forceDefined = false;
         let expanded = false;
         let defineName = null;
