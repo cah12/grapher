@@ -871,6 +871,17 @@ require([
   // var e = nerdamer("(x^2+1)/(x-1)+1/2");
   // var denominator = e.denominator().toString();
   // console.log(denominator);
+
+  // console.log(
+  //   math.evaluate("((1/x+1/(x^6+x^5-3*x^4+2*x^3)+x^(1/5))*x^4)/2", {
+  //     x: -10,
+  //   })
+  // );
+  // console.log(
+  //   math.evaluate("((1/x+1/(x^6+x^5-3*x^4+2*x^3)+x^(1/5))*x^4)/2", {
+  //     x: -9.94987,
+  //   })
+  // );
 });
 
 /*

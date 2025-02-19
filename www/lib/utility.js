@@ -1816,7 +1816,6 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
-    const lmt = 1e30;
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
@@ -2227,8 +2226,8 @@ class Utility {
       const discont = obj.discontinuity;
       const lmt_l = samples[0].x;
       const lmt_u = samples[samples.length - 1].x;
-      const step = (samples[1].x - samples[0].x) * 0.001;
-      const scope = new Map();
+      const step = (samples[1].x - samples[0].x) * 1e-20;
+      const lmt = 1e30;
 
       //on the left boundary
       if (
@@ -2250,6 +2249,8 @@ class Utility {
 
       let n = 0;
       const _scope = new Map();
+      const delta = (samples[1].x - samples[0].x) * 1e-6;
+      // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
         const d = discont[i];
         if (d == "#") {
@@ -2267,20 +2268,21 @@ class Utility {
         for (; n < samples.length; n++) {
           const x = samples[n].x;
           if (x > d) {
-            scope.set("x", d - 1e-5);
-            yVal = parser.eval(scope);
+            _scope.set("x", d - delta);
+            yVal = parser.eval(_scope);
             samples[n - 1].y = math.sign(yVal) * lmt;
-            scope.set("x", d + 1e-5);
-            yVal = parser.eval(scope);
+            _scope.set("x", d + delta);
+            yVal = parser.eval(_scope);
             samples[n].y = math.sign(yVal) * lmt;
+
             break;
           }
         }
       }
     }
-    // samples = samples.sort(function (a, b) {
-    //   return a.x - b.x;
-    // });
+    samples = samples.sort(function (a, b) {
+      return a.x - b.x;
+    });
 
     return samples;
   }
@@ -3533,6 +3535,7 @@ class Utility {
     result = result.sort(function (a, b) {
       return a - b;
     });
+
     //console.timeEnd("discontinuity");
     Utility.progressWait(false);
     return result;

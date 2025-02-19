@@ -742,13 +742,16 @@ class MyPlot extends Plot {
 
       let discont = [];
       ///////////////////////
-
-      discont = Utility.discontinuity(
-        fn,
-        makeSamplesData.lowerX,
-        makeSamplesData.upperX,
-        self._functionDlg.variable
-      );
+      try {
+        discont = await Utility.discontinuity(
+          fn,
+          makeSamplesData.lowerX,
+          makeSamplesData.upperX,
+          self._functionDlg.variable
+        );
+      } catch (error) {
+        discont = [];
+      }
 
       //console.log(discont);
       // discont = discont.sort(function (a, b) {
