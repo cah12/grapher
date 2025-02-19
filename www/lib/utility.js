@@ -2249,7 +2249,7 @@ class Utility {
 
       let n = 0;
       const _scope = new Map();
-      const delta = (samples[1].x - samples[0].x) * 1e-6;
+      const delta = (samples[1].x - samples[0].x) * 1e-5;
       // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
         const d = discont[i];
