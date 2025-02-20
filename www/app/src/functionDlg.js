@@ -797,7 +797,7 @@ class MFunctionDlg {
           return;
         }
 
-        if (fnDlgFunctionVal.indexOf("=") == -1) {
+        /* if (fnDlgFunctionVal.indexOf("=") == -1) {
           try {
             fnDlgFunctionVal = await Static.solveFor(
               `y=${fnDlgFunctionVal}`,
@@ -815,7 +815,7 @@ class MFunctionDlg {
             Utility.progressWait(false);
             return;
           }
-        }
+        } */
 
         let forceDefined = false;
         let expanded = false;
@@ -933,7 +933,7 @@ class MFunctionDlg {
 
             try {
               Utility.progressWait();
-              solution = await Static.solveFor(fn, "U");
+              solution = await Static.solveFor(fn, "U", self.variable);
               Utility.progressWait(false);
               if (!solution.length) {
                 const mf = $("#fnDlg_function")[0];
@@ -1212,7 +1212,7 @@ class MFunctionDlg {
                 let solution;
                 try {
                   Utility.progressWait();
-                  solution = await Static.solveFor(fn, variable);
+                  solution = await Static.solveFor(fn, variable, variable);
                   Utility.progressWait(false);
                   if (!solution.length) {
                     const mf = $("#fnDlg_function")[0];
@@ -1261,7 +1261,7 @@ class MFunctionDlg {
 
                 try {
                   Utility.progressWait();
-                  solution = await Static.solveFor(fn, variable);
+                  solution = await Static.solveFor(fn, variable, variable);
                   Utility.progressWait(false);
                   if (!solution.length) {
                     const mf = $("#fnDlg_function")[0];
@@ -1722,7 +1722,11 @@ class MFunctionDlg {
 
                 try {
                   Utility.progressWait();
-                  solution = await Static.solveFor(fnDlgFunctionVal, "y");
+                  solution = await Static.solveFor(
+                    fnDlgFunctionVal,
+                    "y",
+                    variable
+                  );
                   Utility.progressWait(false);
                   if (!solution.length) {
                     const mf = $("#fnDlg_function")[0];
@@ -2011,7 +2015,11 @@ class MFunctionDlg {
                   var solution;
                   try {
                     Utility.progressWait();
-                    solution = await Static.solveFor(fnDlgFunctionVal, "U");
+                    solution = await Static.solveFor(
+                      fnDlgFunctionVal,
+                      "U",
+                      variable
+                    );
                     Utility.progressWait(false);
                     if (!solution.length) {
                       const mf = $("#fnDlg_function")[0];
@@ -2065,7 +2073,11 @@ class MFunctionDlg {
                     }
                     try {
                       Utility.progressWait();
-                      solution = await Static.solveFor(fnDlgFunctionVal, _v);
+                      solution = await Static.solveFor(
+                        fnDlgFunctionVal,
+                        _v,
+                        variable
+                      );
                       Utility.progressWait(false);
                       if (!solution.length) {
                         const mf = $("#fnDlg_function")[0];
@@ -2160,7 +2172,7 @@ class MFunctionDlg {
 
                 try {
                   Utility.progressWait();
-                  solution = await Static.solveFor(fn, _v);
+                  solution = await Static.solveFor(fn, _v, variable);
                   Utility.progressWait(false);
                   if (!solution.length) {
                     const mf = $("#fnDlg_function")[0];

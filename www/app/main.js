@@ -882,6 +882,12 @@ require([
   //     x: -9.94987,
   //   })
   // );
+  // var x = nerdamer("x^2+1");
+
+  // console.log(
+  //   Utility.insertProductSign("xsin(x)/(xsin(x)(cos(x))))").toString()
+  // );
+  //console.log(Utility.insertProductSign("2(x+10)"));
 });
 
 /*

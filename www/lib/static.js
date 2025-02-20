@@ -421,7 +421,7 @@ const customSimplify = function (str, scope, options) {
   if (str && str.im) return str;
   scope = scope || {};
   options = options || { exactFractions: false };
-  options.exactFractions = true;
+  // options.exactFractions = true;
   if (typeof str !== "string") str = str.toString();
   return originalSimplify(reduceMultiplyByZero(str), scope, options);
 };
@@ -482,8 +482,9 @@ Static.grapherHelp = "";
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
-Static.solveFor = function (exp, v) {
+Static.solveFor = function (exp, v, indepVar = "x") {
   Utility.progressWait();
+  // exp = Utility.insertProductSign(exp, indepVar);
   if (exp.indexOf("=") != -1) {
     const arr = exp.split("=");
     let lhs;
@@ -528,6 +529,18 @@ Static.solveFor = function (exp, v) {
     return result;
   } else {
     Utility.progressWait(false);
-    return solve_for(nerdamer(exp).toString(), v);
+
+    // const arr = exp.split("=");
+    // exp = math.simplify(arr[0], {exactFractions:true}).toString();
+    // let right = null;
+    // if (arr.length == 2) {
+    //   right = math.simplify(arr[1], {exactFractions:true}).toString();
+    //   exp = `${exp}=${right}`;
+    // }
+
+    // exp = nerdamer(exp).toString();
+    // nerdamer.clear();
+    exp = Utility.insertProductSign(exp, indepVar);
+    return solve_for(exp, v);
   }
 };

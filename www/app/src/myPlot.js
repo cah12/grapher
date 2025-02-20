@@ -2027,7 +2027,11 @@ class MyPlot extends Plot {
 
               try {
                 Utility.progressWait();
-                solution = await Static.solveFor(fn, curve.parametric_variable);
+                solution = await Static.solveFor(
+                  fn,
+                  curve.parametric_variable,
+                  curve.parametric_variable
+                );
                 Utility.progressWait(false);
                 if (!solution.length) {
                   const mf = $("#fnDlg_function")[0];

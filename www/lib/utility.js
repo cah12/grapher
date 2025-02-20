@@ -2319,7 +2319,7 @@ class Utility {
     //try {
     try {
       Utility.progressWait();
-      solution = await Static.solveFor(_defn, "y");
+      solution = await Static.solveFor(_defn, "y", variable);
       Utility.progressWait(false);
       if (!solution.length) {
         const mf = $("#fnDlg_function")[0];
@@ -3063,14 +3063,18 @@ class Utility {
     return { operand, unmodifiedOperand };
   }
 
-  /* static async discontinuity(exp, lower, upper, indepVar) {
+  static async discontinuity(exp, lower, upper, indepVar) {
     Utility.progressWait();
     let result = [];
     if (Static.imagePath === "images/") {
       result = this.discontinuity1(exp, lower, upper, indepVar);
     } else {
+      // exp = Utility.insertProductSign(exp, indepVar);
       try {
-        const _result = await points(exp, lower, upper, indepVar);
+        // exp = nerdamer(exp).toString();
+        // nerdamer.clear();
+        exp = Utility.insertProductSign(exp, indepVar);
+        const _result = await discontinuity(exp, lower, upper, indepVar);
         if (_result) {
           result = _result.discontinuities;
         }
@@ -3080,9 +3084,9 @@ class Utility {
     }
     Utility.progressWait(false);
     return result;
-  } */
+  }
 
-  static discontinuity(exp, lower, upper, indepVar) {
+  static discontinuity1(exp, lower, upper, indepVar) {
     Utility.progressWait();
     //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
@@ -4823,9 +4827,9 @@ class Utility {
     return str;
   }
 
-  static insertProductSign(str, variable = null, defines) {
+  static insertProductSign1(str, variable = null, defines) {
     if (!str) return null;
-    if (str.indexOf(",") != -1) return str;
+    // if (str.indexOf(",") != -1) return str;
     if (!str || str.length == 0) {
       return "";
     }
@@ -4866,12 +4870,19 @@ class Utility {
 
     var result = "";
     result += str[0];
+    let marker = 0;
+    if (result == "%") {
+      marker++;
+    }
     for (var i = 1; i < str.length; ++i) {
       if (
         (Utility.isAlpha(str[i - 1]) && Utility.isAlpha(str[i])) ||
         (Utility.isAlpha(str[i - 1]) && Utility.isDigit(str[i])) ||
+        (Utility.isDigit(str[i - 1]) && Utility.isAlpha(str[i])) ||
         (str[i - 1] === ")" && Utility.isDigit(str[i])) ||
         (str[i - 1] === ")" && Utility.isAlpha(str[i])) ||
+        (str[i - 1] === ")" && str[i] === "(") ||
+        (Utility.isDigit(str[i - 1]) && str[i] === "(") ||
         (variable &&
           Utility.isAlpha(str[i - 1]) &&
           str[i - 1] != "variable" &&
@@ -4893,7 +4904,17 @@ class Utility {
       ) {
         result += "*";
       }
+      if (marker == 0 && Utility.isDigit(str[i - 1]) && str[i] == "%") {
+        result += "*";
+      }
+
       result += str[i];
+      if (str[i] == "%") {
+        marker++;
+      }
+      if (marker == 2) {
+        marker = 0;
+      }
     }
 
     if (res) {
@@ -4907,6 +4928,19 @@ class Utility {
     result = Utility.insertProductSignOn_e(result);
 
     return result;
+  }
+
+  static insertProductSign(str, variable = null, defines) {
+    const arr = str.split("=");
+    if (arr.length == 0) {
+      return str;
+    }
+    if (arr.length == 1) {
+      return Utility.insertProductSign1(arr[0], variable, defines);
+    }
+    const left = Utility.insertProductSign1(arr[0], variable, defines);
+    const right = Utility.insertProductSign1(arr[1], variable, defines);
+    return `${left}=${right}`;
   }
 
   /* Static.keywords = [
