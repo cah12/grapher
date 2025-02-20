@@ -281,8 +281,16 @@ class MFunctionDlg {
 
     Replacement.replace();
 
-    $('input[name="math_mode"]').on("change", function () {
+    $('input[name="math_mode"]').on("change", async function () {
       Replacement.config.angles = $(this).val();
+      if (Static.imagePath != "images/") {
+        try {
+          let res = await mode(Replacement.config.angles);
+          //console.log(res);
+        } catch (error) {
+          console.log(error);
+        }
+      }
       $("#fnDlg_ok").trigger("focus");
     });
 
@@ -2830,7 +2838,15 @@ class MFunctionDlg {
       //m_dlg1.detach();
     };
 
-    this.functionDlg = function (curveName) {
+    this.functionDlg = async function (curveName) {
+      if (Static.imagePath != "images/") {
+        try {
+          let res = await mode(Replacement.config.angles);
+          // console.log(res);
+        } catch (error) {
+          console.log(error);
+        }
+      }
       //$("body").append(m_dlg1);
       $("#functionModal").modal({
         backdrop: "static",

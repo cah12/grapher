@@ -3063,6 +3063,29 @@ class Utility {
     return { operand, unmodifiedOperand };
   }
 
+  static replaceTrigKeyword(exp, keyword, replacement) {
+    if (exp.indexOf(keyword) == -1) return exp;
+    while (exp.indexOf(keyword) !== -1) {
+      const indexOfKeyword = exp.indexOf(keyword);
+
+      let obj = Utility.getOperand(exp, keyword, indexOfKeyword);
+      if (!obj) {
+        Static.errorMessage = `Failed to determine operand for "${keyword}". Please check.`;
+        return null;
+      }
+      if (obj.unmodifiedOperand) {
+        exp = exp.replace(obj.unmodifiedOperand, obj.operand);
+      }
+      let operand = obj.operand;
+
+      exp = exp.replace(
+        keyword + operand,
+        "(1/(" + replacement + operand + "))"
+      );
+    }
+    return exp;
+  }
+
   static async discontinuity(exp, lower, upper, indepVar) {
     Utility.progressWait();
     let result = [];
@@ -3071,8 +3094,9 @@ class Utility {
     } else {
       // exp = Utility.insertProductSign(exp, indepVar);
       try {
-        // exp = nerdamer(exp).toString();
-        // nerdamer.clear();
+        exp = this.replaceTrigKeyword(exp, "sec", "cos");
+        exp = this.replaceTrigKeyword(exp, "csc", "sin");
+        exp = this.replaceTrigKeyword(exp, "cot", "tan");
         exp = Utility.insertProductSign(exp, indepVar);
         const _result = await discontinuity(exp, lower, upper, indepVar);
         if (_result) {
@@ -3167,30 +3191,10 @@ class Utility {
       return exp;
     }
 
-    function replaceTrigKeyword(exp, keyword, replacement) {
+    /* function replaceTrigKeyword(exp, keyword, replacement) {
       if (exp.indexOf(keyword) == -1) return exp;
       while (exp.indexOf(keyword) !== -1) {
         const indexOfKeyword = exp.indexOf(keyword);
-
-        //get operand
-        /* let operand = "";
-        let lBracket = 0;
-        for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
-          if (exp[i] == "(") {
-            operand += "(";
-            lBracket++;
-            continue;
-          }
-          if (exp[i] == ")") {
-            operand += ")";
-            lBracket--;
-            if (lBracket == 0) {
-              break;
-            }
-            continue;
-          }
-          operand += exp[i];
-        } */
 
         let obj = Utility.getOperand(exp, keyword, indexOfKeyword);
         if (!obj) {
@@ -3208,7 +3212,7 @@ class Utility {
         );
       }
       return exp;
-    }
+    } */
 
     function adjustConstantForMode(exp) {
       const trigsForConstantAdjustment = [
@@ -3415,9 +3419,9 @@ class Utility {
       return denom;
     }
 
-    exp = replaceTrigKeyword(exp, "sec", "cos");
-    exp = replaceTrigKeyword(exp, "csc", "sin");
-    exp = replaceTrigKeyword(exp, "cot", "tan");
+    exp = this.replaceTrigKeyword(exp, "sec", "cos");
+    exp = this.replaceTrigKeyword(exp, "csc", "sin");
+    exp = this.replaceTrigKeyword(exp, "cot", "tan");
 
     exp = replaceTrigTanKeyword(exp, "tan", "sin", "cos");
     //exp = replaceTrigTanKeyword(exp, "cot", "cos", "sin");

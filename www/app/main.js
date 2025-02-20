@@ -887,7 +887,10 @@ require([
   // console.log(
   //   Utility.insertProductSign("xsin(x)/(xsin(x)(cos(x))))").toString()
   // );
-  //console.log(Utility.insertProductSign("2(x+10)"));
+  // var eq = nerdamer("(csc(x))=0");
+  // console.log(eq.toString());
+  // var solutions = eq.solveFor("x").toString();
+  // console.log(solutions);
 });
 
 /*
