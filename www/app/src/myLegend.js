@@ -19,6 +19,7 @@ class MyLegend extends Legend {
       let m_fn = null;
       if (_curve.fn) {
         m_fn = Utility.adjustExpForDecimalPlaces(_curve.fn, decimalPlacesX);
+        m_fn = Utility.removeUnwantedAsterisk(_curve.fn);
       }
 
       if (

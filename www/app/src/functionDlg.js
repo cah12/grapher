@@ -632,7 +632,7 @@ class MFunctionDlg {
       function negativeRootFn() {
         let fn = [];
         return [];
-        let noNegativeRoot = false;
+        /*let noNegativeRoot = false;
         //return fn;
         if (!self.expandedFn || $.isNumeric(self.expandedFn)) return fn;
         let degOfPoly;
@@ -678,35 +678,9 @@ class MFunctionDlg {
           filtered = [];
         }
 
-        // filtered = filtered.concat(
-        //   node.filter(function (node) {
-        //     return node.fn && node.fn.name === "sqrt";
-        //   })
-        // );
+        
 
-        /* filtered = filtered.concat(
-          node.filter(function (node) {
-            if (node.fn === "sqrt") {
-              return true;
-            }
-            if (node.fn === "pow") {
-              const val = node.args[1].value;
-              if ($.isNumeric(val) && val < 1) {
-                const fr = math.simplify(
-                  `${val}`,
-                  {},
-                  { exactFractions: true }
-                );
-                const denom = fr.args[1].value;
-                if (denom % 2 == 0) {
-                  return true;
-                }
-                //console.log(fr);
-              }
-            }
-            return false;
-          })
-        ); */
+        
 
         for (let i = 0; i < filtered.length; i++) {
           //console.log(filtered[i].args);
@@ -754,8 +728,8 @@ class MFunctionDlg {
 
         if (fn.length) fn = [fn[0]];
 
-        return fn;
-      }
+        return fn;*/
+      } ///////////////////////
 
       function derivativeOrder(name) {
         let order = 0;
