@@ -317,13 +317,13 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.errorMessage = "";
       mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
       const m_value = $("#fnDlg_function")[0].value;
-      if (m_value) {
-        plot._functionDlg.doEnter(m_value, true);
-        executeButtonClicked = false;
-        // Utility.progressWait(false);
-      } else {
-        Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
-      }
+      //if (m_value) {
+      plot._functionDlg.doEnter(m_value, true);
+      executeButtonClicked = false;
+      // Utility.progressWait(false);
+      // } else {
+      //   Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
+      // }
       $("#fnDlg_function")[0].executeCommand("selectAll");
       $("#fnDlg_function").focus();
     });

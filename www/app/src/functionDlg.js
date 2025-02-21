@@ -766,7 +766,17 @@ class MFunctionDlg {
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
         let g_solution_arr = null;
+
+        if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
+          const mf = $("#fnDlg_function")[0];
+          mf.setValue("?....?");
+          Utility.displayErrorMessage(mf, `You made an invalid entry.`);
+          Utility.progressWait(false);
+          return;
+        }
+
         const ind = Utility.isValidCharInExpression(fnDlgFunctionVal);
+
         if (ind != -1) {
           const mf = $("#fnDlg_function")[0];
           Utility.displayErrorMessage(
