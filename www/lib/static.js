@@ -351,6 +351,8 @@ Static.constructEquation = 1;
 Static.rearrangeEquation = 2;
 Static.solveEquation = 3;
 
+Static.g_solution_arr = null;
+
 ////////////////////////////////////////////////
 
 const originalParse = math.parse;
@@ -540,7 +542,7 @@ Static.solveFor = function (exp, v, indepVar = "x") {
 
     // exp = nerdamer(exp).toString();
     // nerdamer.clear();
-    exp = Utility.insertProductSign(exp, indepVar);
+    exp = Utility.insertProductSign_total(exp, indepVar);
     return solve_for(exp, v);
   }
 };

@@ -2293,9 +2293,9 @@ class Utility {
     let m_failedInverse = false;
     let _defn = fn.replaceAll(variable, "y");
 
-    if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
-      return "failedInverse";
-    }
+    // if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
+    //   return "failedInverse";
+    // }
 
     //console.log(math.evaluate(degOfPoly.toString()));
     let exponent = null;
@@ -2322,98 +2322,74 @@ class Utility {
       solution = await Static.solveFor(_defn, "y", variable);
       Utility.progressWait(false);
       if (!solution.length) {
-        const mf = $("#fnDlg_function")[0];
-        Utility.displayErrorMessage(
-          mf,
-          `Unable to find a solution for "${_defn}".`
-        );
+        // const mf = $("#fnDlg_function")[0];
+        // Utility.displayErrorMessage(
+        //   mf,
+        //   `Grapher tried but was unable to find a solution for for the inverse of "${_defn}". The inverse relation is plotted.`
+        // );
         Utility.progressWait(false);
         return "failedInverse";
       }
+
+      if (typeof solution != "object") {
+        solution = [solution];
+      }
+      //console.log(solution[0]);
+      if (exponent && solution[0].toString().indexOf("^2") != -1) {
+        return "failedInverse";
+      }
+
+      //const m_degOfPoly = parseInt(degOfPoly.toString());
+      const m_solution = [];
+      if (solution.length > 2) {
+        for (let i = 0; i < solution.length; i++) {
+          const s_sol = math
+            .simplify(
+              solution[i].toString().replaceAll("abs", "1*"),
+              {},
+              { exactFractions: false }
+            )
+            .toString();
+          if (s_sol.indexOf("abs") !== -1 || s_sol.indexOf("i") !== -1) {
+            continue;
+          }
+          if (s_sol.indexOf("^") == -1) {
+            m_failedInverse = true;
+            continue;
+          }
+          m_solution.push(s_sol);
+          break;
+        }
+      } else {
+        //let m_failedInverse = false;
+        for (let i = 0; i < solution.length; i++) {
+          let sol = solution[i];
+          sol = sol.toString().replaceAll("abs", "1*");
+          if (exponent && sol.indexOf("^") == -1) {
+            m_failedInverse = true;
+            continue;
+          }
+          m_solution.push(
+            math
+              .simplify(sol, {}, { exactFractions: false })
+              .toString()
+              .replaceAll(" ", "")
+          );
+        }
+      }
+
+      if (m_solution.length === 0 || m_failedInverse) {
+        return "failedInverse";
+      }
+      return m_solution;
     } catch (error) {
       console.log(error);
       Utility.progressWait(false);
       return "failedInverse";
     }
+    /////////////////////////
 
-    // if (!solution || (typeof solution == "object" && solution.length == 0)) {
-    //   return "failedInverse";
-    // }
-    // } catch (error) {
-    //   //console.log("Error in discontinuity()");
-    //   return "failedInverse";
-    // }
-
-    //console.log(typeof solution);
-    if (typeof solution != "object") {
-      solution = [solution];
-    }
-    //console.log(solution[0]);
-    if (exponent && solution[0].toString().indexOf("^2") != -1) {
-      return "failedInverse";
-    }
-
-    //const m_degOfPoly = parseInt(degOfPoly.toString());
-    const m_solution = [];
-    if (solution.length > 2) {
-      for (let i = 0; i < solution.length; i++) {
-        const s_sol = math
-          .simplify(
-            solution[i].toString().replaceAll("abs", "1*"),
-            {},
-            { exactFractions: false }
-          )
-          .toString();
-        if (s_sol.indexOf("abs") !== -1 || s_sol.indexOf("i") !== -1) {
-          continue;
-        }
-        if (s_sol.indexOf("^") == -1) {
-          m_failedInverse = true;
-          continue;
-        }
-        m_solution.push(s_sol);
-        break;
-      }
-      /* const s_sol = solution[0].toString();
-      if (s_sol.indexOf("^") == -1) {
-        m_failedInverse = true;
-      }
-      m_solution.push(s_sol); */
-    } else {
-      //let m_failedInverse = false;
-      for (let i = 0; i < solution.length; i++) {
-        let sol = solution[i];
-        sol = sol.toString().replaceAll("abs", "1*");
-        if (exponent && sol.indexOf("^") == -1) {
-          m_failedInverse = true;
-          continue;
-        }
-        m_solution.push(
-          math
-            .simplify(sol, {}, { exactFractions: false })
-            .toString()
-            .replaceAll(" ", "")
-        );
-      }
-    }
-
-    if (m_solution.length === 0 || m_failedInverse) {
-      return "failedInverse";
-    }
-
-    /* solution = solution[0].toString().replaceAll("abs", "1*");
-
-    if (exponent && solution.indexOf("^") == -1) {
-      //solution = `${lhs}+${solution}`;
-      return "failedInverse";
-    }
-
-    solution = math
-      .simplify(solution, {}, { exactFractions: false })
-      .toString()
-      .replaceAll(" ", ""); */
-
-    return m_solution;
+    ///////////////////
   }
 
   static removeNonNumericPoints(samples) {
@@ -3120,7 +3096,7 @@ class Utility {
         exp = this.replaceTrigKeyword(exp, "csc", "sin");
         exp = this.replaceTrigKeyword(exp, "cot", "tan");
         exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
-        exp = Utility.insertProductSign(exp, indepVar);
+        exp = Utility.insertProductSign_total(exp, indepVar);
         const _result = await discontinuity(exp, lower, upper, indepVar);
         if (_result) {
           result = _result.discontinuities;
@@ -4516,6 +4492,17 @@ class Utility {
     return result;
   }
 
+  /* static async addDefine(name, value, defines) {
+    try {
+      value = await defines.expandDefines(value, null, false);
+      let latexValue = Utility.toLatex(value);
+      dlg.doAdd(name, { value, latexValue });
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  } */
+
   static splitParametricFunction(str) {
     if (!Utility.isParametricFunction(str)) {
       return null;
@@ -4937,7 +4924,7 @@ class Utility {
     return result;
   }
 
-  static insertProductSign(str, variable = null, defines) {
+  static insertProductSign_total(str, variable = null, defines) {
     const arr = str.split("=");
     if (arr.length == 0) {
       return str;
@@ -4948,6 +4935,93 @@ class Utility {
     const left = Utility.insertProductSign1(arr[0], variable, defines);
     const right = Utility.insertProductSign1(arr[1], variable, defines);
     return `${left}=${right}`;
+  }
+
+  static insertProductSign(str, variable = null, defines) {
+    if (!str) return null;
+    if (str.indexOf(",") != -1) return str;
+    if (!str || str.length == 0) {
+      return "";
+    }
+
+    str = str.replace(/\s/g, "");
+
+    // try {
+    //   str = math
+    //     .simplify(str, {}, { exactFractions: false })
+    //     .toString()
+    //     .replace(/\s/g, "");
+    // } catch (error) {}
+    // str = math
+    //   .simplify(str, {}, { exactFractions: false })
+    //   .toString()
+    //   .replace(/\s/g, "");
+
+    //Replace the whitespace delimiters stripped out by simplify()
+    //str = str.replaceAll("mod", " mod ");
+
+    function hasKeyword(str) {
+      for (var i = 0; i < Static.keywords.length; ++i) {
+        while (str.indexOf(Static.keywords[i]) != -1) return true;
+      }
+      return false;
+    }
+
+    //if (hasKeyword(str)) return str;
+
+    let res = null;
+    if (hasKeyword(str)) {
+      str = Utility.purgeAndMarkKeywords(str);
+      res = str.match(/%(.*?)%/g);
+      //for (let i = 0; i < res.length; i++) {
+      // str = str.replace(res[i], `(${res[i]}`);
+      //}
+    }
+
+    var result = "";
+    result += str[0];
+    for (var i = 1; i < str.length; ++i) {
+      if (
+        (Utility.isAlpha(str[i - 1]) && Utility.isAlpha(str[i])) ||
+        (Utility.isAlpha(str[i - 1]) && Utility.isDigit(str[i])) ||
+        (str[i - 1] === ")" && Utility.isDigit(str[i])) ||
+        (str[i - 1] === ")" && Utility.isAlpha(str[i])) ||
+        (variable &&
+          Utility.isAlpha(str[i - 1]) &&
+          str.length > 3 &&
+          str[i + 1] != variable &&
+          str[i] == "(")
+      ) {
+        if (
+          1
+          // defines &&
+          // !defines.isCharPartOfAdefine(str[i - 1]) &&
+          // str[i - 1] !== ","
+        ) {
+          //if (!defines?.isCharPartOfAdefine(str[i - 1]) && str[i - 1] !== ",") {
+          result += "*";
+        }
+      }
+      if (
+        (Utility.isAlpha(str[i - 1]) || str[i - 1] === ")") &&
+        str[i] == "%"
+      ) {
+        result += "*";
+      }
+      result += str[i];
+    }
+
+    if (res) {
+      /* for (let i = 0; i < res.length; i++) {
+        result = result.replace(`(${res[i]}`, res[i]);
+      } */
+      result = Utility.replaceKeywordMarkers(result);
+    }
+
+    result = Utility.insertProductSignOnPi(result);
+    result = Utility.insertProductSignOn_e(result);
+
+    return result;
   }
 
   /* Static.keywords = [

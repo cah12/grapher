@@ -282,6 +282,7 @@ class DefinesDlg extends ModalDlg {
       if (
         self.selector("definesName").val().length &&
         _.isString(self.selector("definesName").val()) &&
+        mf.getValue("ascii-math") &&
         mf.getValue("ascii-math").length &&
         _.isString(mf.getValue("ascii-math"))
       ) {
@@ -482,209 +483,216 @@ class Defines {
     }
 
     let counter = 0;
-    function doExpandDefines(str, variable, derive) {
+    async function doExpandDefines(str, variable, derive) {
       //handle function declarations
+      try {
+        let m_str;
+        let dec;
 
-      let m_str;
-      let dec;
+        if (str.indexOf("^(-1)") !== -1) {
+          let obj = Utility.getInverseDeclaration(str);
+          let n = 0;
+          let _index = 0;
+          while (obj && obj.dec && obj.arg && n < 100) {
+            let solution = null;
 
-      if (str.indexOf("^(-1)") !== -1) {
-        let obj = Utility.getInverseDeclaration(str);
-        let n = 0;
-        let _index = 0;
-        while (obj && obj.dec && obj.arg && n < 100) {
-          let solution = null;
+            const { dec, arg } = obj;
+            // const _dec = dec.replace("^(-1)", "");
+            let _dec = dec.replace(arg, variable).replace("^(-1)", "");
+            const m_defn = m_defines.get(_dec);
+            let degOfPoly = nerdamer.deg(m_defn.value);
+            //console.log(degOfPoly.toString());
 
-          const { dec, arg } = obj;
-          // const _dec = dec.replace("^(-1)", "");
-          let _dec = dec.replace(arg, variable).replace("^(-1)", "");
-          const m_defn = m_defines.get(_dec);
-          let degOfPoly = nerdamer.deg(m_defn.value);
-          //console.log(degOfPoly.toString());
+            if (m_defn) {
+              Static.g_solution_arr = solution = await Utility.inverseFunction(
+                m_defn.value,
+                variable
+              );
+              if (solution === "failedInverse") {
+                Utility.alert(
+                  `Grapher tried but failed to get an inverse function of <b>"${m_defn.value}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. The inverse <b>relation</b> is plotted.`,
+                  null,
+                  "failedInverse"
+                );
+                return solution;
+              }
+              ////
+              else {
+                solution = solution[0].replaceAll(variable, `(${arg})`);
 
-          if (m_defn) {
-            solution = Utility.inverseFunction(m_defn.value, variable);
-            if (solution === "failedInverse") {
-              Utility.alert(
-                "Grapher tried but failed to get the inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
-                null,
-                "failedInverse"
+                str = str.replace(dec, `(${solution})`);
+              }
+              //console.log(solution);
+            } /////
+            if (solution) {
+              obj = Utility.getInverseDeclaration(str, _index);
+            } else {
+              _index += str.indexOf(dec) + 8;
+              obj = Utility.getInverseDeclaration(str, _index);
+            }
+
+            n++;
+          } //
+        }
+
+        if (derive) {
+          m_str = str.slice();
+          dec = Utility.getFunctionDeclaration(str);
+          while (dec) {
+            m_str = m_str.replaceAll(dec, "");
+            if (dec) {
+              //if (!m_defines.get(dec)) {
+              // alert(
+              //   `Attempt to use "${dec}" rejected because it is undefined.`
+              // );
+              // return null;
+              // }
+            }
+            dec = Utility.getFunctionDeclaration(m_str);
+          }
+
+          //handle derivativesdeclarations
+          m_str = str.slice();
+          let full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+          // if (!m_defines.get(full_dec)) {
+          dec = self.getDerivativeDeclaration(m_str, variable);
+          let values = [];
+          let names = [];
+          while (full_dec) {
+            m_str = m_str.replaceAll(full_dec, "");
+            if (dec) {
+              if (!m_defines.get(dec)) {
+                let _derivativeOrder = Utility.derivativeOrder(dec);
+                let fnDec = dec.replaceAll("'", "");
+                let _derivative = null;
+                if (m_defines.get(fnDec))
+                  _derivative = m_defines.get(fnDec).value;
+
+                if (_derivative) {
+                  const variable = fnDec[fnDec.length - 2];
+                  for (let index = 0; index < _derivativeOrder; index++) {
+                    _derivative = math
+                      .derivative(_derivative, variable)
+                      .toString();
+                    //_derivative = _derivative.replaceAll(variable, arg);
+                  }
+                  _derivative = _derivative.replace(/\s/g, "");
+                  names.push(dec);
+                  values.push(_derivative);
+                  //$(window).trigger("defineAdded", [dec, _derivative]);
+                } else {
+                  // alert(
+                  //   `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+                  // );
+                  return null;
+                }
+              } else {
+                // if (m_str.length) {
+                //   return null;
+                // }
+                full_dec = Utility.getFullDerivativeDeclaration(
+                  m_str,
+                  variable
+                );
+                if (full_dec) {
+                  dec = self.getDerivativeDeclaration(m_str, variable);
+                }
+                continue;
+              }
+            }
+            full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+            if (full_dec) {
+              dec = self.getDerivativeDeclaration(m_str, variable);
+            }
+          }
+          if (names.length) {
+            let m_names = _.uniq(names);
+            for (let i = 0; i < m_names.length; i++) {
+              $(window).trigger("defineAdded", [m_names[i], values[i]]);
+            }
+          }
+          //}
+        }
+
+        var defined;
+        var i;
+        let startIndex = 0;
+        let res = str.slice().replace(/\s/g, "");
+        let m_res = res.slice();
+        res = Utility.purgeAndMarkKeywords(res);
+        m_defines.forEach(function (value, key, map) {
+          if (key.indexOf("(") == -1) {
+            while (res.indexOf(key) !== -1) {
+              res = res.replace(
+                key,
+                Utility.purgeAndMarkKeywords(getParenthesizeDefine(key))
               );
             }
-            ////
-            else {
-              solution = solution[0].replaceAll(variable, `(${arg})`);
-
-              str = str.replace(dec, `(${solution})`);
-            }
-            //console.log(solution);
-          } /////
-          if (solution) {
-            obj = Utility.getInverseDeclaration(str, _index);
           } else {
-            _index += str.indexOf(dec) + 8;
-            obj = Utility.getInverseDeclaration(str, _index);
-          }
+            const f = key.substring(0, key.indexOf("(") + 1);
+            const names = self.defineNames();
 
-          n++;
-        } //
-      }
+            for (let i = 0; i < names.length; i++) {
+              if (names[i].indexOf(f) != -1) {
+                let n = 0;
 
-      if (derive) {
-        m_str = str.slice();
-        dec = Utility.getFunctionDeclaration(str);
-        while (dec) {
-          m_str = m_str.replaceAll(dec, "");
-          if (dec) {
-            //if (!m_defines.get(dec)) {
-            // alert(
-            //   `Attempt to use "${dec}" rejected because it is undefined.`
-            // );
-            // return null;
-            // }
-          }
-          dec = Utility.getFunctionDeclaration(m_str);
-        }
+                while (res.indexOf(f, startIndex) !== -1 && n < 100) {
+                  startIndex = res.indexOf(f);
+                  n++;
+                  let def = getParenthesizeDefine(names[i]);
+                  let m_x = names[i].substring(
+                    names[i].indexOf("(") + 1,
+                    names[i].indexOf(")")
+                  );
+                  let subInd = 0;
+                  let s_par = 0;
+                  let o_par = false;
+                  for (let index = startIndex; index < m_res.length; index++) {
+                    if (m_res[index] == "(") s_par++;
+                    if (m_res[index] == ")") s_par--;
+                    if (
+                      !o_par &&
+                      index > 0 &&
+                      m_res[index] == "(" /*  && */
+                      /* m_res[index - 1] == f[0] */
+                      /* m_res[index - 1] == f[index - 1] */
+                    ) {
+                      o_par = true;
+                    }
+                    if (o_par && s_par == 0) {
+                      subInd = index;
+                      break;
+                    }
+                  }
+                  let m_x_replacement = m_res.substring(
+                    m_res.indexOf(f),
+                    subInd + 1
+                  );
+                  m_x_replacement =
+                    getFunctionDeclarationArgument(m_x_replacement);
+                  def = def.replaceAll(m_x, "(" + m_x_replacement + ")");
+                  if (res[0] === f[0]) {
+                    res = res.replace(f + m_x_replacement + ")", def);
+                  } else {
+                    res = res.replace(f + m_x_replacement + ")", "*" + def);
+                    res = res.replace("**", "*");
+                    res = res.replace("+*", "+");
+                    res = res.replace("-*", "-");
+                    res = res.replace("/*", "/");
+                    res = res.replace("(*(", "((");
+                    res = res.replace(")*)", "))");
+                  }
 
-        //handle derivativesdeclarations
-        m_str = str.slice();
-        let full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
-        // if (!m_defines.get(full_dec)) {
-        dec = self.getDerivativeDeclaration(m_str, variable);
-        let values = [];
-        let names = [];
-        while (full_dec) {
-          m_str = m_str.replaceAll(full_dec, "");
-          if (dec) {
-            if (!m_defines.get(dec)) {
-              let _derivativeOrder = Utility.derivativeOrder(dec);
-              let fnDec = dec.replaceAll("'", "");
-              let _derivative = null;
-              if (m_defines.get(fnDec))
-                _derivative = m_defines.get(fnDec).value;
-
-              if (_derivative) {
-                const variable = fnDec[fnDec.length - 2];
-                for (let index = 0; index < _derivativeOrder; index++) {
-                  _derivative = math
-                    .derivative(_derivative, variable)
-                    .toString();
-                  //_derivative = _derivative.replaceAll(variable, arg);
+                  m_res = res.slice();
+                  startIndex = 0;
                 }
-                _derivative = _derivative.replace(/\s/g, "");
-                names.push(dec);
-                values.push(_derivative);
-                //$(window).trigger("defineAdded", [dec, _derivative]);
-              } else {
-                // alert(
-                //   `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
-                // );
-                return null;
+                break;
               }
-            } else {
-              // if (m_str.length) {
-              //   return null;
-              // }
-              full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
-              if (full_dec) {
-                dec = self.getDerivativeDeclaration(m_str, variable);
-              }
-              continue;
             }
           }
-          full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
-          if (full_dec) {
-            dec = self.getDerivativeDeclaration(m_str, variable);
-          }
-        }
-        if (names.length) {
-          let m_names = _.uniq(names);
-          for (let i = 0; i < m_names.length; i++) {
-            $(window).trigger("defineAdded", [m_names[i], values[i]]);
-          }
-        }
-        //}
-      }
+        });
 
-      var defined;
-      var i;
-      let startIndex = 0;
-      let res = str.slice().replace(/\s/g, "");
-      let m_res = res.slice();
-      res = Utility.purgeAndMarkKeywords(res);
-      m_defines.forEach(function (value, key, map) {
-        if (key.indexOf("(") == -1) {
-          while (res.indexOf(key) !== -1) {
-            res = res.replace(
-              key,
-              Utility.purgeAndMarkKeywords(getParenthesizeDefine(key))
-            );
-          }
-        } else {
-          const f = key.substring(0, key.indexOf("(") + 1);
-          const names = self.defineNames();
-
-          for (let i = 0; i < names.length; i++) {
-            if (names[i].indexOf(f) != -1) {
-              let n = 0;
-
-              while (res.indexOf(f, startIndex) !== -1 && n < 100) {
-                startIndex = res.indexOf(f);
-                n++;
-                let def = getParenthesizeDefine(names[i]);
-                let m_x = names[i].substring(
-                  names[i].indexOf("(") + 1,
-                  names[i].indexOf(")")
-                );
-                let subInd = 0;
-                let s_par = 0;
-                let o_par = false;
-                for (let index = startIndex; index < m_res.length; index++) {
-                  if (m_res[index] == "(") s_par++;
-                  if (m_res[index] == ")") s_par--;
-                  if (
-                    !o_par &&
-                    index > 0 &&
-                    m_res[index] == "(" /*  && */
-                    /* m_res[index - 1] == f[0] */
-                    /* m_res[index - 1] == f[index - 1] */
-                  ) {
-                    o_par = true;
-                  }
-                  if (o_par && s_par == 0) {
-                    subInd = index;
-                    break;
-                  }
-                }
-                let m_x_replacement = m_res.substring(
-                  m_res.indexOf(f),
-                  subInd + 1
-                );
-                m_x_replacement =
-                  getFunctionDeclarationArgument(m_x_replacement);
-                def = def.replaceAll(m_x, "(" + m_x_replacement + ")");
-                if (res[0] === f[0]) {
-                  res = res.replace(f + m_x_replacement + ")", def);
-                } else {
-                  res = res.replace(f + m_x_replacement + ")", "*" + def);
-                  res = res.replace("**", "*");
-                  res = res.replace("+*", "+");
-                  res = res.replace("-*", "-");
-                  res = res.replace("/*", "/");
-                  res = res.replace("(*(", "((");
-                  res = res.replace(")*)", "))");
-                }
-
-                m_res = res.slice();
-                startIndex = 0;
-              }
-              break;
-            }
-          }
-        }
-      });
-
-      /* [
+        /* [
   { l: 'n1*n3 + n2*n3', r: '(n1+n2)*n3' },
   'n1*n3 + n2*n3 -> (n1+n2)*n3',
   function (node) {
@@ -694,33 +702,37 @@ class Defines {
 ] 
 [{ l: 'c1*v1', r: 'c1v1' }]
 */
-      if (res.indexOf("'") !== -1) {
-        return null;
-      }
-      res = Utility.replaceKeywordMarkers(res);
-      if (m_simplify) {
-        try {
-          // res = math.simplify(res, {}, { exactFractions: false }).toString();
-          res = res.replace(/\s/g, "");
-          res = res.replaceAll("+-", "-");
-          res = res.replaceAll("-+", "-");
-
-          //Replace the whitespace delimiters stripped out by simplify()
-          res = res.replaceAll("mod", " mod ");
-          return Utility.removeUnwantedAsterisk(res);
-        } catch (error) {
-          // Utility.alert(error.message, "small", "m_simplify");
-          // return res;
-          res = res.replace(/\s/g, "");
-          res = res.replaceAll("+-", "-");
-          res = res.replaceAll("-+", "-");
-
-          //Replace the whitespace delimiters stripped out by simplify()
-          res = res.replaceAll("mod", " mod ");
-          return Utility.removeUnwantedAsterisk(res);
+        if (res.indexOf("'") !== -1) {
+          return null;
         }
+        res = Utility.replaceKeywordMarkers(res);
+        if (m_simplify) {
+          try {
+            // res = math.simplify(res, {}, { exactFractions: false }).toString();
+            res = res.replace(/\s/g, "");
+            res = res.replaceAll("+-", "-");
+            res = res.replaceAll("-+", "-");
+
+            //Replace the whitespace delimiters stripped out by simplify()
+            res = res.replaceAll("mod", " mod ");
+            return Utility.removeUnwantedAsterisk(res);
+          } catch (error) {
+            // Utility.alert(error.message, "small", "m_simplify");
+            // return res;
+            res = res.replace(/\s/g, "");
+            res = res.replaceAll("+-", "-");
+            res = res.replaceAll("-+", "-");
+
+            //Replace the whitespace delimiters stripped out by simplify()
+            res = res.replaceAll("mod", " mod ");
+            return Utility.removeUnwantedAsterisk(res);
+          }
+        }
+        return res;
+      } catch (error) {
+        console.log(error);
+        return str;
       }
-      return res;
     }
 
     this.getDerivativeDeclaration = function (str, variable) {
@@ -778,7 +790,18 @@ class Defines {
       return null;
     }; */
 
-    this.expandDefines = function (str, variable, derive = true) {
+    this.addDefine = async function (name, value) {
+      try {
+        value = await self.expandDefines(value, null, false);
+        let latexValue = Utility.toLatex(value);
+        this.getDefinesDlg().doAdd(name, { value, latexValue });
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    };
+
+    this.expandDefines = async function (str, variable, derive = true) {
       if ($.isNumeric(str)) {
         return str;
       }
@@ -788,98 +811,49 @@ class Defines {
       str = str.replaceAll(" ", "");
       let prevExpanded = str;
 
-      str = doExpandDefines(str, variable, derive);
-      if (!str) {
-        return str;
-      }
-      if (str == "failedInverse") {
-        return { fn: prevExpanded, failedInverse: true };
-      }
-      //let prevExpanded = null;
+      try {
+        str = await doExpandDefines(str, variable, derive);
+        if (!str) {
+          return str;
+        }
+        if (str == "failedInverse") {
+          return { fn: prevExpanded, failedInverse: true };
+        }
+        //let prevExpanded = null;
 
-      let n = 0;
-      /* if (!variable) {
-        while (str !== prevExpanded && n < 100) {
-          prevExpanded = str;
-          str = doExpandDefines(str, variable, derive);
-          //prevExpanded = str;
+        let n = 0;
+
+        while (
+          prevExpanded !== str &&
+          !Utility.isMathematicalEqual(str, prevExpanded) &&
+          n < 100
+        ) {
+          prevExpanded = math
+            .simplify(str, {}, { exactFractions: false })
+            .toString()
+            .replaceAll(" ", "");
+          str = await doExpandDefines(str, variable, derive);
+
           n++;
         }
-      } else { */
-      //prevExpanded = str;
-      /* let scope = new Map();
-        scope.set(variable, 1);
-        let s1 = str;
-        try {
-          s1 = math.evaluate(str, scope);
-        } catch (error) {}
-        let s2 = prevExpanded;
-        try {
-          s2 = math.evaluate(prevExpanded, scope);
-        } catch (error) {}
-        if (typeof s1 === "number") {
-          s1 = `${Math.round(s1)}`;
-        }
-        if (typeof s2 === "number") {
-          s2 = `${Math.round(s2)}`;
-        }
-        s1 = math
-          .simplify(math.parse(s1), {}, { exactFractions: false })
-          .toString()
-          .replaceAll("*", "")
-          .replaceAll(" ", "");
-        s2 = math
-          .simplify(math.parse(s2), {}, { exactFractions: false })
-          .toString()
-          .replaceAll("*", "")
-          .replaceAll(" ", ""); */
-      while (
-        prevExpanded !== str &&
-        !Utility.isMathematicalEqual(str, prevExpanded) &&
-        n < 100
-      ) {
-        prevExpanded = math
-          .simplify(str, {}, { exactFractions: false })
-          .toString()
-          .replaceAll(" ", "");
-        str = doExpandDefines(str, variable, derive);
-        //prevExpanded = str;
-        /* s1 = str;
-          try {
-            s1 = math.evaluate(str, scope);
-          } catch (error) {}
-          s2 = prevExpanded;
-          try {
-            s2 = math.evaluate(prevExpanded, scope);
-          } catch (error) {}
-          if (typeof s1 === "number") {
-            s1 = `${Math.round(s1)}`;
-          }
-          if (typeof s2 === "number") {
-            s2 = `${Math.round(s2)}`;
-          }
-          s1 = math
-            .simplify(math.parse(s1), {}, { exactFractions: false })
-            .toString()
-            .replaceAll("*", "")
-            .replaceAll(" ", "");
-          s2 = math
-            .simplify(math.parse(s2), {}, { exactFractions: false })
-            .toString()
-            .replaceAll("*", "")
-            .replaceAll(" ", ""); */
-        n++;
-      }
-      //console.log("expandDefines() iteration:", n);
-      // }
-      const _fn = Utility.isLinear(str, variable);
-      if (_fn) str = _fn;
 
-      str = str.replaceAll(`${variable}${variable}`, `${variable}*${variable}`);
-      return Utility.insertProductSign(str, variable).replaceAll(
-        "mod",
-        " mod "
-      );
+        const _fn = Utility.isLinear(str, variable);
+        if (_fn) str = _fn;
+
+        str = str.replaceAll(
+          `${variable}${variable}`,
+          `${variable}*${variable}`
+        );
+        str = Utility.insertProductSign(str, variable).replaceAll(
+          "mod",
+          " mod "
+        );
+
+        return str;
+      } catch (error) {
+        console.log(error);
+        return str;
+      }
     };
 
     this.removeDefine = function (name) {
@@ -1062,12 +1036,15 @@ class MDefines extends Defines {
       // }
     });
 
-    $(window).bind("defineAdded", function (e, name, value) {
-      value = self.expandDefines(value, null, false);
-      //console.log(value);
-      //value = Utility.logBaseAdjust(value);
-      let latexValue = Utility.toLatex(value);
-      dlg.doAdd(name, { value, latexValue });
+    $(window).bind("defineAdded", async function (e, name, value) {
+      try {
+        value = await self.expandDefines(value, null, false);
+        let latexValue = Utility.toLatex(value);
+        dlg.doAdd(name, { value, latexValue });
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
     });
   }
 }

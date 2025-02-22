@@ -891,6 +891,8 @@ require([
   // console.log(eq.toString());
   // var solutions = eq.solveFor("x").toString();
   // console.log(solutions);
+
+  //console.log(Utility.insertProductSign("f(x)", "x"));
 });
 
 /*

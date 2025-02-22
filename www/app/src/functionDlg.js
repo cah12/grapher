@@ -765,7 +765,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
-        let g_solution_arr = null;
+        Static.g_solution_arr = null;
 
         if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
           const mf = $("#fnDlg_function")[0];
@@ -774,6 +774,8 @@ class MFunctionDlg {
           Utility.progressWait(false);
           return;
         }
+
+        fnDlgFunctionVal = Utility.removeUnwantedAsterisk(fnDlgFunctionVal);
 
         const ind = Utility.isValidCharInExpression(fnDlgFunctionVal);
 
@@ -837,151 +839,137 @@ class MFunctionDlg {
             return false; //failed to force definition
           }
 
-          const expandedRHS = plot.defines.expandDefines(
-            arr[1],
-            self.variable,
-            false
-          );
-          if (!expandedRHS) {
-            Utility.progressWait(false);
-            return null;
-          }
-          const expandedLHS = plot.defines.expandDefines(
-            arr[0],
-            self.variable,
-            false
-          );
-          if (!expandedLHS) {
-            Utility.progressWait(false);
-            return null;
-          }
-          fn = `${expandedLHS}=${expandedRHS}`;
-          //fn = `${expandedLHS}=${expandedRHS}`;
-          fn = Utility.insertProductSign(fn, self.variable, plot.defines);
-
-          let res = null;
-          //fn = fn.replaceAll(dec, "U");
-
-          if (expandedLHS == "U" && expandedRHS.indexOf("U") === -1) {
-            res = expandedRHS;
-          }
-
-          if (expandedRHS == "U" && expandedLHS.indexOf("U") === -1) {
-            res = expandedLHS;
-          }
-
-          if (!res) {
-            //need to account for nerdamer's inability to deal with polynomials
-            // whose abs is <1 (with the exception of 0.5)
-
-            let poly = math
-              .simplify(`${expandedLHS}-${expandedRHS}`)
-              .toString();
-            let deg_of_poly = math.abs(
-              parseFloat(
-                math.simplify(
-                  nerdamer(`deg(${poly},${self.variable})`).toString()
-                )
-              )
+          try {
+            const expandedRHS = await plot.defines.expandDefines(
+              arr[1],
+              self.variable,
+              false
             );
-            if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
+            if (!expandedRHS) {
               Utility.progressWait(false);
-              return false;
+              return null;
             }
 
-            // let deg_of_poly_LHS = math.abs(
-            //   parseFloat(
-            //     math.simplify(
-            //       nerdamer(`deg(${expandedLHS},${self.variable})`).toString()
-            //     )
-            //   )
-            // );
-            // if (
-            //   deg_of_poly_LHS < 1 &&
-            //   deg_of_poly_LHS != 0 &&
-            //   deg_of_poly_LHS != 0.5
-            // ) {
-            //   return false;
-            // }
-            // let deg_of_poly_RHS = math.abs(
-            //   parseFloat(
-            //     math.simplify(
-            //       nerdamer(`deg(${expandedRHS},${self.variable})`).toString()
-            //     )
-            //   )
-            // );
-            // if (
-            //   deg_of_poly_RHS < 1 &&
-            //   deg_of_poly_RHS != 0 &&
-            //   deg_of_poly_RHS != 0.5
-            // ) {
-            //   return false;
-            // }
-
-            //////////////
-
-            //var eq = nerdamer(fn);
-            var solution;
-
-            try {
-              Utility.progressWait();
-              solution = await Static.solveFor(fn, "U", self.variable);
+            const expandedLHS = await plot.defines.expandDefines(
+              arr[0],
+              self.variable,
+              false
+            );
+            if (!expandedLHS) {
               Utility.progressWait(false);
-              if (!solution.length) {
-                const mf = $("#fnDlg_function")[0];
-                Utility.displayErrorMessage(
-                  mf,
-                  `Unable to find a solution for "${fn}".`
-                );
+              return null;
+            }
+            fn = `${expandedLHS}=${expandedRHS}`;
+            //fn = `${expandedLHS}=${expandedRHS}`;
+            fn = Utility.insertProductSign(fn, self.variable, plot.defines);
+
+            let res = null;
+            //fn = fn.replaceAll(dec, "U");
+
+            if (expandedLHS == "U" && expandedRHS.indexOf("U") === -1) {
+              res = expandedRHS;
+            }
+
+            if (expandedRHS == "U" && expandedLHS.indexOf("U") === -1) {
+              res = expandedLHS;
+            }
+
+            if (!res) {
+              //need to account for nerdamer's inability to deal with polynomials
+              // whose abs is <1 (with the exception of 0.5)
+
+              let poly = math
+                .simplify(`${expandedLHS}-${expandedRHS}`)
+                .toString();
+              let deg_of_poly = math.abs(
+                parseFloat(
+                  math.simplify(
+                    nerdamer(`deg(${poly},${self.variable})`).toString()
+                  )
+                )
+              );
+              if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
                 Utility.progressWait(false);
+                return false;
+              }
+
+              var solution;
+
+              try {
+                Utility.progressWait();
+                solution = await Static.solveFor(fn, "U", self.variable);
+                Utility.progressWait(false);
+                if (!solution.length) {
+                  const mf = $("#fnDlg_function")[0];
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Unable to find a solution for "${fn}".`
+                  );
+                  Utility.progressWait(false);
+                  return;
+                }
+              } catch (error) {
+                console.log(error);
+                Utility.progressWait(false);
+              }
+              res = solution[0];
+            }
+            if (res) {
+              try {
+                if (res.indexOf(",") !== -1) {
+                  const sltns = res.replaceAll(",", ", ");
+                  const _res = res.split(",");
+                  if (_res[0] === "0" && _res[1] !== "0") {
+                    res = _res[1];
+                  } else {
+                    res = _res[0];
+                  }
+                  if (_res[0] !== "0") {
+                    Utility.alert(
+                      `The solutions for the definition of "${dec}" are [ ${sltns} ].\nThe first solution, "${res}", is used.`,
+                      "",
+                      "multiple_solution"
+                    );
+                  }
+                }
+                res = res.replace("U", dec);
+                if (res.indexOf("U") !== -1) {
+                  Utility.progressWait(false);
+                  return false; //failed to force definition
+                }
+                if (plot.defines.getDefine(dec)) {
+                  alert(
+                    `You are attempting to re-define ${dec}. Redefinition is not permitted.`
+                  );
+                  Utility.progressWait(false);
+                  return;
+                }
+
+                /* $(window).trigger("defineAdded", [
+                  dec,
+                  math.simplify(res, {}, { exactFractions: false }).toString(),
+                ]); */
+
+                await plot.defines.addDefine(
+                  dec,
+                  math.simplify(res, {}, { exactFractions: false }).toString()
+                );
+
+                Utility.progressWait(false);
+                return true;
+              } catch (error) {
+                console.log(error);
                 return;
               }
-            } catch (error) {
-              console.log(error);
-              Utility.progressWait(false);
+
+              //////////////
             }
-            res = solution[0];
-          }
-          if (res) {
-            //res = `U=${res}`;
-            //console.log(res);
-            if (res.indexOf(",") !== -1) {
-              const sltns = res.replaceAll(",", ", ");
-              const _res = res.split(",");
-              if (_res[0] === "0" && _res[1] !== "0") {
-                res = _res[1];
-              } else {
-                res = _res[0];
-              }
-              if (_res[0] !== "0") {
-                Utility.alert(
-                  `The solutions for the definition of "${dec}" are [ ${sltns} ].\nThe first solution, "${res}", is used.`,
-                  "",
-                  "multiple_solution"
-                );
-              }
-            }
-            res = res.replace("U", dec);
-            if (res.indexOf("U") !== -1) {
-              Utility.progressWait(false);
-              return false; //failed to force definition
-            }
-            if (plot.defines.getDefine(dec)) {
-              alert(
-                `You are attempting to re-define ${dec}. Redefinition is not permitted.`
-              );
-              Utility.progressWait(false);
-              return;
-            }
-            $(window).trigger("defineAdded", [
-              dec,
-              math.simplify(res, {}, { exactFractions: false }).toString(),
-            ]);
             Utility.progressWait(false);
-            return true;
+            return false;
+          } catch (error) {
+            console.log(error);
+            return false;
           }
-          Utility.progressWait(false);
-          return false;
         }
         //console.log(456)
         if ($("#fnDlg_numberOfPoints").val() < 2) {
@@ -1740,7 +1728,7 @@ class MFunctionDlg {
                   return;
                 }
                 arr = ["y", solution[0].replaceAll("abs", "")];
-                g_solution_arr = solution;
+                Static.g_solution_arr = solution;
 
                 fnDlgFunctionVal = `y=${arr[1]}`;
               } else {
@@ -1878,30 +1866,40 @@ class MFunctionDlg {
                 let m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
                 if (m_lhs_fnDec) {
                   if (!plot.defines.getDefine(m_lhs_fnDec)) {
-                    if (
-                      self.variable !== "y" &&
-                      fnDlgFunctionVal.indexOf("y") !== -1
-                    ) {
-                      // alert(
-                      //   `Cannot use "y" in this context. It is reserved for use as the independent variable.`
-                      // );
-                      Utility.displayErrorMessage(
-                        mf,
-                        `Cannot use "y" in this context. It is reserved for use as the independent variable.`
-                      );
-                      Utility.progressWait(false);
-                      return;
-                    }
+                    try {
+                      if (
+                        self.variable !== "y" &&
+                        fnDlgFunctionVal.indexOf("y") !== -1
+                      ) {
+                        // alert(
+                        //   `Cannot use "y" in this context. It is reserved for use as the independent variable.`
+                        // );
+                        Utility.displayErrorMessage(
+                          mf,
+                          `Cannot use "y" in this context. It is reserved for use as the independent variable.`
+                        );
+                        Utility.progressWait(false);
+                        return;
+                      }
 
-                    if (forceDefine(fnDlgFunctionVal, m_lhs_fnDec)) {
-                      fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
-                      arr = [m_lhs];
-                    } else {
-                      Utility.displayErrorMessage(
-                        mf,
-                        `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
+                      const fd = await forceDefine(
+                        fnDlgFunctionVal,
+                        m_lhs_fnDec
                       );
-                      Utility.progressWait(false);
+
+                      if (fd) {
+                        fnDlgFunctionVal = m_lhs = m_lhs_fnDec;
+                        arr = [m_lhs];
+                      } else {
+                        Utility.displayErrorMessage(
+                          mf,
+                          `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
+                        );
+                        Utility.progressWait(false);
+                        return;
+                      }
+                    } catch (error) {
+                      console.log(error);
                       return;
                     }
                   } else {
@@ -2220,45 +2218,50 @@ class MFunctionDlg {
               self.variable
             );
             if (!dec) {
-              //console.time("timer");
-              self.expandedFn =
-                self.fn =
-                fnDlgFunctionVal =
-                  plot.defines.expandDefines(
-                    fnDlgFunctionVal,
-                    self.variable,
-                    false
-                  );
-              //console.timeEnd("timer");
-              if (!self.expandedFn) {
-                Utility.progressWait(false);
-                return;
-              }
-              if (typeof self.expandedFn == "object") {
-                console.log("do relation");
-                const relationFn = self.expandedFn.fn;
-                self.expandedFn = self.fn = fnDlgFunctionVal = null;
-
-                const { lowerLimit, upperLimit, numOfPoints, variable } = self;
-
-                const samples = Utility.inverseRelationSamples(
-                  relationFn,
-                  lowerLimit,
-                  upperLimit,
-                  numOfPoints,
-                  variable,
-                  plot
-                );
-
-                if (samples && samples.length) {
-                  const c = new MyCurve(
-                    Utility.generateCurveName(plot, "Inv_")
-                  );
-                  c.setSamples(samples);
-                  c.attach(plot);
+              try {
+                //console.time("timer");
+                self.expandedFn =
+                  self.fn =
+                  fnDlgFunctionVal =
+                    await plot.defines.expandDefines(
+                      fnDlgFunctionVal,
+                      self.variable,
+                      false
+                    );
+                //console.timeEnd("timer");
+                if (!self.expandedFn) {
+                  Utility.progressWait(false);
+                  return;
                 }
-                Utility.progressWait(false);
-                return;
+                if (typeof self.expandedFn == "object") {
+                  //console.log("do relation");
+                  const relationFn = self.expandedFn.fn;
+                  self.expandedFn = self.fn = fnDlgFunctionVal = null;
+
+                  const { lowerLimit, upperLimit, numOfPoints, variable } =
+                    self;
+
+                  const samples = Utility.inverseRelationSamples(
+                    relationFn,
+                    lowerLimit,
+                    upperLimit,
+                    numOfPoints,
+                    variable,
+                    plot
+                  );
+
+                  if (samples && samples.length) {
+                    const c = new MyCurve(
+                      Utility.generateCurveName(plot, "Inv_")
+                    );
+                    c.setSamples(samples);
+                    c.attach(plot);
+                  }
+                  Utility.progressWait(false);
+                  return;
+                }
+              } catch (error) {
+                console.log(error);
               }
             } else {
               self.expandedFn = self.fn = plot.defines.expandDefines(
@@ -2429,11 +2432,11 @@ class MFunctionDlg {
           try {
             self.lowerLimit = $("#fnDlg_lowerLimit")[0].getValue("ascii-math");
             //handleCoeffs(self.lowerLimit);
-            self.lowerLimit = math.evaluate(
-              replaceParameterWith_1(
-                plot.defines.expandDefines(self.lowerLimit, self.variable)
-              )
+            const lw = await plot.defines.expandDefines(
+              self.lowerLimit,
+              self.variable
             );
+            self.lowerLimit = math.evaluate(replaceParameterWith_1(lw));
             if (self.lowerLimit == undefined) {
               Utility.alert("Please enter a valid lower(x) limit.");
               $("#settingsButton").click();
@@ -2481,11 +2484,11 @@ class MFunctionDlg {
           try {
             self.upperLimit = $("#fnDlg_upperLimit")[0].getValue("ascii-math");
             //handleCoeffs(self.upperLimit);
-            self.upperLimit = math.evaluate(
-              replaceParameterWith_1(
-                plot.defines.expandDefines(self.upperLimit, self.variable)
-              )
+            const ul = await plot.defines.expandDefines(
+              self.upperLimit,
+              self.variable
             );
+            self.upperLimit = math.evaluate(replaceParameterWith_1(ul));
             if (self.upperLimit == undefined) {
               Utility.alert("Please enter a valid upper(x) limit.");
               $("#settingsButton").click();
@@ -2691,7 +2694,7 @@ class MFunctionDlg {
           ) {
             const fn = negativeRootFn();
             if (Static.negativeRoot && fn && fn.length) {
-              g_solution_arr = null;
+              Static.g_solution_arr = null;
               const title = self.title;
               for (let i = 0; i < fn.length; i++) {
                 self.fn = self.expandedFn = fn[i];
@@ -2743,9 +2746,9 @@ class MFunctionDlg {
             }
           }
 
-          if (g_solution_arr) {
-            for (let i = 1; i < g_solution_arr.length; i++) {
-              const m_fn = g_solution_arr[i].toString();
+          if (Static.g_solution_arr) {
+            for (let i = 1; i < Static.g_solution_arr.length; i++) {
+              const m_fn = Static.g_solution_arr[i].toString();
               if (m_fn.indexOf("|") !== -1 || m_fn.indexOf("i") !== -1) {
                 continue;
               }
