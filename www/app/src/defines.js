@@ -515,20 +515,19 @@ class Defines {
                   "failedInverse"
                 );
                 return solution;
-              }
-              ////
-              else {
-                solution = solution[0].replaceAll(variable, `(${arg})`);
+              } else {
+                for (let i = 0; i < solution.length; i++) {
+                  solution[i] = solution[i].replaceAll(variable, `(${arg})`);
+                  str = str.replace(dec, `(${solution[i]})`);
 
-                str = str.replace(dec, `(${solution})`);
+                  if (solution[i]) {
+                    obj = Utility.getInverseDeclaration(str, _index);
+                  } else {
+                    _index += str.indexOf(dec) + 8;
+                    obj = Utility.getInverseDeclaration(str, _index);
+                  }
+                }
               }
-              //console.log(solution);
-            } /////
-            if (solution) {
-              obj = Utility.getInverseDeclaration(str, _index);
-            } else {
-              _index += str.indexOf(dec) + 8;
-              obj = Utility.getInverseDeclaration(str, _index);
             }
 
             n++;
