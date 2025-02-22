@@ -69,11 +69,15 @@ Static.mToPoints = function (
     // filtering out all points outside of
     // the bounding rectangle
 
-    for (i = from; i <= to; i++) {
+    let x, y;
+
+    for (let i = from; i <= to; i++) {
       var sample = series.sample(i);
 
-      var x = xMap.transform(sample.x);
-      var y = yMap.transform(sample.y);
+      // console.log(series.size().toString());
+
+      x = xMap.transform(sample.x);
+      y = yMap.transform(sample.y);
 
       if (
         x >= boundingRect.left() &&
@@ -82,10 +86,8 @@ Static.mToPoints = function (
         y <= boundingRect.bottom()
       ) {
         if (round) {
-          //                    points.push({x:Math.round( x ), y:Math.round( y )});
           points.push(new Misc.Point(Math.round(x), Math.round(y)));
         } else {
-          //                    points.push({x:x, y:y});
           points.push(new Misc.Point(x, y));
         }
         numPoints++;
@@ -105,9 +107,9 @@ Static.mToPoints = function (
       // }
 
       var x = xMap.transform(sample.x) - 1; //minus 1 why
-      if (x < 0) x = 0;
+      // if (x < 0) x = 0;
       var y = yMap.transform(sample.y) - 1; //minus 1 why
-      if (y < 0) y = 0;
+      // if (y < 0) y = 0;
 
       if (round) {
         //                points.push({x:Math.round( x ), y:Math.round( y )});
@@ -211,6 +213,23 @@ class PointMapper {
      * @returns {Array<Misc.Point>} Translated polygon
      */
     this.toPolygonF = function (xMap, yMap, series, from, to) {
+      // console.log(xMap.s1(), xMap.s2());
+      // console.log(yMap.s1(), yMap.s2());
+      // console.log("");
+      // const left = xMap.s1();
+      // const top = yMap.s2();
+      // const w = xMap.s2() - xMap.s1();
+      // const h = yMap.s2() - yMap.s1();
+
+      // console.log(left, top, w, h);
+
+      // const boundingRect = new Misc.Rect();
+      // boundingRect.setLeft(xMap.p1());
+      // boundingRect.setRight(xMap.p2());
+      // boundingRect.setBottom(yMap.p1());
+      // boundingRect.setTop(yMap.p2());
+      // console.log(boundingRect.toString());
+
       var polyline = [];
 
       if (m_flags & PointMapper.TransformationFlag.WeedOutPoints) {
@@ -237,6 +256,7 @@ class PointMapper {
         if (m_flags & PointMapper.TransformationFlag.RoundPoints) {
           polyline = Static.mToPoints(
             new Misc.Rect(0.0, 0.0, -1.0, -1),
+            //boundingRect,
             xMap,
             yMap,
             series,
@@ -247,6 +267,7 @@ class PointMapper {
         } else {
           polyline = Static.mToPoints(
             new Misc.Rect(0.0, 0.0, -1.0, -1),
+            //boundingRect,
             xMap,
             yMap,
             series,
