@@ -2863,7 +2863,7 @@ class Utility {
     return null;
   }
 
-  static getFunctionDeclaration(str) {
+  static getFunctionDeclaration(str, variable = "x") {
     //f(x)
     let m_str = Utility.purgeAndMarkKeywords(str);
     for (let i = 3; i < m_str.length; i++) {
@@ -2871,7 +2871,8 @@ class Utility {
         m_str[i] === ")" &&
         m_str[i - 2] === "(" &&
         Utility.isAlpha(m_str[i - 1]) &&
-        Utility.isAlpha(m_str[i - 3])
+        Utility.isAlpha(m_str[i - 3]) &&
+        m_str[i - 1] === variable
       ) {
         const res = m_str.substring(i - 3, i + 1);
         Utility.replaceKeywordMarkers(m_str);
@@ -3112,6 +3113,9 @@ class Utility {
   }
 
   static discontinuity1(exp, lower, upper, indepVar) {
+    if (!exp || exp.length === 0) {
+      return [];
+    }
     //Utility.progressWait();
     //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
