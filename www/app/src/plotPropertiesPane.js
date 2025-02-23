@@ -302,12 +302,12 @@ class PlotPropertiesPane extends PropertiesPane {
       if (e.data == "insertLineBreak" && mf.caretPoint) {
         //$("#executeButton").trigger("mousedown"); //show wait cursor
         //$("body").trigger("click");
-        Utility.progressWait();
+        //Utility.progressWait();
       }
     });
 
     $("#executeButton").on("mousedown", () => {
-      Utility.progressWait();
+      //Utility.progressWait();
     });
 
     $("#executeButton").on("mouseleave", () => {

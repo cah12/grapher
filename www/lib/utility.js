@@ -290,7 +290,9 @@ class PromptDlg {
  */
 
 class Utility {
-  static progressWait(on = true) {
+  static progressWait(on = true) {}
+
+  static progressWait2(on = true) {
     if (Utility.progressWaitOnCount < 0) {
       Utility.progressWaitOnCount = 0;
     }
@@ -2318,7 +2320,7 @@ class Utility {
 
     //try {
     try {
-      Utility.progressWait();
+      //Utility.progressWait();
       solution = await Static.solveFor(_defn, "y", variable);
       Utility.progressWait(false);
       if (!solution.length) {
@@ -3085,7 +3087,7 @@ class Utility {
   }
 
   static async discontinuity(exp, lower, upper, indepVar) {
-    Utility.progressWait();
+    //Utility.progressWait();
     let result = [];
     if (Static.imagePath === "images/") {
       result = this.discontinuity1(exp, lower, upper, indepVar);
@@ -3110,7 +3112,7 @@ class Utility {
   }
 
   static discontinuity1(exp, lower, upper, indepVar) {
-    Utility.progressWait();
+    //Utility.progressWait();
     //console.time("discontinuity");
     function bindEquationEditorAngleModeChanged() {
       $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
@@ -4176,6 +4178,7 @@ class Utility {
     while (
       str[0] === "(" &&
       str[str.length - 1] === ")" &&
+      str.indexOf("/") == -1 &&
       str.indexOf("^") == -1
     ) {
       str = str.replace("(", "").replace(/.$/, "");
@@ -6089,7 +6092,8 @@ class Utility {
       const right = doParametize(arr2[1]);
       const result = `${left}=${right}{${arr[1]}`;
       return result;
-    } else {
+    }
+    if (str.indexOf("{") != -1 && str.indexOf("}") != -1) {
       const arr = str.split("{");
       if (arr.length != 2) {
         return str;

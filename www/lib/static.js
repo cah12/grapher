@@ -485,7 +485,7 @@ Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v, indepVar = "x") {
-  Utility.progressWait();
+  //Utility.progressWait();
   // exp = Utility.insertProductSign(exp, indepVar);
   if (exp.indexOf("=") != -1) {
     const arr = exp.split("=");
@@ -520,7 +520,7 @@ Static.solveFor = function (exp, v, indepVar = "x") {
     if (Array.isArray(solution)) {
       for (let i = 0; i < solution.length; i++) {
         const sln = solution[i].toString();
-        if (sln.indexOf("i") == -1 /*  && sln.indexOf("abs") == -1 */) {
+        if (sln.indexOf("i") != -1 /*  && sln.indexOf("abs") == -1 */) {
           result.push(solution[i].toString().replaceAll("abs", ""));
         }
       }

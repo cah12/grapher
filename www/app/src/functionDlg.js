@@ -771,12 +771,13 @@ class MFunctionDlg {
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
         Static.g_solution_arr = null;
+        Utility.progressWait2();
 
         if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
           const mf = $("#fnDlg_function")[0];
           mf.setValue("?....?");
           Utility.displayErrorMessage(mf, `You made an invalid entry.`);
-          Utility.progressWait(false);
+          Utility.progressWait2(false);
           return;
         }
 
@@ -792,7 +793,7 @@ class MFunctionDlg {
               ind + 1
             }.`
           );
-          Utility.progressWait(false);
+          Utility.progressWait2(false);
           return;
         }
 
@@ -811,7 +812,7 @@ class MFunctionDlg {
               mf,
               `"${fnDlgFunctionVal}" is an invalid function.`
             );
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return;
           }
         } */
@@ -840,7 +841,7 @@ class MFunctionDlg {
           fn = fn.replaceAll(dec, "U");
           const arr = fn.split("=");
           if (arr.length !== 2) {
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false; //failed to force definition
           }
 
@@ -851,7 +852,7 @@ class MFunctionDlg {
               false
             );
             if (!expandedRHS) {
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return null;
             }
 
@@ -861,7 +862,7 @@ class MFunctionDlg {
               false
             );
             if (!expandedLHS) {
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return null;
             }
             fn = `${expandedLHS}=${expandedRHS}`;
@@ -894,28 +895,28 @@ class MFunctionDlg {
                 )
               );
               if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
 
               var solution;
 
               try {
-                Utility.progressWait();
+                //Utility.progressWait();
                 solution = await Static.solveFor(fn, "U", self.variable);
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 if (!solution.length) {
                   const mf = $("#fnDlg_function")[0];
                   Utility.displayErrorMessage(
                     mf,
                     `Unable to find a solution for "${fn}".`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
               } catch (error) {
                 console.log(error);
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
               }
               res = solution[0];
             }
@@ -939,14 +940,14 @@ class MFunctionDlg {
                 }
                 res = res.replace("U", dec);
                 if (res.indexOf("U") !== -1) {
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false; //failed to force definition
                 }
                 if (plot.defines.getDefine(dec)) {
                   alert(
                     `You are attempting to re-define ${dec}. Redefinition is not permitted.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
 
@@ -960,7 +961,7 @@ class MFunctionDlg {
                   math.simplify(res, {}, { exactFractions: false }).toString()
                 );
 
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return true;
               } catch (error) {
                 console.log(error);
@@ -969,7 +970,7 @@ class MFunctionDlg {
 
               //////////////
             }
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
           } catch (error) {
             console.log(error);
@@ -1029,14 +1030,14 @@ class MFunctionDlg {
                 mf,
                 `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
               );
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return;
             }
           }
 
           if (!fnDlgFunctionVal) {
             alert("Invalid entry");
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
           }
 
@@ -1060,7 +1061,7 @@ class MFunctionDlg {
               mf,
               `Only "less than or equal" (i.e <=) permitted in defining the domain.`
             );
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return;
           }
           let variablePlusExpanded = null;
@@ -1081,7 +1082,7 @@ class MFunctionDlg {
                   mf,
                   `The domain, ${domainRangeRestriction}, is improperly declared.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
 
@@ -1105,7 +1106,7 @@ class MFunctionDlg {
                   mf,
                   `The domain, ${domainRangeRestriction}, is improperly declared. Try defining "${match[0]}".`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             } catch (error) {
@@ -1127,7 +1128,7 @@ class MFunctionDlg {
               mf,
               `The domain, ${domainRangeRestriction}, is improperly declared.`
             );
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
           }
 
@@ -1171,7 +1172,7 @@ class MFunctionDlg {
                     mf,
                     `Improperly declared domain. Expected "${variable}" as the variable.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 }
 
@@ -1191,7 +1192,7 @@ class MFunctionDlg {
                     mf,
                     `Invalid domain declaration. Lower limit must be less than the upper limit.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 }
                 if (variablePlusExpanded && variablePlusExpanded.length > 1) {
@@ -1199,21 +1200,21 @@ class MFunctionDlg {
 
                   let solution;
                   try {
-                    Utility.progressWait();
+                    //Utility.progressWait();
                     solution = await Static.solveFor(fn, variable, variable);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     if (!solution.length) {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
                         `Unable to find a solution for "${fn}".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                   } catch (error) {
                     console.log(error);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                   }
 
                   let sol;
@@ -1248,21 +1249,21 @@ class MFunctionDlg {
                   //solution = eq.solveFor(variable);
 
                   try {
-                    Utility.progressWait();
+                    //Utility.progressWait();
                     solution = await Static.solveFor(fn, variable, variable);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     if (!solution.length) {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
                         `Unable to find a solution for "${fn}".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                   } catch (error) {
                     console.log(error);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                   }
 
                   sol;
@@ -1453,7 +1454,7 @@ class MFunctionDlg {
                     mf,
                     `Unable to resolve lower limit, ${dmLimit}, within the declared domain.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 }
                 dmLimit = domainRangeRestriction[1];
@@ -1471,7 +1472,7 @@ class MFunctionDlg {
                     mf,
                     `Unable to resolve upper limit, ${dmLimit}, within the declared domain.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 }
                 if (
@@ -1482,10 +1483,10 @@ class MFunctionDlg {
                     mf,
                     `Upper limit must be greater than Lower limit.`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 } ///
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return true;
               } catch (error) {
                 console.log(error);
@@ -1499,12 +1500,12 @@ class MFunctionDlg {
                   mf,
                   `Improperly declared domain. Expected "${self.variable}" as the variable.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
 
               if (!handleDomain()) {
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
               if (
@@ -1515,7 +1516,7 @@ class MFunctionDlg {
                   mf,
                   `Unable to resolve the declared domain.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             } else {
@@ -1524,7 +1525,7 @@ class MFunctionDlg {
                   mf,
                   `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
               handleDomain();
@@ -1536,7 +1537,7 @@ class MFunctionDlg {
                   mf,
                   `Unable to resolve the declared domain.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             }
@@ -1587,7 +1588,7 @@ class MFunctionDlg {
                   mf,
                   `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
               if (!lhs) {
@@ -1598,7 +1599,7 @@ class MFunctionDlg {
                   mf,
                   `Failed to retrieve a valid define for expanding "${arr[0]}".`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
               rhs = await plot.defines.expandDefines(
@@ -1611,7 +1612,7 @@ class MFunctionDlg {
                   mf,
                   `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
               if (!rhs) {
@@ -1622,7 +1623,7 @@ class MFunctionDlg {
                   mf,
                   `Failed to retrieve a valid define for expanding "${arr[1]}".`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
               fnDlgFunctionVal = `${lhs}=${rhs}`;
@@ -1635,7 +1636,7 @@ class MFunctionDlg {
                   mf,
                   `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
 
@@ -1703,30 +1704,30 @@ class MFunctionDlg {
                   let solution; // = eq.solveFor("y");
 
                   try {
-                    Utility.progressWait();
+                    //Utility.progressWait();
                     solution = await Static.solveFor(
                       fnDlgFunctionVal,
                       "y",
                       variable
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     if (!solution.length) {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
                         `Unable to find a solution for "${fnDlgFunctionVal}".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                   } catch (error) {
                     console.log(error);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     Utility.displayErrorMessage(
                       mf,
                       `Unable to find a solution for "${fnDlgFunctionVal}".`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
                   arr = ["y", solution[0].replaceAll("abs", "")];
@@ -1738,7 +1739,7 @@ class MFunctionDlg {
                     mf,
                     `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
               }
@@ -1772,7 +1773,7 @@ class MFunctionDlg {
               math.parse(arr[0]);
             } catch (error) {
               Utility.displayErrorMessage(mf, error.message);
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return;
             }
 
@@ -1781,7 +1782,7 @@ class MFunctionDlg {
                 math.parse(arr[1]);
               } catch (error) {
                 Utility.displayErrorMessage(mf, error.message);
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return;
               }
             }
@@ -1796,7 +1797,7 @@ class MFunctionDlg {
                 mf,
                 "Improrper declaration. Try adding 'x=' to the start of the equation"
               );
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return false;
             }
             self.xIsDependentVariable = true;
@@ -1825,7 +1826,7 @@ class MFunctionDlg {
                       mf,
                       `Cannot use "y" in this context. It is reserved for use as the independent variable.`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
 
@@ -1841,7 +1842,7 @@ class MFunctionDlg {
                       mf,
                       `Unable to resolve for "${m_rhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
                 }
@@ -1867,7 +1868,7 @@ class MFunctionDlg {
                       mf,
                       `Tried but failed to define "${m_rhs_fnDec}".`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
                   arr[1] = m_rhs;
@@ -1893,7 +1894,7 @@ class MFunctionDlg {
                           mf,
                           `Cannot use "y" in this context. It is reserved for use as the independent variable.`
                         );
-                        Utility.progressWait(false);
+                        Utility.progressWait2(false);
                         return;
                       }
 
@@ -1910,7 +1911,7 @@ class MFunctionDlg {
                           mf,
                           `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                         );
-                        Utility.progressWait(false);
+                        Utility.progressWait2(false);
                         return;
                       }
                     } catch (error) {
@@ -1929,7 +1930,7 @@ class MFunctionDlg {
                         mf,
                         `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                   }
@@ -1962,7 +1963,7 @@ class MFunctionDlg {
                         mf,
                         `Tried but failed to define "${m_lhs_fnDec}".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                     arr[0] = m_lhs;
@@ -1972,45 +1973,52 @@ class MFunctionDlg {
                 }
               }
               if (m_lhs !== "0" && fnDlgFunctionVal !== m_lhs) {
-                m_lhs = doExpandDefinesAndAdjustLogBase(
-                  m_lhs,
-                  self.variable,
-                  false
-                );
-                if (!m_lhs) {
-                  // alert(
-                  //   `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
-                  // );
-                  Utility.displayErrorMessage(
-                    mf,
-                    `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                try {
+                  m_lhs = await doExpandDefinesAndAdjustLogBase(
+                    m_lhs,
+                    self.variable,
+                    false
                   );
-                  Utility.progressWait(false);
+                  if (!m_lhs) {
+                    // alert(
+                    //   `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                    // );
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                    );
+                    Utility.progressWait2(false);
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
                   return;
                 }
               }
 
               m_rhs = arr[1];
               if (arr.length == 2) {
-                m_rhs = doExpandDefinesAndAdjustLogBase(
-                  m_rhs,
-                  self.variable,
-                  false
-                );
-                if (!m_rhs /*  && m_lhs !== "0" */) {
-                  // alert(
-                  //   `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
-                  // );
-                  Utility.displayErrorMessage(
-                    mf,
-                    `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                try {
+                  m_rhs = await doExpandDefinesAndAdjustLogBase(
+                    m_rhs,
+                    self.variable,
+                    false
                   );
-                  Utility.progressWait(false);
+                  if (!m_rhs /*  && m_lhs !== "0" */) {
+                    // alert(
+                    //   `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                    // );
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
+                    );
+                    Utility.progressWait2(false);
+                    return;
+                  }
+                } catch (error) {
+                  console.log(error);
                   return;
                 }
-
-                //fnDlgFunctionVal = `${m_lhs}=${m_rhs}`;
-                //arr = fnDlgFunctionVal.split("=");
               }
 
               if (arr.length == 2) {
@@ -2023,25 +2031,25 @@ class MFunctionDlg {
                   fnDlgFunctionVal = fnDlgFunctionVal.replaceAll(dec, "U");
                   var solution;
                   try {
-                    Utility.progressWait();
+                    //Utility.progressWait();
                     solution = await Static.solveFor(
                       fnDlgFunctionVal,
                       "U",
                       variable
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     if (!solution.length) {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
                         `Unable to find a solution for "${fnDlgFunctionVal}".`
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       return;
                     }
                   } catch (error) {
                     console.log(error);
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                   }
 
                   arr = [solution[0]];
@@ -2055,7 +2063,7 @@ class MFunctionDlg {
                       mf,
                       `You are attempting to re-define ${dec}. Redefinition is not permitted.`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
                   $(window).trigger("defineAdded", [dec, fnDlgFunctionVal]);
@@ -2068,7 +2076,7 @@ class MFunctionDlg {
                       mf,
                       `The equation, ${arr[0]}=${arr[1]}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
                   if (m_lhs.length == 1 && m_rhs.indexOf("y") == -1) {
@@ -2081,25 +2089,25 @@ class MFunctionDlg {
                       _v = "x";
                     }
                     try {
-                      Utility.progressWait();
+                      //Utility.progressWait();
                       solution = await Static.solveFor(
                         fnDlgFunctionVal,
                         _v,
                         variable
                       );
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                       if (!solution.length) {
                         const mf = $("#fnDlg_function")[0];
                         Utility.displayErrorMessage(
                           mf,
                           `Unable to find a solution for "${fnDlgFunctionVal}".`
                         );
-                        Utility.progressWait(false);
+                        Utility.progressWait2(false);
                         return;
                       }
                     } catch (error) {
                       console.log(error);
-                      Utility.progressWait(false);
+                      Utility.progressWait2(false);
                     }
                     arr = [solution[0]];
                   }
@@ -2109,123 +2117,125 @@ class MFunctionDlg {
             }
           }
           if (arr.length == 2) {
-            if (arr[0].length != 1) {
-              if (
-                arr[0].length != 4 ||
-                arr[0].indexOf("(") == -1 ||
-                arr[0].indexOf(")") == -1
-              ) {
-                // Utility.alert(
-                //   "Invalid function declaration.\nExpected something of the form 'f(x)=X^2'."
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Invalid function declaration.\nExpected something of the form 'f(x)=X^2'.`
-                );
-                Utility.progressWait(false);
-                return false;
-              }
-              let errorType = plot.defines.validateDefineName(arr[0]).errorType;
-              if (errorType == Defines.DefineError.start) {
-                alert(
-                  'Define name,"' +
-                    arr[0] +
-                    '", must start with alpha character.'
-                );
-                Utility.progressWait(false);
-                return false;
-              }
-              if (errorType == Defines.DefineError.contain) {
-                if (arr[1].indexOf("y") == -1) {
+            try {
+              if (arr[0].length != 1) {
+                if (
+                  arr[0].length != 4 ||
+                  arr[0].indexOf("(") == -1 ||
+                  arr[0].indexOf(")") == -1
+                ) {
+                  // Utility.alert(
+                  //   "Invalid function declaration.\nExpected something of the form 'f(x)=X^2'."
+                  // );
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Invalid function declaration.\nExpected something of the form 'f(x)=X^2'.`
+                  );
+                  Utility.progressWait2(false);
+                  return false;
+                }
+                let errorType = plot.defines.validateDefineName(
+                  arr[0]
+                ).errorType;
+                if (errorType == Defines.DefineError.start) {
                   alert(
                     'Define name,"' +
                       arr[0] +
-                      '", contains, or is part of, the earlier define.'
+                      '", must start with alpha character.'
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return false;
                 }
-                errorType = 0;
-              }
-              if (errorType == Defines.DefineError.keyword) {
-                alert(
-                  'Define name,"' +
-                    arr[0] +
-                    '", contains "' +
-                    error.name +
-                    '" keyword!'
-                );
-                Utility.progressWait(false);
-                return false;
-              }
-              if (errorType != Defines.DefineError.noError) {
-                alert(`An error exist within the defines.`);
-                Utility.progressWait(false);
-                return false;
-              }
-
-              ///////////////
-              let m_arr = fnDlgFunctionVal.split("=");
-              if (m_arr.length == 2 && m_arr[1].indexOf("y") !== -1) {
-                m_arr[0] = doExpandDefinesAndAdjustLogBase(
-                  m_arr[0],
-                  self.variable
-                );
-                var fn = `${m_arr[0]}=${m_arr[1]}`;
-                var solution;
-
-                let _v = "y";
-                if (self.variable == "y") {
-                  _v = "x";
+                if (errorType == Defines.DefineError.contain) {
+                  if (arr[1].indexOf("y") == -1) {
+                    alert(
+                      'Define name,"' +
+                        arr[0] +
+                        '", contains, or is part of, the earlier define.'
+                    );
+                    Utility.progressWait2(false);
+                    return false;
+                  }
+                  errorType = 0;
+                }
+                if (errorType == Defines.DefineError.keyword) {
+                  alert(
+                    'Define name,"' +
+                      arr[0] +
+                      '", contains "' +
+                      error.name +
+                      '" keyword!'
+                  );
+                  Utility.progressWait2(false);
+                  return false;
+                }
+                if (errorType != Defines.DefineError.noError) {
+                  alert(`An error exist within the defines.`);
+                  Utility.progressWait2(false);
+                  return false;
                 }
 
-                try {
-                  Utility.progressWait();
+                ///////////////
+                let m_arr = fnDlgFunctionVal.split("=");
+                if (m_arr.length == 2 && m_arr[1].indexOf("y") !== -1) {
+                  m_arr[0] = await doExpandDefinesAndAdjustLogBase(
+                    m_arr[0],
+                    self.variable
+                  );
+                  var fn = `${m_arr[0]}=${m_arr[1]}`;
+                  var solution;
+
+                  let _v = "y";
+                  if (self.variable == "y") {
+                    _v = "x";
+                  }
+
+                  //Utility.progressWait();
                   solution = await Static.solveFor(fn, _v, variable);
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   if (!solution.length) {
                     const mf = $("#fnDlg_function")[0];
                     Utility.displayErrorMessage(
                       mf,
                       `Unable to find a solution for "${fn}".`
                     );
-                    Utility.progressWait(false);
+                    Utility.progressWait2(false);
                     return;
                   }
-                } catch (error) {
-                  console.log(error);
-                  Utility.progressWait(false);
+
+                  arr[0] = "y";
+                  arr[1] = solution[0].toString();
+
+                  fnDlgFunctionVal = arr[1];
                 }
 
-                arr[0] = "y";
-                arr[1] = solution[0].toString();
-
-                fnDlgFunctionVal = arr[1];
-              }
-              ////////////////
-              fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
-                arr[1],
-                self.variable
-              );
-              if (!fnDlgFunctionVal) {
-                //alert(`Failed to successfully expand ${arr[1]}`);
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to successfully expand ${arr[1]}`
+                fnDlgFunctionVal = await doExpandDefinesAndAdjustLogBase(
+                  arr[1],
+                  self.variable
                 );
-                Utility.progressWait(false);
-                return;
-              }
+                if (!fnDlgFunctionVal) {
+                  //alert(`Failed to successfully expand ${arr[1]}`);
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to successfully expand ${arr[1]}`
+                  );
+                  Utility.progressWait2(false);
+                  return;
+                }
 
-              defineName = arr[0];
-              defineValue = fnDlgFunctionVal;
-            } else {
-              fnDlgFunctionVal = doExpandDefinesAndAdjustLogBase(
-                arr[1],
-                self.variable
-              );
+                defineName = arr[0];
+                defineValue = fnDlgFunctionVal;
+              } else {
+                fnDlgFunctionVal = await doExpandDefinesAndAdjustLogBase(
+                  arr[1],
+                  self.variable
+                );
+              }
+            } catch (error) {
+              console.log(error);
+              return;
             }
-          }
+          } /////////////////////c
 
           if (
             arr.length == 1 &&
@@ -2249,7 +2259,7 @@ class MFunctionDlg {
                     );
                 //console.timeEnd("timer");
                 if (!self.expandedFn) {
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
                 if (typeof self.expandedFn == "object") {
@@ -2276,7 +2286,7 @@ class MFunctionDlg {
                     c.setSamples(samples);
                     c.attach(plot);
                   }
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
               } catch (error) {
@@ -2296,7 +2306,7 @@ class MFunctionDlg {
                     mf,
                     `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
                   );
-                  Utility.progressWait(false);
+                  Utility.progressWait2(false);
                   return;
                 }
               } catch (error) {
@@ -2307,80 +2317,92 @@ class MFunctionDlg {
           }
 
           if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-            if (!expanded) {
-              self.expandedFn = doExpandDefinesAndAdjustLogBase(
-                fnDlgFunctionVal,
-                self.variable,
-                false
-              );
-              if (!self.expandedFn) {
-                //alert(`Failed to successfully expand ${fnDlgFunctionVal}`);
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to successfully expand ${fnDlgFunctionVal}`
+            try {
+              if (!expanded) {
+                self.expandedFn = await doExpandDefinesAndAdjustLogBase(
+                  fnDlgFunctionVal,
+                  self.variable,
+                  false
                 );
-                Utility.progressWait(false);
-                return;
-              }
+                if (!self.expandedFn) {
+                  //alert(`Failed to successfully expand ${fnDlgFunctionVal}`);
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to successfully expand ${fnDlgFunctionVal}`
+                  );
+                  Utility.progressWait2(false);
+                  return;
+                }
 
-              if (self.expandedFn.charAt(1) === "'") {
-                $(window).trigger("defineRemoved", arr[0]);
-                plot.defines.removeDefine(arr[0]);
+                if (self.expandedFn.charAt(1) === "'") {
+                  $(window).trigger("defineRemoved", arr[0]);
+                  plot.defines.removeDefine(arr[0]);
 
-                // Utility.alert(
-                //   `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
-                );
-                Utility.progressWait(false);
-                return;
+                  // Utility.alert(
+                  //   `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
+                  // );
+                  Utility.displayErrorMessage(
+                    mf,
+                    `You are attempting to use an unknown derivative on the right-hand-side of the equation.`
+                  );
+                  Utility.progressWait2(false);
+                  return;
+                }
               }
+            } catch (error) {
+              console.log(error);
+              return;
             }
           } else {
             //Parametric function
-            self.expandedFn = null;
-            const obj = Utility.splitParametricFunction(fnDlgFunctionVal);
-            if (!obj) {
-              //alert("Improperrly defined parametric function.");
-              Utility.displayErrorMessage(
-                mf,
-                `Improperrly defined parametric function.`
-              );
-              Utility.progressWait(false);
+            try {
+              self.expandedFn = null;
+              const obj = Utility.splitParametricFunction(fnDlgFunctionVal);
+              if (!obj) {
+                //alert("Improperrly defined parametric function.");
+                Utility.displayErrorMessage(
+                  mf,
+                  `Improperrly defined parametric function.`
+                );
+                Utility.progressWait2(false);
+                return;
+              }
+              let arr = [obj.operand, obj.base];
+              self.expandedParametricFnX =
+                await doExpandDefinesAndAdjustLogBase(
+                  arr[0],
+                  self.variable,
+                  false
+                );
+              if (!self.expandedParametricFnX) {
+                //alert(`Failed to successfully expand ${arr[0]}`);
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to successfully expand ${arr[0]}`
+                );
+                Utility.progressWait2(false);
+                return;
+              }
+              self.expandedParametricFnY =
+                await doExpandDefinesAndAdjustLogBase(
+                  arr[1],
+                  self.variable,
+                  false
+                );
+              if (!self.expandedParametricFnY) {
+                //alert(`Failed to successfully expand ${arr[1]}`);
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to successfully expand ${arr[1]}`
+                );
+                Utility.progressWait2(false);
+                return;
+              }
+            } catch (error) {
+              console.log(error);
               return;
             }
-            let arr = [obj.operand, obj.base];
-            self.expandedParametricFnX = doExpandDefinesAndAdjustLogBase(
-              arr[0],
-              self.variable,
-              false
-            );
-            if (!self.expandedParametricFnX) {
-              //alert(`Failed to successfully expand ${arr[0]}`);
-              Utility.displayErrorMessage(
-                mf,
-                `Failed to successfully expand ${arr[0]}`
-              );
-              Utility.progressWait(false);
-              return;
-            }
-            self.expandedParametricFnY = doExpandDefinesAndAdjustLogBase(
-              arr[1],
-              self.variable,
-              false
-            );
-            if (!self.expandedParametricFnY) {
-              //alert(`Failed to successfully expand ${arr[1]}`);
-              Utility.displayErrorMessage(
-                mf,
-                `Failed to successfully expand ${arr[1]}`
-              );
-              Utility.progressWait(false);
-              return;
-            }
-          }
+          } ///////////////////////c
 
           if (!self.threeD) {
             if (self.expandedFn) {
@@ -2390,7 +2412,7 @@ class MFunctionDlg {
                   mf,
                   `Invalid function. Probably yields infinity.`
                 );
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
               self.coeffs = getCoeffs(self.expandedFn);
@@ -2403,7 +2425,7 @@ class MFunctionDlg {
                   `Number of unknown coefficient cannot be greater than 5.`
                 );
                 $("#cont_variable").show();
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             } else if (
@@ -2431,7 +2453,7 @@ class MFunctionDlg {
                   `Number of unknown coefficient cannot be greater than 5.`
                 );
                 $("#cont_variable").show();
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             }
@@ -2464,7 +2486,7 @@ class MFunctionDlg {
             if (self.lowerLimit == undefined) {
               Utility.alert("Please enter a valid lower(x) limit.");
               $("#settingsButton").click();
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return false;
             }
             var lower = Math.abs(self.lowerLimit);
@@ -2474,7 +2496,7 @@ class MFunctionDlg {
                   Static._eps
                 )}.`
               );
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return false;
             }
           } catch (err) {
@@ -2501,7 +2523,7 @@ class MFunctionDlg {
             } */
             Utility.alert("Please enter a valid lower(x) limit.");
             $("#settingsButton").click();
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
           }
 
@@ -2516,7 +2538,7 @@ class MFunctionDlg {
             if (self.upperLimit == undefined) {
               Utility.alert("Please enter a valid upper(x) limit.");
               $("#settingsButton").click();
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return false;
             }
             // var upper = Math.abs(self.upperLimit);
@@ -2549,7 +2571,7 @@ class MFunctionDlg {
             } catch (err) { */
             Utility.alert("Please enter a valid upper(x) limit.");
             $("#settingsButton").click();
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
             //}
           }
@@ -2646,7 +2668,7 @@ class MFunctionDlg {
                   mf,
                   `Undefined symbols "${m_uniqChars}"`
                 );
-              Utility.progressWait(false);
+              Utility.progressWait2(false);
               return;
             }
 
@@ -2704,8 +2726,9 @@ class MFunctionDlg {
           let _newCurve = null;
           try {
             _newCurve = await cb();
+            Utility.progressWait2(false);
           } catch (error) {
-            Utility.progressWait(false);
+            Utility.progressWait2(false);
             return false;
           }
 
@@ -2782,7 +2805,7 @@ class MFunctionDlg {
               try {
                 _newCurve2 = cb();
               } catch (error) {
-                Utility.progressWait(false);
+                Utility.progressWait2(false);
                 return false;
               }
             }
@@ -2818,7 +2841,7 @@ class MFunctionDlg {
             }
           }
         }
-        Utility.progressWait(false);
+        Utility.progressWait2(false);
         return true;
       };
 

@@ -2026,7 +2026,7 @@ class MyPlot extends Plot {
               var solution;
 
               try {
-                Utility.progressWait();
+                // Utility.progressWait();
                 solution = await Static.solveFor(
                   fn,
                   curve.parametric_variable,
