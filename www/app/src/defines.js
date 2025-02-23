@@ -535,82 +535,89 @@ class Defines {
         }
 
         if (derive) {
-          m_str = str.slice();
-          dec = Utility.getFunctionDeclaration(str);
-          while (dec) {
-            m_str = m_str.replaceAll(dec, "");
-            if (dec) {
-              //if (!m_defines.get(dec)) {
-              // alert(
-              //   `Attempt to use "${dec}" rejected because it is undefined.`
-              // );
-              // return null;
-              // }
-            }
-            dec = Utility.getFunctionDeclaration(m_str);
-          }
-
-          //handle derivativesdeclarations
-          m_str = str.slice();
-          let full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
-          // if (!m_defines.get(full_dec)) {
-          dec = self.getDerivativeDeclaration(m_str, variable);
-          let values = [];
-          let names = [];
-          while (full_dec) {
-            m_str = m_str.replaceAll(full_dec, "");
-            if (dec) {
-              if (!m_defines.get(dec)) {
-                let _derivativeOrder = Utility.derivativeOrder(dec);
-                let fnDec = dec.replaceAll("'", "");
-                let _derivative = null;
-                if (m_defines.get(fnDec))
-                  _derivative = m_defines.get(fnDec).value;
-
-                if (_derivative) {
-                  const variable = fnDec[fnDec.length - 2];
-                  for (let index = 0; index < _derivativeOrder; index++) {
-                    _derivative = math
-                      .derivative(_derivative, variable)
-                      .toString();
-                    //_derivative = _derivative.replaceAll(variable, arg);
-                  }
-                  _derivative = _derivative.replace(/\s/g, "");
-                  names.push(dec);
-                  values.push(_derivative);
-                  //$(window).trigger("defineAdded", [dec, _derivative]);
-                } else {
-                  // alert(
-                  //   `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
-                  // );
-                  return null;
-                }
-              } else {
-                // if (m_str.length) {
-                //   return null;
+          try {
+            m_str = str.slice();
+            dec = Utility.getFunctionDeclaration(str);
+            while (dec) {
+              m_str = m_str.replaceAll(dec, "");
+              if (dec) {
+                //if (!m_defines.get(dec)) {
+                // alert(
+                //   `Attempt to use "${dec}" rejected because it is undefined.`
+                // );
+                // return null;
                 // }
-                full_dec = Utility.getFullDerivativeDeclaration(
-                  m_str,
-                  variable
-                );
-                if (full_dec) {
-                  dec = self.getDerivativeDeclaration(m_str, variable);
+              }
+              dec = Utility.getFunctionDeclaration(m_str);
+            }
+
+            //handle derivativesdeclarations
+            m_str = str.slice();
+            let full_dec = Utility.getFullDerivativeDeclaration(
+              m_str,
+              variable
+            );
+            // if (!m_defines.get(full_dec)) {
+            dec = self.getDerivativeDeclaration(m_str, variable);
+            let values = [];
+            let names = [];
+            while (full_dec) {
+              m_str = m_str.replaceAll(full_dec, "");
+              if (dec) {
+                if (!m_defines.get(dec)) {
+                  let _derivativeOrder = Utility.derivativeOrder(dec);
+                  let fnDec = dec.replaceAll("'", "");
+                  let _derivative = null;
+                  if (m_defines.get(fnDec))
+                    _derivative = m_defines.get(fnDec).value;
+
+                  if (_derivative) {
+                    const variable = fnDec[fnDec.length - 2];
+                    for (let index = 0; index < _derivativeOrder; index++) {
+                      _derivative = math
+                        .derivative(_derivative, variable)
+                        .toString();
+                      //_derivative = _derivative.replaceAll(variable, arg);
+                    }
+                    _derivative = _derivative.replace(/\s/g, "");
+                    names.push(dec);
+                    values.push(_derivative);
+                    //$(window).trigger("defineAdded", [dec, _derivative]);
+                  } else {
+                    // alert(
+                    //   `Attempt to define "${dec}" failed because "${fnDec}" is undefined.`
+                    // );
+                    return null;
+                  }
+                } else {
+                  // if (m_str.length) {
+                  //   return null;
+                  // }
+                  full_dec = Utility.getFullDerivativeDeclaration(
+                    m_str,
+                    variable
+                  );
+                  if (full_dec) {
+                    dec = self.getDerivativeDeclaration(m_str, variable);
+                  }
+                  continue;
                 }
-                continue;
+              }
+              full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
+              if (full_dec) {
+                dec = self.getDerivativeDeclaration(m_str, variable);
               }
             }
-            full_dec = Utility.getFullDerivativeDeclaration(m_str, variable);
-            if (full_dec) {
-              dec = self.getDerivativeDeclaration(m_str, variable);
+
+            if (names.length) {
+              let m_names = _.uniq(names);
+              for (let i = 0; i < m_names.length; i++) {
+                await self.addDefine(m_names[i], values[i]);
+              }
             }
+          } catch (error) {
+            console.log(error);
           }
-          if (names.length) {
-            let m_names = _.uniq(names);
-            for (let i = 0; i < m_names.length; i++) {
-              $(window).trigger("defineAdded", [m_names[i], values[i]]);
-            }
-          }
-          //}
         }
 
         var defined;
