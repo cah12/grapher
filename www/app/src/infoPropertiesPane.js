@@ -506,47 +506,51 @@ class InfoPropertiesPane extends Pane {
       "coeff_val4",
     ];
 
-    function adjustDomain(curCurve, selector) {
-      const selectorIndex = inputIds.indexOf(selector[0].id);
-      var coeffs = curCurve.coeffs;
-      if (curCurve.domainRangeRestriction.length) {
-        let s = curCurve.domainRangeRestriction[0];
-        s = curCurve.plot().defines.expandDefines(s);
-        s = Utility.purgeAndMarkKeywords(s);
-        // s = s.replaceAll(
-        //   coeffs[selectorIndex],
-        //   `(${curCurve.coeffsVal[selectorIndex]})`
-        // );
-        for (let index = 0; index < coeffs.length; index++) {
-          if (s.indexOf(coeffs[index]) != -1) {
-            s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
+    async function adjustDomain(curCurve, selector) {
+      try {
+        const selectorIndex = inputIds.indexOf(selector[0].id);
+        var coeffs = curCurve.coeffs;
+        if (curCurve.domainRangeRestriction.length) {
+          let s = curCurve.domainRangeRestriction[0];
+          s = await curCurve.plot().defines.expandDefines(s);
+          s = Utility.purgeAndMarkKeywords(s);
+          // s = s.replaceAll(
+          //   coeffs[selectorIndex],
+          //   `(${curCurve.coeffsVal[selectorIndex]})`
+          // );
+          for (let index = 0; index < coeffs.length; index++) {
+            if (s.indexOf(coeffs[index]) != -1) {
+              s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
+            }
           }
-        }
-        if (curCurve.parametricFnX) {
-          curCurve.parametricLowerX = math.evaluate(
-            Utility.replaceKeywordMarkers(s)
-          );
-        } else {
-          curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
-        }
-
-        s = curCurve.domainRangeRestriction[1];
-        s = curCurve.plot().defines.expandDefines(s); //plot.defines.expandDefines
-        s = Utility.purgeAndMarkKeywords(s);
-        for (let index = 0; index < coeffs.length; index++) {
-          if (s.indexOf(coeffs[index]) != -1) {
-            s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
+          if (curCurve.parametricFnX) {
+            curCurve.parametricLowerX = math.evaluate(
+              Utility.replaceKeywordMarkers(s)
+            );
+          } else {
+            curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
           }
-        }
-        if (curCurve.parametricFnX) {
-          curCurve.parametricUpperX = math.evaluate(
-            Utility.replaceKeywordMarkers(s)
-          );
-        } else {
-          curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
-        }
 
-        //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
+          s = curCurve.domainRangeRestriction[1];
+          s = await curCurve.plot().defines.expandDefines(s); //plot.defines.expandDefines
+          s = Utility.purgeAndMarkKeywords(s);
+          for (let index = 0; index < coeffs.length; index++) {
+            if (s.indexOf(coeffs[index]) != -1) {
+              s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
+            }
+          }
+          if (curCurve.parametricFnX) {
+            curCurve.parametricUpperX = math.evaluate(
+              Utility.replaceKeywordMarkers(s)
+            );
+          } else {
+            curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
+          }
+
+          //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
 

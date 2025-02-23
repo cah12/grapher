@@ -170,71 +170,81 @@ class MPointEntryDlg extends ModalDlg {
       return false;
     }
 
-    function enterCb() {
-      let curve = self.plot.findPlotCurve(self.selector("curve_name").val());
-      if (curve) {
-        //if (self.modify) {
-        if (self.selector("title").html() == "Modify/Remove Point") {
-          curve.removePoint(self.point, true);
-          //self.plot.cs.setLimits(); //set curveShapeItem limits to undefined
-          Static.trigger("curveAdjusted");
+    async function enterCb() {
+      try {
+        let curve = self.plot.findPlotCurve(self.selector("curve_name").val());
+        if (curve) {
+          //if (self.modify) {
+          if (self.selector("title").html() == "Modify/Remove Point") {
+            curve.removePoint(self.point, true);
+            //self.plot.cs.setLimits(); //set curveShapeItem limits to undefined
+            Static.trigger("curveAdjusted");
+          }
+        } else {
+          //"Create curve"
+          curve = new MyCurve(self.selector("curve_name").val());
+          //curve = new MyCurve(Utility.generateCurveName(self.plot));
+          //curve.attach(self.plot);
+          let color = Utility.randomColor();
+          curve.setPen(new Misc.Pen(color));
+          let sym = new Symbol2(
+            Symbol2.Style.MRect,
+            new Misc.Brush(Utility.invert(color)),
+            new Misc.Pen(color),
+            new Misc.Size(8, 8)
+          );
+          curve.setSymbol(sym);
+          let attribute = "";
+          if (Static.showline && Static.showsymbol) {
+            attribute = "lineAndSymbol";
+          } else if (Static.showline) {
+            attribute = "line";
+          } else if (Static.showsymbol) {
+            attribute = "symbol";
+          }
+          Utility.setLegendAttribute(
+            curve,
+            attribute,
+            curve.getLegendIconSize()
+          ); //attribute = "line" or "symbol" or "lineAndSymbol"
+          curve.attach(self.plot);
         }
-      } else {
-        //"Create curve"
-        curve = new MyCurve(self.selector("curve_name").val());
-        //curve = new MyCurve(Utility.generateCurveName(self.plot));
-        //curve.attach(self.plot);
-        let color = Utility.randomColor();
-        curve.setPen(new Misc.Pen(color));
-        let sym = new Symbol2(
-          Symbol2.Style.MRect,
-          new Misc.Brush(Utility.invert(color)),
-          new Misc.Pen(color),
-          new Misc.Size(8, 8)
+        let samples = curve.data().samples();
+        const abscissaVal_L = await self.plot.defines.expandDefines(
+          self.selector("abscissa").val()
         );
-        curve.setSymbol(sym);
-        let attribute = "";
-        if (Static.showline && Static.showsymbol) {
-          attribute = "lineAndSymbol";
-        } else if (Static.showline) {
-          attribute = "line";
-        } else if (Static.showsymbol) {
-          attribute = "symbol";
+        var abscissaVal = math.evaluate(abscissaVal_L);
+
+        const ordinateVal_L = await self.plot.defines.expandDefines(
+          self.selector("ordinate").val()
+        );
+        var ordinateVal = math.evaluate(ordinateVal_L);
+
+        let p = new Misc.Point(abscissaVal, ordinateVal);
+        self.point = p;
+        if (!samples.containsPoint(p)) {
+          samples.push(p);
         }
-        Utility.setLegendAttribute(curve, attribute, curve.getLegendIconSize()); //attribute = "line" or "symbol" or "lineAndSymbol"
-        curve.attach(self.plot);
-      }
-      let samples = curve.data().samples();
-      var abscissaVal = math.evaluate(
-        self.plot.defines.expandDefines(self.selector("abscissa").val())
-      );
-
-      var ordinateVal = math.evaluate(
-        self.plot.defines.expandDefines(self.selector("ordinate").val())
-      );
-
-      let p = new Misc.Point(abscissaVal, ordinateVal);
-      self.point = p;
-      if (!samples.containsPoint(p)) {
-        samples.push(p);
-      }
-      samples.sort(function (a, b) {
-        /* if(a.x < b.x) return -1;
+        samples.sort(function (a, b) {
+          /* if(a.x < b.x) return -1;
                 if(a.x > b.x) return 1;
                 return 0; */
-        return a.x - b.x;
-      });
-      curve.setSamples(samples);
-      self.plot.autoRefresh();
-      Static.trigger("pointAdded", curve);
-      //self.plot.cs.setLimits(); //set curveShapeItem limits to undefined
-      Static.trigger("curveAdjusted");
-      /* We have at least one point. Ensure remove button is enabled. */
-      //$('#pointEntryDlg_remove').attr('disabled', false);
-      //setRemoveButtonAttribute();
-      self.selector("pointEntryDlg_enter").attr("disabled", true);
-      if (samples.length > 1)
-        self.selector("pointEntryDlg_remove").attr("disabled", false);
+          return a.x - b.x;
+        });
+        curve.setSamples(samples);
+        self.plot.autoRefresh();
+        Static.trigger("pointAdded", curve);
+        //self.plot.cs.setLimits(); //set curveShapeItem limits to undefined
+        Static.trigger("curveAdjusted");
+        /* We have at least one point. Ensure remove button is enabled. */
+        //$('#pointEntryDlg_remove').attr('disabled', false);
+        //setRemoveButtonAttribute();
+        self.selector("pointEntryDlg_enter").attr("disabled", true);
+        if (samples.length > 1)
+          self.selector("pointEntryDlg_remove").attr("disabled", false);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     function removeCb() {
@@ -251,54 +261,60 @@ class MPointEntryDlg extends ModalDlg {
       Static.trigger("curveAdjusted");
     }
 
-    function keyupCb() {
-      var curve = self.plot.findPlotCurve(self.selector("curve_name").val());
-      var samples;
-      if (curve) samples = curve.data().samples();
-      if (self.selector("abscissa").val() == "-") {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-        return;
-      }
-      var abscissaVal; // = math.evaluate(self.plot.defines.expandDefines(self.selector("abscissa").val())).toString(10);
+    async function keyupCb() {
       try {
-        abscissaVal = math.evaluate(
-          self.plot.defines.expandDefines(self.selector("abscissa").val())
-        ); //.toString(10);
-      } catch (error) {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-        return;
-      }
-      if (self.selector("ordinate").val() == "-") {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-        return;
-      }
-      var ordinateVal; // = math.evaluate(self.plot.defines.expandDefines(self.selector("ordinate").val())).toString(10);
-      try {
-        ordinateVal = math.evaluate(
-          self.plot.defines.expandDefines(self.selector("ordinate").val())
-        ); //.toString(10);
-      } catch (error) {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-        return;
-      }
+        var curve = self.plot.findPlotCurve(self.selector("curve_name").val());
+        var samples;
+        if (curve) samples = curve.data().samples();
+        if (self.selector("abscissa").val() == "-") {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+          return;
+        }
+        var abscissaVal;
+        try {
+          const abscissaVal_L = await self.plot.defines.expandDefines(
+            self.selector("abscissa").val()
+          );
+          abscissaVal = math.evaluate(abscissaVal_L); //.toString(10);
+        } catch (error) {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+          return;
+        }
+        if (self.selector("ordinate").val() == "-") {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+          return;
+        }
+        var ordinateVal;
+        try {
+          const ordinateVal_L = await self.plot.defines.expandDefines(
+            self.selector("ordinate").val()
+          );
+          ordinateVal = math.evaluate(ordinateVal_L); //.toString(10);
+        } catch (error) {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+          return;
+        }
 
-      if (ordinateVal == undefined || abscissaVal == undefined) {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-        return;
-      }
+        if (ordinateVal == undefined || abscissaVal == undefined) {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+          return;
+        }
 
-      if (findPoint(new Misc.Point(abscissaVal, ordinateVal))) {
-        if (samples.length > 1)
-          self.selector("pointEntryDlg_remove").attr("disabled", false);
-        self.selector("pointEntryDlg_enter").attr("disabled", true);
-      } else {
-        self.selector("pointEntryDlg_remove").attr("disabled", true);
-        self.selector("pointEntryDlg_enter").attr("disabled", false);
+        if (findPoint(new Misc.Point(abscissaVal, ordinateVal))) {
+          if (samples.length > 1)
+            self.selector("pointEntryDlg_remove").attr("disabled", false);
+          self.selector("pointEntryDlg_enter").attr("disabled", true);
+        } else {
+          self.selector("pointEntryDlg_remove").attr("disabled", true);
+          self.selector("pointEntryDlg_enter").attr("disabled", false);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
 

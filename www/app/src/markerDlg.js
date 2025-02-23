@@ -441,174 +441,179 @@ weight: "normal" */
 
 		mPos.attach( this ); */
 
-    function okCb() {
-      var marker = self.plot.findPlotMarker($("#marker_name").val());
-      if (marker) {
-        marker.detach();
-        //marker = null;
-      }
-      marker = new PlotMarker($("#marker_name").val());
-      marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+    async function okCb() {
+      try {
+        var marker = self.plot.findPlotMarker($("#marker_name").val());
+        if (marker) {
+          marker.detach();
+          //marker = null;
+        }
+        marker = new PlotMarker($("#marker_name").val());
+        marker.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
 
-      marker.setSpacing(parseInt($("#marker_labelSpace").val()));
+        marker.setSpacing(parseInt($("#marker_labelSpace").val()));
 
-      marker.setLabelFont(new Misc.Font(fontDlg.labelFont));
+        marker.setLabelFont(new Misc.Font(fontDlg.labelFont));
 
-      if ($("#markerHorizontalAxis").val() === "markerAxisBottom")
-        marker.setXAxis(Axis.AxisId.xBottom);
-      else marker.setXAxis(Axis.AxisId.xTop);
-      if ($("#markerVerticalAxis").val() === "markerAxisLeft")
-        marker.setYAxis(Axis.AxisId.yLeft);
-      else marker.setYAxis(Axis.AxisId.yRight);
-      if ($("#markerSymbol").val() === "arrow")
-        marker.setSymbol(
-          new ArrowSymbol(parseFloat($("#marker_symbolAngle").val()))
+        if ($("#markerHorizontalAxis").val() === "markerAxisBottom")
+          marker.setXAxis(Axis.AxisId.xBottom);
+        else marker.setXAxis(Axis.AxisId.xTop);
+        if ($("#markerVerticalAxis").val() === "markerAxisLeft")
+          marker.setYAxis(Axis.AxisId.yLeft);
+        else marker.setYAxis(Axis.AxisId.yRight);
+        if ($("#markerSymbol").val() === "arrow")
+          marker.setSymbol(
+            new ArrowSymbol(parseFloat($("#marker_symbolAngle").val()))
+          );
+        else if ($("#markerSymbol").val() === "dotOnLine")
+          marker.setSymbol(
+            new DotOnLineSymbol(parseFloat($("#marker_symbolAngle").val()))
+          );
+
+        marker.setLinePen(
+          new Misc.Pen(
+            $("#marker_lineColor").val(),
+            1,
+            $("#markerLineType").val()
+          )
         );
-      else if ($("#markerSymbol").val() === "dotOnLine")
-        marker.setSymbol(
-          new DotOnLineSymbol(parseFloat($("#marker_symbolAngle").val()))
+
+        if ($("#markerLineStyle").val() === "HLine")
+          marker.setLineStyle(PlotMarker.LineStyle.HLine);
+        else if ($("#markerLineStyle").val() === "VLine")
+          marker.setLineStyle(PlotMarker.LineStyle.VLine);
+        else if ($("#markerLineStyle").val() === "Cross")
+          marker.setLineStyle(PlotMarker.LineStyle.Cross);
+        else {
+          marker.setLineStyle(PlotMarker.LineStyle.NoLine);
+        }
+
+        //call marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true) after lineStyle and or symbolType is set
+        if ($("#marker_legend")[0].checked) {
+          marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+        } else {
+          marker.setItemAttribute(PlotItem.ItemAttribute.Legend, false);
+        }
+
+        marker.setLegendIconSize(new Misc.Size(20, 20));
+        const x = await self.plot.defines.expandDefines(
+          $("#marker_xValue").val()
         );
+        var xVal = math.evaluate(x);
+        const y = self.plot.defines.expandDefines($("#marker_yValue").val());
+        var yVal = math.evaluate(y);
+        marker.setValue(new Misc.Point(xVal, yVal));
+        marker.setLabel($("#marker_label").val());
+        //var labelAlignment = Static.AlignRight;
+        if ($("#markerLabelAlignment").val() == "markerAlignmentLeftTop") {
+          marker.setLabelAlignment(Static.AlignLeft | Static.AlignTop);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentLeftCenter"
+        ) {
+          marker.setLabelAlignment(Static.AlignLeft | Static.AlignCenter);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentLeftBottom"
+        ) {
+          marker.setLabelAlignment(Static.AlignLeft | Static.AlignBottom);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentRightTop"
+        ) {
+          marker.setLabelAlignment(Static.AlignRight | Static.AlignTop);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentRightCenter"
+        ) {
+          marker.setLabelAlignment(Static.AlignRight | Static.AlignCenter);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentRightBottom"
+        ) {
+          marker.setLabelAlignment(Static.AlignRight | Static.AlignBottom);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentCenterTop"
+        ) {
+          marker.setLabelAlignment(Static.AlignCenter | Static.AlignTop);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentCenterCenter"
+        ) {
+          marker.setLabelAlignment(Static.AlignCenter);
+        } else if (
+          $("#markerLabelAlignment").val() == "markerAlignmentCenterBottom"
+        ) {
+          marker.setLabelAlignment(Static.AlignCenter | Static.AlignBottom);
+        }
 
-      marker.setLinePen(
-        new Misc.Pen(
-          $("#marker_lineColor").val(),
-          1,
-          $("#markerLineType").val()
-        )
-      );
+        if ($("#markerLabelOrientation").val() == "markerLabelHorizontal") {
+          marker.setLabelOrientation(Static.Horizontal);
+        } else if (
+          $("#markerLabelOrientation").val() == "markerLabelVertical"
+        ) {
+          marker.setLabelOrientation(Static.Vertical);
+        }
 
-      if ($("#markerLineStyle").val() === "HLine")
-        marker.setLineStyle(PlotMarker.LineStyle.HLine);
-      else if ($("#markerLineStyle").val() === "VLine")
-        marker.setLineStyle(PlotMarker.LineStyle.VLine);
-      else if ($("#markerLineStyle").val() === "Cross")
-        marker.setLineStyle(PlotMarker.LineStyle.Cross);
-      else {
-        marker.setLineStyle(PlotMarker.LineStyle.NoLine);
+        var m_symbol = marker.symbol();
+        if (m_symbol) {
+          if ($("#markerSymbolSize").val() === "6x6")
+            m_symbol.setSize(new Misc.Size(6, 6));
+          else if ($("#markerSymbolSize").val() === "6x10")
+            m_symbol.setSize(new Misc.Size(6, 12));
+          else if ($("#markerSymbolSize").val() === "6x12")
+            m_symbol.setSize(new Misc.Size(6, 12));
+          else if ($("#markerSymbolSize").val() === "6x14")
+            m_symbol.setSize(new Misc.Size(6, 14));
+          else if ($("#markerSymbolSize").val() === "8x6")
+            m_symbol.setSize(new Misc.Size(8, 6));
+          else if ($("#markerSymbolSize").val() === "8x8")
+            m_symbol.setSize(new Misc.Size(8, 8));
+          else if ($("#markerSymbolSize").val() === "8x10")
+            m_symbol.setSize(new Misc.Size(8, 10));
+          else if ($("#markerSymbolSize").val() === "8x12")
+            m_symbol.setSize(new Misc.Size(8, 12));
+          else if ($("#markerSymbolSize").val() === "8x14")
+            m_symbol.setSize(new Misc.Size(8, 14));
+          else if ($("#markerSymbolSize").val() === "10x6")
+            m_symbol.setSize(new Misc.Size(10, 6));
+          else if ($("#markerSymbolSize").val() === "10x8")
+            m_symbol.setSize(new Misc.Size(10, 8));
+          else if ($("#markerSymbolSize").val() === "10x10")
+            m_symbol.setSize(new Misc.Size(10, 10));
+          else if ($("#markerSymbolSize").val() === "10x12")
+            m_symbol.setSize(new Misc.Size(10, 12));
+          else if ($("#markerSymbolSize").val() === "10x14")
+            m_symbol.setSize(new Misc.Size(10, 14));
+          else if ($("#markerSymbolSize").val() === "12x6")
+            m_symbol.setSize(new Misc.Size(12, 6));
+          else if ($("#markerSymbolSize").val() === "12x8")
+            m_symbol.setSize(new Misc.Size(12, 8));
+          else if ($("#markerSymbolSize").val() === "12x10")
+            m_symbol.setSize(new Misc.Size(12, 10));
+          else if ($("#markerSymbolSize").val() === "12x12")
+            m_symbol.setSize(new Misc.Size(12, 12));
+          else if ($("#markerSymbolSize").val() === "12x14")
+            m_symbol.setSize(new Misc.Size(12, 14));
+          else if ($("#markerSymbolSize").val() === "14x6")
+            m_symbol.setSize(new Misc.Size(14, 6));
+          else if ($("#markerSymbolSize").val() === "14x8")
+            m_symbol.setSize(new Misc.Size(14, 8));
+          else if ($("#markerSymbolSize").val() === "14x10")
+            m_symbol.setSize(new Misc.Size(14, 10));
+          else if ($("#markerSymbolSize").val() === "14x12")
+            m_symbol.setSize(new Misc.Size(14, 12));
+          else if ($("#markerSymbolSize").val() === "14x14")
+            m_symbol.setSize(new Misc.Size(14, 14));
+
+          //marker.setSymbol(m_symbol)
+        }
+
+        //marker.setLegendIconSize(new Misc.Size(20,20))
+        //marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
+
+        marker.attach(self.plot);
+
+        closeCb();
+        self.plot.autoRefresh();
+      } catch (error) {
+        console.log(error);
+        closeCb();
       }
-
-      //call marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true) after lineStyle and or symbolType is set
-      if ($("#marker_legend")[0].checked) {
-        marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-      } else {
-        marker.setItemAttribute(PlotItem.ItemAttribute.Legend, false);
-      }
-
-      marker.setLegendIconSize(new Misc.Size(20, 20));
-
-      var xVal = math.evaluate(
-        self.plot.defines.expandDefines($("#marker_xValue").val())
-      );
-
-      var yVal = math.evaluate(
-        self.plot.defines.expandDefines($("#marker_yValue").val())
-      );
-      marker.setValue(new Misc.Point(xVal, yVal));
-      marker.setLabel($("#marker_label").val());
-      //var labelAlignment = Static.AlignRight;
-      if ($("#markerLabelAlignment").val() == "markerAlignmentLeftTop") {
-        marker.setLabelAlignment(Static.AlignLeft | Static.AlignTop);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentLeftCenter"
-      ) {
-        marker.setLabelAlignment(Static.AlignLeft | Static.AlignCenter);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentLeftBottom"
-      ) {
-        marker.setLabelAlignment(Static.AlignLeft | Static.AlignBottom);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentRightTop"
-      ) {
-        marker.setLabelAlignment(Static.AlignRight | Static.AlignTop);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentRightCenter"
-      ) {
-        marker.setLabelAlignment(Static.AlignRight | Static.AlignCenter);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentRightBottom"
-      ) {
-        marker.setLabelAlignment(Static.AlignRight | Static.AlignBottom);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentCenterTop"
-      ) {
-        marker.setLabelAlignment(Static.AlignCenter | Static.AlignTop);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentCenterCenter"
-      ) {
-        marker.setLabelAlignment(Static.AlignCenter);
-      } else if (
-        $("#markerLabelAlignment").val() == "markerAlignmentCenterBottom"
-      ) {
-        marker.setLabelAlignment(Static.AlignCenter | Static.AlignBottom);
-      }
-
-      if ($("#markerLabelOrientation").val() == "markerLabelHorizontal") {
-        marker.setLabelOrientation(Static.Horizontal);
-      } else if ($("#markerLabelOrientation").val() == "markerLabelVertical") {
-        marker.setLabelOrientation(Static.Vertical);
-      }
-
-      var m_symbol = marker.symbol();
-      if (m_symbol) {
-        if ($("#markerSymbolSize").val() === "6x6")
-          m_symbol.setSize(new Misc.Size(6, 6));
-        else if ($("#markerSymbolSize").val() === "6x10")
-          m_symbol.setSize(new Misc.Size(6, 12));
-        else if ($("#markerSymbolSize").val() === "6x12")
-          m_symbol.setSize(new Misc.Size(6, 12));
-        else if ($("#markerSymbolSize").val() === "6x14")
-          m_symbol.setSize(new Misc.Size(6, 14));
-        else if ($("#markerSymbolSize").val() === "8x6")
-          m_symbol.setSize(new Misc.Size(8, 6));
-        else if ($("#markerSymbolSize").val() === "8x8")
-          m_symbol.setSize(new Misc.Size(8, 8));
-        else if ($("#markerSymbolSize").val() === "8x10")
-          m_symbol.setSize(new Misc.Size(8, 10));
-        else if ($("#markerSymbolSize").val() === "8x12")
-          m_symbol.setSize(new Misc.Size(8, 12));
-        else if ($("#markerSymbolSize").val() === "8x14")
-          m_symbol.setSize(new Misc.Size(8, 14));
-        else if ($("#markerSymbolSize").val() === "10x6")
-          m_symbol.setSize(new Misc.Size(10, 6));
-        else if ($("#markerSymbolSize").val() === "10x8")
-          m_symbol.setSize(new Misc.Size(10, 8));
-        else if ($("#markerSymbolSize").val() === "10x10")
-          m_symbol.setSize(new Misc.Size(10, 10));
-        else if ($("#markerSymbolSize").val() === "10x12")
-          m_symbol.setSize(new Misc.Size(10, 12));
-        else if ($("#markerSymbolSize").val() === "10x14")
-          m_symbol.setSize(new Misc.Size(10, 14));
-        else if ($("#markerSymbolSize").val() === "12x6")
-          m_symbol.setSize(new Misc.Size(12, 6));
-        else if ($("#markerSymbolSize").val() === "12x8")
-          m_symbol.setSize(new Misc.Size(12, 8));
-        else if ($("#markerSymbolSize").val() === "12x10")
-          m_symbol.setSize(new Misc.Size(12, 10));
-        else if ($("#markerSymbolSize").val() === "12x12")
-          m_symbol.setSize(new Misc.Size(12, 12));
-        else if ($("#markerSymbolSize").val() === "12x14")
-          m_symbol.setSize(new Misc.Size(12, 14));
-        else if ($("#markerSymbolSize").val() === "14x6")
-          m_symbol.setSize(new Misc.Size(14, 6));
-        else if ($("#markerSymbolSize").val() === "14x8")
-          m_symbol.setSize(new Misc.Size(14, 8));
-        else if ($("#markerSymbolSize").val() === "14x10")
-          m_symbol.setSize(new Misc.Size(14, 10));
-        else if ($("#markerSymbolSize").val() === "14x12")
-          m_symbol.setSize(new Misc.Size(14, 12));
-        else if ($("#markerSymbolSize").val() === "14x14")
-          m_symbol.setSize(new Misc.Size(14, 14));
-
-        //marker.setSymbol(m_symbol)
-      }
-
-      //marker.setLegendIconSize(new Misc.Size(20,20))
-      //marker.setItemAttribute(PlotItem.ItemAttribute.Legend, true);
-
-      marker.attach(self.plot);
-
-      closeCb();
-      self.plot.autoRefresh();
     }
 
     function showDlg() {

@@ -152,73 +152,78 @@ class PlotPropertiesPane extends PropertiesPane {
       return result;
     }
 
-    function getPointsFromTable() {
+    async function getPointsFromTable() {
       let samples = [];
-      const rows = $("#pointTableTable")[0].rows;
-      let precisionX = plot.axisPrecision(newTableCurve.xAxis());
-      let decimalPlacesX = plot.axisDecimalPlaces(newTableCurve.xAxis());
-      let precisionY = plot.axisPrecision(newTableCurve.yAxis());
-      let decimalPlacesY = plot.axisDecimalPlaces(newTableCurve.yAxis());
-      for (let i = 1; i < rows.length; i++) {
-        const inputs = $(rows[i]).find("math-field");
-        let x = "",
-          y = "";
-        if (inputs && inputs[0] && inputs[0].value) {
-          x = inputs[0].value.replace(/\s/g, "");
-        }
-        if (inputs && inputs[1] && inputs[1].value) {
-          y = inputs[1].value.replace(/\s/g, "");
-        }
-        if (x.length) {
-          x = Utility.logBaseAdjust(
-            //plot.defines.expandDefines(Utility.latexToAscii(inputs[0]))
-            plot.defines.expandDefines(inputs[0].getValue("ascii-math"))
-          );
-          try {
-            x = math.evaluate(x).toString();
-          } catch (error) {
-            alert(error.message);
-            inputs[0].value = "";
-            return;
+      try {
+        const rows = $("#pointTableTable")[0].rows;
+        let precisionX = plot.axisPrecision(newTableCurve.xAxis());
+        let decimalPlacesX = plot.axisDecimalPlaces(newTableCurve.xAxis());
+        let precisionY = plot.axisPrecision(newTableCurve.yAxis());
+        let decimalPlacesY = plot.axisDecimalPlaces(newTableCurve.yAxis());
+        for (let i = 1; i < rows.length; i++) {
+          const inputs = $(rows[i]).find("math-field");
+          let x = "",
+            y = "";
+          if (inputs && inputs[0] && inputs[0].value) {
+            x = inputs[0].value.replace(/\s/g, "");
           }
-          inputs[0].value = Utility.toPrecision(
-            Utility.adjustForDecimalPlaces(x, decimalPlacesX),
-            precisionX
-          );
-        }
-        if (y.length) {
-          //Utility.logBaseAdjust(fnDlgFunctionVal)
-          y = Utility.logBaseAdjust(
-            //plot.defines.expandDefines(Utility.latexToAscii(inputs[1]))
-            plot.defines.expandDefines(inputs[1].getValue("ascii-math"))
-          );
-          try {
-            y = math.evaluate(y).toString();
-          } catch (error) {
-            alert(error.message);
-            inputs[1].value = "";
-            return;
+          if (inputs && inputs[1] && inputs[1].value) {
+            y = inputs[1].value.replace(/\s/g, "");
           }
-          inputs[1].value = Utility.toPrecision(
-            Utility.adjustForDecimalPlaces(y, decimalPlacesY),
-            precisionY
-          );
+          if (x.length) {
+            const _x = await plot.defines.expandDefines(
+              inputs[0].getValue("ascii-math")
+            );
+            x = Utility.logBaseAdjust(_x);
+            try {
+              x = math.evaluate(x).toString();
+            } catch (error) {
+              alert(error.message);
+              inputs[0].value = "";
+              return;
+            }
+            inputs[0].value = Utility.toPrecision(
+              Utility.adjustForDecimalPlaces(x, decimalPlacesX),
+              precisionX
+            );
+          }
+          if (y.length) {
+            //Utility.logBaseAdjust(fnDlgFunctionVal)
+            const _y = await plot.defines.expandDefines(
+              inputs[1].getValue("ascii-math")
+            );
+            y = Utility.logBaseAdjust(_y);
+            try {
+              y = math.evaluate(y).toString();
+            } catch (error) {
+              alert(error.message);
+              inputs[1].value = "";
+              return;
+            }
+            inputs[1].value = Utility.toPrecision(
+              Utility.adjustForDecimalPlaces(y, decimalPlacesY),
+              precisionY
+            );
+          }
+
+          // const
+          // const y = parseFloat(inputs[1].value);
+          if (x.length && y.length) {
+            x = parseFloat(x);
+            y = parseFloat(y);
+            samples.push(new Misc.Point(x, y));
+          }
         }
 
-        // const
-        // const y = parseFloat(inputs[1].value);
-        if (x.length && y.length) {
-          x = parseFloat(x);
-          y = parseFloat(y);
-          samples.push(new Misc.Point(x, y));
-        }
+        samples.sort(function (a, b) {
+          return a.x - b.x;
+        });
+
+        return samples;
+      } catch (error) {
+        console.log(error);
+        return samples;
       }
-
-      samples.sort(function (a, b) {
-        return a.x - b.x;
-      });
-
-      return samples;
     }
 
     function updatePointTable(curve) {
