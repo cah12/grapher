@@ -6064,11 +6064,38 @@ class Utility {
     if (!str || $.isNumeric(str) || str.length < 4) {
       return str;
     }
-    if (str.indexOf("=") != -1) {
-      const arr = str.split("=");
-      const left = doParametize(arr[0]);
-      const right = doParametize(arr[1]);
-      const result = `${left}=${right}`;
+
+    const equalSigns = Utility.countString(str, "=");
+    if ((equalSigns == 3 && str.indexOf("{") == -1) || equalSigns > 3) {
+      return str;
+    }
+    if (equalSigns == 1) {
+      if (str.indexOf("=") != -1) {
+        const arr = str.split("=");
+        const left = doParametize(arr[0]);
+        const right = doParametize(arr[1]);
+        const result = `${left}=${right}`;
+        return result;
+      }
+    }
+    if (equalSigns == 3) {
+      const arr = str.split("{");
+      if (arr.length != 2) {
+        return str;
+      }
+      const arr2 = arr[0].split("=");
+
+      const left = doParametize(arr2[0]);
+      const right = doParametize(arr2[1]);
+      const result = `${left}=${right}{${arr[1]}`;
+      return result;
+    } else {
+      const arr = str.split("{");
+      if (arr.length != 2) {
+        return str;
+      }
+      const s = doParametize(arr[0]);
+      const result = `${s}{${arr[1]}`;
       return result;
     }
 

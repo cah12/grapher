@@ -750,18 +750,23 @@ class MFunctionDlg {
         return order;
       }
 
-      function doExpandDefinesAndAdjustLogBase(
+      async function doExpandDefinesAndAdjustLogBase(
         fnDlgFunctionVal,
         variable,
         derive
       ) {
-        fnDlgFunctionVal = plot.defines.expandDefines(
-          fnDlgFunctionVal,
-          variable,
-          derive
-        );
+        try {
+          fnDlgFunctionVal = await plot.defines.expandDefines(
+            fnDlgFunctionVal,
+            variable,
+            derive
+          );
 
-        return Utility.logBaseAdjust(fnDlgFunctionVal);
+          return Utility.logBaseAdjust(fnDlgFunctionVal);
+        } catch (error) {
+          console.log(error);
+          Utility.logBaseAdjust(fnDlgFunctionVal);
+        }
       }
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
@@ -1067,39 +1072,44 @@ class MFunctionDlg {
             )
           );
           if (variablePlus.length > 1) {
-            if (
-              variablePlus.indexOf(self.variable) == -1 &&
-              variablePlus.indexOf(self.parametric_variable) == -1
-            ) {
-              Utility.displayErrorMessage(
-                mf,
-                `The domain, ${domainRangeRestriction}, is improperly declared.`
-              );
-              Utility.progressWait(false);
-              return false;
-            }
+            try {
+              if (
+                variablePlus.indexOf(self.variable) == -1 &&
+                variablePlus.indexOf(self.parametric_variable) == -1
+              ) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `The domain, ${domainRangeRestriction}, is improperly declared.`
+                );
+                Utility.progressWait(false);
+                return false;
+              }
 
-            variable = self.variable;
+              variable = self.variable;
 
-            if (Utility.isParametricFunction(fnDlgFunctionVal)) {
-              variable = self.parametric_variable;
-            }
+              if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+                variable = self.parametric_variable;
+              }
 
-            variablePlusExpanded = plot.defines.expandDefines(
-              variablePlus,
-              variable /* ,
+              variablePlusExpanded = await plot.defines.expandDefines(
+                variablePlus,
+                variable /* ,
               true */
-            );
-            const match = variablePlusExpanded
-              .replaceAll(variable, "")
-              .replaceAll("^", "")
-              .match(/[a-zA-z]/);
-            if (match && match.length) {
-              Utility.displayErrorMessage(
-                mf,
-                `The domain, ${domainRangeRestriction}, is improperly declared. Try defining "${match[0]}".`
               );
-              Utility.progressWait(false);
+              const match = variablePlusExpanded
+                .replaceAll(variable, "")
+                .replaceAll("^", "")
+                .match(/[a-zA-z]/);
+              if (match && match.length) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `The domain, ${domainRangeRestriction}, is improperly declared. Try defining "${match[0]}".`
+                );
+                Utility.progressWait(false);
+                return false;
+              }
+            } catch (error) {
+              console.log(error);
               return false;
             }
           }
@@ -1142,205 +1152,218 @@ class MFunctionDlg {
               return;
             } */
             async function handleDomain() {
-              // if(variablePlus && variablePlus.length==1){
-              //   return;
-              // }
-              domainRangeRestriction = domainRangeRestriction.replace(
-                variablePlus,
-                "~"
-              );
-
-              domainRangeRestriction = domainRangeRestriction.split("~");
-              if (
-                domainRangeRestriction.length != 2 ||
-                domainRangeRestriction[0].length == 0 ||
-                domainRangeRestriction[1].length == 0
-              ) {
-                // Utility.alert(
-                //   `Improperly declared domain. Expected "${self.variable}" as the variable.`
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Improperly declared domain. Expected "${variable}" as the variable.`
+              try {
+                domainRangeRestriction = domainRangeRestriction.replace(
+                  variablePlus,
+                  "~"
                 );
-                Utility.progressWait(false);
-                return false;
-              }
 
-              domainRangeRestriction[0] = plot.defines.expandDefines(
-                domainRangeRestriction[0],
-                self.variable
-              );
-              domainRangeRestriction[1] = plot.defines.expandDefines(
-                domainRangeRestriction[1],
-                self.variable
-              );
-              if (
-                parseFloat(domainRangeRestriction[0]) >=
-                parseFloat(domainRangeRestriction[1])
-              ) {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Invalid domain declaration. Lower limit must be less than the upper limit.`
-                );
-                Utility.progressWait(false);
-                return false;
-              }
-              if (variablePlusExpanded && variablePlusExpanded.length > 1) {
-                let fn = `${variablePlusExpanded}=${domainRangeRestriction[0]}`;
-
-                let solution;
-                try {
-                  Utility.progressWait();
-                  solution = await Static.solveFor(fn, variable, variable);
+                domainRangeRestriction = domainRangeRestriction.split("~");
+                if (
+                  domainRangeRestriction.length != 2 ||
+                  domainRangeRestriction[0].length == 0 ||
+                  domainRangeRestriction[1].length == 0
+                ) {
+                  // Utility.alert(
+                  //   `Improperly declared domain. Expected "${self.variable}" as the variable.`
+                  // );
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Improperly declared domain. Expected "${variable}" as the variable.`
+                  );
                   Utility.progressWait(false);
-                  if (!solution.length) {
-                    const mf = $("#fnDlg_function")[0];
-                    Utility.displayErrorMessage(
-                      mf,
-                      `Unable to find a solution for "${fn}".`
-                    );
+                  return false;
+                }
+
+                domainRangeRestriction[0] = await plot.defines.expandDefines(
+                  domainRangeRestriction[0],
+                  self.variable
+                );
+                domainRangeRestriction[1] = await plot.defines.expandDefines(
+                  domainRangeRestriction[1],
+                  self.variable
+                );
+                if (
+                  parseFloat(domainRangeRestriction[0]) >=
+                  parseFloat(domainRangeRestriction[1])
+                ) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Invalid domain declaration. Lower limit must be less than the upper limit.`
+                  );
+                  Utility.progressWait(false);
+                  return false;
+                }
+                if (variablePlusExpanded && variablePlusExpanded.length > 1) {
+                  let fn = `${variablePlusExpanded}=${domainRangeRestriction[0]}`;
+
+                  let solution;
+                  try {
+                    Utility.progressWait();
+                    solution = await Static.solveFor(fn, variable, variable);
                     Utility.progressWait(false);
-                    return;
+                    if (!solution.length) {
+                      const mf = $("#fnDlg_function")[0];
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Unable to find a solution for "${fn}".`
+                      );
+                      Utility.progressWait(false);
+                      return;
+                    }
+                  } catch (error) {
+                    console.log(error);
+                    Utility.progressWait(false);
                   }
-                } catch (error) {
-                  console.log(error);
-                  Utility.progressWait(false);
-                }
 
-                let sol;
-                for (let i = 0; i < solution.length; i++) {
-                  sol = math
-                    .simplify(solution[i].replaceAll("abs", ""))
-                    .toString();
-                  if ($.isNumeric(sol)) {
-                    domainGap_lower.push(sol);
-                  }
-                }
-
-                domainGap_lower = domainGap_lower.sort((a, b) => {
-                  return parseFloat(a) - parseFloat(b);
-                });
-
-                if (domainGap_lower.length > 2) {
-                  let arr = [];
-                  for (let i = 0; i < domainGap_lower.length; i++) {
-                    if ((i + 1) % 2 == 0) {
-                      domainGap_upper.push(domainGap_lower[i]);
-                    } else {
-                      arr.push(domainGap_lower[i]);
+                  let sol;
+                  for (let i = 0; i < solution.length; i++) {
+                    sol = math
+                      .simplify(solution[i].replaceAll("abs", ""))
+                      .toString();
+                    if ($.isNumeric(sol)) {
+                      domainGap_lower.push(sol);
                     }
                   }
-                  domainGap_lower = arr;
-                }
 
-                fn = `${variablePlusExpanded}=${domainRangeRestriction[1]}`;
+                  domainGap_lower = domainGap_lower.sort((a, b) => {
+                    return parseFloat(a) - parseFloat(b);
+                  });
 
-                //console.log(eq.toString());
-                //solution = eq.solveFor(variable);
+                  if (domainGap_lower.length > 2) {
+                    let arr = [];
+                    for (let i = 0; i < domainGap_lower.length; i++) {
+                      if ((i + 1) % 2 == 0) {
+                        domainGap_upper.push(domainGap_lower[i]);
+                      } else {
+                        arr.push(domainGap_lower[i]);
+                      }
+                    }
+                    domainGap_lower = arr;
+                  }
 
-                try {
-                  Utility.progressWait();
-                  solution = await Static.solveFor(fn, variable, variable);
-                  Utility.progressWait(false);
-                  if (!solution.length) {
-                    const mf = $("#fnDlg_function")[0];
-                    Utility.displayErrorMessage(
-                      mf,
-                      `Unable to find a solution for "${fn}".`
-                    );
+                  fn = `${variablePlusExpanded}=${domainRangeRestriction[1]}`;
+
+                  //console.log(eq.toString());
+                  //solution = eq.solveFor(variable);
+
+                  try {
+                    Utility.progressWait();
+                    solution = await Static.solveFor(fn, variable, variable);
                     Utility.progressWait(false);
-                    return;
+                    if (!solution.length) {
+                      const mf = $("#fnDlg_function")[0];
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Unable to find a solution for "${fn}".`
+                      );
+                      Utility.progressWait(false);
+                      return;
+                    }
+                  } catch (error) {
+                    console.log(error);
+                    Utility.progressWait(false);
                   }
-                } catch (error) {
-                  console.log(error);
-                  Utility.progressWait(false);
-                }
 
-                sol;
-                //console.log(solution);
+                  sol;
+                  //console.log(solution);
 
-                for (let i = 0; i < solution.length; i++) {
-                  sol = math
-                    .simplify(solution[i].replaceAll("abs", ""))
-                    .toString();
-                  if ($.isNumeric(sol)) {
-                    domainGap_upper.push(sol);
+                  for (let i = 0; i < solution.length; i++) {
+                    sol = math
+                      .simplify(solution[i].replaceAll("abs", ""))
+                      .toString();
+                    if ($.isNumeric(sol)) {
+                      domainGap_upper.push(sol);
+                    }
                   }
                 }
-              }
 
-              if (domainGap_lower.length == 1 && domainGap_upper.length == 1) {
-                domainRangeRestriction = [
-                  domainGap_lower[0],
-                  domainGap_upper[0],
-                ];
-              }
-
-              if (domainGap_lower.length == 2 && domainGap_upper.length == 2) {
-                domainRangeRestriction = [
-                  domainGap_lower[0],
-                  domainGap_upper[0],
-                ];
-              }
-
-              if (domainGap_lower.length == 0 && domainGap_upper.length == 2) {
-                let l = parseFloat(domainGap_upper[0]);
-                let u = parseFloat(domainGap_upper[1]);
-
-                if (l > u) {
-                  const temp = u;
-                  u = l;
-                  l = temp;
-                }
-                domainRangeRestriction = [l + "", u + ""];
-              }
-
-              if (domainGap_lower.length == 2 && domainGap_upper.length == 0) {
-                let l = parseFloat(domainGap_lower[0]);
-                let u = parseFloat(domainGap_lower[1]);
-
-                if (l > u) {
-                  const temp = u;
-                  u = l;
-                  l = temp;
-                }
-                domainRangeRestriction = [l + "", u + ""];
-              }
-
-              if (domainGap_lower.length == 1 && domainGap_upper.length == 2) {
                 if (
-                  parseFloat(domainGap_upper[0]) >
-                  parseFloat(domainGap_upper[1])
+                  domainGap_lower.length == 1 &&
+                  domainGap_upper.length == 1
                 ) {
-                  let temp = domainGap_upper[0];
-                  domainGap_upper[0] = domainGap_upper[1];
-                  domainGap_upper[1] = temp;
-                } //
-                let l = parseFloat(domainGap_upper[0]);
-                let u = parseFloat(domainGap_upper[1]);
-                if (
-                  parseFloat(domainGap_lower[0]) <
-                  parseFloat(domainGap_upper[0])
-                ) {
-                  l = parseFloat(domainGap_lower[0]);
+                  domainRangeRestriction = [
+                    domainGap_lower[0],
+                    domainGap_upper[0],
+                  ];
                 }
 
                 if (
-                  parseFloat(domainGap_lower[0]) >
-                  parseFloat(domainGap_upper[1])
+                  domainGap_lower.length == 2 &&
+                  domainGap_upper.length == 2
                 ) {
-                  u = parseFloat(domainGap_lower[0]);
+                  domainRangeRestriction = [
+                    domainGap_lower[0],
+                    domainGap_upper[0],
+                  ];
                 }
 
-                if (l > u) {
-                  const temp = u;
-                  u = l;
-                  l = temp;
-                }
-                domainRangeRestriction = [l + "", u + ""];
+                if (
+                  domainGap_lower.length == 0 &&
+                  domainGap_upper.length == 2
+                ) {
+                  let l = parseFloat(domainGap_upper[0]);
+                  let u = parseFloat(domainGap_upper[1]);
 
-                /* let l = parseFloat(domainGap_lower[0]);
+                  if (l > u) {
+                    const temp = u;
+                    u = l;
+                    l = temp;
+                  }
+                  domainRangeRestriction = [l + "", u + ""];
+                }
+
+                if (
+                  domainGap_lower.length == 2 &&
+                  domainGap_upper.length == 0
+                ) {
+                  let l = parseFloat(domainGap_lower[0]);
+                  let u = parseFloat(domainGap_lower[1]);
+
+                  if (l > u) {
+                    const temp = u;
+                    u = l;
+                    l = temp;
+                  }
+                  domainRangeRestriction = [l + "", u + ""];
+                }
+
+                if (
+                  domainGap_lower.length == 1 &&
+                  domainGap_upper.length == 2
+                ) {
+                  if (
+                    parseFloat(domainGap_upper[0]) >
+                    parseFloat(domainGap_upper[1])
+                  ) {
+                    let temp = domainGap_upper[0];
+                    domainGap_upper[0] = domainGap_upper[1];
+                    domainGap_upper[1] = temp;
+                  } //
+                  let l = parseFloat(domainGap_upper[0]);
+                  let u = parseFloat(domainGap_upper[1]);
+                  if (
+                    parseFloat(domainGap_lower[0]) <
+                    parseFloat(domainGap_upper[0])
+                  ) {
+                    l = parseFloat(domainGap_lower[0]);
+                  }
+
+                  if (
+                    parseFloat(domainGap_lower[0]) >
+                    parseFloat(domainGap_upper[1])
+                  ) {
+                    u = parseFloat(domainGap_lower[0]);
+                  }
+
+                  if (l > u) {
+                    const temp = u;
+                    u = l;
+                    l = temp;
+                  }
+                  domainRangeRestriction = [l + "", u + ""];
+
+                  /* let l = parseFloat(domainGap_lower[0]);
                 let l_0, u;
 
                 if (
@@ -1366,101 +1389,108 @@ class MFunctionDlg {
                   l = temp;
                 }
                 domainRangeRestriction = [l + "", u + ""]; */
-              }
-
-              if (domainGap_lower.length == 2 && domainGap_upper.length == 1) {
-                if (
-                  parseFloat(domainGap_lower[0]) >
-                  parseFloat(domainGap_lower[1])
-                ) {
-                  let temp = domainGap_lower[0];
-                  domainGap_lower[0] = domainGap_lower[1];
-                  domainGap_lower[1] = temp;
-                }
-
-                let l = parseFloat(domainGap_lower[0]);
-                let u = parseFloat(domainGap_lower[1]);
-                if (
-                  parseFloat(domainGap_upper[0]) <
-                  parseFloat(domainGap_lower[0])
-                ) {
-                  l = parseFloat(domainGap_upper[0]);
                 }
 
                 if (
-                  parseFloat(domainGap_upper[0]) >
-                  parseFloat(domainGap_lower[1])
+                  domainGap_lower.length == 2 &&
+                  domainGap_upper.length == 1
                 ) {
-                  u = parseFloat(domainGap_upper[0]);
+                  if (
+                    parseFloat(domainGap_lower[0]) >
+                    parseFloat(domainGap_lower[1])
+                  ) {
+                    let temp = domainGap_lower[0];
+                    domainGap_lower[0] = domainGap_lower[1];
+                    domainGap_lower[1] = temp;
+                  }
+
+                  let l = parseFloat(domainGap_lower[0]);
+                  let u = parseFloat(domainGap_lower[1]);
+                  if (
+                    parseFloat(domainGap_upper[0]) <
+                    parseFloat(domainGap_lower[0])
+                  ) {
+                    l = parseFloat(domainGap_upper[0]);
+                  }
+
+                  if (
+                    parseFloat(domainGap_upper[0]) >
+                    parseFloat(domainGap_lower[1])
+                  ) {
+                    u = parseFloat(domainGap_upper[0]);
+                  }
+
+                  if (l > u) {
+                    const temp = u;
+                    u = l;
+                    l = temp;
+                  }
+                  domainRangeRestriction = [l + "", u + ""];
                 }
 
-                if (l > u) {
-                  const temp = u;
-                  u = l;
-                  l = temp;
+                ///////////////////////////////////////////////////////////////////
+                if (
+                  parseFloat(domainRangeRestriction[0]) >
+                  parseFloat(domainRangeRestriction[1])
+                ) {
+                  const temp = domainRangeRestriction[0];
+                  domainRangeRestriction[0] = domainRangeRestriction[1];
+                  domainRangeRestriction[1] = temp;
                 }
-                domainRangeRestriction = [l + "", u + ""];
-              }
 
-              ///////////////////////////////////////////////////////////////////
-              if (
-                parseFloat(domainRangeRestriction[0]) >
-                parseFloat(domainRangeRestriction[1])
-              ) {
-                const temp = domainRangeRestriction[0];
-                domainRangeRestriction[0] = domainRangeRestriction[1];
-                domainRangeRestriction[1] = temp;
-              }
-
-              let dmLimit = domainRangeRestriction[0];
-              domainRangeRestriction[0] = plot.defines.expandDefines(
-                domainRangeRestriction[0],
-                self.variable,
-                true
-              );
-              domainRangeRestriction[0] = handleCoeffs(
-                domainRangeRestriction[0]
-              );
-
-              if (!domainRangeRestriction[0]) {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Unable to resolve lower limit, ${dmLimit}, within the declared domain.`
+                let dmLimit = domainRangeRestriction[0];
+                domainRangeRestriction[0] = await plot.defines.expandDefines(
+                  domainRangeRestriction[0],
+                  self.variable,
+                  true
                 );
-                Utility.progressWait(false);
-                return false;
-              }
-              dmLimit = domainRangeRestriction[1];
-              domainRangeRestriction[1] = plot.defines.expandDefines(
-                domainRangeRestriction[1],
-                self.variable,
-                true
-              );
-              domainRangeRestriction[1] = handleCoeffs(
-                domainRangeRestriction[1]
-              );
+                domainRangeRestriction[0] = handleCoeffs(
+                  domainRangeRestriction[0]
+                );
 
-              if (!domainRangeRestriction[1]) {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Unable to resolve upper limit, ${dmLimit}, within the declared domain.`
+                if (!domainRangeRestriction[0]) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Unable to resolve lower limit, ${dmLimit}, within the declared domain.`
+                  );
+                  Utility.progressWait(false);
+                  return false;
+                }
+                dmLimit = domainRangeRestriction[1];
+                domainRangeRestriction[1] = await plot.defines.expandDefines(
+                  domainRangeRestriction[1],
+                  self.variable,
+                  true
                 );
+                domainRangeRestriction[1] = handleCoeffs(
+                  domainRangeRestriction[1]
+                );
+
+                if (!domainRangeRestriction[1]) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Unable to resolve upper limit, ${dmLimit}, within the declared domain.`
+                  );
+                  Utility.progressWait(false);
+                  return false;
+                }
+                if (
+                  parseFloat(domainRangeRestriction[0]) >=
+                  parseFloat(domainRangeRestriction[1])
+                ) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Upper limit must be greater than Lower limit.`
+                  );
+                  Utility.progressWait(false);
+                  return false;
+                } ///
                 Utility.progressWait(false);
-                return false;
+                return true;
+              } catch (error) {
+                console.log(error);
+                return true;
               }
-              if (
-                parseFloat(domainRangeRestriction[0]) >=
-                parseFloat(domainRangeRestriction[1])
-              ) {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Upper limit must be greater than Lower limit.`
-                );
-                Utility.progressWait(false);
-                return false;
-              } ///
-              Utility.progressWait(false);
-              return true;
             }
 
             if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
@@ -1509,43 +1539,6 @@ class MFunctionDlg {
                 Utility.progressWait(false);
                 return false;
               }
-              /*domainRangeRestriction = domainRangeRestriction.replace(
-                //self.parametric_variable,
-                variablePlus,
-                "~"
-              );
-              domainRangeRestriction = domainRangeRestriction.split("~");
-              if (domainRangeRestriction.length != 2) {
-                // Utility.alert(
-                //   `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`
-                // );
-
-                Utility.displayErrorMessage(
-                  mf,
-                  `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`
-                );
-                return false;
-              }
-              domainRangeRestriction[0] = plot.defines.expandDefines(
-                domainRangeRestriction[0],
-                self.parametric_variable,
-                true
-              );
-              domainRangeRestriction[1] = plot.defines.expandDefines(
-                domainRangeRestriction[1],
-                self.parametric_variable,
-                true
-              );
-              if (
-                parseFloat(domainRangeRestriction[0]) >=
-                parseFloat(domainRangeRestriction[1])
-              ) {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Upper limit must be greater than Lower limit.`
-                );
-                return;
-              }*/
             }
 
             if (
@@ -1583,133 +1576,152 @@ class MFunctionDlg {
             fnDlgFunctionVal.indexOf("y") !== -1 &&
             self.variable !== "y"
           ) {
-            lhs = plot.defines.expandDefines(arr[0], self.variable, true);
-            if (!Utility.isValidExpression(lhs, "y", arr[1], self.variable)) {
-              Utility.displayErrorMessage(
-                mf,
-                `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`
+            try {
+              lhs = await plot.defines.expandDefines(
+                arr[0],
+                self.variable,
+                true
               );
-              Utility.progressWait(false);
-              return;
-            }
-            if (!lhs) {
-              // alert(
-              //   `Failed to retrieve a valid define for expanding "${arr[0]}".`
-              // );
-              Utility.displayErrorMessage(
-                mf,
-                `Failed to retrieve a valid define for expanding "${arr[0]}".`
+              if (!Utility.isValidExpression(lhs, "y", arr[1], self.variable)) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`
+                );
+                Utility.progressWait(false);
+                return;
+              }
+              if (!lhs) {
+                // alert(
+                //   `Failed to retrieve a valid define for expanding "${arr[0]}".`
+                // );
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to retrieve a valid define for expanding "${arr[0]}".`
+                );
+                Utility.progressWait(false);
+                return;
+              }
+              rhs = await plot.defines.expandDefines(
+                arr[1],
+                self.variable,
+                true
               );
-              Utility.progressWait(false);
-              return;
-            }
-            rhs = plot.defines.expandDefines(arr[1], self.variable, true);
-            if (!Utility.isValidExpression(rhs, "y", arr[0], self.variable)) {
-              Utility.displayErrorMessage(
-                mf,
-                `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`
-              );
-              Utility.progressWait(false);
-              return;
-            }
-            if (!rhs) {
-              // alert(
-              //   `Failed to retrieve a valid define for expanding "${arr[1]}".`
-              // );
-              Utility.displayErrorMessage(
-                mf,
-                `Failed to retrieve a valid define for expanding "${arr[1]}".`
-              );
-              Utility.progressWait(false);
-              return;
-            }
-            fnDlgFunctionVal = `${lhs}=${rhs}`;
-            let res = math.simplify(`-1*(${lhs}-(${rhs}))`).toString();
-            if (res.indexOf("y") == -1) {
-              // alert(
-              //   `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
-              // );
-              Utility.displayErrorMessage(
-                mf,
-                `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
-              );
-              Utility.progressWait(false);
-              return;
-            }
+              if (!Utility.isValidExpression(rhs, "y", arr[0], self.variable)) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`
+                );
+                Utility.progressWait(false);
+                return;
+              }
+              if (!rhs) {
+                // alert(
+                //   `Failed to retrieve a valid define for expanding "${arr[1]}".`
+                // );
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to retrieve a valid define for expanding "${arr[1]}".`
+                );
+                Utility.progressWait(false);
+                return;
+              }
+              fnDlgFunctionVal = `${lhs}=${rhs}`;
+              let res = math.simplify(`-1*(${lhs}-(${rhs}))`).toString();
+              if (res.indexOf("y") == -1) {
+                // alert(
+                //   `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
+                // );
+                Utility.displayErrorMessage(
+                  mf,
+                  `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
+                );
+                Utility.progressWait(false);
+                return;
+              }
 
-            if (rhs == "y") {
-              rhs = lhs;
-              lhs = "y";
-            }
+              if (rhs == "y") {
+                rhs = lhs;
+                lhs = "y";
+              }
 
-            if (lhs != "y") {
-              let validForNerdamer = true;
-              let invalidExponent = null;
+              if (lhs != "y") {
+                let validForNerdamer = true;
+                let invalidExponent = null;
 
-              // let deg_of_poly_LHS = math.abs(
-              //   parseFloat(
-              //     math.simplify(
-              //       nerdamer(`deg(${lhs},${self.variable})`).toString()
-              //     )
-              //   )
-              // );
-              // if (
-              //   deg_of_poly_LHS < 1 &&
-              //   deg_of_poly_LHS != 0 &&
-              //   deg_of_poly_LHS != 0.5
-              // ) {
-              //   validForNerdamer = false;
-              //   invalidExponent = lhs;
-              // }
+                // let deg_of_poly_LHS = math.abs(
+                //   parseFloat(
+                //     math.simplify(
+                //       nerdamer(`deg(${lhs},${self.variable})`).toString()
+                //     )
+                //   )
+                // );
+                // if (
+                //   deg_of_poly_LHS < 1 &&
+                //   deg_of_poly_LHS != 0 &&
+                //   deg_of_poly_LHS != 0.5
+                // ) {
+                //   validForNerdamer = false;
+                //   invalidExponent = lhs;
+                // }
 
-              // let poly = math.simplify(`${lhs}-${rhs}`).toString();
-              // let deg_of_poly = math.abs(
-              //   parseFloat(
-              //     math.simplify(
-              //       nerdamer(`deg(${poly},${self.variable})`).toString()
-              //     )
-              //   )
-              // );
-              // if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
-              //   validForNerdamer = false;
-              //   invalidExponent = rhs;
-              // }
+                // let poly = math.simplify(`${lhs}-${rhs}`).toString();
+                // let deg_of_poly = math.abs(
+                //   parseFloat(
+                //     math.simplify(
+                //       nerdamer(`deg(${poly},${self.variable})`).toString()
+                //     )
+                //   )
+                // );
+                // if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
+                //   validForNerdamer = false;
+                //   invalidExponent = rhs;
+                // }
 
-              // let deg_of_poly_RHS = math.abs(
-              //   parseFloat(
-              //     math.simplify(
-              //       nerdamer(`deg(${rhs},${self.variable})`).toString()
-              //     )
-              //   )
-              // );
-              // if (
-              //   deg_of_poly_RHS < 1 &&
-              //   deg_of_poly_RHS != 0 &&
-              //   deg_of_poly_RHS != 0.5
-              // ) {
-              //   validForNerdamer = false;
-              //   invalidExponent = rhs;
-              // }
+                // let deg_of_poly_RHS = math.abs(
+                //   parseFloat(
+                //     math.simplify(
+                //       nerdamer(`deg(${rhs},${self.variable})`).toString()
+                //     )
+                //   )
+                // );
+                // if (
+                //   deg_of_poly_RHS < 1 &&
+                //   deg_of_poly_RHS != 0 &&
+                //   deg_of_poly_RHS != 0.5
+                // ) {
+                //   validForNerdamer = false;
+                //   invalidExponent = rhs;
+                // }
 
-              // if (deg_of_poly_RHS >= 1 || deg_of_poly_LHS >= 1) {
-              //   validForNerdamer = true;
-              // }
+                // if (deg_of_poly_RHS >= 1 || deg_of_poly_LHS >= 1) {
+                //   validForNerdamer = true;
+                // }
 
-              if (validForNerdamer) {
-                // let eq = nerdamer(fnDlgFunctionVal);
-                // console.log(eq.toString());
-                let solution; // = eq.solveFor("y");
+                if (validForNerdamer) {
+                  // let eq = nerdamer(fnDlgFunctionVal);
+                  // console.log(eq.toString());
+                  let solution; // = eq.solveFor("y");
 
-                try {
-                  Utility.progressWait();
-                  solution = await Static.solveFor(
-                    fnDlgFunctionVal,
-                    "y",
-                    variable
-                  );
-                  Utility.progressWait(false);
-                  if (!solution.length) {
-                    const mf = $("#fnDlg_function")[0];
+                  try {
+                    Utility.progressWait();
+                    solution = await Static.solveFor(
+                      fnDlgFunctionVal,
+                      "y",
+                      variable
+                    );
+                    Utility.progressWait(false);
+                    if (!solution.length) {
+                      const mf = $("#fnDlg_function")[0];
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Unable to find a solution for "${fnDlgFunctionVal}".`
+                      );
+                      Utility.progressWait(false);
+                      return;
+                    }
+                  } catch (error) {
+                    console.log(error);
+                    Utility.progressWait(false);
                     Utility.displayErrorMessage(
                       mf,
                       `Unable to find a solution for "${fnDlgFunctionVal}".`
@@ -1717,28 +1729,22 @@ class MFunctionDlg {
                     Utility.progressWait(false);
                     return;
                   }
-                } catch (error) {
-                  console.log(error);
-                  Utility.progressWait(false);
+                  arr = ["y", solution[0].replaceAll("abs", "")];
+                  Static.g_solution_arr = solution;
+
+                  fnDlgFunctionVal = `y=${arr[1]}`;
+                } else {
                   Utility.displayErrorMessage(
                     mf,
-                    `Unable to find a solution for "${fnDlgFunctionVal}".`
+                    `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
                   );
                   Utility.progressWait(false);
                   return;
                 }
-                arr = ["y", solution[0].replaceAll("abs", "")];
-                Static.g_solution_arr = solution;
-
-                fnDlgFunctionVal = `y=${arr[1]}`;
-              } else {
-                Utility.displayErrorMessage(
-                  mf,
-                  `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`
-                );
-                Utility.progressWait(false);
-                return;
               }
+            } catch (error) {
+              console.log(error);
+              return;
             }
           }
 
@@ -1842,24 +1848,33 @@ class MFunctionDlg {
               }
               m_rhs_fnDec = Utility.getFullDerivativeDeclaration(m_rhs);
               if (m_rhs_fnDec) {
-                const _dec = Utility.getFunctionDeclaration(m_rhs);
-                if (_dec) {
-                  m_rhs = m_rhs.replaceAll(_dec, "U");
-                }
-                m_rhs = plot.defines.expandDefines(m_rhs, self.variable, true);
-                if (_dec) {
-                  m_rhs = m_rhs.replaceAll("U", _dec);
-                }
-                if (!m_rhs) {
-                  //alert(`Tried but failed to define "${m_rhs_fnDec}".`);
-                  Utility.displayErrorMessage(
-                    mf,
-                    `Tried but failed to define "${m_rhs_fnDec}".`
+                try {
+                  const _dec = Utility.getFunctionDeclaration(m_rhs);
+                  if (_dec) {
+                    m_rhs = m_rhs.replaceAll(_dec, "U");
+                  }
+                  m_rhs = await plot.defines.expandDefines(
+                    m_rhs,
+                    self.variable,
+                    true
                   );
-                  Utility.progressWait(false);
+                  if (_dec) {
+                    m_rhs = m_rhs.replaceAll("U", _dec);
+                  }
+                  if (!m_rhs) {
+                    //alert(`Tried but failed to define "${m_rhs_fnDec}".`);
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Tried but failed to define "${m_rhs_fnDec}".`
+                    );
+                    Utility.progressWait(false);
+                    return;
+                  }
+                  arr[1] = m_rhs;
+                } catch (error) {
+                  console.log(error);
                   return;
                 }
-                arr[1] = m_rhs;
               }
 
               if (!forceDefined) {
@@ -1921,35 +1936,39 @@ class MFunctionDlg {
                 }
                 m_lhs_fnDec = Utility.getFullDerivativeDeclaration(m_lhs);
                 if (m_lhs_fnDec) {
-                  const _dec = Utility.getFunctionDeclaration(m_rhs);
-                  if (_dec) {
-                    m_lhs = m_lhs.replaceAll(_dec, "U");
-                  }
-                  m_lhs = plot.defines.expandDefines(
-                    m_lhs,
-                    self.variable,
-                    true
-                  );
-                  if (_dec) {
-                    m_lhs = m_lhs.replaceAll("U", _dec);
-                  }
-                  if (!_dec) {
-                    m_lhs = plot.defines.expandDefines(
+                  try {
+                    const _dec = Utility.getFunctionDeclaration(m_rhs);
+                    if (_dec) {
+                      m_lhs = m_lhs.replaceAll(_dec, "U");
+                    }
+                    m_lhs = await plot.defines.expandDefines(
                       m_lhs,
                       self.variable,
                       true
                     );
+                    if (_dec) {
+                      m_lhs = m_lhs.replaceAll("U", _dec);
+                    }
+                    if (!_dec) {
+                      m_lhs = await plot.defines.expandDefines(
+                        m_lhs,
+                        self.variable,
+                        true
+                      );
+                    }
+                    if (!m_lhs) {
+                      //alert(`Tried but failed to define "${m_lhs_fnDec}".`);
+                      Utility.displayErrorMessage(
+                        mf,
+                        `Tried but failed to define "${m_lhs_fnDec}".`
+                      );
+                      Utility.progressWait(false);
+                      return;
+                    }
+                    arr[0] = m_lhs;
+                  } catch (error) {
+                    console.log(error);
                   }
-                  if (!m_lhs) {
-                    //alert(`Tried but failed to define "${m_lhs_fnDec}".`);
-                    Utility.displayErrorMessage(
-                      mf,
-                      `Tried but failed to define "${m_lhs_fnDec}".`
-                    );
-                    Utility.progressWait(false);
-                    return;
-                  }
-                  arr[0] = m_lhs;
                 }
               }
               if (m_lhs !== "0" && fnDlgFunctionVal !== m_lhs) {
@@ -2264,19 +2283,24 @@ class MFunctionDlg {
                 console.log(error);
               }
             } else {
-              self.expandedFn = self.fn = plot.defines.expandDefines(
-                fnDlgFunctionVal,
-                self.variable
-              );
-              if (!self.expandedFn) {
-                // alert(
-                //   `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
+              try {
+                self.expandedFn = self.fn = await plot.defines.expandDefines(
+                  fnDlgFunctionVal,
+                  self.variable
                 );
-                Utility.progressWait(false);
+                if (!self.expandedFn) {
+                  // alert(
+                  //   `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
+                  // );
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
+                  );
+                  Utility.progressWait(false);
+                  return;
+                }
+              } catch (error) {
+                console.log(error);
                 return;
               }
             }
