@@ -72,28 +72,38 @@ class MyCurveSelectorObject extends HObject {
     }
 
     this.highLightSelectedCurve = function () {
-      const curve = new Curve();
-      curve.setItemAttribute(PlotItem.ItemAttribute.Legend, false);
-      curve.setSamples(this.selectorWidgetOverlay.curve.data().samples());
       const times = timesSelected(this.selectorWidgetOverlay.curve) + 1;
-      const highLightPen = new Misc.Pen(
-        this.selectorWidgetOverlay.curve.pen().color,
-        times * 3 * this.selectorWidgetOverlay.curve.pen().width,
-        this.selectorWidgetOverlay.curve.pen().style
-      );
-      this.curves.push(curve);
-      curve.setPen(highLightPen);
+      if (times <= 1) {
+        const curve = new Curve(
+          `%%${this.selectorWidgetOverlay.curve.title()}%%`
+        );
+        curve.setItemAttribute(PlotItem.ItemAttribute.Legend, false);
+        curve.setSamples(this.selectorWidgetOverlay.curve.data().samples());
+        // const times = timesSelected(this.selectorWidgetOverlay.curve) + 1;
+        // if (times <= 1) {
+        const highLightPen = new Misc.Pen(
+          this.selectorWidgetOverlay.curve.pen().color,
+          times * 3 * this.selectorWidgetOverlay.curve.pen().width,
+          this.selectorWidgetOverlay.curve.pen().style
+        );
 
-      curve.setAxes(
-        this.selectorWidgetOverlay.curve.xAxis(),
-        this.selectorWidgetOverlay.curve.yAxis()
-      );
-      curve.attach(plot);
+        this.curves.push(curve);
+        curve.setPen(highLightPen);
+
+        curve.setAxes(
+          this.selectorWidgetOverlay.curve.xAxis(),
+          this.selectorWidgetOverlay.curve.yAxis()
+        );
+        curve.attach(plot);
+        return true;
+      }
+      self.abortSelection();
+      return false;
     };
 
     function abortLastSelection() {
       if (self.curves.length == 1) {
-        self.abortSelection();
+        self.abortSelections();
       } else {
         self.curves[self.curves.length - 1].detach();
         self.curves.pop();
@@ -107,7 +117,7 @@ class MyCurveSelectorObject extends HObject {
         event.button == this.abortButton &&
         Utility.modifiers(event) == this.abortModifiers
       ) {
-        this.abortSelection();
+        this.abortSelections();
         return;
       }
       if (
@@ -122,11 +132,12 @@ class MyCurveSelectorObject extends HObject {
         Utility.modifiers(event) == this.modifiers
       ) {
         if (this.selected) {
-          this.highLightSelectedCurve();
-          this.selectedCurves.push(this.selectorWidgetOverlay.curve);
+          //this.highLightSelectedCurve();
+          if (this.highLightSelectedCurve())
+            this.selectedCurves.push(this.selectorWidgetOverlay.curve);
         } else {
           Static.trigger("selectedCurves", [self.selectedCurves]);
-          this.abortSelection();
+          this.abortSelections();
         }
       }
       return true;
@@ -175,6 +186,39 @@ class MyCurveSelectorObject extends HObject {
   }
 
   abortSelection() {
+    let curves = this.curves;
+    const selectedCurve = this.selectorWidgetOverlay.curve;
+    console.log(selectedCurve.title());
+    console.log(curves[0].title());
+    for (let i = 0; i < curves.length; i++) {
+      const tt = curves[i].title().replaceAll("%", "");
+      if (tt === selectedCurve.title()) {
+        curves[i].detach();
+      }
+    }
+    this.curves = curves.filter(function (curve) {
+      const tt = curve.title().replaceAll("%", "");
+      if (tt != selectedCurve.title()) {
+        return true;
+      }
+      return false;
+    });
+
+    this.selectedCurves = this.selectedCurves.filter(function (curve) {
+      const tt = curve.title().replaceAll("%", "");
+      if (tt != selectedCurve.title()) {
+        return true;
+      }
+      return false;
+    });
+    this.selectorWidgetOverlay.curve = 0;
+    if (this.curves.length == 0) {
+      this.curveSelector.setEnabled(false);
+      $(window).trigger("mousedown");
+    }
+  }
+
+  abortSelections() {
     for (let i = 0; i < this.curves.length; i++) {
       this.curves[i].detach();
     }
@@ -243,7 +287,7 @@ class MyCurveSelectorObject extends HObject {
     } else if (event.type == "mousedown" /* || event.type == 'touchstart' */) {
       this.mouseDown(event);
     } else if (event.type == "dblclick" /* || event.type == 'touchstart' */) {
-      //this.abortSelection();
+      //this.abortSelections();
     } else if (event.type == "mouseleave" /* || event.type == 'touchstart' */) {
       if (this.selected) {
         this.selectorWidgetOverlay.clearCanvas();
@@ -342,6 +386,10 @@ class CurveSelector {
 
   setDistance(dist) {
     this.eventHandlingObject._dmin = dist;
+  }
+
+  abortSelections() {
+    this.eventHandlingObject.abortSelections();
   }
 
   abortSelection() {
