@@ -714,7 +714,6 @@ class Defines {
         res = Utility.replaceKeywordMarkers(res);
         if (m_simplify) {
           try {
-            // res = math.simplify(res, {}, { exactFractions: false }).toString();
             res = res.replace(/\s/g, "");
             res = res.replaceAll("+-", "-");
             res = res.replaceAll("-+", "-");

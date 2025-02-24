@@ -499,11 +499,15 @@ weight: "normal" */
         const x = await self.plot.defines.expandDefines(
           $("#marker_xValue").val()
         );
-        var xVal = math.evaluate(x);
-        const y = await self.plot.defines.expandDefines(
-          $("#marker_yValue").val()
-        );
-        var yVal = math.evaluate(y);
+        let xVal, y, yVal;
+        try {
+          xVal = math.evaluate(x);
+          y = await self.plot.defines.expandDefines($("#marker_yValue").val());
+          yVal = math.evaluate(y);
+        } catch (error) {
+          console.log(error);
+        }
+
         marker.setValue(new Misc.Point(xVal, yVal));
         marker.setLabel($("#marker_label").val());
         //var labelAlignment = Static.AlignRight;

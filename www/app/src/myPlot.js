@@ -957,125 +957,7 @@ class MyPlot extends Plot {
           const obj = Utility.grapherDeterminedDecimalPlaces(newCurve);
           decimalPlacesY = obj.decimalPlacesY;
           decimalPlacesX = obj.decimalPlacesX;
-        } /* else {
-          decimalPlacesY = self.axisDecimalPlaces(newCurve.yAxis());
-          decimalPlacesX = self.axisDecimalPlaces(newCurve.xAxis());
-        } */
-
-        /* const tps = newCurve.turningPoints;
-        if (tps && tps.length) {
-          let scaleX = 1;
-          let scaleY = 1;
-          const width =
-            math.max(
-              math.abs(newCurve.minXValue()),
-              math.abs(newCurve.maxXValue())
-            ) * 2;
-          const height =
-            math.max(
-              math.abs(newCurve.minYValue()),
-              math.abs(newCurve.maxYValue())
-            ) * 2;
-          //const { width, height } = newCurve.boundingRect().size();
-          if (width > 1e6) {
-            scaleX = 1e6 / width;
-          }
-          if (height > 1e6) {
-            scaleY = 1e6 / height;
-          }
-
-          let n = 0;
-          m_samples = m_samples.map(function (e) {
-            if (Utility.isPointATurningPoint(tps, e)) {
-              let pt = new Misc.Point(
-                Utility.adjustForDecimalPlaces(
-                  e.x * scaleX,
-                  decimalPlacesX / 2
-                ),
-                Utility.adjustForDecimalPlaces(e.y * scaleY, decimalPlacesY / 2)
-              );
-              pt.x = pt.x / scaleX;
-              pt.y = pt.y / scaleY;
-              newCurve.turningPoints[n] = pt;
-              n++;
-              return pt;
-            }
-            return new Misc.Point(
-              Utility.adjustForDecimalPlaces(e.x, decimalPlacesX),
-              Utility.adjustForDecimalPlaces(e.y, decimalPlacesY)
-            );
-          });
-
-          newCurve.turningPoints = newCurve.turningPoints.filter(
-            (item, index) => {
-              if (index > 0) {
-                return (
-                  newCurve.turningPoints[index - 1].x !==
-                  newCurve.turningPoints[index].x
-                );
-              }
-              return true;
-            }
-          );
-        } */
-
-        /* const ips = newCurve.inflectionPoints;
-        if (ips && ips.length) {
-          let scaleX = 1;
-          let scaleY = 1;
-          const width =
-            math.max(
-              math.abs(newCurve.minXValue()),
-              math.abs(newCurve.maxXValue())
-            ) * 2;
-          const height =
-            math.max(
-              math.abs(newCurve.minYValue()),
-              math.abs(newCurve.maxYValue())
-            ) * 2;
-          //const { width, height } = newCurve.boundingRect().size();
-          if (width > 1e6) {
-            scaleX = 1e6 / width;
-          }
-          if (height > 1e6) {
-            scaleY = 1e6 / height;
-          }
-
-          let n = 0;
-          m_samples = m_samples.map(function (pt) {
-            // if (scaleX !== 1 || scaleY !== 1) {
-            if (Utility.isPointATurningPoint(ips, pt)) {
-              pt.x = Utility.adjustForDecimalPlaces(
-                pt.x * scaleX,
-                decimalPlacesX / 2
-              );
-              pt.y = Utility.adjustForDecimalPlaces(
-                pt.y * scaleY,
-                decimalPlacesY / 2
-              );
-              pt.x = pt.x / scaleX;
-              pt.y = pt.y / scaleY;
-              newCurve.inflectionPoints[n] = pt;
-              n++;
-              return pt;
-            }
-            pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-            pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
-            return pt;
-          });
-
-          newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
-            (item, index) => {
-              if (index > 0) {
-                return (
-                  newCurve.inflectionPoints[index - 1].x !==
-                  newCurve.inflectionPoints[index].x
-                );
-              }
-              return true;
-            }
-          );
-        } */
+        }
 
         const tps = newCurve.turningPoints;
         const ips = newCurve.inflectionPoints;
@@ -1085,16 +967,22 @@ class MyPlot extends Plot {
           !newCurve.discontinuity.length &&
           ((tps && tps.length) || (ips && ips.length))
         ) {
-          const width =
-            math.max(
-              math.abs(newCurve.minXValue()),
-              math.abs(newCurve.maxXValue())
-            ) * 2;
-          const height =
-            math.max(
-              math.abs(newCurve.minYValue()),
-              math.abs(newCurve.maxYValue())
-            ) * 2;
+          let width, height;
+          try {
+            width =
+              math.max(
+                math.abs(newCurve.minXValue()),
+                math.abs(newCurve.maxXValue())
+              ) * 2;
+            height =
+              math.max(
+                math.abs(newCurve.minYValue()),
+                math.abs(newCurve.maxYValue())
+              ) * 2;
+          } catch (error) {
+            console.log(error);
+          }
+
           //const { width, height } = newCurve.boundingRect().size();
           if (width > 1e6) {
             scaleX = 1e6 / width;
@@ -1120,15 +1008,19 @@ class MyPlot extends Plot {
               pt.y = pt.y / scaleY;
               return pt;
             }
+            try {
+              pt.x = Utility.adjustForDecimalPlaces(
+                pt.x,
+                math.max(4, (decimalPlacesX + 1) * 2)
+              );
+              pt.y = Utility.adjustForDecimalPlaces(
+                pt.y,
+                math.max(4, decimalPlacesY * 2)
+              );
+            } catch (error) {
+              console.log(error);
+            }
 
-            pt.x = Utility.adjustForDecimalPlaces(
-              pt.x,
-              math.max(4, (decimalPlacesX + 1) * 2)
-            );
-            pt.y = Utility.adjustForDecimalPlaces(
-              pt.y,
-              math.max(4, decimalPlacesY * 2)
-            );
             return pt;
           });
 
@@ -1237,10 +1129,15 @@ class MyPlot extends Plot {
         let invalid = false;
         for (let i = 0; i < curves.length; i++) {
           const curve = curves[i];
-          const minXVal = math.abs(curve.minXValue());
-          const minYVal = math.abs(curve.minYValue());
-          const maxXVal = math.abs(curve.maxXValue());
-          const maxYVal = math.abs(curve.maxYValue());
+          let minXVal, minYVal, maxXVal, maxYVal;
+          try {
+            minXVal = math.abs(curve.minXValue());
+            minYVal = math.abs(curve.minYValue());
+            maxXVal = math.abs(curve.maxXValue());
+            maxYVal = math.abs(curve.maxYValue());
+          } catch (error) {
+            console.log(error);
+          }
 
           if (minXVal !== 0) {
             if (minXVal < 1e-100) {
@@ -1400,14 +1297,7 @@ class MyPlot extends Plot {
                   return false;
                 }
                 entry = csvStr;
-                //} else {
-                //validInput = true;
-                // const m_translateX = math.evaluate(arr[0]);
-                // const m_translateY = math.evaluate(arr[1]);
 
-                //const plot = curves[0].plot();
-                // const doAutoReplot = plot.autoReplot();
-                // plot.setAutoReplot(false);
                 for (let i = 0; i < curves.length; i++) {
                   self.transformation.transform(
                     curves[i],
@@ -1589,12 +1479,17 @@ class MyPlot extends Plot {
               fn += functions[i];
               if (i < functions.length - 1) fn += "+";
             }
-            combinedFn = math
-              .simplify(math.parse(fn), {}, { exactFractions: false })
-              .toString()
-              .replace(/\s/g, "")
-              .replaceAll("+-", "-");
-            //Replace the whitespace delimiters stripped out by simplify()
+            try {
+              combinedFn = math
+                .simplify(math.parse(fn), {}, { exactFractions: false })
+                .toString()
+                .replace(/\s/g, "")
+                .replaceAll("+-", "-");
+              //Replace the whitespace delimiters stripped out by simplify()
+            } catch (error) {
+              console.log(error);
+            }
+
             combinedFn = combinedFn.replaceAll("mod", " mod ");
           }
           if (operationType == "Subtract") {
@@ -1603,12 +1498,17 @@ class MyPlot extends Plot {
               fn += `(${functions[i]})`;
               if (i < functions.length - 1) fn += "-";
             }
-            combinedFn = math
-              .simplify(math.parse(fn), {}, { exactFractions: false })
-              .toString()
-              .replace(/\s/g, "")
-              .replaceAll("+-", "-");
-            //Replace the whitespace delimiters stripped out by simplify()
+            try {
+              combinedFn = math
+                .simplify(math.parse(fn), {}, { exactFractions: false })
+                .toString()
+                .replace(/\s/g, "")
+                .replaceAll("+-", "-");
+              //Replace the whitespace delimiters stripped out by simplify()
+            } catch (error) {
+              console.log(error);
+            }
+
             combinedFn = combinedFn.replaceAll("mod", " mod ");
           }
           if (operationType == "Multiply") {
@@ -1617,12 +1517,17 @@ class MyPlot extends Plot {
               fn += `(${functions[i]})`;
               if (i < functions.length - 1) fn += "*";
             }
-            combinedFn = math
-              .simplify(math.parse(fn), {}, { exactFractions: false })
-              .toString()
-              .replace(/\s/g, "")
-              .replaceAll("+-", "-");
-            //Replace the whitespace delimiters stripped out by simplify()
+            try {
+              combinedFn = math
+                .simplify(math.parse(fn), {}, { exactFractions: false })
+                .toString()
+                .replace(/\s/g, "")
+                .replaceAll("+-", "-");
+              //Replace the whitespace delimiters stripped out by simplify()
+            } catch (error) {
+              console.log(error);
+            }
+
             combinedFn = combinedFn.replaceAll("mod", " mod ");
           }
           if (operationType == "Divide") {
@@ -1631,12 +1536,17 @@ class MyPlot extends Plot {
               fn += `(${functions[i]})`;
               if (i < functions.length - 1) fn += "/";
             }
-            combinedFn = math
-              .simplify(math.parse(fn), {}, { exactFractions: false })
-              .toString()
-              .replace(/\s/g, "")
-              .replaceAll("+-", "-");
-            //Replace the whitespace delimiters stripped out by simplify()
+            try {
+              combinedFn = math
+                .simplify(math.parse(fn), {}, { exactFractions: false })
+                .toString()
+                .replace(/\s/g, "")
+                .replaceAll("+-", "-");
+              //Replace the whitespace delimiters stripped out by simplify()
+            } catch (error) {
+              console.log(error);
+            }
+
             combinedFn = combinedFn.replaceAll("mod", " mod ");
           }
           if (operationType == "Composite") {
@@ -1645,21 +1555,30 @@ class MyPlot extends Plot {
               const gx = functions[i];
               fn = fn.replaceAll(variable, "(" + gx + ")");
             }
-            combinedFn = math
-              .simplify(math.parse(fn), {}, { exactFractions: false })
-              .toString()
-              .replace(/\s/g, "")
-              .replaceAll("+-", "-");
-            //Replace the whitespace delimiters stripped out by simplify()
+            try {
+              combinedFn = math
+                .simplify(math.parse(fn), {}, { exactFractions: false })
+                .toString()
+                .replace(/\s/g, "")
+                .replaceAll("+-", "-");
+              //Replace the whitespace delimiters stripped out by simplify()
+            } catch (error) {
+              console.log(error);
+            }
+
             combinedFn = combinedFn.replaceAll("mod", " mod ");
 
             var order = nerdamer(`deg(${combinedFn})`).toString();
             if (order === "1") {
               const combinedFnTest = combinedFn.replaceAll(variable, "U");
-              if (
-                math.abs(1 - math.evaluate(combinedFnTest, { U: 1 })) < 1e-10
-              ) {
-                combinedFn = variable;
+              try {
+                if (
+                  math.abs(1 - math.evaluate(combinedFnTest, { U: 1 })) < 1e-10
+                ) {
+                  combinedFn = variable;
+                }
+              } catch (error) {
+                console.log(error);
               }
             }
 
@@ -2369,12 +2288,17 @@ class MyPlot extends Plot {
                 samples2[samples2.length - 1].y,
               ];
 
-              let point = math.intersect(
-                point1Line1,
-                point2Line1,
-                point1Line2,
-                point2Line2
-              );
+              let point;
+              try {
+                point = math.intersect(
+                  point1Line1,
+                  point2Line1,
+                  point1Line2,
+                  point2Line2
+                );
+              } catch (error) {
+                console.log(error);
+              }
 
               if (point) {
                 let x = Utility.adjustForDecimalPlaces(point[0]);
@@ -2509,12 +2433,17 @@ class MyPlot extends Plot {
                 //console.log(rect2.toString());
 
                 if (rect1.intersects(rect2)) {
-                  let point = math.intersect(
-                    point1Line1,
-                    point2Line1,
-                    point1Line2,
-                    point2Line2
-                  );
+                  let point;
+                  try {
+                    point = math.intersect(
+                      point1Line1,
+                      point2Line1,
+                      point1Line2,
+                      point2Line2
+                    );
+                  } catch (error) {
+                    console.log(error);
+                  }
 
                   //console.log(point);
                   if (!point) {
@@ -2608,12 +2537,17 @@ class MyPlot extends Plot {
                 ).normalized();
 
                 if (rect1.intersects(rect2)) {
-                  let point = math.intersect(
-                    point1Line1,
-                    point2Line1,
-                    point1Line2,
-                    point2Line2
-                  );
+                  let point;
+                  try {
+                    point = math.intersect(
+                      point1Line1,
+                      point2Line1,
+                      point1Line2,
+                      point2Line2
+                    );
+                  } catch (error) {
+                    console.log(error);
+                  }
 
                   //console.log(point);
                   if (!point) {
@@ -2672,8 +2606,14 @@ class MyPlot extends Plot {
 
               // const mx = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
               const mx = pt.x;
-              const my1 = math.evaluate(fn1, { x: mx });
-              const my2 = math.evaluate(fn2, { x: mx });
+              let my1, my2;
+              try {
+                my1 = math.evaluate(fn1, { x: mx });
+                my2 = math.evaluate(fn2, { x: mx });
+              } catch (error) {
+                console.log(error);
+              }
+
               if (my1 == my2) {
                 return pt;
               }
@@ -2681,56 +2621,65 @@ class MyPlot extends Plot {
               let xMap = self.axisScaleDraw(curves[0].xAxis()).scaleMap();
               const px = 1e-4;
               //const px = 8e-3;
-              const step = math.max(
-                1e-5,
-                math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
-              );
+              let step, fx, diff;
+              try {
+                step = math.max(
+                  1e-5,
+                  math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
+                );
 
-              //console.log("step", step);
+                //console.log("step", step);
 
-              const fx = `(${fn2})-(${fn1})`;
-              let diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                fx = `(${fn2})-(${fn1})`;
+                diff = math.abs(math.evaluate(fx, { x: pt.x }));
+              } catch (error) {
+                console.log(error);
+              }
 
               if (diff > 1e-8) {
-                const d = math.abs(math.evaluate(fx, { x: pt.x + step }));
-                if (d > diff) {
-                  add = false;
-                }
-
-                let n = 0;
-                let prevDiff = Number.MAX_VALUE;
-                while (diff < prevDiff && n < 16000) {
-                  n++;
-                  prevDiff = diff;
-                  if (add) {
-                    pt.x = pt.x + step;
-                    diff = math.abs(math.evaluate(fx, { x: pt.x }));
-                  } else {
-                    pt.x = pt.x - step;
-                    diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                try {
+                  const d = math.abs(math.evaluate(fx, { x: pt.x + step }));
+                  if (d > diff) {
+                    add = false;
                   }
+
+                  let n = 0;
+                  let prevDiff = Number.MAX_VALUE;
+                  while (diff < prevDiff && n < 16000) {
+                    n++;
+                    prevDiff = diff;
+                    if (add) {
+                      pt.x = pt.x + step;
+                      diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                    } else {
+                      pt.x = pt.x - step;
+                      diff = math.abs(math.evaluate(fx, { x: pt.x }));
+                    }
+                  }
+                  //console.log("n", n);
+
+                  pt.x = pt.x - 0.5 * step;
+
+                  if (fn1.indexOf("^") === -1) {
+                    const pt_y = math.evaluate(fn1, { x: pt.x });
+                    pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
+                  } else if (fn2.indexOf("^") === -1) {
+                    const pt_y = math.evaluate(fn2, { x: pt.x });
+                    pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
+                  } else {
+                    let pt_y_1 = math.evaluate(fn1, { x: pt.x });
+                    pt_y_1 = math.isNumeric(pt_y_1) ? pt_y_1 : pt.y;
+                    let pt_y_2 = math.evaluate(fn2, { x: pt.x });
+                    pt_y_2 = math.isNumeric(pt_y_2) ? pt_y_2 : pt.y;
+                    pt.y = (pt_y_1 + pt_y_2) / 2;
+                  }
+
+                  // pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
+                  // pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
+                  return pt;
+                } catch (error) {
+                  console.log(error);
                 }
-                //console.log("n", n);
-
-                pt.x = pt.x - 0.5 * step;
-
-                if (fn1.indexOf("^") === -1) {
-                  const pt_y = math.evaluate(fn1, { x: pt.x });
-                  pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
-                } else if (fn2.indexOf("^") === -1) {
-                  const pt_y = math.evaluate(fn2, { x: pt.x });
-                  pt.y = math.isNumeric(pt_y) ? pt_y : pt.y;
-                } else {
-                  let pt_y_1 = math.evaluate(fn1, { x: pt.x });
-                  pt_y_1 = math.isNumeric(pt_y_1) ? pt_y_1 : pt.y;
-                  let pt_y_2 = math.evaluate(fn2, { x: pt.x });
-                  pt_y_2 = math.isNumeric(pt_y_2) ? pt_y_2 : pt.y;
-                  pt.y = (pt_y_1 + pt_y_2) / 2;
-                }
-
-                // pt.x = Utility.adjustForDecimalPlaces(pt.x, decimalPlacesX);
-                // pt.y = Utility.adjustForDecimalPlaces(pt.y, decimalPlacesY);
-                return pt;
               }
             }
             return pt;
@@ -2754,26 +2703,6 @@ class MyPlot extends Plot {
             if ($.isNumeric(fn)) {
               fn = curves[1].fn;
             }
-
-            const p = math.parse(fn);
-            const scope = new Map();
-
-            // if (
-            //   res.length > 1 &&
-            //   math.sign(res[0].x) != math.sign(res[res.length - 1].x)
-            // ) {
-            //    res.push(new Misc.Point(0, 0));
-            // }
-            /*if (p) {
-             res = res.filter((pt) => {
-              scope.set(variable, pt.x);
-              const v = p.evaluate(scope);
-              if (Utility.mFuzzyCompare(v, 0) || math.abs(pt.x) > 1) {
-                return true;
-              }
-              return false;
-            }); */
-            //}
           }
 
           //console.log(res);

@@ -887,13 +887,19 @@ class MFunctionDlg {
               let poly = math
                 .simplify(`${expandedLHS}-${expandedRHS}`)
                 .toString();
-              let deg_of_poly = math.abs(
-                parseFloat(
-                  math.simplify(
-                    nerdamer(`deg(${poly},${self.variable})`).toString()
+              let deg_of_poly;
+              try {
+                deg_of_poly = math.abs(
+                  parseFloat(
+                    math.simplify(
+                      nerdamer(`deg(${poly},${self.variable})`).toString()
+                    )
                   )
-                )
-              );
+                );
+              } catch (error) {
+                console.log(error);
+              }
+
               if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
                 Utility.progressWait2(false);
                 return false;
@@ -951,15 +957,14 @@ class MFunctionDlg {
                   return;
                 }
 
-                /* $(window).trigger("defineAdded", [
-                  dec,
-                  math.simplify(res, {}, { exactFractions: false }).toString(),
-                ]); */
-
-                await plot.defines.addDefine(
-                  dec,
-                  math.simplify(res, {}, { exactFractions: false }).toString()
-                );
+                try {
+                  await plot.defines.addDefine(
+                    dec,
+                    math.simplify(res, {}, { exactFractions: false }).toString()
+                  );
+                } catch (error) {
+                  console.log(error);
+                }
 
                 Utility.progressWait2(false);
                 return true;
@@ -1561,14 +1566,6 @@ class MFunctionDlg {
             self.domainRangeRestriction = domainRangeRestriction;
           }
           let arr = fnDlgFunctionVal.split("=");
-          // for (let i = 0; i < arr.length; i++) {
-          //   try {
-          //     math.parse(arr[i]);
-          //   } catch (error) {
-          //     Utility.displayErrorMessage(mf, error.message);
-          //     return;
-          //   }
-          // }
 
           let lhs, rhs;
 
@@ -1627,7 +1624,13 @@ class MFunctionDlg {
                 return;
               }
               fnDlgFunctionVal = `${lhs}=${rhs}`;
-              let res = math.simplify(`-1*(${lhs}-(${rhs}))`).toString();
+              let res;
+              try {
+                res = math.simplify(`-1*(${lhs}-(${rhs}))`).toString();
+              } catch (error) {
+                console.log(error);
+              }
+
               if (res.indexOf("y") == -1) {
                 // alert(
                 //   `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`
@@ -1648,55 +1651,6 @@ class MFunctionDlg {
               if (lhs != "y") {
                 let validForNerdamer = true;
                 let invalidExponent = null;
-
-                // let deg_of_poly_LHS = math.abs(
-                //   parseFloat(
-                //     math.simplify(
-                //       nerdamer(`deg(${lhs},${self.variable})`).toString()
-                //     )
-                //   )
-                // );
-                // if (
-                //   deg_of_poly_LHS < 1 &&
-                //   deg_of_poly_LHS != 0 &&
-                //   deg_of_poly_LHS != 0.5
-                // ) {
-                //   validForNerdamer = false;
-                //   invalidExponent = lhs;
-                // }
-
-                // let poly = math.simplify(`${lhs}-${rhs}`).toString();
-                // let deg_of_poly = math.abs(
-                //   parseFloat(
-                //     math.simplify(
-                //       nerdamer(`deg(${poly},${self.variable})`).toString()
-                //     )
-                //   )
-                // );
-                // if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
-                //   validForNerdamer = false;
-                //   invalidExponent = rhs;
-                // }
-
-                // let deg_of_poly_RHS = math.abs(
-                //   parseFloat(
-                //     math.simplify(
-                //       nerdamer(`deg(${rhs},${self.variable})`).toString()
-                //     )
-                //   )
-                // );
-                // if (
-                //   deg_of_poly_RHS < 1 &&
-                //   deg_of_poly_RHS != 0 &&
-                //   deg_of_poly_RHS != 0.5
-                // ) {
-                //   validForNerdamer = false;
-                //   invalidExponent = rhs;
-                // }
-
-                // if (deg_of_poly_RHS >= 1 || deg_of_poly_LHS >= 1) {
-                //   validForNerdamer = true;
-                // }
 
                 if (validForNerdamer) {
                   // let eq = nerdamer(fnDlgFunctionVal);
@@ -2500,27 +2454,6 @@ class MFunctionDlg {
               return false;
             }
           } catch (err) {
-            /* try {
-              self.lowerLimit = math.evaluate(
-                replaceParameterWith_1($("#fnDlg_lowerLimit").val())
-              );
-              if (!self.lowerLimit) {
-                Utility.alert("Please enter a valid lower(x) limit.");
-                return false;
-              }
-              var lower = Math.abs(self.lowerLimit);
-              if (self.lowerLimit > 0 && lower < Math.cbrt(Static._eps)) {
-                Utility.alert(
-                  `Absolute value of lower(x) limit must not be less than ${Math.cbrt(
-                    Static._eps
-                  )}.`
-                );
-                return false;
-              }
-            } catch (err) {
-              Utility.alert("Please enter a valid lower(x) limit.");
-              return;
-            } */
             Utility.alert("Please enter a valid lower(x) limit.");
             $("#settingsButton").click();
             Utility.progressWait2(false);
@@ -2551,24 +2484,6 @@ class MFunctionDlg {
             //   return false;
             // }
           } catch (err) {
-            /* try {
-              self.upperLimit = math.evaluate(
-                replaceParameterWith_1($("#fnDlg_upperLimit").val())
-              );
-              if (!self.upperLimit) {
-                Utility.alert("Please enter a valid upper(x) limit.");
-                return false;
-              }
-              var upper = Math.abs(self.upperLimit);
-              if (self.upperLimit > 0 && upper < Math.cbrt(Static._eps)) {
-                Utility.alert(
-                  `Absolute value of upper(x) limit must not be less than ${Math.cbrt(
-                    Static._eps
-                  )}.`
-                );
-                return false;
-              }
-            } catch (err) { */
             Utility.alert("Please enter a valid upper(x) limit.");
             $("#settingsButton").click();
             Utility.progressWait2(false);
@@ -2762,8 +2677,13 @@ class MFunctionDlg {
               let u_lmt = domainGap_upper[1];
               let scope = new Map();
               scope.set(self.variable, 1);
-              self.lowerLimit = math.evaluate(l_lmt, scope);
-              self.upperLimit = math.evaluate(u_lmt, scope);
+              try {
+                self.lowerLimit = math.evaluate(l_lmt, scope);
+                self.upperLimit = math.evaluate(u_lmt, scope);
+              } catch (error) {
+                console.log(error);
+              }
+
               if (self.lowerLimit > self.upperLimit) {
                 let temp = u_lmt;
                 u_lmt = l_lmt;

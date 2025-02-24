@@ -29,9 +29,6 @@ class MCurveFitDlg extends ModalDlg {
     function getRightHandSide(fn) {
       fn = fn.replace(/\s/g, "");
       fn = fn.replace("y=", "");
-      // try {
-      //   fn = math.simplify(fn, {}, { exactFractions: false }).toString(); //Here
-      // } catch (error) {}
 
       while (fn.indexOf("+ -") != -1) {
         fn = fn.replace("+ -", "- ");
@@ -386,24 +383,17 @@ class MCurveFitDlg extends ModalDlg {
 
         fn = getRightHandSide(fn).replace("ln", "log");
 
-        // let expStr = fn[0];
-        // for (let i = 1; i < fn.length; i++) {
-        //   const c = fn[i];
-        //   if (fn[i - 1] === "0" && Utility.isAlpha(c)) {
-        //     expStr += "*";
-        //     expStr += c;
-        //   } else {
-        //     expStr += c;
-        //   }
-        // }
-        // fn = math.simplify(expStr, {}, { exactFractions: false }).toString();
         fn = fn
           .replaceAll(" ", "")
           .replaceAll("+-", "-")
           .replaceAll("-+", "-")
           .replaceAll("0x", "0");
 
-        fn = math.simplify(fn, {}, { exactFractions: false }).toString();
+        try {
+          fn = math.simplify(fn, {}, { exactFractions: false }).toString();
+        } catch (error) {
+          console.log(error);
+        }
 
         curve.equation = "y=" + fn;
 

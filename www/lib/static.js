@@ -459,14 +459,18 @@ Static.accuracyFactorModerate = 1; //moderate
 // example();
 
 const customPow = function (num, pow) {
-  const rd = Math.round(pow);
+  try {
+    const rd = Math.round(pow);
 
-  if (pow - rd !== 0 && math.abs(pow - rd) < 1) {
-    const p = 1 / pow;
-    if (p % 2 !== 0) {
-      const sign = math.sign(num);
-      return Math.pow(math.abs(num), pow) * sign;
+    if (pow - rd !== 0 && math.abs(pow - rd) < 1) {
+      const p = 1 / pow;
+      if (p % 2 !== 0) {
+        const sign = math.sign(num);
+        return Math.pow(math.abs(num), pow) * sign;
+      }
     }
+  } catch (error) {
+    console.log(error);
   }
 
   return originalPow(num, pow);
@@ -532,16 +536,6 @@ Static.solveFor = function (exp, v, indepVar = "x") {
   } else {
     Utility.progressWait(false);
 
-    // const arr = exp.split("=");
-    // exp = math.simplify(arr[0], {exactFractions:true}).toString();
-    // let right = null;
-    // if (arr.length == 2) {
-    //   right = math.simplify(arr[1], {exactFractions:true}).toString();
-    //   exp = `${exp}=${right}`;
-    // }
-
-    // exp = nerdamer(exp).toString();
-    // nerdamer.clear();
     exp = Utility.insertProductSign_total(exp, indepVar);
     return solve_for(exp, v);
   }

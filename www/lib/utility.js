@@ -1247,15 +1247,6 @@ class Utility {
     var m = (p2.y - p1.y) / (p2.x - p1.x);
     var c = -m * p1.x + p1.y;
     const eps = 1e-20;
-    // if (decimalPlaces) {
-    //   //if (math.abs(m) < eps)
-    //   m = Utility.adjustForDecimalPlaces(m, decimalPlaces);
-    //   //if (math.abs(c) < eps)
-    //   c = Utility.adjustForDecimalPlaces(c, decimalPlaces);
-    // }
-    // var fn = m.toString();
-    // fn += "x+";
-    // fn += c.toString();
 
     var fn = `${m}x+${c}`;
     //console.log("fn:", fn);
@@ -1892,9 +1883,6 @@ class Utility {
       return null;
     }
 
-    /* const node = math.parse(fx); // parse expression into a node tree
-		const code = node.compile();  */
-
     var step = (upperX - lowerX) / (numOfSamples - 1);
     var stepY;
     if (obj.threeD) {
@@ -1922,10 +1910,14 @@ class Utility {
         if (zVal > zMax) zMax = zVal;
       } else {
         yVal = parser.eval({ x: xVal });
-        if (math.isNaN(yVal) || !isFinite(yVal)) {
-          //return [];
-          continue;
+        try {
+          if (math.isNaN(yVal) || !isFinite(yVal)) {
+            continue;
+          }
+        } catch (error) {
+          console.log(error);
         }
+
         const abs_yVal = Math.abs(yVal);
         if (abs_yVal !== 0) {
           if (abs_yVal < 1e-300 || abs_yVal > 1e300) {
@@ -2209,20 +2201,6 @@ class Utility {
 
     samples = Utility.removeNonNumericPoints(samples);
     if (limits_x) {
-      /* let { lowerX, upperX } = limits_x;
-      let xRound = math.round(lowerX);
-      let yRound = parser.eval({ x: xRound });
-      if ($.isNumeric(yRound)) {
-        samples[0].x = xRound;
-        samples[0].y = yRound;
-      }
-
-      xRound = math.round(upperX);
-      yRound = parser.eval({ x: xRound });
-      if ($.isNumeric(yRound)) {
-        samples[samples.length - 1].x = xRound;
-        samples[samples.length - 1].y = yRound;
-      } */
     }
     if (obj.discontinuity.length) {
       const discont = obj.discontinuity;
@@ -2236,7 +2214,11 @@ class Utility {
         Utility.adjustForDecimalPlaces(discont[0], 4) ===
         Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
-        samples[0].y = math.sign(samples[0].y) * lmt;
+        try {
+          samples[0].y = math.sign(samples[0].y) * lmt;
+        } catch (error) {
+          console.log(error);
+        }
         discont[0] = "#";
       }
       //on the right boundary
@@ -2244,8 +2226,12 @@ class Utility {
         Utility.adjustForDecimalPlaces(discont[discont.length - 1], 4) ===
         Utility.adjustForDecimalPlaces(upperX, 4)
       ) {
-        samples[samples.length - 1].y =
-          math.sign(samples[samples.length - 1].y) * lmt;
+        try {
+          samples[samples.length - 1].y =
+            math.sign(samples[samples.length - 1].y) * lmt;
+        } catch (error) {
+          console.log(error);
+        }
         discont[discont.length - 1] = "#";
       }
 
@@ -2259,23 +2245,19 @@ class Utility {
           continue;
         }
 
-        //Interior
-        // scope.set("x", d - step);
-        // yVal = parser.eval(scope);
-        // samples.push(new Misc.Point(d - step, math.sign(yVal) * lmt)); //point before
-        // scope.set("x", d + step);
-        // yVal = parser.eval(scope);
-        // samples.push(new Misc.Point(d + step, math.sign(yVal) * lmt)); //point before
-
         for (; n < samples.length; n++) {
           const x = samples[n].x;
           if (x > d) {
             _scope.set("x", d - delta);
             yVal = parser.eval(_scope);
-            samples[n - 1].y = math.sign(yVal) * lmt;
-            _scope.set("x", d + delta);
-            yVal = parser.eval(_scope);
-            samples[n].y = math.sign(yVal) * lmt;
+            try {
+              samples[n - 1].y = math.sign(yVal) * lmt;
+              _scope.set("x", d + delta);
+              yVal = parser.eval(_scope);
+              samples[n].y = math.sign(yVal) * lmt;
+            } catch (error) {
+              console.log(error);
+            }
 
             break;
           }
@@ -2295,25 +2277,24 @@ class Utility {
     let m_failedInverse = false;
     let _defn = fn.replaceAll(variable, "y");
 
-    // if (degOfPoly && parseInt(degOfPoly.toString()) > 3) {
-    //   return "failedInverse";
-    // }
-
-    //console.log(math.evaluate(degOfPoly.toString()));
     let exponent = null;
     let lhs = null;
-    if (
-      degOfPoly &&
-      degOfPoly.toString() != "0" &&
-      math.evaluate(degOfPoly.toString()) < 1
-    ) {
-      exponent = math.evaluate(degOfPoly.toString());
-      exponent = math.inv(exponent);
-      lhs = `x^${exponent}`;
-      const rhs = nerdamer(`simplify((${_defn})^${exponent})`).toString();
-      _defn = `${lhs}=${rhs}`;
-    } else {
-      _defn = `${_defn}=${variable}`;
+    try {
+      if (
+        degOfPoly &&
+        degOfPoly.toString() != "0" &&
+        math.evaluate(degOfPoly.toString()) < 1
+      ) {
+        exponent = math.evaluate(degOfPoly.toString());
+        exponent = math.inv(exponent);
+        lhs = `x^${exponent}`;
+        const rhs = nerdamer(`simplify((${_defn})^${exponent})`).toString();
+        _defn = `${lhs}=${rhs}`;
+      } else {
+        _defn = `${_defn}=${variable}`;
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     let eq = null;
@@ -2438,83 +2419,90 @@ class Utility {
     let step = 0;
     const numOfSteps = 1000 / Static.accuracyFactor;
     step = (samples[1].x - samples[0].x) / numOfSteps;
-    let sign = math.sign(parser.eval({ x: samples[0].x }));
+    let sign;
+    try {
+      sign = math.sign(parser.eval({ x: samples[0].x }));
+    } catch (error) {
+      console.log(error);
+    }
+
     for (let i = 1; i < samples.length; i++) {
       ////////////////////////
       //const m = parser.eval({ x: samples[i].x });
-      const m = math.sign(parser.eval({ x: samples[i].x }));
-      if (m !== sign) {
-        //if (math.sign(m) !== 0 && math.sign(m) == sign * -1) {
-        //Search for turning point
-        // const numOfSteps = 1000 / Static.accuracyFactor;
-        // step = (samples[i + 1].x - samples[i].x) / numOfSteps;
-        let arr = [];
-        for (let n = 0; n < numOfSteps; n++) {
-          let xVal = samples[i - 1].x + n * step;
-          arr.push(Math.abs(parser.eval({ x: xVal })));
-        }
-        const min = Math.min(...arr);
-        //sign *= -1;
-        sign = math.sign(parser.eval({ x: samples[i].x }));
-        let xVal = samples[i - 1].x + arr.indexOf(min) * step;
-        result.push(
-          new Misc.Point(
-            Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
-            Utility.adjustForDecimalPlaces(
-              math.evaluate(m_fn, { x: xVal }),
-              decimalPlacesY
+      try {
+        const m = math.sign(parser.eval({ x: samples[i].x }));
+        if (m !== sign) {
+          let arr = [];
+          for (let n = 0; n < numOfSteps; n++) {
+            let xVal = samples[i - 1].x + n * step;
+            arr.push(Math.abs(parser.eval({ x: xVal })));
+          }
+          const min = Math.min(...arr);
+          //sign *= -1;
+          sign = math.sign(parser.eval({ x: samples[i].x }));
+          let xVal = samples[i - 1].x + arr.indexOf(min) * step;
+          result.push(
+            new Misc.Point(
+              Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
+              Utility.adjustForDecimalPlaces(
+                math.evaluate(m_fn, { x: xVal }),
+                decimalPlacesY
+              )
             )
-          )
-        );
+          );
+        }
+      } catch (error) {
+        console.log(error);
       }
-    }
+    } /////////
     //Test
     let arr = [];
     step = samples[1].x - samples[0].x;
     for (let i = 0; i < result.length; i++) {
-      const x = result[i].x;
-      // if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
-      //   arr.push(result[i]);
-      //   continue;
-      // }
-      let pt1 = new Misc.Point(x - step, math.evaluate(fn, { x: x - step }));
-      let pt2 = new Misc.Point(x, math.evaluate(fn, { x }));
-      const slopeBeforeTp = Utility.slope(pt1, pt2);
-      pt1 = new Misc.Point(x, math.evaluate(fn, { x }));
-      pt2 = new Misc.Point(x + step, math.evaluate(fn, { x: x + step }));
-      const slopeAfterTp = Utility.slope(pt1, pt2);
-      if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
-        if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
-          arr.push(result[i]);
-          continue;
-        }
-      }
+      try {
+        const x = result[i].x;
 
-      if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
-        let n = 0;
-        const incrmt = step * 1e-5;
-        let _x1 = x - 500 * incrmt;
-        let _y1;
-        let _x2 = _x1 + incrmt;
-        let _y2;
-        let slope = math.abs(slopeBeforeTp);
-        let prevSlope = Number.MAX_VALUE;
-        while (slope < prevSlope && n < 3000) {
-          prevSlope = slope;
-          pt1.x = _x1 + n * incrmt;
-          pt1.y = math.evaluate(fn, { x: pt1.x });
-          pt2.x = _x2 + n * incrmt;
-          pt2.y = math.evaluate(fn, { x: pt2.x });
-          slope = math.abs(Utility.slope(pt1, pt2));
-          n++;
+        let pt1 = new Misc.Point(x - step, math.evaluate(fn, { x: x - step }));
+        let pt2 = new Misc.Point(x, math.evaluate(fn, { x }));
+        const slopeBeforeTp = Utility.slope(pt1, pt2);
+        pt1 = new Misc.Point(x, math.evaluate(fn, { x }));
+        pt2 = new Misc.Point(x + step, math.evaluate(fn, { x: x + step }));
+        const slopeAfterTp = Utility.slope(pt1, pt2);
+        if (Utility.mFuzzyCompare(result[i].y, math.evaluate(m_fn, { x }))) {
+          if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
+            arr.push(result[i]);
+            continue;
+          }
         }
-        //console.log("TP n:", n);
-        pt1.x = pt1.x - 0.5 * incrmt;
-        pt1.y = math.evaluate(fn, { x: pt1.x });
-        //console.log("TP:", pt1);
-        arr.push(pt1);
+
+        if (math.sign(slopeBeforeTp) !== math.sign(slopeAfterTp)) {
+          let n = 0;
+          const incrmt = step * 1e-5;
+          let _x1 = x - 500 * incrmt;
+          let _y1;
+          let _x2 = _x1 + incrmt;
+          let _y2;
+          let slope = math.abs(slopeBeforeTp);
+          let prevSlope = Number.MAX_VALUE;
+          while (slope < prevSlope && n < 3000) {
+            prevSlope = slope;
+            pt1.x = _x1 + n * incrmt;
+            pt1.y = math.evaluate(fn, { x: pt1.x });
+            pt2.x = _x2 + n * incrmt;
+            pt2.y = math.evaluate(fn, { x: pt2.x });
+            slope = math.abs(Utility.slope(pt1, pt2));
+            n++;
+          }
+          //console.log("TP n:", n);
+          pt1.x = pt1.x - 0.5 * incrmt;
+          pt1.y = math.evaluate(fn, { x: pt1.x });
+          //console.log("TP:", pt1);
+          arr.push(pt1);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    }
+    } ///////////////
     // arr = arr.map((pt) => {
     //   pt.x = Utility.adjustForDecimalPlaces(pt.x, 100);
     //   pt.y = Utility.adjustForDecimalPlaces(pt.y, 200);
@@ -2569,7 +2557,13 @@ class Utility {
     let indices = getIndices(slopes);
     //console.log(indices);
 
-    const parser = math.parse(fn);
+    let parser;
+    try {
+      parser = math.parse(fn);
+    } catch (error) {
+      console.log(error);
+    }
+
     const scope = new Map();
 
     for (let i = 0; i < indices.length; i++) {
@@ -2610,19 +2604,22 @@ class Utility {
 
     function getIndices(_slopes, brk = false) {
       let indices = [];
-      let sign1;
-      let sign = math.sign(_slopes[0]);
-      for (let i = 1; i < _slopes.length; i++) {
-        sign1 = math.sign(_slopes[i]);
-        //sign = math.sign(_slopes[i - 1]);
-        //console.log(sign, sign1);
-        if (sign == sign1) {
-          continue;
+      try {
+        let sign1;
+        let sign = math.sign(_slopes[0]);
+        for (let i = 1; i < _slopes.length; i++) {
+          sign1 = math.sign(_slopes[i]);
+          if (sign == sign1) {
+            continue;
+          }
+          sign *= -1;
+          indices.push(i - 1);
+          if (brk) break;
         }
-        sign *= -1;
-        indices.push(i - 1);
-        if (brk) break;
+      } catch (error) {
+        console.log(error);
       }
+
       return indices;
     }
 
@@ -2657,7 +2654,13 @@ class Utility {
       return result;
     }
 
-    const parser = math.parse(fn);
+    let parser;
+    try {
+      parser = math.parse(fn);
+    } catch (error) {
+      console.log(error);
+    }
+
     const scope = new Map();
 
     for (let i = 0; i < indices.length; i++) {
@@ -2705,12 +2708,17 @@ class Utility {
         (innerSamples[innerInd].y + innerSamples[innerInd + 1].y) / 2,
       ];
 
-      const res = math.intersect(
-        endPoint1Line1,
-        endPoint2Line1,
-        endPoint1Line2,
-        endPoint2Line2
-      );
+      let res;
+      try {
+        res = math.intersect(
+          endPoint1Line1,
+          endPoint2Line1,
+          endPoint1Line2,
+          endPoint2Line2
+        );
+      } catch (error) {
+        console.log(error);
+      }
 
       if (res) {
         result.push(new Misc.Point(res[0], res[1]));
@@ -3244,7 +3252,12 @@ class Utility {
             let constant = 0,
               replacement = 0;
             if (Utility.mathMode() == "deg") {
-              constant = Math.abs(math.evaluate(operand, { x: 0 }));
+              try {
+                constant = Math.abs(math.evaluate(operand, { x: 0 }));
+              } catch (error) {
+                console.log(error);
+              }
+
               if (constant != 0) {
                 replacement = (constant * Math.PI) / 180;
                 exp = exp.replace(constant, replacement);
@@ -3286,9 +3299,14 @@ class Utility {
     }
 
     function getCoeff(exp) {
-      //exp = math.simplify(exp, {}, { exactFractions: false }).toString();
       let coeff = [];
-      const node = math.parse(exp);
+      let node;
+      try {
+        node = math.parse(exp);
+      } catch (error) {
+        console.log(error);
+      }
+
       const filtered = node.filter(function (node) {
         return node.op === "*" && node.args[1].name === "x";
       });
@@ -3310,7 +3328,13 @@ class Utility {
 
     function getFactors(exp) {
       let factors = [];
-      const node = math.parse(exp);
+      let node;
+      try {
+        node = math.parse(exp);
+      } catch (error) {
+        console.log(error);
+      }
+
       const filtered = node.filter(function (node) {
         return (
           node.op === "*" &&
@@ -3337,7 +3361,13 @@ class Utility {
 
     function getDenominators(exp) {
       let denom = [];
-      const node = math.parse(exp);
+      let node;
+      try {
+        node = math.parse(exp);
+      } catch (error) {
+        console.log(error);
+      }
+
       const filtered = node.filter(function (node) {
         if (
           node.op === "/" ||
@@ -3353,7 +3383,13 @@ class Utility {
             scope.set(indepVar, 0);
             try {
               const s = node.args[0].toString();
-              const v = math.evaluate(s, scope);
+              let v;
+              try {
+                v = math.evaluate(s, scope);
+              } catch (error) {
+                console.log(error);
+              }
+
               if (s.indexOf(indepVar) == -1 && v === 0) {
                 return false;
               }
@@ -3418,7 +3454,6 @@ class Utility {
     exp = adjustConstantForMode(exp);
 
     let factors = [];
-    //const _exp = math.parse(exp).toString();
     denominators = denominators.concat(getDenominators(exp));
     denominators.forEach(function (d) {
       factors = factors.concat(getFactors(d));
@@ -3465,7 +3500,12 @@ class Utility {
           //console.log(solution.at(i).valueOf());
 
           let val = adjustForMode(e, solution.at(i).valueOf());
-          val = Utility.adjustForDecimalPlaces(math.evaluate(`${val}`), 8);
+          try {
+            val = Utility.adjustForDecimalPlaces(math.evaluate(`${val}`), 8);
+          } catch (error) {
+            console.log(error);
+          }
+
           m_result.push(val);
         }
 
@@ -3622,7 +3662,7 @@ class Utility {
     } else if (numberOfDigits > 16) {
       numberOfDigits = 16;
     }
-    //return math.format(value, {precision: numberOfDigits});
+
     value = parseFloat(value);
     if ($.isNumeric(value)) return value.toPrecision(numberOfDigits);
     return value;
@@ -3663,9 +3703,7 @@ class Utility {
         x1 = Utility.adjustForDecimalPlaces(sample1.x, decimalPlacesX);
         n++;
       }
-      //decimalPlacesX--;
 
-      //const parser = math.parse(curve.fn);
       n = 0;
       let y0 = Utility.adjustForDecimalPlaces(sample0.y, decimalPlacesY);
       let y1 = Utility.adjustForDecimalPlaces(sample1.y, decimalPlacesY);
@@ -4167,11 +4205,15 @@ class Utility {
     let s1 = exp1;
     try {
       s1 = math.evaluate(exp1, scope);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     let s2 = exp2;
     try {
       s2 = math.evaluate(exp2, scope);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     if (typeof s1 === "object" && typeof s2 === "object") {
       return s1.im == s2.im && s1.re == s2.re;
     }
@@ -4188,30 +4230,6 @@ class Utility {
       str = str.replace("(", "").replace(/.$/, "");
     }
 
-    // if (Utility.containsKeyword(str)) {
-    //   return str;
-    // }
-
-    // let arr = str.match(/\([-+*/.+a-zA-Z0-9]*\)/g);
-    // if (!arr) return str;
-    // for (let i = 0; i < arr.length; i++) {
-    //   let doReplace = false;
-    //   let subStr = arr[i];
-
-    //   let replStr = subStr.substring(1, subStr.length - 1);
-
-    //   let replStr2 = replStr
-    //     .replaceAll("*", "")
-    //     .replaceAll("/", "")
-    //     .replace(/[a-zA-Z]/g, "");
-    //   if (math.hasNumericValue(replStr2)) {
-    //     doReplace = true;
-    //   }
-
-    //   if (replStr.length === 1 || math.hasNumericValue(replStr) || doReplace) {
-    //     str = str.replace(subStr, replStr);
-    //   }
-    // }
     return str;
   }
 
@@ -5342,12 +5360,17 @@ class Utility {
       n++;
     } //
 
-    const xArr = math.range(
-      lowerLimit,
-      upperLimit,
-      (upperLimit - lowerLimit) / numOfPoints,
-      true
-    );
+    let xArr;
+    try {
+      xArr = math.range(
+        lowerLimit,
+        upperLimit,
+        (upperLimit - lowerLimit) / numOfPoints,
+        true
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
     if (decObjs.length > 1) {
       let decStr = "";
@@ -5385,7 +5408,13 @@ class Utility {
       dec.replace("^(-1)", "").replace(arg, variable)
     );
     //m_defn = m_defn.replaceAll(variable, `(${arg})`);
-    const p = math.parse(m_defn);
+    let p;
+    try {
+      p = math.parse(m_defn);
+    } catch (error) {
+      console.log(error);
+    }
+
     const scope = new Map();
 
     scope.set(variable, 1);
@@ -5421,7 +5450,13 @@ class Utility {
 
     // exp = nerdamer(exp).toString();
 
-    const xArr = math.range(-50, 50, 1, true);
+    let xArr;
+    try {
+      xArr = math.range(-50, 50, 1, true);
+    } catch (error) {
+      console.log(error);
+    }
+
     exp = Utility.insertProductSign(exp, variable);
     let p = null;
     try {
@@ -5435,18 +5470,6 @@ class Utility {
 
     try {
       const val = p.evaluate(scope);
-      // if (math.abs(1 - math.abs(val)) < 1e-12) {
-      //   const sign = math.sign(val);
-      //   if (sign == 0) {
-      //     return 0;
-      //   }
-      //   if (sign == 1) {
-      //     return variable;
-      //   }
-      //   if (sign == -1) {
-      //     return `-${variable}`;
-      //   }
-      // }
     } catch (error) {
       return null;
     }
@@ -5632,16 +5655,20 @@ class Utility {
   static adjustLatexLogBaseDecimalPlaces(decimalPlaces) {
     Utility.logLatex = math.log.toTex;
 
-    math.log.toTex = function (node, options) {
-      node.traverse(function (node, path, parent) {
-        //console.log(node, path, parent); //args[1]
-        if (node.type === "ConstantNode" && path === "args[1]") {
-          node.value = math.round(node.value, math.min(15, decimalPlaces));
-        }
-        return node;
-      });
-      return `\\mathrm{log_{${node.args[1]}}}\\left(${node.args[0]}\\right)`;
-    };
+    try {
+      math.log.toTex = function (node, options) {
+        node.traverse(function (node, path, parent) {
+          //console.log(node, path, parent); //args[1]
+          if (node.type === "ConstantNode" && path === "args[1]") {
+            node.value = math.round(node.value, math.min(15, decimalPlaces));
+          }
+          return node;
+        });
+        return `\\mathrm{log_{${node.args[1]}}}\\left(${node.args[0]}\\right)`;
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   static restoreLatexLogBaseDecimalPlaces() {
@@ -5657,7 +5684,9 @@ class Utility {
         },
       };
       math.import(customFunctions);
-    } catch (error) {}
+    } catch (error) {
+      //console.log(error);
+    }
 
     /* 
       Helper functions    */
@@ -6498,319 +6527,6 @@ class Utility {
     }
     return child;
   }
-
-  /////////////////////////////////////////////////////////////
-  /*static loggerSetup() {
-    var stepper = (function () {
-      "use strict";
-      var core = nerdamer.getCore(),
-        _ = core.PARSER,
-        //the container for the function steps
-        stepper = {},
-        //nerdamer makes recursive calls when adding, subtracting, etc. Making
-        //sure the stack is clear ensures that we're at the first call
-        stack = [];
-      //a function to add calls to the stack
-      var wrapper = function (f, a, b) {
-        stack.push("lock");
-        var r = f(a, b);
-        stack.pop();
-        return r;
-      };
-      //This logging function makes sure that there aren't any items on the stack
-      //before logging
-      var logger = function () {
-        if (stack.length === 0 && typeof this === "function")
-          this.apply(undefined, arguments);
-      };
-
-      var expression = null;
-
-      //the semi-globals
-      var add, subtract, divide, multiply, pow, fcall;
-
-      var load = function () {
-        //ADD
-        add = _.add;
-        var step_add = function (a, b) {
-          var result;
-          logger.call(stepper.pre_add, a, b);
-          var wrapper_result = wrapper(
-            function (a, b) {
-              result = add.call(_, a.clone(), b.clone());
-              return result;
-            },
-            a,
-            b
-          );
-          logger.call(stepper.post_add, result, a, b);
-          return wrapper_result;
-        };
-        _.add = step_add;
-        //SUBTRACT
-        subtract = _.subtract;
-        var step_subtract = function (a, b) {
-          var result;
-          logger.call(stepper.pre_subtract, a, b);
-          var wrapper_result = wrapper(
-            function (a, b) {
-              result = subtract.call(_, a.clone(), b.clone());
-              return result;
-            },
-            a,
-            b
-          );
-          logger.call(stepper.post_subtract, result, a, b);
-          return wrapper_result;
-        };
-        _.subtract = step_subtract;
-        //DIVIDE
-        divide = _.divide;
-        var step_divide = function (a, b) {
-          var result;
-          logger.call(stepper.pre_divide, a, b);
-          var wrapper_result = wrapper(
-            function (a, b) {
-              result = divide.call(_, a.clone(), b.clone());
-              return result;
-            },
-            a,
-            b
-          );
-          logger.call(stepper.post_divide, result, a, b);
-          return wrapper_result;
-        };
-        _.divide = step_divide;
-        //MULTIPLY
-        multiply = _.multiply;
-        var step_multiply = function (a, b) {
-          var result;
-          logger.call(stepper.pre_multiply, a, b);
-          var wrapper_result = wrapper(
-            function (a, b) {
-              result = multiply.call(_, a.clone(), b.clone());
-              return result;
-            },
-            a,
-            b
-          );
-          logger.call(stepper.post_multiply, result, a, b);
-          return wrapper_result;
-        };
-        _.multiply = step_multiply;
-        //POW
-        pow = _.pow;
-        var step_pow = function (a, b) {
-          var result;
-          logger.call(stepper.pre_pow, a, b);
-          var wrapper_result = wrapper(
-            function (a, b) {
-              result = pow.call(_, a.clone(), b.clone());
-              return result;
-            },
-            a,
-            b
-          );
-          logger.call(stepper.post_pow, result, a, b);
-          return wrapper_result;
-        };
-        _.pow = step_pow;
-        //CALLFUNCTION
-        //function calls are not recursive and can have more than one call on the stack
-        //because of this we don't use the wrapper
-        fcall = _.callfunction;
-        var step_fcall = function (fname, args) {
-          if (
-            stepper.pre_function_call &&
-            typeof stepper.pre_function_call === "function"
-          )
-            stepper.pre_function_call.call(undefined, fname, args);
-          var f = fcall.call(_, fname, args);
-          if (
-            stepper.post_function_call &&
-            typeof stepper.post_function_call === "function"
-          )
-            stepper.post_function_call.call(undefined, f, fname, args);
-          return f;
-        };
-        _.callfunction = step_fcall;
-      };
-
-      //load(); //fire away
-
-      var xport = function (o, override) {
-        for (var x in o) {
-          if (!stepper[x] || (stepper[x] && override)) stepper[x] = o[x];
-        }
-      };
-
-      xport.unload = function () {
-        _.add = add;
-        _.subtract = subtract;
-        _.multiply = multiply;
-        _.divide = divide;
-        _.pow = pow;
-        _.callfunction = fcall;
-      };
-
-      function write(str) {
-        console.log(str);
-      }
-
-      var rmBrackets = Utility.removeUnwantedParentheses;
-
-      function reWriteExpression(expression) {
-        let _expression = nerdamer(`sort(${expression})`).toString();
-        if (_expression[0] !== "[") {
-          //simplified expression returned
-          return { exp: _expression, change: "simplified" };
-        }
-
-        _expression = _expression
-          .replace("[", "")
-          .replace("]", "")
-          .replace(/,/g, "+");
-
-        let test = math.simplify(`${_expression} - ${expression}`).toString();
-        //Replace the whitespace delimiters stripped out by simplify()
-        test = test.replaceAll("mod", " mod ");
-        if (test !== "0" && test !== "+0" && test !== "-0") {
-          return { exp: expression, change: "unchanged" };
-        }
-
-        if (math.compareText(_expression, expression) !== 0) {
-          return { exp: _expression, change: "rearranged" };
-        }
-
-        return { exp: expression, change: "unchanged" };
-      }
-
-      var updateExp = function (oper, result, a, b = null) {
-        //result = result.toString();
-        if (oper == "+") {
-          expression = expression.replace(`${a}+${b}`, result + "");
-        }
-        if (oper == "-") {
-          expression = expression.replace(`${a}-${b}`, result + "");
-        }
-        if (oper == "*") {
-          expression = expression.replace(`${a}*${b}`, result + "");
-        }
-        if (oper == "/") {
-          expression = expression.replace(`${a}/${b}`, result + "");
-        }
-      };
-
-      // var findInExpression = function (s) {
-      //   const str = s.toString();
-      //   if (expression.indexOf(str) !== -1) {
-      //     return str;
-      //   }
-
-      //   return null;
-      // };
-
-      xport.log = function (_exp, type = "Simplify") {
-        const expEqu = type === "Simplify" ? "expression" : "equation";
-        write(`${type} ${expEqu} "${_exp}"\n`);
-        _exp = _exp.replaceAll(" ", "");
-        //const e = reWriteExpression(rmBrackets(exp));
-        const { exp, change } = reWriteExpression(_exp);
-        if (change === "simplified") {
-          write(`Simplifying:-\n\tWe get: ${exp}\n`);
-        } else if (change === "rearranged") {
-          write(`Re-writing the equation.\n\tWe get: ${exp}\n`);
-        } else {
-          write(`No simplification:-\n\tWe get: ${exp}\n`);
-        }
-
-        expression = exp;
-
-        load();
-        nerdamer(expression);
-        xport.unload();
-      };
-
-      xport.clear = function () {
-        stepper = {};
-      };
-
-      xport.load = load;
-
-      xport.exp = function () {
-        return expression;
-      };
-
-      xport.write = write;
-
-      xport.expression = expression;
-      xport.updateExp = updateExp;
-
-      return xport;
-    })();
-
-    stepper({
-      pre_add: function (a, b) {
-        //console.log("Adding " + a + " to " + b);
-      },
-      pre_subtract: function (a, b) {
-        //console.log("Subtracting " + b + " from " + a);
-      },
-      pre_multiply: function (a, b) {
-        //console.log("Multiplying " + a + " by " + b);
-      },
-      pre_divide: function (a, b) {
-        //console.log("Dividing " + a + " by " + b);
-      },
-      pre_pow: function (a, b) {
-        //console.log("Raising " + a + " to the power of " + b);
-      },
-      pre_function_call: function (fname, args) {
-        console.log(
-          "The function " + fname + " was called with arguments " + args
-        );
-      },
-      post_function_call: function (f) {
-        console.log("Afterwards this resulted in " + f + "\n");
-      },
-      post_add: function (result, a, b) {
-        stepper.updateExp("+", result, a, b);
-        stepper.write(`Adding ${a} to ${b}:\n\tWe get: ${stepper.exp()}`);
-      },
-      post_subtract: function (result, a, b) {
-        stepper.updateExp("-", result, a, b);
-        stepper.write(
-          `Subtracting ${b} from ${a}:\n\tWe get: ${stepper.exp()}`
-        );
-      },
-      post_multiply: function (result, a, b) {
-        stepper.updateExp("*", result, a, b);
-        stepper.write(`Multiplying ${a} by ${b}:\n\tWe get: ${stepper.exp()}`);
-      },
-      post_divide: function (result, a, b) {
-        stepper.updateExp("/", result, a, b);
-        stepper.write(`Dividing ${a} by ${b}:\n\tWe get: ${stepper.exp()}`);
-        // console.log(
-        //   "The result of dividing " + a + " by " + b + " was " + result + "\n"
-        // );
-      },
-      post_pow: function (result, a, b) {
-        console.log(
-          "The result of raising " +
-            a +
-            " to the powe rof " +
-            b +
-            " was " +
-            result +
-            "\n"
-        );
-      },
-    });
-
-    return stepper;
-  }*/
-
-  ////////////////////////////////////////////////////////////////
 }
 Utility.promptErrorMsg = "";
 Utility.promptProgress = false;

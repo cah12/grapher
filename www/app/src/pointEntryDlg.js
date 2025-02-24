@@ -213,12 +213,22 @@ class MPointEntryDlg extends ModalDlg {
         const abscissaVal_L = await self.plot.defines.expandDefines(
           self.selector("abscissa").val()
         );
-        var abscissaVal = math.evaluate(abscissaVal_L);
+        let abscissaVal;
+        try {
+          abscissaVal = math.evaluate(abscissaVal_L);
+        } catch (error) {
+          console.log(error);
+        }
 
         const ordinateVal_L = await self.plot.defines.expandDefines(
           self.selector("ordinate").val()
         );
-        var ordinateVal = math.evaluate(ordinateVal_L);
+        let ordinateVal;
+        try {
+          ordinateVal = math.evaluate(ordinateVal_L);
+        } catch (error) {
+          console.log(error);
+        }
 
         let p = new Misc.Point(abscissaVal, ordinateVal);
         self.point = p;

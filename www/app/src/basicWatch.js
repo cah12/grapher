@@ -322,9 +322,14 @@ class WatchSlope extends Watch {
               }
             }
           }
-          this._value = math.derivative(fn, "z").evaluate({
-            z: _rulerLeft,
-          });
+          try {
+            this._value = math.derivative(fn, "z").evaluate({
+              z: _rulerLeft,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+
           this._value = Utility.adjustForDecimalPlaces(
             this._value,
             Math.max(decimalPlacesX, decimalPlacesY)
@@ -465,48 +470,22 @@ class WatchAreaBelowCurve extends Watch {
             _rulerRight = temp;
           }
 
-          this._value = math.evaluate(
-            `integrate(${fn} , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
-          );
+          try {
+            this._value = math.evaluate(
+              `integrate(${fn} , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
+            );
 
-          var twoAbarY = math.evaluate(
-            `integrate((${fn})^2 , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
-          );
+            var twoAbarY = math.evaluate(
+              `integrate((${fn})^2 , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
+            );
 
-          var AbarX = math.evaluate(
-            `integrate(${this._curve.variable}*(${fn}) , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
-          );
+            var AbarX = math.evaluate(
+              `integrate(${this._curve.variable}*(${fn}) , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, false, ${step})`
+            );
+          } catch (error) {
+            console.log(error);
+          }
 
-          // var twoAbarY = math.evaluate(
-          //   "integrate(" +
-          //     "((" +
-          //     fn +
-          //     ")" +
-          //     "*" +
-          //     "(" +
-          //     fn +
-          //     "))" +
-          //     ", z," +
-          //     _rulerLeft +
-          //     "," +
-          //     _rulerRight +
-          //     ",false," +
-          //     step +
-          //     ")"
-          // );
-          // var AbarX = math.evaluate(
-          //   "integrate(" +
-          //     "z * (" +
-          //     fn +
-          //     ")" +
-          //     ", z," +
-          //     _rulerLeft +
-          //     "," +
-          //     _rulerRight +
-          //     ",false," +
-          //     step +
-          //     ")"
-          // );
           m_value = this._value;
 
           this._value = Utility.adjustForDecimalPlaces(
@@ -563,47 +542,51 @@ class WatchAreaBelowCurve extends Watch {
           if (left < _rulerLeft) left = _rulerLeft;
           var right = p2.x;
           if (right > _rulerRight) right = _rulerRight;
-          this._value += math.evaluate(
-            "integrate(" +
-              fn +
-              ", x," +
-              left +
-              "," +
-              right +
-              ",false," +
-              step +
-              ")"
-          );
-          twoAbarY += math.evaluate(
-            "integrate(" +
-              "((" +
-              fn +
-              ")" +
-              "*" +
-              "(" +
-              fn +
-              "))" +
-              ", x," +
-              left +
-              "," +
-              right +
-              ",false," +
-              step +
-              ")"
-          );
-          AbarX += math.evaluate(
-            "integrate(" +
-              "x * (" +
-              fn +
-              ")" +
-              ", x," +
-              left +
-              "," +
-              right +
-              ",false," +
-              step +
-              ")"
-          );
+          try {
+            this._value += math.evaluate(
+              "integrate(" +
+                fn +
+                ", x," +
+                left +
+                "," +
+                right +
+                ",false," +
+                step +
+                ")"
+            );
+            twoAbarY += math.evaluate(
+              "integrate(" +
+                "((" +
+                fn +
+                ")" +
+                "*" +
+                "(" +
+                fn +
+                "))" +
+                ", x," +
+                left +
+                "," +
+                right +
+                ",false," +
+                step +
+                ")"
+            );
+            AbarX += math.evaluate(
+              "integrate(" +
+                "x * (" +
+                fn +
+                ")" +
+                ", x," +
+                left +
+                "," +
+                right +
+                ",false," +
+                step +
+                ")"
+            );
+          } catch (error) {
+            console.log(error);
+          }
         }
 
         m_value = this._value;
@@ -732,20 +715,14 @@ class WatchVolumeOfRevolution extends Watch {
           }
           //var decimalPlaces = 2 * this._curve.plot().axisDecimalPlaces(this._curve.yAxis()) + this._curve.plot().axisDecimalPlaces(this._curve.xAxis());
           //var step = Static.calcStep(this._curve);
-          this._value = math.evaluate(
-            `integrate(${fn} , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, true, ${step})`
-          );
-          // this._value = math.evaluate(
-          //   "integrate(" +
-          //     fn +
-          //     ", x," +
-          //     _rulerLeft +
-          //     "," +
-          //     _rulerRight +
-          //     ",true," +
-          //     step +
-          //     ")"
-          // );
+          try {
+            this._value = math.evaluate(
+              `integrate(${fn} , ${this._curve.variable}, ${_rulerLeft}, ${_rulerRight}, true, ${step})`
+            );
+          } catch (error) {
+            console.log(error);
+          }
+
           this._value = Utility.adjustForDecimalPlaces(
             this._value,
             decimalPlacesX + 2 * decimalPlacesY

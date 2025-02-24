@@ -523,12 +523,16 @@ class InfoPropertiesPane extends Pane {
               s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
             }
           }
-          if (curCurve.parametricFnX) {
-            curCurve.parametricLowerX = math.evaluate(
-              Utility.replaceKeywordMarkers(s)
-            );
-          } else {
-            curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
+          try {
+            if (curCurve.parametricFnX) {
+              curCurve.parametricLowerX = math.evaluate(
+                Utility.replaceKeywordMarkers(s)
+              );
+            } else {
+              curCurve.lowerX = math.evaluate(Utility.replaceKeywordMarkers(s));
+            }
+          } catch (error) {
+            console.log(error);
           }
 
           s = curCurve.domainRangeRestriction[1];
@@ -539,12 +543,16 @@ class InfoPropertiesPane extends Pane {
               s = s.replaceAll(coeffs[index], `(${curCurve.coeffsVal[index]})`);
             }
           }
-          if (curCurve.parametricFnX) {
-            curCurve.parametricUpperX = math.evaluate(
-              Utility.replaceKeywordMarkers(s)
-            );
-          } else {
-            curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
+          try {
+            if (curCurve.parametricFnX) {
+              curCurve.parametricUpperX = math.evaluate(
+                Utility.replaceKeywordMarkers(s)
+              );
+            } else {
+              curCurve.upperX = math.evaluate(Utility.replaceKeywordMarkers(s));
+            }
+          } catch (error) {
+            console.log(error);
           }
 
           //console.log(domainRangeRestriction[0], domainRangeRestriction[1]);
@@ -586,15 +594,21 @@ class InfoPropertiesPane extends Pane {
             numOfSamples: curCurve.numOfSamples,
           }); */
 
-          const expr = math.compile(fn);
-          // evaluate the expression repeatedly for different values of x
-          let xValues = math
-            .range(
-              curCurve.lowerX,
-              curCurve.upperX,
-              (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples
-            )
-            .toArray();
+          let xValues, expr;
+          try {
+            expr = math.compile(fn);
+            // evaluate the expression repeatedly for different values of x
+            xValues = math
+              .range(
+                curCurve.lowerX,
+                curCurve.upperX,
+                (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples
+              )
+              .toArray();
+          } catch (error) {
+            console.log(error);
+          }
+
           if (xValues[xValues.length - 1] < curCurve.upperX) {
             xValues.push(curCurve.upperX);
           }
@@ -650,17 +664,23 @@ class InfoPropertiesPane extends Pane {
             parametric_variable: curCurve.parametric_variable,
           }); */
 
-          const exprX = math.compile(parametricFnX);
-          const exprY = math.compile(parametricFnY);
-          // evaluate the expression repeatedly for different values of x
-          let values = math
-            .range(
-              curCurve.parametricLowerX,
-              curCurve.parametricUpperX,
-              (curCurve.parametricUpperX - curCurve.parametricLowerX) /
-                curCurve.numOfSamples
-            )
-            .toArray();
+          let values, exprX, exprY;
+          try {
+            exprX = math.compile(parametricFnX);
+            exprY = math.compile(parametricFnY);
+            // evaluate the expression repeatedly for different values of x
+            values = math
+              .range(
+                curCurve.parametricLowerX,
+                curCurve.parametricUpperX,
+                (curCurve.parametricUpperX - curCurve.parametricLowerX) /
+                  curCurve.numOfSamples
+              )
+              .toArray();
+          } catch (error) {
+            console.log(error);
+          }
+
           values.push(values[0]);
           const scope = new Map();
           const s = values.map(function (x) {
@@ -734,15 +754,22 @@ class InfoPropertiesPane extends Pane {
                   numOfSamples: curCurve.numOfSamples,
                 }); */
 
-                const expr = math.compile(curCurve.expandedFn);
-                // evaluate the expression repeatedly for different values of x
-                let xValues = math
-                  .range(
-                    curCurve.lowerX,
-                    curCurve.upperX,
-                    (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples
-                  )
-                  .toArray();
+                let xValues, expr;
+                try {
+                  expr = math.compile(curCurve.expandedFn);
+                  // evaluate the expression repeatedly for different values of x
+                  xValues = math
+                    .range(
+                      curCurve.lowerX,
+                      curCurve.upperX,
+                      (curCurve.upperX - curCurve.lowerX) /
+                        curCurve.numOfSamples
+                    )
+                    .toArray();
+                } catch (error) {
+                  console.log(error);
+                }
+
                 if (xValues[xValues.length - 1] < curCurve.upperX) {
                   xValues.push(curCurve.upperX);
                 }
@@ -829,17 +856,23 @@ class InfoPropertiesPane extends Pane {
                 parametricFnY,
                 parametric_variable: curCurve.parametric_variable,
               }); */
-              const exprX = math.compile(parametricFnX);
-              const exprY = math.compile(parametricFnY);
-              // evaluate the expression repeatedly for different values of x
-              let values = math
-                .range(
-                  curCurve.parametricLowerX,
-                  curCurve.parametricUpperX,
-                  (curCurve.parametricUpperX - curCurve.parametricLowerX) /
-                    curCurve.numOfSamples
-                )
-                .toArray();
+              let values, exprX, exprY;
+              try {
+                exprX = math.compile(parametricFnX);
+                exprY = math.compile(parametricFnY);
+                // evaluate the expression repeatedly for different values of x
+                values = math
+                  .range(
+                    curCurve.parametricLowerX,
+                    curCurve.parametricUpperX,
+                    (curCurve.parametricUpperX - curCurve.parametricLowerX) /
+                      curCurve.numOfSamples
+                  )
+                  .toArray();
+              } catch (error) {
+                console.log(error);
+              }
+
               values.push(values[0]);
               const scope = new Map();
               const s = values.map(function (x) {

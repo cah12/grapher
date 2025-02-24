@@ -604,10 +604,16 @@ Misc.Point.prototype.logInterpolatedPoint = function (pt, xVal) {
   if (xVal == this.x) {
     return this;
   }
-  var yVal =
-    ((this.y - pt.y) / (math.log(this.x, 10) - math.log(pt.x, 10))) *
-      (math.log(xVal, 10) - math.log(pt.x, 10)) +
-    pt.y;
+  let yVal;
+  try {
+    yVal =
+      ((this.y - pt.y) / (math.log(this.x, 10) - math.log(pt.x, 10))) *
+        (math.log(xVal, 10) - math.log(pt.x, 10)) +
+      pt.y;
+  } catch (error) {
+    console.log(error);
+  }
+
   return new Misc.Point(xVal, yVal);
 };
 
