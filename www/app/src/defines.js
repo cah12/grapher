@@ -834,10 +834,15 @@ class Defines {
           !Utility.isMathematicalEqual(str, prevExpanded) &&
           n < 100
         ) {
-          prevExpanded = math
-            .simplify(str, {}, { exactFractions: false })
-            .toString()
-            .replaceAll(" ", "");
+          try {
+            prevExpanded = math
+              .simplify(str, {}, { exactFractions: false })
+              .toString()
+              .replaceAll(" ", "");
+          } catch (error) {
+            prevExpanded = str;
+          }
+
           str = await doExpandDefines(str, variable, derive);
 
           n++;

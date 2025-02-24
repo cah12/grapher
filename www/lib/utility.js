@@ -5422,7 +5422,14 @@ class Utility {
     // exp = nerdamer(exp).toString();
 
     const xArr = math.range(-50, 50, 1, true);
-    const p = math.parse(exp);
+    exp = Utility.insertProductSign(exp, variable);
+    let p = null;
+    try {
+      p = math.parse(exp);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
     const scope = new Map();
     scope.set(variable, 1);
 
@@ -6321,9 +6328,14 @@ class Utility {
         Utility.adjustLatexLogBaseDecimalPlaces(decimalPlacesX);
         fnStr = fnStr.replaceAll("+-", "-").replaceAll("-+", "-");
 
-        m_fn = math
-          .simplify(fnStr, {}, { exactFractions: false })
-          .toTex({ parenthesis: "auto", implicit: "hide" });
+        fnStr = Utility.insertProductSign(fnStr);
+        try {
+          m_fn = math
+            .simplify(fnStr, {}, { exactFractions: false })
+            .toTex({ parenthesis: "auto", implicit: "hide" });
+        } catch (error) {
+          console.log(error);
+        }
 
         //.simplify(fnStr, {}, { exactFractions: false })
         Utility.restoreLatexLogBaseDecimalPlaces();
