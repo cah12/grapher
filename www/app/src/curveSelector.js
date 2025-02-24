@@ -188,8 +188,8 @@ class MyCurveSelectorObject extends HObject {
   abortSelection() {
     let curves = this.curves;
     const selectedCurve = this.selectorWidgetOverlay.curve;
-    console.log(selectedCurve.title());
-    console.log(curves[0].title());
+    // console.log(selectedCurve.title());
+    // console.log(curves[0].title());
     for (let i = 0; i < curves.length; i++) {
       const tt = curves[i].title().replaceAll("%", "");
       if (tt === selectedCurve.title()) {
