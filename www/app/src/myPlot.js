@@ -819,12 +819,26 @@ class MyPlot extends Plot {
 
         if (!samples) {
           const mf = $("#fnDlg_function")[0];
+
+          const ikws = Utility.getIncludedKeywords(fn).join(", ");
+
+          if (ikws.length) {
+            Utility.displayErrorMessage(
+              mf,
+              `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+                fn,
+                decimalPlacesX
+              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+            );
+            return;
+          }
+
           Utility.displayErrorMessage(
             mf,
             `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
               fn,
               decimalPlacesX
-            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct.`
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
           );
           return;
         }
@@ -887,19 +901,25 @@ class MyPlot extends Plot {
             return;
           }
 
-          // Utility.alert(
-          //   `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
-          //     fn,
-          //     decimalPlacesX
-          //   )}"</b>.\n1. Check the function for the square-root of a negative.\n2. Check the limits for possible divide-by-zero.\n3. Check that values in the domain and range are within [1e-300, 1e+300].`
-          // );
+          const ikws = Utility.getIncludedKeywords(fn).join(", ");
+
+          if (ikws.length) {
+            Utility.displayErrorMessage(
+              mf,
+              `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+                fn,
+                decimalPlacesX
+              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+            );
+            return;
+          }
 
           Utility.displayErrorMessage(
             mf,
             `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
               fn,
               decimalPlacesX
-            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct.`
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
           );
           return;
         }

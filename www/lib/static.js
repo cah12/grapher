@@ -524,7 +524,7 @@ Static.solveFor = function (exp, v, indepVar = "x") {
     if (Array.isArray(solution)) {
       for (let i = 0; i < solution.length; i++) {
         const sln = solution[i].toString();
-        if (sln.indexOf("i") != -1 /*  && sln.indexOf("abs") == -1 */) {
+        if (sln.indexOf("i") === -1 /*  && sln.indexOf("abs") == -1 */) {
           result.push(solution[i].toString().replaceAll("abs", ""));
         }
       }

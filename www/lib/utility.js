@@ -1869,6 +1869,7 @@ class Utility {
       var upperY = obj.upperY;
     }
 
+    fx = Utility.insertProductSign_total(fx, indepVar);
     let parser = new EvaluateExp(fx);
 
     if (obj.threeD) {
@@ -2884,6 +2885,9 @@ class Utility {
       ) {
         const res = m_str.substring(i - 3, i + 1);
         Utility.replaceKeywordMarkers(m_str);
+        if (res[0] === variable) {
+          return null;
+        }
         return res;
       }
     }
@@ -5449,13 +5453,18 @@ class Utility {
       return exp;
     }
 
-    if (
-      exp.indexOf("sqrt") != -1 ||
-      exp.indexOf("log") != -1 ||
-      exp.indexOf("ln") != -1
-    ) {
+    const ikws = this.getIncludedKeywords(exp);
+    if (ikws.length) {
       return null;
     }
+
+    // if (
+    //   exp.indexOf("sqrt") != -1 ||
+    //   exp.indexOf("log") != -1 ||
+    //   exp.indexOf("ln") != -1
+    // ) {
+    //   return null;
+    // }
 
     // exp = nerdamer(exp).toString();
 
@@ -6087,6 +6096,7 @@ class Utility {
           bracketAdded &&
           (purgeStr[i + 1] === "+" ||
             purgeStr[i + 1] === "-" ||
+            purgeStr[i + 1] === "(" ||
             purgeStr[i + 1] === ")" ||
             (purgeStr[i + 1] === "(" &&
               i + 2 < purgeStr.length &&

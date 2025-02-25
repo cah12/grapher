@@ -47,8 +47,8 @@ class EvaluateExp {
       } catch (err) {
         // var charPos = parseInt(err.message.match(/(\d+)/)[0]);
         // alert("Invalid character in function: " + expanded[charPos - 1]);
-        // self.error = true;
-        // return;
+        self.error = true;
+        return;
       }
       // if (!m_expStr.includes("log") && simplified) {
       //   //Replace the whitespace delimiters stripped out by simplify()
