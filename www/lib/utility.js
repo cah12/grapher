@@ -4164,6 +4164,15 @@ class Utility {
     };
   }
 
+  static getIncludedKeywords(str) {
+    let result = [];
+    const kws = Static.keywords;
+    result = kws.filter(function (kw) {
+      return str.indexOf(kw) != -1;
+    });
+    return result;
+  }
+
   static containAlpha(str) {
     if (!str || str.length == 0) {
       return false;
@@ -4206,13 +4215,13 @@ class Utility {
     try {
       s1 = math.evaluate(exp1, scope);
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
     let s2 = exp2;
     try {
       s2 = math.evaluate(exp2, scope);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
     if (typeof s1 === "object" && typeof s2 === "object") {
       return s1.im == s2.im && s1.re == s2.re;

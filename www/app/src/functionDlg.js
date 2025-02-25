@@ -1027,14 +1027,21 @@ class MFunctionDlg {
                   s.substring(lastIndex + 1);
                 s = s.replaceAll(",", ", ");
               }
-              // alert(
-              //   `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
-              // );
 
-              Utility.displayErrorMessage(
-                mf,
-                `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
-              );
+              const ikws =
+                Utility.getIncludedKeywords(fnDlgFunctionVal).join(", ");
+
+              if (ikws.length) {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}. Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                );
+              } else {
+                Utility.displayErrorMessage(
+                  mf,
+                  `Failed to retrieve a valid define, ${s}, for expanding ${fnDlgFunctionVal}.`
+                );
+              }
               Utility.progressWait2(false);
               return;
             }
@@ -1589,13 +1596,20 @@ class MFunctionDlg {
                 return;
               }
               if (!lhs) {
-                // alert(
-                //   `Failed to retrieve a valid define for expanding "${arr[0]}".`
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to retrieve a valid define for expanding "${arr[0]}".`
-                );
+                const ikws = Utility.getIncludedKeywords(arr[0]).join(", ");
+
+                if (ikws.length) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to retrieve a valid define for expanding "${arr[0]}". Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                  );
+                } else {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to retrieve a valid define for expanding "${arr[0]}".`
+                  );
+                }
+
                 Utility.progressWait2(false);
                 return;
               }
@@ -1613,13 +1627,20 @@ class MFunctionDlg {
                 return;
               }
               if (!rhs) {
-                // alert(
-                //   `Failed to retrieve a valid define for expanding "${arr[1]}".`
-                // );
-                Utility.displayErrorMessage(
-                  mf,
-                  `Failed to retrieve a valid define for expanding "${arr[1]}".`
-                );
+                const ikws = Utility.getIncludedKeywords(arr[1]).join(", ");
+
+                if (ikws.length) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to retrieve a valid define for expanding "${arr[1]}". Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                  );
+                } else {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Failed to retrieve a valid define for expanding "${arr[1]}".`
+                  );
+                }
+
                 Utility.progressWait2(false);
                 return;
               }
@@ -2253,13 +2274,21 @@ class MFunctionDlg {
                   self.variable
                 );
                 if (!self.expandedFn) {
-                  // alert(
-                  //   `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
-                  // );
-                  Utility.displayErrorMessage(
-                    mf,
-                    `Failed to retrieve a valid define, ${dec}, for expanding "${fnDlgFunctionVal}".`
-                  );
+                  const ikws =
+                    Utility.getIncludedKeywords(fnDlgFunctionVal).join(", ");
+
+                  if (ikws.length) {
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Failed to retrieve a valid define, ${dec}, for expanding ${fnDlgFunctionVal}. Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                    );
+                  } else {
+                    Utility.displayErrorMessage(
+                      mf,
+                      `Failed to retrieve a valid define, ${dec}, for expanding ${fnDlgFunctionVal}.`
+                    );
+                  }
+
                   Utility.progressWait2(false);
                   return;
                 }
