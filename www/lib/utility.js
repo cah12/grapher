@@ -2353,12 +2353,16 @@ class Utility {
             m_failedInverse = true;
             continue;
           }
-          m_solution.push(
-            math
-              .simplify(sol, {}, { exactFractions: false })
-              .toString()
-              .replaceAll(" ", "")
-          );
+          try {
+            m_solution.push(
+              math
+                .simplify(sol, {}, { exactFractions: false })
+                .toString()
+                .replaceAll(" ", "")
+            );
+          } catch (error) {
+            console.log(error);
+          }
         }
       }
 

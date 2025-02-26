@@ -38,6 +38,8 @@ class MyPlot extends Plot {
   constructor(plotDiv, plotTitle) {
     super(plotDiv, plotTitle);
 
+    this.relationFn = null;
+    this.inverseOperation = false;
     //fileSystemUIinit();
     this.axesSwapped = false;
     var self = this;
@@ -817,29 +819,36 @@ class MyPlot extends Plot {
 
         const samples = Utility.makeSamples(makeSamplesData);
 
-        if (!samples) {
+        if (!samples || (samples.length == 0 && !self.relationFn)) {
+          // if (self.relationFn) {
+          //   return;
+          // }
+          self.relationFn = makeSamplesData.fx;
           const mf = $("#fnDlg_function")[0];
 
           const ikws = Utility.getIncludedKeywords(fn).join(", ");
 
-          if (ikws.length) {
+          if (!self.inverseOperation) {
+            if (ikws.length) {
+              Utility.displayErrorMessage(
+                mf,
+                `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+                  fn,
+                  decimalPlacesX
+                )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+              );
+              return;
+            }
+
             Utility.displayErrorMessage(
               mf,
               `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
                 fn,
                 decimalPlacesX
-              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
             );
             return;
           }
-
-          Utility.displayErrorMessage(
-            mf,
-            `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
-              fn,
-              decimalPlacesX
-            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
-          );
           return;
         }
         if (samples.length == 0) {
@@ -888,6 +897,11 @@ class MyPlot extends Plot {
               const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
               c.setSamples(samples);
               c.attach(self);
+              Utility.displayErrorMessage(
+                mf,
+                `Grapher tried but failed to find an inverse function for "${fn}". An inverse relation, "${c.title()}", is provided.`
+              );
+              self.inverseOperation = false;
             } else {
               const arr = fn.split("=");
               if (arr.length == 2) {
@@ -1264,7 +1278,7 @@ class MyPlot extends Plot {
           Utility.prompt(
             "Enter comma separated values",
             entry,
-            function (csvStr) {
+            async function (csvStr) {
               if (csvStr) {
                 const arr = csvStr.split(",");
                 if (arr.length !== 2) {
@@ -1276,25 +1290,55 @@ class MyPlot extends Plot {
                   m_translateY = Number.MAX_VALUE;
 
                 try {
+                  m_translateX = await self.defines.expandDefines(
+                    arr[0],
+                    variable
+                  );
+                  m_translateX = math.evaluate(m_translateX);
+                } catch (error) {
+                  console.log(error);
+                  m_translateX = Number.MAX_VALUE;
+                }
+
+                //variable
+
+                // m_translateX = parser.eval();
+                // if (!math.isNumeric(m_translateX))
+                //   m_translateX = Number.MAX_VALUE;
+
+                /* try {
                   let parser = new EvaluateExp(
                     arr[0],
-                    self.defines.expandDefines
+                    self.defines.expandDefines,
+                    variable
                   );
                   m_translateX = parser.eval();
                   if (!math.isNumeric(m_translateX))
                     m_translateX = Number.MAX_VALUE;
                 } catch (error) {
                   m_translateX = Number.MAX_VALUE;
-                }
-                try {
-                  let parser = new EvaluateExp(
-                    arr[1],
-                    self.defines.expandDefines
-                  );
-                  m_translateY = parser.eval();
-                  if (!math.isNumeric(m_translateY))
+                } */
+
+                /* try {
+                    let parser = new EvaluateExp(
+                      arr[1],
+                      self.defines.expandDefines,
+                      variable
+                    );
+                    m_translateY = parser.eval();
+                    if (!math.isNumeric(m_translateY))
+                      m_translateY = Number.MAX_VALUE;
+                  } catch (error) {
                     m_translateY = Number.MAX_VALUE;
+                  } */
+                try {
+                  m_translateY = await self.defines.expandDefines(
+                    arr[1],
+                    variable
+                  );
+                  m_translateY = math.evaluate(m_translateY);
                 } catch (error) {
+                  console.log(error);
                   m_translateY = Number.MAX_VALUE;
                 }
                 // if (arr.length == 2) {
@@ -1319,7 +1363,7 @@ class MyPlot extends Plot {
                 entry = csvStr;
 
                 for (let i = 0; i < curves.length; i++) {
-                  self.transformation.transform(
+                  await self.transformation.transform(
                     curves[i],
                     "Translate",
                     m_translateX,
@@ -1335,94 +1379,121 @@ class MyPlot extends Plot {
               // Utility.promptErrorMsg = "Invalid input. Expected a number.";
 
               return true;
-            }
+            } /////////
           );
         }
         if (operationType == "Scale") {
           // let validInput = false;
           // while (!validInput) {
           let entry = "2";
-          Utility.prompt("Enter a scale factor", entry, function (csvStr) {
-            if (csvStr) {
-              if (isNaN(parseFloat(csvStr))) {
-                Utility.promptErrorMsg =
-                  "Improper scale factor receive. Expected a number.";
-                return false;
-              } else {
-                const scale = parseFloat(csvStr);
-                for (let i = 0; i < curves.length; i++) {
-                  self.transformation.transform(curves[i], "Scale", scale);
-                  curves[i] = null;
+          Utility.prompt(
+            "Enter a scale factor",
+            entry,
+            async function (csvStr) {
+              try {
+                if (csvStr) {
+                  if (isNaN(parseFloat(csvStr))) {
+                    Utility.promptErrorMsg =
+                      "Improper scale factor receive. Expected a number.";
+                    return false;
+                  } else {
+                    const scale = parseFloat(csvStr);
+                    for (let i = 0; i < curves.length; i++) {
+                      await self.transformation.transform(
+                        curves[i],
+                        "Scale",
+                        scale
+                      );
+                      curves[i] = null;
+                    }
+                  }
+                } else {
+                  return false;
                 }
+                return true;
+              } catch (error) {
+                console.log(error);
               }
-            } else {
-              return false;
             }
-            return true;
-          });
+          );
         }
         if (operationType == "Reflect x equal") {
-          Utility.prompt("Enter a value for x = ", "1", function (val) {
-            if (val) {
-              if (isNaN(parseFloat(val))) {
-                Utility.promptErrorMsg =
-                  "Improper value receive. Expected a number.";
-                return false;
-              } else {
-                const m_val = parseFloat(val);
-                for (let i = 0; i < curves.length; i++) {
-                  self.transformation.transform(
-                    curves[i],
-                    "Reflect x equal",
-                    m_val
-                  );
-                  curves[i] = null;
+          Utility.prompt(
+            "Enter a value for x = ",
+            "1",
+            async function (val) {
+              try {
+                if (val) {
+                  if (isNaN(parseFloat(val))) {
+                    Utility.promptErrorMsg =
+                      "Improper value receive. Expected a number.";
+                    return false;
+                  } else {
+                    const m_val = parseFloat(val);
+                    for (let i = 0; i < curves.length; i++) {
+                      await self.transformation.transform(
+                        curves[i],
+                        "Reflect x equal",
+                        m_val
+                      );
+                      curves[i] = null;
+                    }
+                  }
+                } else {
+                  return false;
                 }
+                return true;
+              } catch (error) {
+                console.log(error);
               }
-            } else {
-              return false;
-            }
-            return true;
-          });
+            } ////////////
+          );
         }
         if (operationType == "Reflect y equal") {
-          Utility.prompt("Enter a value for y = ", "1", function (val) {
-            if (val) {
-              if (isNaN(parseFloat(val))) {
-                Utility.promptErrorMsg =
-                  "Improper value receive. Expected a number.";
-                return false;
-              } else {
-                const m_val = parseFloat(val);
-                for (let i = 0; i < curves.length; i++) {
-                  self.transformation.transform(
-                    curves[i],
-                    "Reflect y equal",
-                    m_val
-                  );
-                  curves[i] = null;
+          Utility.prompt("Enter a value for y = ", "1", async function (val) {
+            try {
+              if (val) {
+                if (isNaN(parseFloat(val))) {
+                  Utility.promptErrorMsg =
+                    "Improper value receive. Expected a number.";
+                  return false;
+                } else {
+                  const m_val = parseFloat(val);
+                  for (let i = 0; i < curves.length; i++) {
+                    await self.transformation.transform(
+                      curves[i],
+                      "Reflect y equal",
+                      m_val
+                    );
+                    curves[i] = null;
+                  }
                 }
+              } else {
+                return false;
               }
-            } else {
-              return false;
+              return true;
+            } catch (error) {
+              console.log(error);
             }
-            return true;
           });
         }
         if (operationType == "Reflect x-axis") {
           for (let i = 0; i < curves.length; i++) {
-            self.transformation.transform(curves[i], "Reflect x-axis");
+            await self.transformation.transform(curves[i], "Reflect x-axis");
           }
         }
         if (operationType == "Reflect y-axis") {
           for (let i = 0; i < curves.length; i++) {
-            self.transformation.transform(curves[i], "Reflect y-axis");
+            await self.transformation.transform(curves[i], "Reflect y-axis");
           }
         }
 
         if (operationType == "Reflect x and y-axes") {
           for (let i = 0; i < curves.length; i++) {
-            self.transformation.transform(curves[i], "Reflect x and y-axis");
+            await self.transformation.transform(
+              curves[i],
+              "Reflect x and y-axis"
+            );
           }
           // if (self.tbar.isButtonChecked(self.tbar.auto))
           //   Utility.setAutoScale(self, true);
@@ -1844,6 +1915,8 @@ class MyPlot extends Plot {
            * This operation
            */
           if (operationType == "Inverse") {
+            self.relationFn = null;
+            self.inverseOperation = true;
             const curve = curves[i];
             if (curve.expandedFn) {
               const invFn = await Utility.inverseFunction(
@@ -1867,13 +1940,18 @@ class MyPlot extends Plot {
                       "0~curve_"
                     );
                   }
-                  self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
+                  await self.functionDlgCb(
+                    null,
+                    curve.expandedFn,
+                    min_x,
+                    max_x
+                  );
                 }
               }
               if (invFn === "failedInverse") {
                 self._functionDlg.expandedFn = "failedInverse";
                 self._functionDlg.title = Utility.generateCurveName(self);
-                self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
+                await self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
               }
             }
             /*const curve = curves[i];

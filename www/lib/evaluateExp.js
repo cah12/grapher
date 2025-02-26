@@ -19,7 +19,7 @@ class EvaluateExp {
    * @param {String} expStr expression
    * @param {Function} [modifyCb] optional callback that may modify the expression in some way
    */
-  constructor(expStr, modifyCb) {
+  constructor(expStr, modifyCb, variable = null) {
     var self = this;
     var m_expStr = expStr;
     var f;
@@ -33,29 +33,40 @@ class EvaluateExp {
 
     if (modifyCb) expandDefines = modifyCb;
 
-    function init() {
-      var expanded = expandDefines(m_expStr).replaceAll("mod", " mod ");
+    async function init() {
       try {
-        simplified = math.compile(expanded);
-        // if (!m_expStr.includes("log"))
-        //   simplified = math.simplify(
-        //     simplified.toString(),
-        //     {},
-        //     { exactFractions: false }
-        //   );
-        //simplified = math.compile(simplified);
-      } catch (err) {
-        // var charPos = parseInt(err.message.match(/(\d+)/)[0]);
-        // alert("Invalid character in function: " + expanded[charPos - 1]);
-        self.error = true;
-        return;
+        var expanded;
+        if (modifyCb) {
+          expanded = await expandDefines(m_expStr, variable);
+        } else {
+          expanded = expandDefines(m_expStr);
+          expanded = expanded.replaceAll("mod", " mod ");
+        }
+        //console.log(456);
+        try {
+          simplified = math.compile(expanded);
+          // if (!m_expStr.includes("log"))
+          //   simplified = math.simplify(
+          //     simplified.toString(),
+          //     {},
+          //     { exactFractions: false }
+          //   );
+          //simplified = math.compile(simplified);
+        } catch (err) {
+          // var charPos = parseInt(err.message.match(/(\d+)/)[0]);
+          // alert("Invalid character in function: " + expanded[charPos - 1]);
+          self.error = true;
+          return;
+        }
+        // if (!m_expStr.includes("log") && simplified) {
+        //   //Replace the whitespace delimiters stripped out by simplify()
+        //   simplified = math.parse(simplified.replaceAll("mod", " mod "));
+        //   simplified = simplified.compile();
+        // }
+      } catch (error) {
+        console.log(error);
       }
-      // if (!m_expStr.includes("log") && simplified) {
-      //   //Replace the whitespace delimiters stripped out by simplify()
-      //   simplified = math.parse(simplified.replaceAll("mod", " mod "));
-      //   simplified = simplified.compile();
-      // }
-    }
+    } ///////////
 
     if (m_expStr && m_expStr.length > 0) {
       //if (m_expStr !== undefined && m_expStr.length > 0) {
