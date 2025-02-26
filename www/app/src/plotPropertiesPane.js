@@ -725,14 +725,24 @@ class PlotPropertiesPane extends PropertiesPane {
       //fun: plotLegendBold,
     });
 
-    this.addProperty({
-      name: "showTooltip",
+    const show_Tooltip_Legend = this.addProperty({
+      name: "Show Tooltip",
       id: "showTooltipLegend",
       parentId: "tooltipLegend",
       type: "checkbox",
       checked: true,
       title: "Show tooltip on hover",
       fun: showTooltipLegend,
+    });
+
+    const decimal_Exponts_Legend = this.addProperty({
+      name: "Decimal Exponents",
+      id: "decimalExpontsLegend",
+      parentId: "tooltipLegend",
+      type: "checkbox",
+      checked: false,
+      title: "Display exponents in decimals",
+      fun: decimalExpontsLegend,
     });
 
     this.addProperty({
@@ -2796,6 +2806,10 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.setLegendFont(font);
     }
 
+    function decimalExpontsLegend(checked) {
+      Static.decimalExpontsLegend = checked;
+    }
+
     function showTooltipLegend(checked) {
       Static.showTooltipLegend = checked;
 
@@ -4200,6 +4214,22 @@ class PlotPropertiesPane extends PropertiesPane {
         plot_background.val(plot_background_val);
         plot_background.trigger("change");
       }
+
+      const expontsLegend = localStorage.getItem("decimalExpontsLegend");
+      //console.log(expontsLegend);
+      if (expontsLegend === "false") {
+        decimal_Exponts_Legend.prop("checked", false);
+      } else if (expontsLegend === "true") {
+        decimal_Exponts_Legend.prop("checked", true);
+      }
+
+      const showTooltip = localStorage.getItem("showTooltipLegend");
+      //console.log(showTooltip);
+      if (showTooltip === "false") {
+        show_Tooltip_Legend.prop("checked", false);
+      } else if (showTooltip === "true") {
+        show_Tooltip_Legend.prop("checked", true);
+      }
     };
 
     this.savePlotPropertiesSettings = function () {
@@ -4217,6 +4247,9 @@ class PlotPropertiesPane extends PropertiesPane {
       localStorage.setItem("RightPrecision", right_precision.val());
 
       localStorage.setItem("PlotBackground", plot_background.val());
+
+      localStorage.setItem("decimalExpontsLegend", Static.decimalExpontsLegend);
+      localStorage.setItem("showTooltipLegend", Static.showTooltipLegend);
     };
 
     this.restoreDefaults = function () {
@@ -4231,6 +4264,9 @@ class PlotPropertiesPane extends PropertiesPane {
       localStorage.setItem("RightPrecision", 4);
 
       localStorage.setItem("PlotBackground", "#ffffc8");
+
+      localStorage.setItem("decimalExpontsLegend", false);
+      localStorage.setItem("showTooltipLegend", true);
 
       //console.log()
       self.setPlotPropertiesSettings();

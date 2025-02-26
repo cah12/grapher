@@ -6378,17 +6378,28 @@ class Utility {
 
         fnStr = Utility.insertProductSign(fnStr);
         try {
-          m_fn = math
-            .simplify(fnStr, {}, { exactFractions: false })
-            .toTex({ parenthesis: "auto", implicit: "hide" });
+          m_fn = math.parse(fnStr);
         } catch (error) {
+          console.log(error);
+        }
+
+        if (Static.decimalExpontsLegend) {
           try {
-            m_fn = math
-              .parse(fnStr)
-              .toTex({ parenthesis: "auto", implicit: "hide" });
+            m_fn = math.simplify(m_fn, {}, { exactFractions: false });
           } catch (error) {
             console.log(error);
           }
+        } else {
+          try {
+            m_fn = math.simplify(m_fn, {}, { exactFractions: true });
+          } catch (error) {
+            console.log(error);
+          }
+        }
+        try {
+          m_fn = m_fn.toTex({ parenthesis: "auto", implicit: "hide" });
+        } catch (error) {
+          console.log(error);
         }
 
         //.simplify(fnStr, {}, { exactFractions: false })

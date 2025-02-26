@@ -344,6 +344,7 @@ Static.dicontinuityUserSetting = false;
 Static.userDecimalPlacesForCalculation = false;
 
 Static.showTooltipLegend = true;
+Static.decimalExpontsLegend = false;
 
 //Change types used in steps (working)
 Static.operation = 0;
