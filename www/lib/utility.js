@@ -4582,7 +4582,7 @@ class Utility {
   }
 
   static isParametricFunction(str) {
-    if (!str && str.length) {
+    if (!str && str.length && str.indexOf(",") != -1) {
       return false;
     }
     const indOfCurly = str.indexOf("{");
@@ -6382,7 +6382,13 @@ class Utility {
             .simplify(fnStr, {}, { exactFractions: false })
             .toTex({ parenthesis: "auto", implicit: "hide" });
         } catch (error) {
-          console.log(error);
+          try {
+            m_fn = math
+              .parse(fnStr)
+              .toTex({ parenthesis: "auto", implicit: "hide" });
+          } catch (error) {
+            console.log(error);
+          }
         }
 
         //.simplify(fnStr, {}, { exactFractions: false })
