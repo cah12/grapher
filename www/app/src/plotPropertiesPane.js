@@ -736,12 +736,12 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     const decimal_Exponts_Legend = this.addProperty({
-      name: "Decimal Exponents",
+      name: "Use decimals",
       id: "decimalExpontsLegend",
       parentId: "tooltipLegend",
       type: "checkbox",
       checked: false,
-      title: "Display exponents in decimals",
+      title: "Prefer decimals when possible.",
       fun: decimalExpontsLegend,
     });
 
@@ -2807,7 +2807,7 @@ class PlotPropertiesPane extends PropertiesPane {
     }
 
     function decimalExpontsLegend(checked) {
-      Static.decimalExpontsLegend = checked;
+      Static.useDecimal = checked;
     }
 
     function showTooltipLegend(checked) {
@@ -4248,7 +4248,7 @@ class PlotPropertiesPane extends PropertiesPane {
 
       localStorage.setItem("PlotBackground", plot_background.val());
 
-      localStorage.setItem("decimalExpontsLegend", Static.decimalExpontsLegend);
+      localStorage.setItem("decimalExpontsLegend", Static.useDecimal);
       localStorage.setItem("showTooltipLegend", Static.showTooltipLegend);
     };
 

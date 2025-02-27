@@ -6387,7 +6387,7 @@ class Utility {
           console.log(error);
         }
 
-        if (Static.decimalExpontsLegend) {
+        if (Static.useDecimal) {
           try {
             m_fn = math.simplify(m_fn, {}, { exactFractions: false });
           } catch (error) {

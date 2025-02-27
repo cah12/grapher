@@ -344,7 +344,7 @@ Static.dicontinuityUserSetting = false;
 Static.userDecimalPlacesForCalculation = false;
 
 Static.showTooltipLegend = true;
-Static.decimalExpontsLegend = false;
+Static.useDecimal = false;
 
 //Change types used in steps (working)
 Static.operation = 0;
@@ -486,8 +486,8 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 
 ////////////https://simplegrapher.onrender.com///////////////
-Static.imagePath = "../static/images/"; //for SimpleGrapher in python
-Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+// Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+// Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v, indepVar = "x") {
   //Utility.progressWait();
