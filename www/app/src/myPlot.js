@@ -1768,11 +1768,16 @@ class MyPlot extends Plot {
             color2: "#ff0000", //String
           };
 
-          const curve = self.functionDlgCb(functionDlgData);
-          lowerLimit = undefined;
-          upperLimit = undefined;
-          if (curve) {
-            curve.attach(self);
+          let curve;
+          try {
+            curve = await self.functionDlgCb(functionDlgData);
+            lowerLimit = undefined;
+            upperLimit = undefined;
+            if (curve) {
+              curve.attach(self);
+            }
+          } catch (error) {
+            console.log(error);
           }
         } //
       }
@@ -1919,27 +1924,39 @@ class MyPlot extends Plot {
             self.inverseOperation = true;
             const curve = curves[i];
             if (curve.expandedFn) {
-              const invFn = await Utility.inverseFunction(
-                curve.expandedFn,
-                curve.variable
-              );
-              //return "failedInverse";
-              const min_x = curve.minYValue();
-              const max_x = curve.maxYValue();
-              if (invFn && invFn != "failedInverse" && invFn.length) {
-                for (let i = 0; i < invFn.length; i++) {
-                  if (i > 0 && !Static.negativeRoot) {
-                    break;
-                  }
-                  const fn = invFn[i];
-                  self._functionDlg.expandedFn = fn;
-                  self._functionDlg.title = Utility.generateCurveName(self);
-                  if (i > 0) {
-                    self._functionDlg.title = Utility.generateCurveName(
-                      self,
-                      "0~curve_"
+              try {
+                const invFn = await Utility.inverseFunction(
+                  curve.expandedFn,
+                  curve.variable
+                );
+                //return "failedInverse";
+                const min_x = curve.minYValue();
+                const max_x = curve.maxYValue();
+                if (invFn && invFn != "failedInverse" && invFn.length) {
+                  for (let i = 0; i < invFn.length; i++) {
+                    if (i > 0 && !Static.negativeRoot) {
+                      break;
+                    }
+                    const fn = invFn[i];
+                    self._functionDlg.expandedFn = fn;
+                    self._functionDlg.title = Utility.generateCurveName(self);
+                    if (i > 0) {
+                      self._functionDlg.title = Utility.generateCurveName(
+                        self,
+                        "0~curve_"
+                      );
+                    }
+                    await self.functionDlgCb(
+                      null,
+                      curve.expandedFn,
+                      min_x,
+                      max_x
                     );
                   }
+                }
+                if (invFn === "failedInverse") {
+                  self._functionDlg.expandedFn = "failedInverse";
+                  self._functionDlg.title = Utility.generateCurveName(self);
                   await self.functionDlgCb(
                     null,
                     curve.expandedFn,
@@ -1947,11 +1964,8 @@ class MyPlot extends Plot {
                     max_x
                   );
                 }
-              }
-              if (invFn === "failedInverse") {
-                self._functionDlg.expandedFn = "failedInverse";
-                self._functionDlg.title = Utility.generateCurveName(self);
-                await self.functionDlgCb(null, curve.expandedFn, min_x, max_x);
+              } catch (error) {
+                console.log(error);
               }
             }
             /*const curve = curves[i];
