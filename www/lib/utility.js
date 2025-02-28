@@ -2252,11 +2252,15 @@ class Utility {
             _scope.set("x", d - delta);
             yVal = parser.eval(_scope);
             try {
-              samples[n - 1].y = math.sign(yVal) * lmt;
-              _scope.set("x", d + delta);
-              yVal = parser.eval(_scope);
-              samples[n].y = math.sign(yVal) * lmt;
+              if (n > 0) {
+                samples[n - 1].y = math.sign(yVal) * lmt;
+
+                _scope.set("x", d + delta);
+                yVal = parser.eval(_scope);
+                samples[n].y = math.sign(yVal) * lmt;
+              }
             } catch (error) {
+              console.log(n);
               console.log(error);
             }
 
@@ -3456,7 +3460,9 @@ class Utility {
 
     try {
       exp = math.simplify(exp, {}, { exactFractions: false }).toString();
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     //Replace the whitespace delimiters stripped out by simplify()
     exp = exp.replaceAll("mod", " mod ");
     exp = adjustConstantForMode(exp);
