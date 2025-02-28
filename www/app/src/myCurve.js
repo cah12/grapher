@@ -264,6 +264,7 @@ class MyCurve extends Curve {
         }
       } else {
         try {
+          self.unboundedDiscontinuity = self.discontinuity;
           //console.log("Draw unbounded");
           let samples = [];
           const data = self.data();
@@ -281,14 +282,14 @@ class MyCurve extends Curve {
 
           // let discontinuity;
 
-          // if (!self.unboundedDiscontinuity) {
-          self.unboundedDiscontinuity = await Utility.discontinuity(
-            self.fn,
-            left,
-            right,
-            self.variable
-          );
-          // }
+          if (Static.centralDivDragging) {
+            self.unboundedDiscontinuity = await Utility.discontinuity(
+              self.fn,
+              left,
+              right,
+              self.variable
+            );
+          }
 
           //console.log(self.unboundedDiscontinuity);
 

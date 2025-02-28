@@ -86,6 +86,25 @@ class MyPlot extends Plot {
     let decimalPlacesY = self.axisDecimalPlaces(Axis.AxisId.yLeft);
     let decimalPlacesX = self.axisDecimalPlaces(Axis.AxisId.xBottom);
 
+    let mouseIsDown = false;
+    $("#centralDiv").mousedown(function () {
+      mouseIsDown = true;
+      // console.log("mouseDown");
+    });
+
+    $("#centralDiv").mousemove(function () {
+      if (mouseIsDown) {
+        Static.centralDivDragging = true;
+        // console.log("dragging");
+      }
+    });
+
+    $("#centralDiv").bind("mouseleave mouseup", function () {
+      Static.centralDivDragging = false;
+      mouseIsDown = false;
+      // console.log("mouseleave mouseup");
+    });
+
     function getCoffsVal() {
       var result = [];
       var coeffs = self._functionDlg.coeffs || [];
