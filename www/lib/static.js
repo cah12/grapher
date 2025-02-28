@@ -92,7 +92,7 @@ Array.prototype.containsPoint = function (point) {
   return false;
 };
 
-Static.centralDivDragging = false;
+Static.panning = false;
 
 Static.NoPen = "noPen";
 Static.NoBrush = "noBrush";

@@ -94,13 +94,13 @@ class MyPlot extends Plot {
 
     $("#centralDiv").mousemove(function () {
       if (mouseIsDown) {
-        Static.centralDivDragging = true;
+        Static.panning = true;
         // console.log("dragging");
       }
     });
 
     $("#centralDiv").bind("mouseleave mouseup", function () {
-      Static.centralDivDragging = false;
+      Static.panning = false;
       mouseIsDown = false;
       // console.log("mouseleave mouseup");
     });
