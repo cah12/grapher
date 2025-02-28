@@ -798,6 +798,11 @@ class Defines {
     this.addDefine = async function (name, value) {
       try {
         value = await self.expandDefines(value, null, false);
+        try {
+          value = math.simplify(value).toString();
+        } catch (error) {
+          console.log(error);
+        }
         let latexValue = Utility.toLatex(value);
         this.getDefinesDlg().doAdd(name, { value, latexValue });
       } catch (error) {

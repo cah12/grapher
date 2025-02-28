@@ -1891,12 +1891,29 @@ class PlotPropertiesPane extends PropertiesPane {
       group: "watchCalculationAccuracyGroup",
     });
 
+    /* var decimalPlacesForCalculation =  */ this.addProperty({
+      name: "Decimals",
+      title: "Prefer decimals when ever possible",
+      id: "decimals",
+      parentId: "watchCalculationAccuracy",
+    });
+
+    var preferDecimals = this.addProperty({
+      name: "Use decimals",
+      title: "Prefer decimals when ever possible",
+      id: "preferDecimals",
+      parentId: "decimals",
+      type: "checkbox",
+      //checked: true,
+    });
+
     var decimalPlacesForCalculation = this.addProperty({
       name: "Decimal places in calculation",
       title: "Set the maximum decimal places used in calculations for an axis",
       id: "decimalPlacesForCalculationy",
-      parentId: "watchCalculationAccuracy",
+      parentId: "decimals",
     });
+
     var userDecimalPlacesForCalculation = this.addProperty({
       name: "Enable user selection",
       title: "Let the user set the maximum decimal places used in calculations",
@@ -2112,6 +2129,10 @@ class PlotPropertiesPane extends PropertiesPane {
       left_decimalPlaces.trigger("change");
       right_decimalPlaces.trigger("change");
       Static.userDecimalPlacesForCalculation = this.checked;
+    });
+
+    preferDecimals.change(function () {
+      Static.preferDecimals = this.checked;
     });
     /////////////////////////////////////////////
 

@@ -6389,13 +6389,13 @@ class Utility {
 
         if (Static.useDecimal) {
           try {
-            m_fn = math.simplify(m_fn, {}, { exactFractions: false });
+            m_fn = Static.simplify(m_fn, {}, { exactFractions: false });
           } catch (error) {
             console.log(error);
           }
         } else {
           try {
-            m_fn = math.simplify(m_fn, {}, { exactFractions: true });
+            m_fn = Static.simplify(m_fn, {}, { exactFractions: true });
           } catch (error) {
             console.log(error);
           }

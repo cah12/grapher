@@ -345,6 +345,7 @@ Static.userDecimalPlacesForCalculation = false;
 
 Static.showTooltipLegend = true;
 Static.useDecimal = false;
+Static.preferDecimals = false;
 
 //Change types used in steps (working)
 Static.operation = 0;
@@ -358,6 +359,8 @@ Static.g_solution_arr = null;
 
 const originalParse = math.parse;
 const originalSimplify = math.simplify;
+
+Static.simplify = originalSimplify;
 
 Static.isAlpha = function (ch) {
   ch = ch.toLowerCase().charCodeAt(0);
@@ -424,7 +427,7 @@ const customSimplify = function (str, scope, options) {
   if (str && str.im) return str;
   scope = scope || {};
   options = options || { exactFractions: false };
-  // options.exactFractions = true;
+  options.exactFractions = !Static.preferDecimals;
   if (typeof str !== "string") str = str.toString();
   return originalSimplify(reduceMultiplyByZero(str), scope, options);
 };
@@ -486,8 +489,8 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 
 ////////////https://simplegrapher.onrender.com///////////////
-// Static.imagePath = "../static/images/"; //for SimpleGrapher in python
-// Static.grapherHelp = "../static/"; //for SimpleGrapher in python
+Static.imagePath = "../static/images/"; //for SimpleGrapher in python
+Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v, indepVar = "x") {
   //Utility.progressWait();
