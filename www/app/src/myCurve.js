@@ -34,6 +34,7 @@ class MyCurve extends Curve {
 
     self.left = 0;
     self.right = 0;
+    self.earlier = 0;
 
     this.unboundedDiscontinuity = null;
 
@@ -199,7 +200,9 @@ class MyCurve extends Curve {
     const autoReplot = plot.autoReplot();
 
     plot.setAutoReplot(false);
-    // self.plot().getCentralWidget().setMouseTracking(false);
+    // if (!Static.panning) {
+    //   self.earlier = 0;
+    // }
 
     let samples = null; //self.data().samples();
     //console.log(self.data());
@@ -294,18 +297,20 @@ class MyCurve extends Curve {
 
           // let discontinuity;
 
-          // if (self.left != left && self.right != right) {
-          //   console.log(456);
-          //   self.left = left;
-          //   self.right = right;
+          if (self.left != left && self.right != right) {
+            self.left = left;
+            self.right = right;
+            return;
+          }
           //if (Static.panning) {
+          //self.earlier = self.unboundedDiscontinuity[0];
+          console.log(456);
           self.unboundedDiscontinuity = await Utility.discontinuity(
             self.fn,
             left,
             right,
             self.variable
           );
-          //}
 
           //console.log(self.unboundedDiscontinuity);
 
@@ -371,7 +376,7 @@ class MyCurve extends Curve {
           /* if (m_to < to && m_from < to) {
             super.drawCurve(painter, style, xMap, yMap, m_from, to);
           } */
-          self.unboundedDiscontinuity = null;
+          //self.unboundedDiscontinuity = null;
         } catch (error) {
           console.log(error);
         }
@@ -389,7 +394,8 @@ class MyCurve extends Curve {
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     }
-    // self.plot().getCentralWidget().setMouseTracking(true);
+
+    //self.plot().getCentralWidget().setMouseTracking(true);
   } ////////
 }
 //MyCurve.init();
