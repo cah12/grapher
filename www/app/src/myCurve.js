@@ -32,6 +32,8 @@ class MyCurve extends Curve {
     this.axesSwapped = false;
     this.relation = false;
 
+    self.panningStarted = false;
+
     this.unboundedDiscontinuity = null;
 
     this.parameterLimits = []; //Array of object: {minimum, maximum}
@@ -285,8 +287,11 @@ class MyCurve extends Curve {
           right += 0.25 * width;
 
           // let discontinuity;
+          if (Static.panning) {
+            self.panningStarted = true;
+          }
 
-          if (!Static.panning) {
+          if (!Static.panning && self.panningStarted) {
             self.unboundedDiscontinuity = await Utility.discontinuity(
               self.fn,
               left,
@@ -294,6 +299,7 @@ class MyCurve extends Curve {
               self.variable
             );
             //console.log(456);
+            self.panningStarted = false;
           }
           //console.log(self.unboundedDiscontinuity);
 
