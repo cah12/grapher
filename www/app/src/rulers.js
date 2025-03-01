@@ -777,7 +777,6 @@ class Rulers {
 
   refresh() {
     var p = this._rulerList[0].plot();
-    //p.replot(); //ensure scales are freshly computed. //Out1
     p.autoRefresh();
     if (
       this._curve &&

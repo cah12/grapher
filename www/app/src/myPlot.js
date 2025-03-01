@@ -1167,7 +1167,8 @@ class MyPlot extends Plot {
         let oldLabel = curve.label();
         let newLabel = oldLabel.replace(oldName, newName);
         curve.setLabel(newLabel);
-        curve.plot().replot();
+        //curve.plot().replot();
+        curve.plot().autoRefresh();
       }
     });
 
@@ -3260,7 +3261,8 @@ class MyPlot extends Plot {
 
     this.file.setInputElement($("#fileInput"));
 
-    this.replot();
+    //this.replot();
+    this.autoRefresh();
     this.setAutoReplot(true);
 
     Static.bind("visibilityChange", function (e, plotItem, on) {

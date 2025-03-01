@@ -32,7 +32,8 @@ class MyCurve extends Curve {
     this.axesSwapped = false;
     this.relation = false;
 
-    self.panningStarted = false;
+    self.left = 0;
+    self.right = 0;
 
     this.unboundedDiscontinuity = null;
 
@@ -41,6 +42,8 @@ class MyCurve extends Curve {
     this.toString = function () {
       return "[MyCurve]";
     };
+
+    //self.plot().getLayout().getCentralWidget().setMouseTracking(false);
 
     /* Static.bind("itemAttached", function (e, item, on) {
       //console.log(486, item == self, on);
@@ -196,12 +199,15 @@ class MyCurve extends Curve {
     const autoReplot = plot.autoReplot();
 
     plot.setAutoReplot(false);
+    // self.plot().getCentralWidget().setMouseTracking(false);
 
     let samples = null; //self.data().samples();
     //console.log(self.data());
     if (!self.unboundedRange) {
       samples = self.data().samples();
     }
+
+    //self.panningStarted = false;
 
     //this.unSwapAxes();
 
@@ -287,20 +293,20 @@ class MyCurve extends Curve {
           right += 0.25 * width;
 
           // let discontinuity;
-          if (Static.panning) {
-            self.panningStarted = true;
-          }
 
-          if (!Static.panning && self.panningStarted) {
-            self.unboundedDiscontinuity = await Utility.discontinuity(
-              self.fn,
-              left,
-              right,
-              self.variable
-            );
-            //console.log(456);
-            self.panningStarted = false;
-          }
+          // if (self.left != left && self.right != right) {
+          //   console.log(456);
+          //   self.left = left;
+          //   self.right = right;
+          //if (Static.panning) {
+          self.unboundedDiscontinuity = await Utility.discontinuity(
+            self.fn,
+            left,
+            right,
+            self.variable
+          );
+          //}
+
           //console.log(self.unboundedDiscontinuity);
 
           if (!self.unboundedDiscontinuity.length) {
@@ -365,7 +371,7 @@ class MyCurve extends Curve {
           /* if (m_to < to && m_from < to) {
             super.drawCurve(painter, style, xMap, yMap, m_from, to);
           } */
-          //self.unboundedDiscontinuity = null;
+          self.unboundedDiscontinuity = null;
         } catch (error) {
           console.log(error);
         }
@@ -379,9 +385,11 @@ class MyCurve extends Curve {
       super.drawCurve(painter, style, xMap, yMap, from, to);
     }
     if (!self.unboundedRange) {
+      //self.plot().getLayout().getCentralWidget().setMouseTracking(true);
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     }
+    // self.plot().getCentralWidget().setMouseTracking(true);
   } ////////
 }
 //MyCurve.init();

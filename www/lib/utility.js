@@ -3132,7 +3132,7 @@ class Utility {
     return result;
   }
 
-  static discontinuity1(exp, lower, upper, indepVar) {
+  static async discontinuity1(exp, lower, upper, indepVar) {
     if (!exp || exp.length === 0) {
       return [];
     }

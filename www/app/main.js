@@ -897,5 +897,14 @@ require([
 
 /*
 TODO
-$$ \frac{1}{x}+\frac{1}{x^6+x^5-3x^4+2x^3-4x^2+8x-45}=2y $$
+this code in drawCurve in MyCurve is buggy
+if (Static.panning && !self.unboundedDiscontinuity) {
+            console.log(456);
+            self.unboundedDiscontinuity = await Utility.discontinuity(
+              self.fn,
+              left,
+              right,
+              self.variable
+            );
+          }
 */
