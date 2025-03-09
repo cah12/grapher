@@ -1844,8 +1844,8 @@ class Utility {
     obj.discontinuity = obj.discontinuity || [];
 
     if (obj.discontinuity.length) {
-      numOfSamples = Math.round((numOfSamples *= 2));
-      //numOfSamples = numOfSamples < 300 ? 300 : numOfSamples;
+      //numOfSamples = Math.round((numOfSamples *= 2));
+      //numOfSamples = Math.max(numOfSamples, 250);
     }
 
     //let parser = new EvaluateExp(fx);
@@ -3109,72 +3109,77 @@ class Utility {
 
   static async discontinuity(exp, lower, upper, indepVar) {
     //Utility.progressWait();
-    let result = [];
-    if (Static.imagePath === "images/") {
-      result = this.discontinuity1(exp, lower, upper, indepVar);
-    } else {
-      // exp = Utility.insertProductSign(exp, indepVar);
-      try {
-        exp = this.replaceTrigKeyword(exp, "sec", "cos");
-        exp = this.replaceTrigKeyword(exp, "csc", "sin");
-        exp = this.replaceTrigKeyword(exp, "cot", "tan");
-        exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
-        exp = Utility.insertProductSign_total(exp, indepVar);
-        const _result = await discontinuity(exp, lower, upper, indepVar);
-        if (_result) {
-          result = _result.discontinuities;
+    try {
+      let result = [];
+      if (Static.imagePath === "images/") {
+        result = await this.discontinuity1(exp, lower, upper, indepVar);
+      } else {
+        // exp = Utility.insertProductSign(exp, indepVar);
+        try {
+          exp = this.replaceTrigKeyword(exp, "sec", "cos");
+          exp = this.replaceTrigKeyword(exp, "csc", "sin");
+          exp = this.replaceTrigKeyword(exp, "cot", "tan");
+          exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
+          exp = Utility.insertProductSign_total(exp, indepVar);
+          const _result = await discontinuity(exp, lower, upper, indepVar);
+          if (_result) {
+            result = _result.discontinuities;
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
+      Utility.progressWait(false);
+      return result;
+    } catch (error) {
+      console.log(error);
     }
-    Utility.progressWait(false);
-    return result;
   }
 
   static async discontinuity1(exp, lower, upper, indepVar) {
-    if (!exp || exp.length === 0) {
-      return [];
-    }
-    //Utility.progressWait();
-    //console.time("discontinuity");
-    function bindEquationEditorAngleModeChanged() {
-      $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
-        console.log(mode);
-        Utility.mode = mode;
-      });
-    }
-
-    const bindFunc = _.once(bindEquationEditorAngleModeChanged);
-    bindFunc();
-
-    if (indepVar !== "x") {
-      exp = Utility.purgeAndMarkKeywords(exp);
-      let n = 0;
-      while (exp.indexOf(indepVar) != -1 && n < 500) {
-        exp = exp.replace(indepVar, "x");
-        n++;
+    try {
+      if (!exp || exp.length === 0) {
+        return [];
       }
-      exp = Utility.replaceKeywordMarkers(exp);
-    }
+      //Utility.progressWait();
+      //console.time("discontinuity");
+      function bindEquationEditorAngleModeChanged() {
+        $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
+          console.log(mode);
+          Utility.mode = mode;
+        });
+      }
 
-    let denominators = [];
-    const trigs = [
-      "sin",
-      "cos",
-      "tan",
-      "sec",
-      "csc",
-      "cot",
-      "asin",
-      "acos",
-      "atan",
-      "asec",
-      "acsc",
-      "acot",
-    ];
+      const bindFunc = _.once(bindEquationEditorAngleModeChanged);
+      bindFunc();
 
-    /* function replaceTrigTanKeyword(exp, keyword, replacement1, replacement2) {
+      if (indepVar !== "x") {
+        exp = Utility.purgeAndMarkKeywords(exp);
+        let n = 0;
+        while (exp.indexOf(indepVar) != -1 && n < 500) {
+          exp = exp.replace(indepVar, "x");
+          n++;
+        }
+        exp = Utility.replaceKeywordMarkers(exp);
+      }
+
+      let denominators = [];
+      const trigs = [
+        "sin",
+        "cos",
+        "tan",
+        "sec",
+        "csc",
+        "cot",
+        "asin",
+        "acos",
+        "atan",
+        "asec",
+        "acsc",
+        "acot",
+      ];
+
+      /* function replaceTrigTanKeyword(exp, keyword, replacement1, replacement2) {
       if (exp.indexOf(keyword) == -1) return exp;
       while (exp.indexOf(keyword) !== -1) {
         const indexOfKeyword = exp.indexOf(keyword);       
@@ -3196,7 +3201,7 @@ class Utility {
       return exp;
     } */
 
-    /* function replaceTrigKeyword(exp, keyword, replacement) {
+      /* function replaceTrigKeyword(exp, keyword, replacement) {
       if (exp.indexOf(keyword) == -1) return exp;
       while (exp.indexOf(keyword) !== -1) {
         const indexOfKeyword = exp.indexOf(keyword);
@@ -3219,204 +3224,208 @@ class Utility {
       return exp;
     } */
 
-    function adjustConstantForMode(exp) {
-      const trigsForConstantAdjustment = [
-        "sin",
-        "cos",
-        "tan",
-        "sec",
-        "csc",
-        "cot",
-        // "asin",
-        // "acos",
-        // "atan",
-        // "asec",
-        // "acsc",
-        // "acot",
-      ];
+      function adjustConstantForMode(exp) {
+        const trigsForConstantAdjustment = [
+          "sin",
+          "cos",
+          "tan",
+          "sec",
+          "csc",
+          "cot",
+          // "asin",
+          // "acos",
+          // "atan",
+          // "asec",
+          // "acsc",
+          // "acot",
+        ];
 
-      for (let i = 0; i < trigsForConstantAdjustment.length; i++) {
-        let keyword = trigsForConstantAdjustment[i];
-        let indexOfKeyword = exp.indexOf(keyword);
-        if (indexOfKeyword == -1) continue;
-        while (indexOfKeyword !== -1) {
-          indexOfKeyword = exp.indexOf(keyword, indexOfKeyword);
-          if (indexOfKeyword !== -1) {
-            //get operand
-            let operand = "";
-            let lBracket = 0;
-            for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
-              if (exp[i] == "(") {
-                operand += "(";
-                lBracket++;
-                continue;
-              }
-              if (exp[i] == ")") {
-                operand += ")";
-                lBracket--;
-                if (lBracket == 0) {
-                  break;
+        for (let i = 0; i < trigsForConstantAdjustment.length; i++) {
+          let keyword = trigsForConstantAdjustment[i];
+          let indexOfKeyword = exp.indexOf(keyword);
+          if (indexOfKeyword == -1) continue;
+          while (indexOfKeyword !== -1) {
+            indexOfKeyword = exp.indexOf(keyword, indexOfKeyword);
+            if (indexOfKeyword !== -1) {
+              //get operand
+              let operand = "";
+              let lBracket = 0;
+              for (
+                let i = indexOfKeyword + keyword.length;
+                i < exp.length;
+                i++
+              ) {
+                if (exp[i] == "(") {
+                  operand += "(";
+                  lBracket++;
+                  continue;
                 }
-                continue;
+                if (exp[i] == ")") {
+                  operand += ")";
+                  lBracket--;
+                  if (lBracket == 0) {
+                    break;
+                  }
+                  continue;
+                }
+                operand += exp[i];
               }
-              operand += exp[i];
+              let constant = 0,
+                replacement = 0;
+              if (Utility.mathMode() == "deg") {
+                try {
+                  constant = Math.abs(math.evaluate(operand, { x: 0 }));
+                } catch (error) {
+                  console.log(error);
+                }
+
+                if (constant != 0) {
+                  replacement = (constant * Math.PI) / 180;
+                  exp = exp.replace(constant, replacement);
+                }
+              }
+
+              indexOfKeyword++;
+              //replacement.toString().length - constant.toString().length + 1;
             }
-            let constant = 0,
-              replacement = 0;
+          }
+        }
+        return exp;
+      }
+
+      function adjustForMode(factor, solution) {
+        // let considerMode = false;
+        // for (let i = 0; i < denominators.length; i++) {
+        //   for (let n = 0; n < trigs.length; n++) {
+        //     if (denominators[i].indexOf(trigs[n]) !== -1) {
+        //       considerMode = true;
+        //       break;
+        //     }
+        //   }
+        //   if (considerMode) break;
+        // }
+        // if (considerMode && Utility.mathMode() == "deg") {
+        //   return (solution * 180) / Math.PI;
+        // }
+        // return solution;
+
+        for (let i = 0; i < trigs.length; i++) {
+          if (factor.indexOf(trigs[i]) !== -1) {
             if (Utility.mathMode() == "deg") {
-              try {
-                constant = Math.abs(math.evaluate(operand, { x: 0 }));
-              } catch (error) {
-                console.log(error);
-              }
-
-              if (constant != 0) {
-                replacement = (constant * Math.PI) / 180;
-                exp = exp.replace(constant, replacement);
-              }
+              return (solution * 180) / Math.PI;
             }
-
-            indexOfKeyword++;
-            //replacement.toString().length - constant.toString().length + 1;
           }
         }
+        return solution;
       }
-      return exp;
-    }
 
-    function adjustForMode(factor, solution) {
-      // let considerMode = false;
-      // for (let i = 0; i < denominators.length; i++) {
-      //   for (let n = 0; n < trigs.length; n++) {
-      //     if (denominators[i].indexOf(trigs[n]) !== -1) {
-      //       considerMode = true;
-      //       break;
-      //     }
-      //   }
-      //   if (considerMode) break;
-      // }
-      // if (considerMode && Utility.mathMode() == "deg") {
-      //   return (solution * 180) / Math.PI;
-      // }
-      // return solution;
-
-      for (let i = 0; i < trigs.length; i++) {
-        if (factor.indexOf(trigs[i]) !== -1) {
-          if (Utility.mathMode() == "deg") {
-            return (solution * 180) / Math.PI;
-          }
+      function getCoeff(exp) {
+        let coeff = [];
+        let node;
+        try {
+          node = math.parse(exp);
+        } catch (error) {
+          console.log(error);
         }
-      }
-      return solution;
-    }
 
-    function getCoeff(exp) {
-      let coeff = [];
-      let node;
-      try {
-        node = math.parse(exp);
-      } catch (error) {
-        console.log(error);
-      }
+        const filtered = node.filter(function (node) {
+          return node.op === "*" && node.args[1].name === "x";
+        });
 
-      const filtered = node.filter(function (node) {
-        return node.op === "*" && node.args[1].name === "x";
-      });
+        // let filtered_constant = node.filter(function (node) {
+        //   return node.type === "ConstantNode";
+        // });
 
-      // let filtered_constant = node.filter(function (node) {
-      //   return node.type === "ConstantNode";
-      // });
-
-      for (let i = 0; i < filtered.length; i++) {
-        coeff.push(filtered[i].args[0].getContent().value);
-      }
-      //coeff = _.uniq(coeff);
-      return coeff;
-    }
-
-    function isPeriodic(exp) {
-      return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
-    }
-
-    function getFactors(exp) {
-      let factors = [];
-      let node;
-      try {
-        node = math.parse(exp);
-      } catch (error) {
-        console.log(error);
+        for (let i = 0; i < filtered.length; i++) {
+          coeff.push(filtered[i].args[0].getContent().value);
+        }
+        //coeff = _.uniq(coeff);
+        return coeff;
       }
 
-      const filtered = node.filter(function (node) {
-        return (
-          node.op === "*" &&
-          (node.args[0].name === "sin" || node.args[0].name === "cos") &&
-          (node.args[1].name === "sin" || node.args[1].name === "cos")
-        );
-      });
-
-      // let filtered_constant = node.filter(function (node) {
-      //   return node.type === "ConstantNode";
-      // });
-
-      for (let i = 0; i < filtered.length; i++) {
-        factors.push(filtered[i].args[0].getContent().toString());
-        factors.push(filtered[i].args[1].getContent().toString());
+      function isPeriodic(exp) {
+        return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
       }
 
-      factors = factors.filter(function (e) {
-        return e.indexOf("x") !== -1;
-      });
-      factors = _.uniq(factors);
-      return factors;
-    }
+      function getFactors(exp) {
+        let factors = [];
+        let node;
+        try {
+          node = math.parse(exp);
+        } catch (error) {
+          console.log(error);
+        }
 
-    function getDenominators(exp) {
-      let denom = [];
-      let node;
-      try {
-        node = math.parse(exp);
-      } catch (error) {
-        console.log(error);
+        const filtered = node.filter(function (node) {
+          return (
+            node.op === "*" &&
+            (node.args[0].name === "sin" || node.args[0].name === "cos") &&
+            (node.args[1].name === "sin" || node.args[1].name === "cos")
+          );
+        });
+
+        // let filtered_constant = node.filter(function (node) {
+        //   return node.type === "ConstantNode";
+        // });
+
+        for (let i = 0; i < filtered.length; i++) {
+          factors.push(filtered[i].args[0].getContent().toString());
+          factors.push(filtered[i].args[1].getContent().toString());
+        }
+
+        factors = factors.filter(function (e) {
+          return e.indexOf("x") !== -1;
+        });
+        factors = _.uniq(factors);
+        return factors;
       }
 
-      const filtered = node.filter(function (node) {
-        if (
-          node.op === "/" ||
-          (node.op === "^" &&
-            node.args &&
-            node.args[1] &&
-            node.args[1].content &&
-            node.args[1].content.fn &&
-            node.args[1].content.fn === "unaryMinus")
-        ) {
-          if (node.args && node.args[0] && node.op != "^") {
-            const scope = new Map();
-            scope.set(indepVar, 0);
-            try {
-              const s = node.args[0].toString();
-              let v;
+      function getDenominators(exp) {
+        let denom = [];
+        let node;
+        try {
+          node = math.parse(exp);
+        } catch (error) {
+          console.log(error);
+        }
+
+        const filtered = node.filter(function (node) {
+          if (
+            node.op === "/" ||
+            (node.op === "^" &&
+              node.args &&
+              node.args[1] &&
+              node.args[1].content &&
+              node.args[1].content.fn &&
+              node.args[1].content.fn === "unaryMinus")
+          ) {
+            if (node.args && node.args[0] && node.op != "^") {
+              const scope = new Map();
+              scope.set(indepVar, 0);
               try {
-                v = math.evaluate(s, scope);
-              } catch (error) {
-                console.log(error);
-              }
+                const s = node.args[0].toString();
+                let v;
+                try {
+                  v = math.evaluate(s, scope);
+                } catch (error) {
+                  console.log(error);
+                }
 
-              if (s.indexOf(indepVar) == -1 && v === 0) {
+                if (s.indexOf(indepVar) == -1 && v === 0) {
+                  return false;
+                }
+              } catch (error) {
                 return false;
               }
-            } catch (error) {
-              return false;
+              return true;
             }
-            return true;
+            if (node.op === "^") {
+              return true;
+            }
+          } else {
+            return false;
           }
-          if (node.op === "^") {
-            return true;
-          }
-        } else {
-          return false;
-        }
-        /* return (
+          /* return (
           node.op === "/" ||
           (node.op === "^" &&
             node.args &&
@@ -3425,168 +3434,171 @@ class Utility {
             node.args[1].content.fn &&
             node.args[1].content.fn === "unaryMinus")
         ); */
+        });
+
+        // let filtered_constant = node.filter(function (node) {
+        //   return node.type === "ConstantNode";
+        // });
+
+        for (let i = 0; i < filtered.length; i++) {
+          if (filtered[i].op === "/") {
+            denom.push(filtered[i].args[1].getContent().toString());
+          } else {
+            const s1 = filtered[i].args[0].getContent().toString();
+            const s2 = filtered[i].args[1]
+              .getContent()
+              .toString()
+              .replace("-", "");
+
+            denom.push(`(${s1})^${s2}`);
+          }
+        }
+
+        denom = denom.filter(function (e) {
+          return e.indexOf("x") !== -1;
+        });
+        denom = _.uniq(denom);
+        return denom;
+      }
+
+      exp = this.replaceTrigKeyword(exp, "sec", "cos");
+      exp = this.replaceTrigKeyword(exp, "csc", "sin");
+      exp = this.replaceTrigKeyword(exp, "cot", "tan");
+
+      exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
+
+      try {
+        exp = math.simplify(exp, {}, { exactFractions: false }).toString();
+      } catch (error) {
+        console.log(error);
+      }
+      //Replace the whitespace delimiters stripped out by simplify()
+      exp = exp.replaceAll("mod", " mod ");
+      exp = adjustConstantForMode(exp);
+
+      let factors = [];
+      denominators = denominators.concat(getDenominators(exp));
+      denominators.forEach(function (d) {
+        factors = factors.concat(getFactors(d));
       });
 
-      // let filtered_constant = node.filter(function (node) {
-      //   return node.type === "ConstantNode";
-      // });
+      if (factors.length == 0) {
+        factors = denominators;
+      }
+      //console.log(486, denominators);
 
-      for (let i = 0; i < filtered.length; i++) {
-        if (filtered[i].op === "/") {
-          denom.push(filtered[i].args[1].getContent().toString());
+      let result = [];
+
+      let d = 0;
+      for (let i = 0; i < factors.length; i++) {
+        const e = factors[i];
+
+        let m_result = [];
+        let eq = null;
+        var solution = null;
+
+        try {
+          eq = nerdamer(`${e}=0`);
+          solution = eq.solveFor("x");
+          //nerdamer.flush();
+        } catch (error) {
+          console.log("Error in discontinuity()");
+        }
+        nerdamer.clear("all");
+        nerdamer.flush();
+
+        let periodic = false;
+        let coeff = 1;
+        if (
+          solution.length > 20 &&
+          (e.indexOf("sin") !== -1 || e.indexOf("cos") !== -1)
+        ) {
+          /* let coeffs = getCoeff(e);
+        if (coeffs.length) coeff = coeffs[0]; */
+          periodic = isPeriodic(e);
+        }
+
+        if (solution.length !== undefined) {
+          for (let i = 0; i < solution.length; i++) {
+            //console.log(solution.at(i).valueOf());
+
+            let val = adjustForMode(e, solution.at(i).valueOf());
+            try {
+              val = Utility.adjustForDecimalPlaces(math.evaluate(`${val}`), 8);
+            } catch (error) {
+              console.log(error);
+            }
+
+            m_result.push(val);
+          }
+
+          m_result = _.uniq(m_result);
+          m_result = m_result.sort(function (a, b) {
+            return a - b;
+          });
+
+          //let periodic = true;
+          if (solution.length > 20) {
+            if (periodic) {
+              //a periodic function
+              //Check for periodic
+              d = m_result[1] - m_result[0];
+              let a1 = m_result[0];
+
+              if (d != 0) {
+                //a periodic function
+                if (m_result[0] > lower) {
+                  a1 = m_result[0] - Math.round((m_result[0] - lower) / d) * d;
+                }
+                m_result = [];
+
+                let n = 0;
+                while (1) {
+                  m_result.push(a1 + n * d);
+                  if (m_result[n] > upper) {
+                    break;
+                  }
+                  n++;
+                }
+              }
+            } else {
+              //non periodic function with many solutions
+            }
+          }
+
+          for (let i = 0; i < m_result.length; i++) {
+            if (
+              (m_result[i] >= lower ||
+                Utility.mFuzzyCompare(m_result[i], lower, 1e-7)) &&
+              (m_result[i] <= upper ||
+                Utility.mFuzzyCompare(upper, m_result[i], 1e-7))
+            ) {
+              result.push(Utility.adjustForDecimalPlaces(m_result[i], 20));
+            }
+          }
         } else {
-          const s1 = filtered[i].args[0].getContent().toString();
-          const s2 = filtered[i].args[1]
-            .getContent()
-            .toString()
-            .replace("-", "");
-
-          denom.push(`(${s1})^${s2}`);
+          let val = solution.valueOf();
+          if (
+            (val > lower || Utility.mFuzzyCompare(val, lower, 1e-10)) &&
+            (val < upper || Utility.mFuzzyCompare(val, upper, 1e-10))
+          ) {
+            result.push(val);
+          }
         }
       }
 
-      denom = denom.filter(function (e) {
-        return e.indexOf("x") !== -1;
+      result = _.uniq(result);
+      result = result.sort(function (a, b) {
+        return a - b;
       });
-      denom = _.uniq(denom);
-      return denom;
-    }
 
-    exp = this.replaceTrigKeyword(exp, "sec", "cos");
-    exp = this.replaceTrigKeyword(exp, "csc", "sin");
-    exp = this.replaceTrigKeyword(exp, "cot", "tan");
-
-    exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
-
-    try {
-      exp = math.simplify(exp, {}, { exactFractions: false }).toString();
+      //console.timeEnd("discontinuity");
+      Utility.progressWait(false);
+      return result;
     } catch (error) {
       console.log(error);
     }
-    //Replace the whitespace delimiters stripped out by simplify()
-    exp = exp.replaceAll("mod", " mod ");
-    exp = adjustConstantForMode(exp);
-
-    let factors = [];
-    denominators = denominators.concat(getDenominators(exp));
-    denominators.forEach(function (d) {
-      factors = factors.concat(getFactors(d));
-    });
-
-    if (factors.length == 0) {
-      factors = denominators;
-    }
-    //console.log(486, denominators);
-
-    let result = [];
-
-    let d = 0;
-    for (let i = 0; i < factors.length; i++) {
-      const e = factors[i];
-
-      let m_result = [];
-      let eq = null;
-      var solution = null;
-
-      try {
-        eq = nerdamer(`${e}=0`);
-        solution = eq.solveFor("x");
-        //nerdamer.flush();
-      } catch (error) {
-        console.log("Error in discontinuity()");
-      }
-      nerdamer.clear("all");
-      nerdamer.flush();
-
-      let periodic = false;
-      let coeff = 1;
-      if (
-        solution.length > 20 &&
-        (e.indexOf("sin") !== -1 || e.indexOf("cos") !== -1)
-      ) {
-        /* let coeffs = getCoeff(e);
-        if (coeffs.length) coeff = coeffs[0]; */
-        periodic = isPeriodic(e);
-      }
-
-      if (solution.length !== undefined) {
-        for (let i = 0; i < solution.length; i++) {
-          //console.log(solution.at(i).valueOf());
-
-          let val = adjustForMode(e, solution.at(i).valueOf());
-          try {
-            val = Utility.adjustForDecimalPlaces(math.evaluate(`${val}`), 8);
-          } catch (error) {
-            console.log(error);
-          }
-
-          m_result.push(val);
-        }
-
-        m_result = _.uniq(m_result);
-        m_result = m_result.sort(function (a, b) {
-          return a - b;
-        });
-
-        //let periodic = true;
-        if (solution.length > 20) {
-          if (periodic) {
-            //a periodic function
-            //Check for periodic
-            d = m_result[1] - m_result[0];
-            let a1 = m_result[0];
-
-            if (d != 0) {
-              //a periodic function
-              if (m_result[0] > lower) {
-                a1 = m_result[0] - Math.round((m_result[0] - lower) / d) * d;
-              }
-              m_result = [];
-
-              let n = 0;
-              while (1) {
-                m_result.push(a1 + n * d);
-                if (m_result[n] > upper) {
-                  break;
-                }
-                n++;
-              }
-            }
-          } else {
-            //non periodic function with many solutions
-          }
-        }
-
-        for (let i = 0; i < m_result.length; i++) {
-          if (
-            (m_result[i] >= lower ||
-              Utility.mFuzzyCompare(m_result[i], lower, 1e-7)) &&
-            (m_result[i] <= upper ||
-              Utility.mFuzzyCompare(upper, m_result[i], 1e-7))
-          ) {
-            result.push(Utility.adjustForDecimalPlaces(m_result[i], 20));
-          }
-        }
-      } else {
-        let val = solution.valueOf();
-        if (
-          (val > lower || Utility.mFuzzyCompare(val, lower, 1e-10)) &&
-          (val < upper || Utility.mFuzzyCompare(val, upper, 1e-10))
-        ) {
-          result.push(val);
-        }
-      }
-    }
-
-    result = _.uniq(result);
-    result = result.sort(function (a, b) {
-      return a - b;
-    });
-
-    //console.timeEnd("discontinuity");
-    Utility.progressWait(false);
-    return result;
-  }
+  } ////////
 
   /* static filterOutlier(samples) {
     let m_samples = samples.map(function (e) {

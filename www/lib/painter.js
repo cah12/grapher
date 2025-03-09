@@ -280,7 +280,6 @@ PaintUtil.ContextPainter = function (ctx) {
 
   this.drawPolyline = function (polyline) {
     m_ctx.beginPath();
-    //m_ctx.lineCap = "butt";
     m_ctx.moveTo(polyline[0].x, polyline[0].y);
     for (var i = 1; i < polyline.length; ++i)
       m_ctx.lineTo(polyline[i].x, polyline[i].y);

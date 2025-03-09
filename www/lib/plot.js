@@ -1584,7 +1584,6 @@ class Plot {
       this.drawTitle();
       this.drawFooter();
 
-      //var i = 0;
       for (var i = 0; i < m_plotItemStore.length; ++i) {
         if (!m_plotItemStore[i].isVisible()) continue;
         m_plotItemStore[i].draw(

@@ -200,30 +200,21 @@ class MyCurve extends Curve {
     const autoReplot = plot.autoReplot();
 
     plot.setAutoReplot(false);
-    // if (!Static.panning) {
-    //   self.earlier = 0;
-    // }
 
-    let samples = null; //self.data().samples();
-    //console.log(self.data());
+    let samples = null;
     if (!self.unboundedRange) {
       samples = self.data().samples();
     }
-
-    //self.panningStarted = false;
-
-    //this.unSwapAxes();
 
     let indexBeforeDiscontinuity = [];
 
     if (
       //!self.unboundedRange &&
-      self.discontinuity &&
-      self.discontinuity.length
+      (self.discontinuity && self.discontinuity.length) ||
+      self.hasDiscontinuity
     ) {
       if (!self.unboundedRange) {
         //Account for discontinuity
-
         //samples are free of discontinuity.
         const samples = self.data().samples();
 
@@ -279,9 +270,8 @@ class MyCurve extends Curve {
           const autoReplot = plot.autoReplot();
           plot.setAutoReplot(false);
 
-          self.unboundedDiscontinuity = self.discontinuity;
+          //self.unboundedDiscontinuity = self.discontinuity;
           //console.log("Draw unbounded");
-          let samples = [];
           const data = self.data();
 
           const sz = data.size();
@@ -289,32 +279,24 @@ class MyCurve extends Curve {
           const scaleDiv = plot.axisScaleDiv(self.xAxis());
           let left = scaleDiv.lowerBound(),
             right = scaleDiv.upperBound();
-          const width = right - left;
 
-          left -= 0.25 * width;
-
-          right += 0.25 * width;
-
-          // let discontinuity;
+          if (!self.hasDiscontinuity && self.discontinuity.length) {
+            self.hasDiscontinuity = true;
+          }
 
           if (self.left != left && self.right != right) {
+            //console.log(456);
             self.left = left;
             self.right = right;
-            return;
+            self.discontinuity = await Utility.discontinuity(
+              self.fn,
+              left,
+              right,
+              self.variable
+            );
           }
-          //if (Static.panning) {
-          //self.earlier = self.unboundedDiscontinuity[0];
-          console.log(456);
-          self.unboundedDiscontinuity = await Utility.discontinuity(
-            self.fn,
-            left,
-            right,
-            self.variable
-          );
 
-          //console.log(self.unboundedDiscontinuity);
-
-          if (!self.unboundedDiscontinuity.length) {
+          if (!self.discontinuity.length) {
             data.discontinuitySamples = null;
             return super.drawCurve(painter, style, xMap, yMap, from, to);
           }
@@ -328,18 +310,15 @@ class MyCurve extends Curve {
             indepVar: Utility.findIndepVar(self.fn),
             //indepVarY = obj.variableY; // || findIndepVarY(fx); TODO
 
-            discontinuity: self.unboundedDiscontinuity,
+            discontinuity: self.discontinuity,
           };
 
           data.discontinuitySamples = Utility.makeSamples(obj);
 
-          if (self.unboundedDiscontinuity && data.discontinuitySamples) {
-            for (let n = 0; n < self.unboundedDiscontinuity.length; n++) {
+          if (self.discontinuity && data.discontinuitySamples) {
+            for (let n = 0; n < self.discontinuity.length; n++) {
               for (let i = 0; i < data.discontinuitySamples.length; i++) {
-                if (
-                  data.discontinuitySamples[i].x >
-                  self.unboundedDiscontinuity[n]
-                ) {
+                if (data.discontinuitySamples[i].x > self.discontinuity[n]) {
                   indexBeforeDiscontinuity.push(i - 1);
                   break;
                 }
@@ -350,8 +329,8 @@ class MyCurve extends Curve {
           if (
             data.discontinuitySamples &&
             indexBeforeDiscontinuity &&
-            self.unboundedDiscontinuity &&
-            indexBeforeDiscontinuity.length < self.unboundedDiscontinuity.length
+            self.discontinuity &&
+            indexBeforeDiscontinuity.length < self.discontinuity.length
           )
             indexBeforeDiscontinuity.push(data.discontinuitySamples.length - 1);
 
