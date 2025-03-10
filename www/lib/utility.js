@@ -3123,7 +3123,8 @@ class Utility {
           exp = Utility.insertProductSign_total(exp, indepVar);
           const _result = await discontinuity(exp, lower, upper, indepVar);
           if (_result) {
-            result = _result.discontinuities;
+            Utility.progressWait(false);
+            return _result.discontinuities;
           }
         } catch (error) {
           console.log(error);
