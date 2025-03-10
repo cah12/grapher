@@ -204,6 +204,9 @@ class MyCurve extends Curve {
         const scaleDiv = plot.axisScaleDiv(self.xAxis());
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
+        const w = right - left;
+        left -= w;
+        right += w;
         if (self.left != left && self.right != right) {
           self.left = left;
           self.right = right;
@@ -215,12 +218,14 @@ class MyCurve extends Curve {
           );
         }
         const data = self.data();
+        const sz = Math.max(Static.min_discontinuity_samples, data.size());
+        data.setSize(sz);
 
         const obj = {
           fx: self.fn,
           lowerX: left,
           upperX: right,
-          numOfSamples: data.size(),
+          numOfSamples: sz,
           indepVar: Utility.findIndepVar(self.fn),
           discontinuity: self.discontinuity,
         };

@@ -1845,7 +1845,7 @@ class Utility {
 
     if (obj.discontinuity.length) {
       //numOfSamples = Math.round((numOfSamples *= 2));
-      //numOfSamples = Math.max(numOfSamples, 400);
+      numOfSamples = Math.max(numOfSamples, Static.min_discontinuity_samples);
     }
 
     //let parser = new EvaluateExp(fx);
@@ -3112,8 +3112,7 @@ class Utility {
     try {
       let result = [];
       if (Static.imagePath === "images/") {
-        return [0];
-        //return await this.discontinuity1(exp, lower, upper, indepVar);
+        return await this.discontinuity1(exp, lower, upper, indepVar);
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
