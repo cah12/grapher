@@ -200,7 +200,7 @@ class MyCurve extends Curve {
       const plot = self.plot();
 
       if (!self.unboundedRange) {
-        await self.doDraw(painter, style, xMap, yMap, from, to);
+        self.doDraw(painter, style, xMap, yMap, from, to);
       } else {
         const plot = self.plot();
         const scaleDiv = plot.axisScaleDiv(self.xAxis());
@@ -228,7 +228,7 @@ class MyCurve extends Curve {
         };
 
         data.discontinuitySamples = Utility.makeSamples(obj);
-        await self.doDraw(
+        self.doDraw(
           painter,
           style,
           xMap,
@@ -243,7 +243,7 @@ class MyCurve extends Curve {
     }
   }
 
-  async doDraw(painter, style, xMap, yMap, from, to, samples) {
+  doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
     if (!self.discontinuity.length) {
