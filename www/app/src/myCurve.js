@@ -285,15 +285,14 @@ class MyCurve extends Curve {
     to,
     indexBeforeDiscontinuity
   ) {
+    const plot = this.plot();
     let m_from = from,
       m_to;
     for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
       if (indexBeforeDiscontinuity[i] < 0) continue;
       m_to = indexBeforeDiscontinuity[i];
       if (m_from < m_to) {
-        //console.log(486, self.data().samples());
         super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
-        //console.log(487, self.data().samples());
       }
       m_from = m_to + 1;
     }
@@ -302,13 +301,11 @@ class MyCurve extends Curve {
       indexBeforeDiscontinuity.length == 1 &&
       indexBeforeDiscontinuity[0] == -1
     ) {
-      //console.log(486, self.data().samples());
       super.drawCurve(painter, style, xMap, yMap, m_from, to);
-      //console.log(487, self.data().samples());
     }
 
     if (m_to < to && m_from < to) {
-      return super.drawCurve(painter, style, xMap, yMap, m_from, to);
+      super.drawCurve(painter, style, xMap, yMap, m_from, to);
     }
   }
 
