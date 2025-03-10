@@ -489,7 +489,7 @@ math.pow = customPow;
 Static.imagePath = "images/";
 Static.grapherHelp = "";
 //////////////////////////////////////
-Static.min_discontinuity_samples = 400;
+Static.min_discontinuity_samples = 500;
 ////////////https://simplegrapher.onrender.com///////////////
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python
