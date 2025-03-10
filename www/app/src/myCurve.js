@@ -205,15 +205,15 @@ class MyCurve extends Curve {
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
         const w = right - left;
-        left -= w;
-        right += w;
+        // left -= w;
+        // right += w;
         if (self.left != left && self.right != right) {
           self.left = left;
           self.right = right;
           self.discontinuity = await Utility.discontinuity(
             self.fn,
-            left,
-            right,
+            left - w,
+            right + w,
             self.variable
           );
         }
