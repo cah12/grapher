@@ -1845,7 +1845,7 @@ class Utility {
 
     if (obj.discontinuity.length) {
       //numOfSamples = Math.round((numOfSamples *= 2));
-      //numOfSamples = Math.max(numOfSamples, 250);
+      //numOfSamples = Math.max(numOfSamples, 400);
     }
 
     //let parser = new EvaluateExp(fx);

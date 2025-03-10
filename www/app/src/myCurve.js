@@ -194,23 +194,19 @@ class MyCurve extends Curve {
   } */
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
-    const self = this;
+    try {
+      const self = this;
 
-    const plot = self.plot();
-    // const autoReplot = plot.autoReplot();
+      const plot = self.plot();
 
-    // plot.setAutoReplot(false);
-
-    if (!self.unboundedRange) {
-      self.doDraw(painter, style, xMap, yMap, from, to);
-    } else {
-      try {
+      if (!self.unboundedRange) {
+        await self.doDraw(painter, style, xMap, yMap, from, to);
+      } else {
         const plot = self.plot();
         const scaleDiv = plot.axisScaleDiv(self.xAxis());
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
         if (self.left != left && self.right != right) {
-          //console.log(456);
           self.left = left;
           self.right = right;
           self.discontinuity = await Utility.discontinuity(
@@ -232,7 +228,7 @@ class MyCurve extends Curve {
         };
 
         data.discontinuitySamples = Utility.makeSamples(obj);
-        self.doDraw(
+        await self.doDraw(
           painter,
           style,
           xMap,
@@ -241,15 +237,13 @@ class MyCurve extends Curve {
           to,
           data.discontinuitySamples
         );
-      } catch (error) {
-        console.log(error);
       }
-      //plot.setAutoReplot(autoReplot);
-      plot.autoRefresh();
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  doDraw(painter, style, xMap, yMap, from, to, samples) {
+  async doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
     if (!self.discontinuity.length) {
