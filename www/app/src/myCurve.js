@@ -197,6 +197,149 @@ class MyCurve extends Curve {
     const self = this;
 
     const plot = self.plot();
+    // const autoReplot = plot.autoReplot();
+
+    // plot.setAutoReplot(false);
+
+    if (!self.unboundedRange) {
+      self.doDraw(painter, style, xMap, yMap, from, to);
+    } else {
+      try {
+        const plot = self.plot();
+        const scaleDiv = plot.axisScaleDiv(self.xAxis());
+        let left = scaleDiv.lowerBound(),
+          right = scaleDiv.upperBound();
+        if (self.left != left && self.right != right) {
+          //console.log(456);
+          self.left = left;
+          self.right = right;
+          self.discontinuity = await Utility.discontinuity(
+            self.fn,
+            left,
+            right,
+            self.variable
+          );
+        }
+        const data = self.data();
+
+        const obj = {
+          fx: self.fn,
+          lowerX: left,
+          upperX: right,
+          numOfSamples: data.size(),
+          indepVar: Utility.findIndepVar(self.fn),
+          discontinuity: self.discontinuity,
+        };
+
+        data.discontinuitySamples = Utility.makeSamples(obj);
+        self.doDraw(
+          painter,
+          style,
+          xMap,
+          yMap,
+          from,
+          to,
+          data.discontinuitySamples
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      //plot.setAutoReplot(autoReplot);
+      plot.autoRefresh();
+    }
+  }
+
+  doDraw(painter, style, xMap, yMap, from, to, samples) {
+    const self = this;
+    const plot = self.plot();
+    if (!self.discontinuity.length) {
+      return super.drawCurve(painter, style, xMap, yMap, from, to);
+    } else {
+      samples = samples || self.data().samples();
+      const indexBeforeDiscontinuity = self.indices(self, samples);
+      if (!self.setAxis) {
+        self.setAxis = true;
+        if (!self.unboundedRange) {
+          Utility.setAutoScale(plot, true);
+        }
+        plot.setAxisScale(self.yAxis(), -6, 6);
+      }
+      return self.drawDiscontinuosCurve(
+        painter,
+        style,
+        xMap,
+        yMap,
+        from,
+        to,
+        indexBeforeDiscontinuity
+      );
+    }
+  }
+
+  drawDiscontinuosCurve(
+    painter,
+    style,
+    xMap,
+    yMap,
+    from,
+    to,
+    indexBeforeDiscontinuity
+  ) {
+    let m_from = from,
+      m_to;
+    for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
+      if (indexBeforeDiscontinuity[i] < 0) continue;
+      m_to = indexBeforeDiscontinuity[i];
+      if (m_from < m_to) {
+        //console.log(486, self.data().samples());
+        super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+        //console.log(487, self.data().samples());
+      }
+      m_from = m_to + 1;
+    }
+
+    if (
+      indexBeforeDiscontinuity.length == 1 &&
+      indexBeforeDiscontinuity[0] == -1
+    ) {
+      //console.log(486, self.data().samples());
+      super.drawCurve(painter, style, xMap, yMap, m_from, to);
+      //console.log(487, self.data().samples());
+    }
+
+    if (m_to < to && m_from < to) {
+      return super.drawCurve(painter, style, xMap, yMap, m_from, to);
+    }
+  }
+
+  indices(self, samples) {
+    const indexBeforeDiscontinuity = [];
+    for (let n = 0; n < self.discontinuity.length; n++) {
+      for (let i = 0; i < samples.length; i++) {
+        if (!self.axesSwapped) {
+          if (samples[i].x > self.discontinuity[n]) {
+            indexBeforeDiscontinuity.push(i - 1);
+            break;
+          }
+        } else {
+          if (samples[i].y > self.discontinuity[n]) {
+            indexBeforeDiscontinuity.push(i - 1);
+            break;
+          }
+        }
+      }
+    }
+
+    if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
+      indexBeforeDiscontinuity.push(samples.length - 1);
+    }
+    return indexBeforeDiscontinuity;
+  }
+
+  async drawCurve1(painter, style, xMap, yMap, from, to) {
+    const self = this;
+
+    const plot = self.plot();
     const autoReplot = plot.autoReplot();
 
     plot.setAutoReplot(false);
@@ -375,6 +518,6 @@ class MyCurve extends Curve {
     }
 
     //self.plot().getCentralWidget().setMouseTracking(true);
-  } ////////
+  }
 }
 //MyCurve.init();
