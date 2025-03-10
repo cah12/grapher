@@ -197,8 +197,6 @@ class MyCurve extends Curve {
     try {
       const self = this;
 
-      const plot = self.plot();
-
       if (!self.unboundedRange) {
         self.doDraw(painter, style, xMap, yMap, from, to);
       } else {

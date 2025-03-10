@@ -3112,7 +3112,8 @@ class Utility {
     try {
       let result = [];
       if (Static.imagePath === "images/") {
-        result = await this.discontinuity1(exp, lower, upper, indepVar);
+        return [0];
+        //return await this.discontinuity1(exp, lower, upper, indepVar);
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
