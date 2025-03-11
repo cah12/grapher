@@ -211,14 +211,18 @@ class MyCurve extends Curve {
         const w = right - left;
         // left -= w;
         // right += w;
-        if (self.left != left && self.right != right) {
+        if (
+          self.left != left &&
+          self.right != right &&
+          self.discontinuity.length
+        ) {
           self.left = left;
           self.right = right;
           self.discontinuosCurvePending = true;
           self.discontinuity = await Utility.discontinuity(
             self.fn,
-            left - w,
-            right + w,
+            left,
+            right,
             self.variable
           );
         }
