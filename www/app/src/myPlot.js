@@ -34,6 +34,14 @@ class MyPlot extends Plot {
         }
       }
     });
+
+    Static.bind("magnifyingStart", (e) => {
+      Static.magnifying = true;
+    });
+
+    Static.bind("magnifyingEnd", (e) => {
+      Static.magnifying = false;
+    });
   }
   constructor(plotDiv, plotTitle) {
     super(plotDiv, plotTitle);
@@ -4233,6 +4241,23 @@ class MyPlot extends Plot {
       this.axesSwapped = false;
       return true;
     };
+
+    //const centralDiv = self.getCentralWidget().getElement();
+
+    /* let mousedown = false;
+    centralDiv.on("mousedown", (e) => {
+      mousedown = true;
+    });
+    centralDiv.on("mouseup", (e) => {
+      mousedown = false;
+    });
+    centralDiv.on("mousemove", (e) => {
+      if (mousedown) {
+        Static.mousemove = true;
+      } else {
+        Static.mousemove = false;
+      }
+    }); */
   }
 }
 MyPlot.init();

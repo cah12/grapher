@@ -198,25 +198,31 @@ class MyCurve extends Curve {
       const self = this;
 
       if (!self.unboundedRange) {
-        self.doDraw(painter, style, xMap, yMap, from, to);
+        return self.doDraw(painter, style, xMap, yMap, from, to);
       } else {
+        if (self.discontinuosCurvePending) {
+          return;
+        }
+
         const plot = self.plot();
         const scaleDiv = plot.axisScaleDiv(self.xAxis());
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
-        const w = right - left;
+        //const w = right - left;
         // left -= w;
         // right += w;
         if (self.left != left && self.right != right) {
           self.left = left;
           self.right = right;
+          self.discontinuosCurvePending = true;
           self.discontinuity = await Utility.discontinuity(
             self.fn,
-            left - w,
-            right + w,
+            left,
+            right,
             self.variable
           );
         }
+
         const data = self.data();
         const sz = Math.max(Static.min_discontinuity_samples, data.size());
         data.setSize(sz);
@@ -231,6 +237,7 @@ class MyCurve extends Curve {
         };
 
         data.discontinuitySamples = Utility.makeSamples(obj);
+
         self.doDraw(
           painter,
           style,
@@ -240,6 +247,7 @@ class MyCurve extends Curve {
           to,
           data.discontinuitySamples
         );
+        plot.autoRefresh();
       }
     } catch (error) {
       console.log(error);
@@ -253,7 +261,7 @@ class MyCurve extends Curve {
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
       samples = samples || self.data().samples();
-      const indexBeforeDiscontinuity = self.indices(self, samples);
+      const indexBeforeDiscontinuity = self.indices(samples);
 
       self.drawDiscontinuosCurve(
         painter,
@@ -283,6 +291,7 @@ class MyCurve extends Curve {
     to,
     indexBeforeDiscontinuity
   ) {
+    this.discontinuosCurvePending = false;
     const plot = this.plot();
     let m_from = from,
       m_to;
@@ -305,9 +314,11 @@ class MyCurve extends Curve {
     if (m_to < to && m_from < to) {
       super.drawCurve(painter, style, xMap, yMap, m_from, to);
     }
+    // plot.autoRefresh();
   }
 
-  indices(self, samples) {
+  indices(samples) {
+    const self = this;
     const indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
       for (let i = 0; i < samples.length; i++) {
