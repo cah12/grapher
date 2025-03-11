@@ -208,7 +208,7 @@ class MyCurve extends Curve {
         const scaleDiv = plot.axisScaleDiv(self.xAxis());
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
-        //const w = right - left;
+        const w = right - left;
         // left -= w;
         // right += w;
         if (self.left != left && self.right != right) {
@@ -217,8 +217,8 @@ class MyCurve extends Curve {
           self.discontinuosCurvePending = true;
           self.discontinuity = await Utility.discontinuity(
             self.fn,
-            left,
-            right,
+            left - w,
+            right + w,
             self.variable
           );
         }
