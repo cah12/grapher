@@ -50,6 +50,15 @@ class MFile {
         p.yRightMax = _plot.axisInterval(Axis.AxisId.yRight).maxValue();
       }
 
+      p.math_mode = Static.math_mode;
+
+      const rL = _plot.rv._rulerList;
+
+      p.ruler_0_Visibility = rL[0].isVisible();
+      p.ruler_1_Visibility = rL[1].isVisible();
+      p.ruler_2_Visibility = rL[2].isVisible();
+      p.ruler_3_Visibility = rL[3].isVisible();
+
       data.push(p);
 
       //Handle Rtti_PlotCurve
@@ -230,232 +239,258 @@ class MFile {
       });
     }
 
-    function plt(data) {
-      let obj = JSON.parse(data.content);
+    async function plt(data) {
+      try {
+        let obj = JSON.parse(data.content);
 
-      let p = obj[0];
-      if (p.rightScaleEngineType == "[LogScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.yRight, new LogScaleEngine());
-      }
-      if (p.leftScaleEngineType == "[LogScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.yLeft, new LogScaleEngine());
-      }
-      if (p.bottomScaleEngineType == "[LogScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.xBottom, new LogScaleEngine());
-      }
-      if (p.topScaleEngineType == "[LogScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.xTop, new LogScaleEngine());
-      }
-
-      if (p.rightScaleEngineType == "[LinearScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.yRight, new LinearScaleEngine());
-      }
-      if (p.leftScaleEngineType == "[LinearScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.yLeft, new LinearScaleEngine());
-      }
-      if (p.bottomScaleEngineType == "[LinearScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.xBottom, new LinearScaleEngine());
-      }
-      if (p.topScaleEngineType == "[LinearScaleEngine]") {
-        _plot.setAxisScaleEngine(Axis.AxisId.xTop, new LinearScaleEngine());
-      }
-
-      if (!p.autoScale) {
-        _plot.setAxisScale(Axis.AxisId.xBottom, p.xBottomMin, p.xBottomMax);
-        _plot.setAxisScale(Axis.AxisId.yLeft, p.yLeftMin, p.yLeftMax);
-        _plot.setAxisScale(Axis.AxisId.xTop, p.xTopMin, p.xTopMax);
-        _plot.setAxisScale(Axis.AxisId.yRight, p.yRightMin, p.yRightMax);
-      } else {
-        Utility.setAutoScale(_plot, true);
-      }
-      //setAutoScale(true)
-
-      _plot.setTitleFont(new Misc.Font(p.titleFont));
-      _plot.setFooterFont(new Misc.Font(p.footerFont));
-      _plot.setAxisTitleFont(
-        Axis.AxisId.xBottom,
-        new Misc.Font(p.axisTitleFont)
-      );
-      _plot.setAxisTitleFont(Axis.AxisId.xTop, new Misc.Font(p.axisTitleFont));
-      _plot.setAxisTitleFont(Axis.AxisId.yLeft, new Misc.Font(p.axisTitleFont));
-      _plot.setAxisTitleFont(
-        Axis.AxisId.yRight,
-        new Misc.Font(p.axisTitleFont)
-      );
-
-      _plot.setTitle(p.title);
-      _plot.setFooter(p.footer);
-      _plot.setAxisTitle(Axis.AxisId.xBottom, p.xBottomAxisTitle);
-      _plot.setAxisTitle(Axis.AxisId.xTop, p.xTopAxisTitle);
-      _plot.setAxisTitle(Axis.AxisId.yLeft, p.yLeftAxisTitle);
-      _plot.setAxisTitle(Axis.AxisId.yRight, p.yRightAxisTitle);
-
-      for (let i = 1; i < obj.length; ++i) {
-        if (
-          obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
-          _plot.findPlotCurve(obj[i].title)
-        ) {
-          Utility.alert(obj[i].title + " already exist");
-          //Upload.reset($("#fileInput"));
-          return; //false;
+        let p = obj[0];
+        if (p.rightScaleEngineType == "[LogScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.yRight, new LogScaleEngine());
         }
-      }
+        if (p.leftScaleEngineType == "[LogScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.yLeft, new LogScaleEngine());
+        }
+        if (p.bottomScaleEngineType == "[LogScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.xBottom, new LogScaleEngine());
+        }
+        if (p.topScaleEngineType == "[LogScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.xTop, new LogScaleEngine());
+        }
 
-      for (let i = 1; i < obj.length; ++i) {
-        //Deal with Rtti_PlotCurve
-        if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
-          /*let curve = null;
-           if (obj[i].fn) {
-            curve = _plot.functionDlgCb(obj[i].functionDlgData);
-            //return;
-          } else {
-            //curve = new curveConstructor(obj[i].title);
-            curve = _plot.createCurve(obj[i].rtti, obj[i].title);
-            curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
-          }
-
-          if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
-            let sym = new Symbol2();
-            sym.setStyle(obj[i].symbolType);
-            sym.setSize(new Misc.Size(obj[i].symbolWidth, obj[i].symbolWidth));
-            sym.setPen(
-              new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth)
-            );
-            sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
-            curve.setSymbol(sym);
-          }
-
-          curve.setStyle(obj[i].style);
-          if (obj[i].fitType) {
-            curve.fitType = obj[i].fitType;
-            curve.equation = obj[i].equation;
-          }
-
-          //curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
-          if (obj[i].fitType == "natural" || obj[i].fitType == "periodic") {
-            //curve.setData(CurveFitDlg.curve.data())
-            let f = new SplineCurveFitter();
-            let s = f.spline();
-            if (obj[i].fitType == "periodic") {
-              s.setSplineType(Static.SplineType.Periodic);
-            } else {
-              s.setSplineType(Static.SplineType.Natural);
-            }
-            curve.setCurveFitter(f);
-          }
-
-          curve.setPen(
-            new Misc.Pen(obj[i].pen.color, obj[i].pen.width, obj[i].pen.style)
+        if (p.rightScaleEngineType == "[LinearScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.yRight, new LinearScaleEngine());
+        }
+        if (p.leftScaleEngineType == "[LinearScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.yLeft, new LinearScaleEngine());
+        }
+        if (p.bottomScaleEngineType == "[LinearScaleEngine]") {
+          _plot.setAxisScaleEngine(
+            Axis.AxisId.xBottom,
+            new LinearScaleEngine()
           );
-
-          curve.setAxes(obj[i].xAxis, obj[i].yAxis); */
-
-          let curve = Utility.pltPlotCurveData(_plot, obj[i]);
-          curve.attach(_plot);
+        }
+        if (p.topScaleEngineType == "[LinearScaleEngine]") {
+          _plot.setAxisScaleEngine(Axis.AxisId.xTop, new LinearScaleEngine());
         }
 
-        //Deal with Rtti_PlotSpectroCurve
-        if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
-          //console.log("obj[i].color1, obj[i].color2", obj[i].color1, obj[i].color2)
-          let curve = null;
-          if (obj[i].fn) {
-            curve = _plot.functionDlgCb(obj[i].functionDlgData);
-          } else {
-            //curve = new curveConstructor(obj[i].title);
-            curve = _plot.createCurve(obj[i].rtti, obj[i].title);
-            curve.setSamples(obj[i].samples);
+        if (!p.autoScale) {
+          _plot.setAxisScale(Axis.AxisId.xBottom, p.xBottomMin, p.xBottomMax);
+          _plot.setAxisScale(Axis.AxisId.yLeft, p.yLeftMin, p.yLeftMax);
+          _plot.setAxisScale(Axis.AxisId.xTop, p.xTopMin, p.xTopMax);
+          _plot.setAxisScale(Axis.AxisId.yRight, p.yRightMin, p.yRightMax);
+        } else {
+          Utility.setAutoScale(_plot, true);
+        }
+        //setAutoScale(true)
+
+        _plot.setTitleFont(new Misc.Font(p.titleFont));
+        _plot.setFooterFont(new Misc.Font(p.footerFont));
+        _plot.setAxisTitleFont(
+          Axis.AxisId.xBottom,
+          new Misc.Font(p.axisTitleFont)
+        );
+        _plot.setAxisTitleFont(
+          Axis.AxisId.xTop,
+          new Misc.Font(p.axisTitleFont)
+        );
+        _plot.setAxisTitleFont(
+          Axis.AxisId.yLeft,
+          new Misc.Font(p.axisTitleFont)
+        );
+        _plot.setAxisTitleFont(
+          Axis.AxisId.yRight,
+          new Misc.Font(p.axisTitleFont)
+        );
+
+        _plot.setTitle(p.title);
+        _plot.setFooter(p.footer);
+        _plot.setAxisTitle(Axis.AxisId.xBottom, p.xBottomAxisTitle);
+        _plot.setAxisTitle(Axis.AxisId.xTop, p.xTopAxisTitle);
+        _plot.setAxisTitle(Axis.AxisId.yLeft, p.yLeftAxisTitle);
+        _plot.setAxisTitle(Axis.AxisId.yRight, p.yRightAxisTitle);
+
+        const rL = _plot.rv._rulerList;
+
+        rL[0].setVisible(p.ruler_0_Visibility);
+        rL[1].setVisible(p.ruler_1_Visibility);
+        rL[2].setVisible(p.ruler_2_Visibility);
+        rL[3].setVisible(p.ruler_3_Visibility);
+
+        //setMathMode(p.math_mode);
+
+        for (let i = 1; i < obj.length; ++i) {
+          if (
+            obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
+            _plot.findPlotCurve(obj[i].title)
+          ) {
+            Utility.alert(obj[i].title + " already exist");
+            //Upload.reset($("#fileInput"));
+            return; //false;
           }
-
-          //let curve = new SpectroCurve(obj[i].title);
-          curve.setPenWidth(obj[i].penWidth);
-          //curve.setSamples(obj[i].samples);
-          curve.setColorInterval(obj[i].color1, obj[i].color2);
-          curve.setColorRange(new Interval(obj[i].minZ, obj[i].maxZ));
-          curve.minZ = obj[i].minZ;
-          curve.maxZ = obj[i].maxZ;
-
-          //curve.attach(_plot);
         }
 
-        //Deal with Rtti_PlotSpectrogram
-        if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
-          let curve = null;
-          if (obj[i].fn) {
-            curve = _plot.functionDlgCb(obj[i].functionDlgData);
-            curve.setNumberOfContourPlanes(obj[i].numberOfContourPlanes);
-            curve.showContour(obj[i].showContour);
-            curve.showSpectrogram(obj[i].showSpectrogram);
-          } else {
-            const displayData = {
-              title: obj[i].title,
-              color1: obj[i].color1,
-              color2: obj[i].color2,
-              showContour: obj[i].showContour,
-              showSpectrogram: obj[i].showSpectrogram,
-              numberOfContourPlanes: obj[i].numberOfContourPlanes,
-            };
-            _plot.uploadSpectrogram(
-              displayData,
-              obj[i].spectrogramData,
-              obj[i].upload
-            );
-          }
-          curve.attach(_plot);
-        }
-
-        //Deal with PlotItem.RttiValues.Rtti_PlotMarker
-        if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
-          //let marker = new markerConstructor(obj[i].title);
-          let marker = _plot.createCurve(obj[i].rtti, obj[i].title);
-          if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
-            let sym = null;
-            if (obj[i].type && obj[i].type === "arrow") sym = new ArrowSymbol();
-            else if (obj[i].type && obj[i].type === "dotOnLine")
-              sym = new DotOnLineSymbol();
-
-            if (sym) {
-              sym.setSize(
-                new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight)
-              );
-              if (sym.setRotation) {
-                sym.setRotation(obj[i].rotation);
-              }
+        for (let i = 1; i < obj.length; ++i) {
+          setMathMode(obj[i].math_mode);
+          //Deal with Rtti_PlotCurve
+          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
+            /*let curve = null;
+             if (obj[i].fn) {
+              curve = _plot.functionDlgCb(obj[i].functionDlgData);
+              //return;
+            } else {
+              //curve = new curveConstructor(obj[i].title);
+              curve = _plot.createCurve(obj[i].rtti, obj[i].title);
+              curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
+            }
+  
+            if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
+              let sym = new Symbol2();
+              sym.setStyle(obj[i].symbolType);
+              sym.setSize(new Misc.Size(obj[i].symbolWidth, obj[i].symbolWidth));
               sym.setPen(
                 new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth)
               );
               sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
-              marker.setSymbol(sym);
+              curve.setSymbol(sym);
+            }
+  
+            curve.setStyle(obj[i].style);
+            if (obj[i].fitType) {
+              curve.fitType = obj[i].fitType;
+              curve.equation = obj[i].equation;
+            }
+  
+            //curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
+            if (obj[i].fitType == "natural" || obj[i].fitType == "periodic") {
+              //curve.setData(CurveFitDlg.curve.data())
+              let f = new SplineCurveFitter();
+              let s = f.spline();
+              if (obj[i].fitType == "periodic") {
+                s.setSplineType(Static.SplineType.Periodic);
+              } else {
+                s.setSplineType(Static.SplineType.Natural);
+              }
+              curve.setCurveFitter(f);
+            }
+  
+            curve.setPen(
+              new Misc.Pen(obj[i].pen.color, obj[i].pen.width, obj[i].pen.style)
+            );
+  
+            curve.setAxes(obj[i].xAxis, obj[i].yAxis); */
+
+            let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
+            curve.attach(_plot);
+          }
+
+          //Deal with Rtti_PlotSpectroCurve
+          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
+            //console.log("obj[i].color1, obj[i].color2", obj[i].color1, obj[i].color2)
+            let curve = null;
+            if (obj[i].fn) {
+              curve = _plot.functionDlgCb(obj[i].functionDlgData);
+            } else {
+              //curve = new curveConstructor(obj[i].title);
+              curve = _plot.createCurve(obj[i].rtti, obj[i].title);
+              curve.setSamples(obj[i].samples);
             }
 
-            marker.setLineStyle(obj[i].lineStyle);
-            marker.setLinePen(
-              new Misc.Pen(
-                obj[i].linePen.color,
-                obj[i].linePen.width,
-                obj[i].linePen.style
-              )
-            );
-            marker.setAxes(obj[i].xAxis, obj[i].yAxis);
-            marker.setValue(obj[i].x, obj[i].y);
-            marker.setLabel(obj[i].label);
-            marker.setLabelAlignment(obj[i].labelAlignment);
-            marker.setLabelOrientation(obj[i].labelOrientation); //Misc.Font = function (th, name, style, weight,fontColor)
-            marker.setLabelFont(
-              new Misc.Font(
-                obj[i].labelFont.th,
-                obj[i].labelFont.name,
-                obj[i].labelFont.style,
-                obj[i].labelFont.weight,
-                obj[i].labelFont.fontColor
-              )
-            );
-            marker.attach(_plot);
-            //
+            //let curve = new SpectroCurve(obj[i].title);
+            curve.setPenWidth(obj[i].penWidth);
+            //curve.setSamples(obj[i].samples);
+            curve.setColorInterval(obj[i].color1, obj[i].color2);
+            curve.setColorRange(new Interval(obj[i].minZ, obj[i].maxZ));
+            curve.minZ = obj[i].minZ;
+            curve.maxZ = obj[i].maxZ;
+
+            //curve.attach(_plot);
+          }
+
+          //Deal with Rtti_PlotSpectrogram
+          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
+            let curve = null;
+            if (obj[i].fn) {
+              curve = _plot.functionDlgCb(obj[i].functionDlgData);
+              curve.setNumberOfContourPlanes(obj[i].numberOfContourPlanes);
+              curve.showContour(obj[i].showContour);
+              curve.showSpectrogram(obj[i].showSpectrogram);
+            } else {
+              const displayData = {
+                title: obj[i].title,
+                color1: obj[i].color1,
+                color2: obj[i].color2,
+                showContour: obj[i].showContour,
+                showSpectrogram: obj[i].showSpectrogram,
+                numberOfContourPlanes: obj[i].numberOfContourPlanes,
+              };
+              _plot.uploadSpectrogram(
+                displayData,
+                obj[i].spectrogramData,
+                obj[i].upload
+              );
+            }
+            curve.attach(_plot);
+          }
+
+          //Deal with PlotItem.RttiValues.Rtti_PlotMarker
+          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+            //let marker = new markerConstructor(obj[i].title);
+            let marker = _plot.createCurve(obj[i].rtti, obj[i].title);
+            if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
+              let sym = null;
+              if (obj[i].type && obj[i].type === "arrow")
+                sym = new ArrowSymbol();
+              else if (obj[i].type && obj[i].type === "dotOnLine")
+                sym = new DotOnLineSymbol();
+
+              if (sym) {
+                sym.setSize(
+                  new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight)
+                );
+                if (sym.setRotation) {
+                  sym.setRotation(obj[i].rotation);
+                }
+                sym.setPen(
+                  new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth)
+                );
+                sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
+                marker.setSymbol(sym);
+              }
+
+              marker.setLineStyle(obj[i].lineStyle);
+              marker.setLinePen(
+                new Misc.Pen(
+                  obj[i].linePen.color,
+                  obj[i].linePen.width,
+                  obj[i].linePen.style
+                )
+              );
+              marker.setAxes(obj[i].xAxis, obj[i].yAxis);
+              marker.setValue(obj[i].x, obj[i].y);
+              marker.setLabel(obj[i].label);
+              marker.setLabelAlignment(obj[i].labelAlignment);
+              marker.setLabelOrientation(obj[i].labelOrientation); //Misc.Font = function (th, name, style, weight,fontColor)
+              marker.setLabelFont(
+                new Misc.Font(
+                  obj[i].labelFont.th,
+                  obj[i].labelFont.name,
+                  obj[i].labelFont.style,
+                  obj[i].labelFont.weight,
+                  obj[i].labelFont.fontColor
+                )
+              );
+              marker.attach(_plot);
+              //
+            }
           }
         }
-      }
 
-      //Upload.reset($("#fileInput"));
+        setMathMode(p.math_mode);
+
+        //Upload.reset($("#fileInput"));
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     this.setPlotData = function (data, mongo = false) {
@@ -789,5 +824,18 @@ class MFile {
     };
 
     this.init(plot);
+
+    function setMathMode(mode) {
+      if (mode === undefined) {
+        mode = "deg";
+      }
+      let radioButtons = document.getElementsByName("math_mode");
+      for (let i = 0; i < radioButtons.length; i++) {
+        if (radioButtons[i].value === mode) {
+          radioButtons[i].checked = true; // Select the radio button with value 'myValue'
+          $(radioButtons[i]).trigger("change");
+        }
+      }
+    }
   } //,,,,
 }

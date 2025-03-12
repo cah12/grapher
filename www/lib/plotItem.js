@@ -291,8 +291,10 @@ class PlotItem {
     this.doSetVisible = function (on) {
       if (on !== m_isVisible) {
         m_isVisible = on;
-        if (!on) cnvs.hide();
-        else cnvs.show();
+        if (cnvs) {
+          if (!on) cnvs.hide();
+          else cnvs.show();
+        }
         this.itemChanged();
         Static.trigger("visibilityChange", [this, on]);
       }

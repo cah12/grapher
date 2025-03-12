@@ -997,59 +997,70 @@ class Utility {
     return false;
   }
 
-  static pltPlotCurveData(plot, curveData) {
-    let curve = null;
-    if (curveData.fn) {
-      curve = plot.functionDlgCb(curveData.functionDlgData);
-      curve.setTitle(curveData.title);
-      //return;
-    } else {
-      //curve = new curveConstructor(curveData.title);
-      curve = plot.createCurve(curveData.rtti, curveData.title);
-      curve.setSamples(Utility.pointsFromXYObjectArray(curveData.samples));
-    }
-
-    if (curveData.symbolType !== Symbol2.Style.NoSymbol) {
-      let sym = new Symbol2();
-      sym.setStyle(curveData.symbolType);
-      sym.setSize(new Misc.Size(curveData.symbolWidth, curveData.symbolWidth));
-      sym.setPen(
-        new Misc.Pen(curveData.symbolPenColor, curveData.symbolPenWidth)
-      );
-      sym.setBrush(new Misc.Brush(curveData.symbolBrushColor));
-      curve.setSymbol(sym);
-    }
-
-    curve.setStyle(curveData.style);
-    if (curveData.fitType) {
-      curve.fitType = curveData.fitType;
-      curve.equation = curveData.equation;
-    }
-
-    //curve.setSamples(Utility.pointsFromXYObjectArray(curveData.samples));
-    if (curveData.fitType == "natural" || curveData.fitType == "periodic") {
-      //curve.setData(CurveFitDlg.curve.data())
-      let f = new SplineCurveFitter();
-      let s = f.spline();
-      if (curveData.fitType == "periodic") {
-        s.setSplineType(Static.SplineType.Periodic);
+  static async pltPlotCurveData(plot, curveData) {
+    try {
+      let curve = null;
+      if (curveData.fn) {
+        curve = await plot.functionDlgCb(curveData.functionDlgData);
+        curve.setTitle(curveData.title);
+        //return;
       } else {
-        s.setSplineType(Static.SplineType.Natural);
+        //curve = new curveConstructor(curveData.title);
+        curve = plot.createCurve(curveData.rtti, curveData.title);
+        curve.setSamples(Utility.pointsFromXYObjectArray(curveData.samples));
       }
-      curve.setCurveFitter(f);
+
+      if (curveData.symbolType !== Symbol2.Style.NoSymbol) {
+        let sym = new Symbol2();
+        sym.setStyle(curveData.symbolType);
+        sym.setSize(
+          new Misc.Size(curveData.symbolWidth, curveData.symbolWidth)
+        );
+        sym.setPen(
+          new Misc.Pen(curveData.symbolPenColor, curveData.symbolPenWidth)
+        );
+        sym.setBrush(new Misc.Brush(curveData.symbolBrushColor));
+        curve.setSymbol(sym);
+      }
+
+      curve.setStyle(curveData.style);
+      if (curveData.fitType) {
+        curve.fitType = curveData.fitType;
+        curve.equation = curveData.equation;
+      }
+
+      //curve.setSamples(Utility.pointsFromXYObjectArray(curveData.samples));
+      if (curveData.fitType == "natural" || curveData.fitType == "periodic") {
+        //curve.setData(CurveFitDlg.curve.data())
+        let f = new SplineCurveFitter();
+        let s = f.spline();
+        if (curveData.fitType == "periodic") {
+          s.setSplineType(Static.SplineType.Periodic);
+        } else {
+          s.setSplineType(Static.SplineType.Natural);
+        }
+        curve.setCurveFitter(f);
+      }
+
+      curve.setPen(
+        new Misc.Pen(
+          curveData.pen.color,
+          curveData.pen.width,
+          curveData.pen.style
+        )
+      );
+
+      curve.setAxes(curveData.xAxis, curveData.yAxis);
+
+      if (curveData.visible === undefined) {
+        curveData.visible = true;
+      }
+      curve.setVisible(curveData.visible);
+
+      return curve;
+    } catch (error) {
+      console.log(error);
     }
-
-    curve.setPen(
-      new Misc.Pen(
-        curveData.pen.color,
-        curveData.pen.width,
-        curveData.pen.style
-      )
-    );
-
-    curve.setAxes(curveData.xAxis, curveData.yAxis);
-
-    return curve;
   }
 
   static getPlotCurveData(curve) {
@@ -1083,6 +1094,10 @@ class Utility {
 
     d.xAxis = curve.xAxis();
     d.yAxis = curve.yAxis();
+
+    d.visible = curve.isVisible();
+
+    d.math_mode = curve.math_mode;
 
     return d;
   }

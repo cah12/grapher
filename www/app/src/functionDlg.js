@@ -282,6 +282,7 @@ class MFunctionDlg {
     Replacement.replace();
 
     $('input[name="math_mode"]').on("change", async function () {
+      Static.math_mode = $(this).val();
       Replacement.config.angles = $(this).val();
       if (Static.imagePath != "images/") {
         try {

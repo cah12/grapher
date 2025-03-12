@@ -36,6 +36,8 @@ class MyCurve extends Curve {
     self.right = 0;
     self.earlier = 0;
 
+    this.discontinuity = [];
+
     this.unboundedDiscontinuity = null;
 
     this.parameterLimits = []; //Array of object: {minimum, maximum}
@@ -43,6 +45,8 @@ class MyCurve extends Curve {
     this.toString = function () {
       return "[MyCurve]";
     };
+
+    this.math_mode = Static.math_mode;
 
     //self.plot().getLayout().getCentralWidget().setMouseTracking(false);
 

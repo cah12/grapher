@@ -491,6 +491,7 @@ Static.grapherHelp = "";
 //////////////////////////////////////
 Static.min_discontinuity_samples = 400;
 Static.magnifying = false;
+Static.math_mode = "deg";
 //Static.mousemove = false;
 ////////////https://simplegrapher.onrender.com///////////////
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
