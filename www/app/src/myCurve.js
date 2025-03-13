@@ -217,12 +217,15 @@ class MyCurve extends Curve {
         // right += w;
         if (
           self.left != left &&
-          self.right != right &&
-          self.discontinuity.length
+          self.right != right /* &&
+          self.discontinuity.length */ &&
+          !self.discontinuosCurvePending
         ) {
           self.left = left;
           self.right = right;
           self.discontinuosCurvePending = true;
+          // left -= w;
+          // right += w;
           self.discontinuity = await Utility.discontinuity(
             self.fn,
             left,
@@ -265,7 +268,7 @@ class MyCurve extends Curve {
   doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
-    if (!self.discontinuity.length) {
+    if (!self.discontinuity.length && !self.discontinuosCurvePending) {
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
       samples = samples || self.data().samples();
