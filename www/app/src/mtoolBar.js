@@ -258,7 +258,9 @@ class MToolBar extends ToolBar {
       label: "&P-Prop",
       checked: true,
       cb: function (on) {
-        _plot.leftSidebar.showGridItem(1, on);
+        if (_plot.leftSidebar) {
+          _plot.leftSidebar.showGridItem(1, on);
+        }
       },
       tooltip: "Show/Hide plot properties pane",
     });
@@ -411,6 +413,9 @@ class MToolBar extends ToolBar {
       tooltip: "Show/Hide sidbar",
       disabled: true,
     });
+
+    _plot.sBar = sBar;
+
     var pSel = this.addToolButton("checkbox", {
       label: "P-Se&l",
       cb: function (on) {

@@ -870,7 +870,42 @@ About Us
       if (type == "link") return addLink(obj);
     };
 
+    /* this.setButtonCheck = function (buttonId, on) {
+      if (typeof buttonId == "string") {
+        buttonId = buttonTextAttribToId(buttonId);
+      }
+
+      const input = $(buttonList[buttonId]).find("input").prevObject[0];
+      //console.log(input, input.checked);
+      if (input.checked != on) {
+        input.checked = on;
+      }
+      $(input).trigger("change");
+    };
+ */
     this.setButtonCheck = function (buttonId, on) {
+      if (typeof buttonId == "string") {
+        buttonId = buttonTextAttribToId(buttonId);
+      }
+
+      const input = $(buttonList[buttonId]).find("input").prevObject;
+      const e = document.getElementById(input[0].id);
+      //console.log(e, input[0].checked);
+      if (e && e.checked != on) {
+        $(e).click();
+      }
+      //$(input).trigger("change");
+    };
+
+    this.isButtonChecked = function (buttonId) {
+      if (typeof buttonId == "string") {
+        buttonId = buttonTextAttribToId(buttonId);
+      }
+      const input = $(buttonList[buttonId]).find("input").prevObject[0];
+      return input.checked;
+    };
+
+    /* this.setButtonCheck = function (buttonId, on) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
@@ -882,9 +917,9 @@ About Us
           buttonList[buttonId][0].children[0].checked = on;
         else buttonList[buttonId][0].children[1].checked = on; //Some how translation requires thid
       } else buttonList[buttonId][0].checked = on;
-    };
+    }; */
 
-    this.isButtonChecked = function (buttonId) {
+    /* this.isButtonChecked = function (buttonId) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
@@ -896,7 +931,7 @@ About Us
           return buttonList[buttonId][0].children[0].checked;
         else return buttonList[buttonId][0].children[1].checked; //Some how translation requires thid
       } else return buttonList[buttonId][0].checked;
-    };
+    }; */
 
     this.isDropdownItemChecked = function (buttonId, listIndex) {
       if (typeof buttonId == "string")
@@ -905,17 +940,42 @@ About Us
         .children()
         .children()
         .children();
-      return input.prop("checked");
+      //console.log(input.prop("checked"));
+      // if (input && input[0].checked != undefined) {
+      //   return input[0].checked;
+      // }
+      if (!input[1] && input[0].checked != undefined) {
+        return input[0].checked;
+      }
+      if (input && input[1].checked != undefined) {
+        return input[1].checked;
+      }
+      return true;
     };
-
+    ////////////////
     this.setDropdownItemCheck = function (buttonId, listIndex, on) {
       if (typeof buttonId == "string")
         buttonId = buttonTextAttribToId(buttonId);
-      var input = $($(buttonList[buttonId].children()[1]).children()[listIndex])
-        .children()
-        .children()
-        .children();
-      input.prop("checked", on);
+      var input = $(
+        $(buttonList[buttonId].children()[1]).children()[listIndex]
+      ).find("input");
+      //input.prop("checked", on);
+
+      //if (!input[1] && input[0].checked != undefined) {
+      if (input[0].checked != on) {
+        //$(input[0]).trigger("change");
+        input.click();
+        return;
+      }
+      //}
+      // if (input && input[1] && input[1].checked != undefined) {
+      //   if (input[1].checked != on) {
+      //     input.click();
+      //     return;
+      //   }
+      // }
+
+      //input.trigger("change");
     };
 
     this.hideDropdownItem = function (buttonId, listIndex) {

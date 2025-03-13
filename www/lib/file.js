@@ -50,6 +50,32 @@ class MFile {
         p.yRightMax = _plot.axisInterval(Axis.AxisId.yRight).maxValue();
       }
 
+      // p.view_0_enabled = _plot.axisEnabled(0);
+      // p.view_1_enabled = _plot.axisEnabled(1);
+      // p.view_2_enabled = _plot.axisEnabled(2);
+      // p.view_3_enabled = _plot.axisEnabled(3);
+
+      p.view_0_enabled = _plot.tbar.isDropdownItemChecked("View", 0);
+      p.view_1_enabled = _plot.tbar.isDropdownItemChecked("View", 1);
+      p.view_2_enabled = _plot.tbar.isDropdownItemChecked("View", 2);
+      p.view_3_enabled = _plot.tbar.isDropdownItemChecked("View", 3);
+      p.view_4_enabled = _plot.tbar.isDropdownItemChecked("View", 4);
+      p.view_5_enabled = _plot.tbar.isDropdownItemChecked("View", 5);
+      p.view_6_enabled = _plot.tbar.isDropdownItemChecked("View", 6);
+      p.view_7_enabled = _plot.tbar.isDropdownItemChecked("View", 7);
+      p.view_8_enabled = _plot.tbar.isDropdownItemChecked("View", 8);
+
+      p.watch_0_enabled = _plot.tbar.isDropdownItemChecked("Watch", 0);
+      p.watch_1_enabled = _plot.tbar.isDropdownItemChecked("Watch", 1);
+      p.watch_2_enabled = _plot.tbar.isDropdownItemChecked("Watch", 2);
+      p.watch_3_enabled = _plot.tbar.isDropdownItemChecked("Watch", 3);
+      p.watch_4_enabled = _plot.tbar.isDropdownItemChecked("Watch", 4);
+      p.watch_5_enabled = _plot.tbar.isDropdownItemChecked("Watch", 5);
+      p.watch_6_enabled = _plot.tbar.isDropdownItemChecked("Watch", 6);
+      p.watch_7_enabled = _plot.tbar.isDropdownItemChecked("Watch", 7);
+
+      p.sideBarVisible = _plot.tbar.isButtonChecked(_plot.sBar);
+
       p.math_mode = Static.math_mode;
 
       const rL = _plot.rv._rulerList;
@@ -316,6 +342,78 @@ class MFile {
         rL[2].setVisible(p.ruler_2_Visibility);
         rL[3].setVisible(p.ruler_3_Visibility);
 
+        if (p.view_0_enabled === undefined) {
+          p.view_0_enabled = true;
+        }
+        if (p.view_1_enabled === undefined) {
+          p.view_1_enabled = true;
+        }
+        if (p.view_2_enabled === undefined) {
+          p.view_2_enabled = false;
+        }
+        if (p.view_3_enabled === undefined) {
+          p.view_3_enabled = false;
+        }
+        if (p.view_4_enabled === undefined) {
+          p.view_4_enabled = true;
+        }
+        if (p.view_5_enabled === undefined) {
+          p.view_5_enabled = true;
+        }
+        if (p.view_6_enabled === undefined) {
+          p.view_6_enabled = true;
+        }
+        if (p.view_7_enabled === undefined) {
+          p.view_7_enabled = true;
+        }
+        if (p.view_8_enabled === undefined) {
+          p.view_8_enabled = true;
+        }
+
+        _plot.tbar.setDropdownItemCheck("View", 0, p.view_0_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 1, p.view_1_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 2, p.view_2_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 3, p.view_3_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 4, p.view_4_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 5, p.view_5_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 6, p.view_6_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 7, p.view_7_enabled);
+        _plot.tbar.setDropdownItemCheck("View", 8, p.view_8_enabled);
+
+        if (p.watch_0_enabled === undefined) {
+          p.watch_0_enabled = true;
+        }
+        if (p.watch_1_enabled === undefined) {
+          p.watch_1_enabled = true;
+        }
+        if (p.watch_2_enabled === undefined) {
+          p.watch_2_enabled = true;
+        }
+        if (p.watch_3_enabled === undefined) {
+          p.watch_3_enabled = true;
+        }
+        if (p.watch_4_enabled === undefined) {
+          p.watch_4_enabled = false;
+        }
+        if (p.watch_5_enabled === undefined) {
+          p.watch_5_enabled = false;
+        }
+        if (p.watch_6_enabled === undefined) {
+          p.watch_6_enabled = false;
+        }
+        if (p.watch_7_enabled === undefined) {
+          p.watch_7_enabled = false;
+        }
+
+        _plot.tbar.setDropdownItemCheck("Watch", 0, p.watch_0_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 1, p.watch_1_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 2, p.watch_2_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 3, p.watch_3_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 4, p.watch_4_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 5, p.watch_5_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 6, p.watch_6_enabled);
+        _plot.tbar.setDropdownItemCheck("Watch", 7, p.watch_7_enabled);
+
         //setMathMode(p.math_mode);
 
         for (let i = 1; i < obj.length; ++i) {
@@ -382,6 +480,11 @@ class MFile {
             let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
             curve.attach(_plot);
           }
+
+          // if (p.sideBarVisible && !_plot.tbar.isButtonChecked(_plot.sBar)) {
+          //   $("#sideBarCheckBoxId").click();
+          // }
+          _plot.tbar.setButtonCheck(_plot.sBar, p.sideBarVisible);
 
           //Deal with Rtti_PlotSpectroCurve
           if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
