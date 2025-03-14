@@ -881,20 +881,23 @@ About Us
         input.checked = on;
       }
       $(input).trigger("change");
-    };
- */
+    }; */
+
     this.setButtonCheck = function (buttonId, on) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
 
       const input = $(buttonList[buttonId]).find("input").prevObject;
+      if (input[0].checked === undefined) {
+        //console.log(456);
+        this.setButtonCheck_1(buttonId, on);
+      }
       const e = document.getElementById(input[0].id);
       //console.log(e, input[0].checked);
       if (e && e.checked != on) {
         $(e).click();
       }
-      //$(input).trigger("change");
     };
 
     this.isButtonChecked = function (buttonId) {
@@ -905,7 +908,7 @@ About Us
       return input.checked;
     };
 
-    /* this.setButtonCheck = function (buttonId, on) {
+    this.setButtonCheck_1 = function (buttonId, on) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
@@ -917,7 +920,7 @@ About Us
           buttonList[buttonId][0].children[0].checked = on;
         else buttonList[buttonId][0].children[1].checked = on; //Some how translation requires thid
       } else buttonList[buttonId][0].checked = on;
-    }; */
+    };
 
     /* this.isButtonChecked = function (buttonId) {
       if (typeof buttonId == "string") {
