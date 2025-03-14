@@ -2223,7 +2223,7 @@ class Utility {
       // const lmt_l = samples[0].x;
       // const lmt_u = samples[samples.length - 1].x;
       // const step = (samples[1].x - samples[0].x) * 1e-20;
-      const lmt = 1e200;
+      const lmt = 1e299;
 
       //on the left boundary
       if (
