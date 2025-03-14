@@ -2220,10 +2220,10 @@ class Utility {
     }
     if (obj.discontinuity.length) {
       const discont = obj.discontinuity;
-      // const lmt_l = samples[0].x;
-      // const lmt_u = samples[samples.length - 1].x;
-      // const step = (samples[1].x - samples[0].x) * 1e-20;
-      const lmt = 1e299;
+      const lmt_l = samples[0].x;
+      const lmt_u = samples[samples.length - 1].x;
+      const step = (samples[1].x - samples[0].x) * 1e-20;
+      const lmt = 1e35;
 
       //on the left boundary
       if (
@@ -2269,10 +2269,12 @@ class Utility {
             try {
               if (n > 0) {
                 samples[n - 1].y = math.sign(yVal) * lmt;
+                //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
 
                 _scope.set("x", d + delta);
                 yVal = parser.eval(_scope);
                 samples[n].y = math.sign(yVal) * lmt;
+                //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
               }
             } catch (error) {
               console.log(n);

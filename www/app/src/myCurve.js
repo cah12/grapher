@@ -274,6 +274,13 @@ class MyCurve extends Curve {
       samples = samples || self.data().samples();
       const indexBeforeDiscontinuity = self.indices(samples);
 
+      if (!self.setAxis) {
+        self.setAxis = true;
+        if (!self.unboundedRange) {
+          Utility.setAutoScale(plot, true);
+        }
+        plot.setAxisScale(self.yAxis(), -6, 6);
+      }
       self.drawDiscontinuosCurve(
         painter,
         style,
@@ -283,13 +290,6 @@ class MyCurve extends Curve {
         to,
         indexBeforeDiscontinuity
       );
-      if (!self.setAxis) {
-        self.setAxis = true;
-        if (!self.unboundedRange) {
-          Utility.setAutoScale(plot, true);
-        }
-        plot.setAxisScale(self.yAxis(), -6, 6);
-      }
     }
   }
 
