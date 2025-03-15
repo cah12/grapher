@@ -409,6 +409,7 @@ class MToolBar extends ToolBar {
         }
         if (!on) _plot.sidebar.setSidebarReDisplay(false);
         _plot.setAutoReplot(doReplot);
+        _plot.autoRefresh();
       },
       tooltip: "Show/Hide sidbar",
       disabled: true,
