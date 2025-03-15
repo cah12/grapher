@@ -900,13 +900,13 @@ About Us
       }
     };
 
-    this.isButtonChecked = function (buttonId) {
+    /* this.isButtonChecked = function (buttonId) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
       const input = $(buttonList[buttonId]).find("input").prevObject[0];
       return input.checked;
-    };
+    }; */
 
     this.setButtonCheck_1 = function (buttonId, on) {
       if (typeof buttonId == "string") {
@@ -922,7 +922,7 @@ About Us
       } else buttonList[buttonId][0].checked = on;
     };
 
-    /* this.isButtonChecked = function (buttonId) {
+    this.isButtonChecked = function (buttonId) {
       if (typeof buttonId == "string") {
         buttonId = buttonTextAttribToId(buttonId);
       }
@@ -934,7 +934,7 @@ About Us
           return buttonList[buttonId][0].children[0].checked;
         else return buttonList[buttonId][0].children[1].checked; //Some how translation requires thid
       } else return buttonList[buttonId][0].checked;
-    }; */
+    };
 
     this.isDropdownItemChecked = function (buttonId, listIndex) {
       if (typeof buttonId == "string")

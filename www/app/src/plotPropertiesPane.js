@@ -2574,6 +2574,13 @@ class PlotPropertiesPane extends PropertiesPane {
 
         plot.enableAxis(1, false);
         plot.enableAxis(3, false);
+
+        //Toggling the Auto is somehow required
+        const on = plot.tbar.isButtonChecked("Auto");
+        if (on) {
+          plot.tbar.setButtonCheck("Auto", false);
+          plot.tbar.setButtonCheck("Auto", true);
+        }
       } else {
         const availablePlotDivWidth =
           parseFloat($(".plotDivPrint").css("width")) -
