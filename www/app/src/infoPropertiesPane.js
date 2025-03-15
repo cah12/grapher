@@ -886,9 +886,6 @@ class InfoPropertiesPane extends Pane {
               const scope = new Map();
               const s = values.map(function (x) {
                 scope.set(curCurve.parametric_variable, x);
-                console.log(exprX.toString(), exprY.toString());
-                const p_x = exprX.evaluate(scope);
-                const py_y = exprY.evaluate(scope);
                 return new Misc.Point(
                   exprX.evaluate(scope),
                   exprY.evaluate(scope)
