@@ -128,8 +128,10 @@ class MyPlot extends Plot {
       curve.coeffsVal = getCoffsVal();
       //curve.fn = self._functionDlg.fn;
       curve.fn = self._functionDlg.expandedFn;
-      curve.parametricFnX = self._functionDlg.expandedParametricFnX;
-      curve.parametricFnY = self._functionDlg.expandedParametricFnY;
+      curve.parametricFnX = self._functionDlg.parametricFnX;
+      curve.parametricFnY = self._functionDlg.parametricFnY;
+      curve.expandedParametricFnX = self._functionDlg.expandedParametricFnX;
+      curve.expandedParametricFnY = self._functionDlg.expandedParametricFnY;
       curve.unboundedRange = self._functionDlg.unboundedRange;
       curve.lowerX = parseFloat(self._functionDlg.lowerLimit);
       curve.upperX = parseFloat(self._functionDlg.upperLimit);

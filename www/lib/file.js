@@ -85,42 +85,18 @@ class MFile {
       p.ruler_2_Visibility = rL[2].isVisible();
       p.ruler_3_Visibility = rL[3].isVisible();
 
+      p.defines = {};
+      if (_plot.defines.definesSize()) {
+        p.defines = Object.fromEntries(_plot.defines.getDefinesMap());
+      }
+
+      //p.defines = _plot.defines.getDef
+
       data.push(p);
 
       //Handle Rtti_PlotCurve
       let list = _plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < list.length; ++i) {
-        /* let d = {};
-        d.rtti = PlotItem.RttiValues.Rtti_PlotCurve;
-        d.title = list[i].title();
-
-        const fn = list[i].fn;
-        if (fn) {
-          d.functionDlgData = list[i].functionDlgData;
-        } else {
-          d.samples = list[i].data().samples();
-        }
-
-        d.fn = list[i].fn;
-
-        d.pen = list[i].pen();
-        d.fitType = list[i].fitType;
-        d.equation = list[i].equation;
-
-        let sym = list[i].symbol();
-        d.symbolType = Symbol2.Style.NoSymbol;
-        if (sym) {
-          d.symbolType = sym.style();
-          d.symbolWidth = sym.size().width;
-          d.symbolPenColor = sym.pen().color;
-          d.symbolPenWidth = sym.pen().width;
-          d.symbolBrushColor = sym.brush().color;
-        }
-        d.style = list[i].style();
-
-        d.xAxis = list[i].xAxis();
-        d.yAxis = list[i].yAxis(); */
-
         data.push(Utility.getPlotCurveData(list[i]));
       }
 
@@ -414,8 +390,15 @@ class MFile {
         _plot.tbar.setDropdownItemCheck("Watch", 6, p.watch_6_enabled);
         _plot.tbar.setDropdownItemCheck("Watch", 7, p.watch_7_enabled);
 
-        //setMathMode(p.math_mode);
+        if (p.defines) {
+          const entries = Object.entries(p.defines);
+          for (let i = 0; i < entries.length; i++) {
+            const element = entries[i];
+            await _plot.defines.addDefine(element[0], element[1].value);
+          }
+        }
 
+        //setMathMode(p.math_mode);
         for (let i = 1; i < obj.length; ++i) {
           if (
             obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
@@ -431,52 +414,6 @@ class MFile {
           setMathMode(obj[i].math_mode);
           //Deal with Rtti_PlotCurve
           if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
-            /*let curve = null;
-             if (obj[i].fn) {
-              curve = _plot.functionDlgCb(obj[i].functionDlgData);
-              //return;
-            } else {
-              //curve = new curveConstructor(obj[i].title);
-              curve = _plot.createCurve(obj[i].rtti, obj[i].title);
-              curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
-            }
-  
-            if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
-              let sym = new Symbol2();
-              sym.setStyle(obj[i].symbolType);
-              sym.setSize(new Misc.Size(obj[i].symbolWidth, obj[i].symbolWidth));
-              sym.setPen(
-                new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth)
-              );
-              sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
-              curve.setSymbol(sym);
-            }
-  
-            curve.setStyle(obj[i].style);
-            if (obj[i].fitType) {
-              curve.fitType = obj[i].fitType;
-              curve.equation = obj[i].equation;
-            }
-  
-            //curve.setSamples(Utility.pointsFromXYObjectArray(obj[i].samples));
-            if (obj[i].fitType == "natural" || obj[i].fitType == "periodic") {
-              //curve.setData(CurveFitDlg.curve.data())
-              let f = new SplineCurveFitter();
-              let s = f.spline();
-              if (obj[i].fitType == "periodic") {
-                s.setSplineType(Static.SplineType.Periodic);
-              } else {
-                s.setSplineType(Static.SplineType.Natural);
-              }
-              curve.setCurveFitter(f);
-            }
-  
-            curve.setPen(
-              new Misc.Pen(obj[i].pen.color, obj[i].pen.width, obj[i].pen.style)
-            );
-  
-            curve.setAxes(obj[i].xAxis, obj[i].yAxis); */
-
             let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
             curve.attach(_plot);
           }

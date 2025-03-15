@@ -2358,6 +2358,7 @@ class MFunctionDlg {
                   self.variable,
                   false
                 );
+              self.parametricFnX = arr[0];
               if (!self.expandedParametricFnX) {
                 //alert(`Failed to successfully expand ${arr[0]}`);
                 Utility.displayErrorMessage(
@@ -2373,6 +2374,7 @@ class MFunctionDlg {
                   self.variable,
                   false
                 );
+              self.parametricFnY = arr[1];
               if (!self.expandedParametricFnY) {
                 //alert(`Failed to successfully expand ${arr[1]}`);
                 Utility.displayErrorMessage(

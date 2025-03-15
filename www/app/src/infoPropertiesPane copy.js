@@ -503,7 +503,10 @@ class InfoPropertiesPane extends Pane {
     function adjustDomain(curCurve, selector) {
       const selectorIndex = inputIds.indexOf(selector[0].id);
       var coeffs = curCurve.coeffs;
-      if (curCurve.domainRangeRestriction.length) {
+      if (
+        curCurve.domainRangeRestriction &&
+        curCurve.domainRangeRestriction.length
+      ) {
         let s = curCurve.domainRangeRestriction[0];
         s = curCurve.plot().defines.expandDefines(s);
         s = Utility.purgeAndMarkKeywords(s);

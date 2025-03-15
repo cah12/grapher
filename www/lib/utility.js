@@ -1000,9 +1000,19 @@ class Utility {
   static async pltPlotCurveData(plot, curveData) {
     try {
       let curve = null;
-      if (curveData.fn) {
+      if (
+        curveData.fn ||
+        (curveData.functionDlgData &&
+          curveData.functionDlgData.parametricFnX &&
+          curveData.functionDlgData.parametricFnY)
+      ) {
         curve = await plot.functionDlgCb(curveData.functionDlgData);
+        //curve = await plot.functionDlgCb(curveData);
         curve.setTitle(curveData.title);
+        curve.parametricLowerX = curveData.functionDlgData.parametricLowerX;
+        curve.parametricUpperX = curveData.functionDlgData.parametricUpperX;
+        curve.parametric_variable =
+          curveData.functionDlgData.parametric_variable;
         //return;
       } else {
         //curve = new curveConstructor(curveData.title);
@@ -1068,14 +1078,29 @@ class Utility {
     d.rtti = PlotItem.RttiValues.Rtti_PlotCurve;
     d.title = curve.title();
 
+    // parametricFnX: "0"
+    // parametricFnY: "250"
     const fn = curve.fn;
-    if (fn) {
+    if (curve.fn || (curve.parametricFnX && curve.parametricFnY)) {
       d.functionDlgData = curve.functionDlgData;
+      d.functionDlgData.parametricFnX = curve.parametricFnX;
+      d.functionDlgData.parametricFnY = curve.parametricFnY;
+      d.functionDlgData.expandedParametricFnX = curve.expandedParametricFnX;
+      d.functionDlgData.expandedParametricFnY = curve.expandedParametricFnY;
+
+      d.functionDlgData.parametricLowerX = curve.parametricLowerX;
+      d.functionDlgData.parametricUpperX = curve.parametricUpperX;
+
+      d.functionDlgData.parametric_variable = curve.parametric_variable;
     } else {
       d.samples = curve.data().samples();
     }
 
     d.fn = curve.fn;
+    // d.parametricFnX = curve.parametricFnX;
+    // d.parametricFnY = curve.parametricFnY;
+    // d.expandedParametricFnX = curve.expandedParametricFnX;
+    // d.expandedParametricFnY = curve.expandedParametricFnY;
 
     d.pen = curve.pen();
     d.fitType = curve.fitType;

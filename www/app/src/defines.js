@@ -418,6 +418,14 @@ class Defines {
     let m_simplify = true;
     const mf = $("#fnDlg_function")[0];
 
+    this.getDefinesMap = function () {
+      return m_defines;
+    };
+
+    this.setDefinesMap = function (map) {
+      m_defines = map;
+    };
+
     this.getDefinesDlg = function () {
       return null; //subclass reimplement to return something useful.
     };
