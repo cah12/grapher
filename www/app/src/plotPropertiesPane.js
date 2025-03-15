@@ -825,7 +825,7 @@ class PlotPropertiesPane extends PropertiesPane {
       fun: aspectRatio,
     });
 
-    this.addProperty({
+    /* this.addProperty({
       name: "+/- root",
       id: "plusMinusRoot",
       parentId: "drawingSettings",
@@ -833,7 +833,7 @@ class PlotPropertiesPane extends PropertiesPane {
       checked: true,
       title: "Add a curve for any negative root",
       fun: negativeRoot,
-    });
+    }); */
 
     var animationRate = this.addProperty({
       name: "Animation rate",
