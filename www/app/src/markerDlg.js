@@ -219,9 +219,11 @@ class MMarkerDlg {
       }
     });
 
-    $("#markerModal").on("shown.bs.modal", function () {
-      $("#markerDlg_ok").trigger("focus");
-    });
+    $("#markerModal")
+      .off("shown.bs.modal")
+      .on("shown.bs.modal", function () {
+        $("#markerDlg_ok").trigger("focus");
+      });
 
     this.markerCb = function (plot) {
       $("body").append(dlg);
@@ -637,7 +639,7 @@ weight: "normal" */
       });
     }
 
-    dlg.on("hidden.bs.modal", function () {
+    dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {
       dlg.detach();
     });
 

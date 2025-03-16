@@ -274,8 +274,7 @@ class InfoPropertiesPane extends Pane {
           console.log(error);
         }
       }
-      $("#copyText").off("click", copyTextCb);
-      $("#copyText").on("click", copyTextCb);
+      $("#copyText").off("click", copyTextCb).on("click", copyTextCb);
 
       var widthX = curCurve.upperX - curCurve.lowerX;
       var step = widthX / (damp / 10000);
@@ -297,19 +296,6 @@ class InfoPropertiesPane extends Pane {
           `Maximum value: ${curCurve.parameterLimits[i].maximum}`
         );
       }
-
-      /* $("#damp").on("input", function () {
-        var val = parseInt($("#damp").val());
-        if (!_.isFinite(val) || val < 1) {
-          $("#damp").val(damp);
-        } else {
-          damp = val;
-        }
-        step = widthX / (damp / 10000);
-        for (var i = 0; i < numOfCoeffs; ++i) {
-          $("#coeff_val" + i).attr("step", step);
-        }
-      }); */
 
       if (numOfCoeffs > 5) {
         numOfCoeffs = 5;
@@ -371,24 +357,26 @@ class InfoPropertiesPane extends Pane {
 
       $(
         "#coeff_val0_max, #coeff_val1_max, #coeff_val2_max, #coeff_val3_max, #coeff_val4_max, #coeff_val0_min, #coeff_val1_min, #coeff_val2_min, #coeff_val3_min, #coeff_val4_min"
-      ).on("input", function () {
-        const c = $(this)[0].id.charAt(9);
-        $("#coeff_val" + c).stop(true);
-        $("#coeff_val" + c + "_playButton")[0].children[0].src =
-          Static.imagePath + "play.png";
-        let curCurve = plot.findPlotCurve($("#currentCurve").val());
-        if ($(this)[0].id.indexOf("_min") !== -1) {
-          $(this).attr("title", `Minimum value: ${$(this).val()}`);
-          curCurve.parameterLimits[parseInt(c)].minimum = parseFloat(
-            $(this).val()
-          );
-        } else {
-          $(this).attr("title", `Maximum value: ${$(this).val()}`);
-          curCurve.parameterLimits[parseInt(c)].maximum = parseFloat(
-            $(this).val()
-          );
-        }
-      });
+      )
+        .off("input")
+        .on("input", function () {
+          const c = $(this)[0].id.charAt(9);
+          $("#coeff_val" + c).stop(true);
+          $("#coeff_val" + c + "_playButton")[0].children[0].src =
+            Static.imagePath + "play.png";
+          let curCurve = plot.findPlotCurve($("#currentCurve").val());
+          if ($(this)[0].id.indexOf("_min") !== -1) {
+            $(this).attr("title", `Minimum value: ${$(this).val()}`);
+            curCurve.parameterLimits[parseInt(c)].minimum = parseFloat(
+              $(this).val()
+            );
+          } else {
+            $(this).attr("title", `Maximum value: ${$(this).val()}`);
+            curCurve.parameterLimits[parseInt(c)].maximum = parseFloat(
+              $(this).val()
+            );
+          }
+        });
 
       $(
         "#coeff_val0_playButton, #coeff_val1_playButton, #coeff_val2_playButton, #coeff_val3_playButton, #coeff_val4_playButton"
@@ -442,26 +430,29 @@ class InfoPropertiesPane extends Pane {
       //////////////////////////////////////////////////////////////////////////
 
       //immediate update
-      $("#coeff_val0, #coeff_val1, #coeff_val2, #coeff_val3, #coeff_val4").on(
-        "input",
-        function () {
-          //if (!$("#onchange")[0].checked) {
-          const value = parseFloat($(this).val());
-          const minValue = parseFloat($("#" + $(this)[0].id + "_min").val());
-          const maxValue = parseFloat($("#" + $(this)[0].id + "_max").val());
-          if (value > maxValue) {
-            $(this).val(maxValue);
+      $("#coeff_val0, #coeff_val1, #coeff_val2, #coeff_val3, #coeff_val4")
+        .off("input")
+        .on(
+          "input",
+          function () {
+            //if (!$("#onchange")[0].checked) {
+            const value = parseFloat($(this).val());
+            const minValue = parseFloat($("#" + $(this)[0].id + "_min").val());
+            const maxValue = parseFloat($("#" + $(this)[0].id + "_max").val());
+            if (value > maxValue) {
+              $(this).val(maxValue);
+            }
+            if (value < minValue) {
+              $(this).val(minValue);
+            }
+            //console.log(minValue, maxValue);
+            if (validateInput($(this))) adjustCurve($(this));
           }
-          if (value < minValue) {
-            $(this).val(minValue);
-          }
-          //console.log(minValue, maxValue);
-          if (validateInput($(this))) adjustCurve($(this));
-        }
-        //}
-      );
+          //}
+        );
       //update on enter
-      /* $("#coeff_val0, #coeff_val1, #coeff_val2, #coeff_val3, #coeff_val4").on(
+      /* $("#coeff_val0, #coeff_val1, #coeff_val2, #coeff_val3, #coeff_val4").off(
+        "change").$("#coeff_val0, #coeff_val1, #coeff_val2, #coeff_val3, #coeff_val4").on(
         "change",
         function () {
           if (!validateInput($(this))) {

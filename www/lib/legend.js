@@ -392,7 +392,7 @@ class AbstractLegend {
 
       let scrollTop = 0;
 
-      row.on("mouseenter", function (e) {
+      row.off("mouseenter").on("mouseenter", function (e) {
         if (mouseDown) return;
         hover = true;
         const hasScroll =
@@ -451,13 +451,13 @@ class AbstractLegend {
         showTooltip($(this).index());
       });
 
-      row.on("mouseleave", function (e) {
+      row.off("mouseleave").on("mouseleave", function (e) {
         if (mouseDown) return;
         hover = false;
         showTooltip($(this).index(), false);
       });
 
-      m_legendDiv.on("scroll", function () {
+      m_legendDiv.off("scroll").on("scroll", function () {
         //console.log(486);
         if (dontScroll || rightClickActive) {
           $(this).scrollTop(scrollTop);
@@ -466,11 +466,11 @@ class AbstractLegend {
         }
       });
 
-      $(window).on("mousemove", function (e) {
+      Static.bind("mousemove", function (e) {
         dontScroll = false;
       });
 
-      row.on("mousedown", function (e) {
+      row.off("mousedown").on("mousedown", function (e) {
         dontScroll = true;
         rightClickActive = false;
         if (e.which == 3) {
@@ -479,19 +479,19 @@ class AbstractLegend {
         }
       });
 
-      $(window).on("mousedown", function (e) {
+      Static.bind("mousedown", function (e) {
         mouseDown = true;
         if (e.which !== 3) {
           rightClickActive = false;
         }
       });
 
-      $(window).on("mouseup", function (e) {
+      Static.bind("mouseup", function (e) {
         mouseDown = false;
         //rightClickActive = false;
       });
 
-      tdElem.on("click", plotItem, function (event) {
+      tdElem.off("click").on("click", plotItem, function (event) {
         showTooltip($(this).parent().index(), false);
         hover = false;
         //dontScroll = true;
@@ -572,7 +572,6 @@ class AbstractLegend {
       if (rowNumber < 0) return;
       removeElementAt(rowNumber);
       removeClickFromTDElement(rowNumber);
-      //$(tbl[0].rows[rowNumber]).off("titleChanged");
       tbl[0].deleteRow(rowNumber);
       if (parseInt(tbl.css("height")) < parseInt(m_legendDiv.css("height"))) {
         m_legendDiv.css("overflow-y", "auto");

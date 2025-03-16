@@ -144,13 +144,13 @@ class ModalDlg {
       dlg.modal("hide");
     };
 
-    dlg.on("hidden.bs.modal", function () {
+    dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {
       m_appended = false;
       self.beforeClose();
       dlg.detach();
     });
 
-    dlg.on("shown.bs.modal", function () {
+    dlg.off("shown.bs.modal").on("shown.bs.modal", function () {
       $("#" + focusId).trigger("focus");
     });
 
@@ -276,7 +276,9 @@ class ModalDlg {
       const L = id.split(",");
       if (!m_appended) $("body").append(dlg);
       for (let i = 0; i < L.length; i++) {
-        $("#" + makeUniqueId(L[i].trim())).on(eventType, handler);
+        $("#" + makeUniqueId(L[i].trim()))
+          .off(eventType)
+          .on(eventType, handler);
       }
       if (!m_appended) dlg.detach();
     };

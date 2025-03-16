@@ -37,7 +37,7 @@ class PlotPropertiesPane extends PropertiesPane {
       Utility.extendGetValue(row_inputs[0]);
       Utility.extendGetValue(row_inputs[1]);
 
-      row.on("change", function () {
+      row.off("change").on("change", function () {
         //const row = $(this).parent().parent();
         const inputs = $(this).find("math-field");
 
@@ -66,7 +66,7 @@ class PlotPropertiesPane extends PropertiesPane {
           }
         }
       });
-      row.on("input", function () {
+      row.off("input").on("input", function () {
         //console.log($("#pointTableTable")[0].rows);
         const rows = $("#pointTableTable")[0].rows;
         const inputs = $(this).find("math-field");
@@ -139,10 +139,6 @@ class PlotPropertiesPane extends PropertiesPane {
       },
       { capture: true }
     );
-
-    // $(".pointTableRow").on("input", function () {
-    //   //console.log(parseFloat($(this).val()));
-    // });
 
     function validInput(str) {
       let result = false;
@@ -306,13 +302,17 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
 
-    $("#executeButton").on("mousedown", () => {
-      //Utility.progressWait();
-    });
+    $("#executeButton")
+      .off("mousedown")
+      .on("mousedown", () => {
+        //Utility.progressWait();
+      });
 
-    $("#executeButton").on("mouseleave", () => {
-      // if (!executeButtonClicked) Utility.progressWait(false);
-    });
+    $("#executeButton")
+      .off("mouseleave")
+      .on("mouseleave", () => {
+        // if (!executeButtonClicked) Utility.progressWait(false);
+      });
 
     Static.enterButton = $("#executeButton");
 
@@ -333,36 +333,38 @@ class PlotPropertiesPane extends PropertiesPane {
       $("#fnDlg_function").focus();
     });
 
-    $("#fnDlg_function").on("input", function (e) {
-      Static.errorMessage = "";
-      Utility.displayErrorMessage(mf, null); //clear error message
-    });
+    $("#fnDlg_function")
+      .off("input")
+      .on("input", function (e) {
+        Static.errorMessage = "";
+        Utility.displayErrorMessage(mf, null); //clear error message
+      });
 
-    // $("#fnDlg_function").on("keyup", function (e) {
-    //   $("#executeButton").trigger("mousedown");
-    // });
+    $("#fnDlg_function")
+      .off("keyup")
+      .on("keyup", function (e) {
+        mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
+      });
 
-    $("#fnDlg_function").on("keyup", function (e) {
-      mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
-    });
+    $("#fnDlg_function")
+      .off("keyup")
+      .on("keyup", function (e) {
+        const w = parseFloat(t.parent().parent().css("width"));
+        //console.log($("#fnDlg_function")[0].caretPoint);
+        if ($("#fnDlg_function")[0].caretPoint) {
+          const c = $("#fnDlg_function")[0].caretPoint.x;
 
-    $("#fnDlg_function").on("keyup", function (e) {
-      const w = parseFloat(t.parent().parent().css("width"));
-      //console.log($("#fnDlg_function")[0].caretPoint);
-      if ($("#fnDlg_function")[0].caretPoint) {
-        const c = $("#fnDlg_function")[0].caretPoint.x;
+          if (c > w) {
+            t.parent().parent()[0].scrollLeft = c - w + 80;
+          }
+          if (e.key === "Enter" || e.keyCode === 13) {
+            // $("#executeButton").click();
 
-        if (c > w) {
-          t.parent().parent()[0].scrollLeft = c - w + 80;
+            mathVirtualKeyboard.hide();
+            $("#executeButton").click();
+          }
         }
-        if (e.key === "Enter" || e.keyCode === 13) {
-          // $("#executeButton").click();
-
-          mathVirtualKeyboard.hide();
-          $("#executeButton").click();
-        }
-      }
-    });
+      });
 
     Static.bind("itemAttached", function (e, curve, on) {
       //const L = plot.itemList();
@@ -4300,11 +4302,11 @@ class PlotPropertiesPane extends PropertiesPane {
       self.setPlotPropertiesSettings();
     };
 
-    $(window).bind("beforeunload", function () {
+    Static.bind("beforeunload", function () {
       self.savePlotPropertiesSettings();
     });
 
-    $(window).bind("reload", function () {
+    Static.bind("reload", function () {
       self.savePlotPropertiesSettings();
     });
 

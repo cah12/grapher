@@ -150,7 +150,7 @@ class MPicker extends PlotPicker {
     };
 
     var plotDivParent = plot.getLayout().getPlotDiv().parent();
-    plotDivParent.on("mouseup", function () {
+    plotDivParent.off("mouseup").on("mouseup", function () {
       if (MPicker.DisplayChange.LeftButtonDown) {
         if (Static.isMobile()) {
           self.clearDragCursor();

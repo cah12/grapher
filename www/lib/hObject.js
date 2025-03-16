@@ -225,9 +225,11 @@ class HObject {
   setMouseTracking(on) {
     if (this.getElement() && on) {
       let self = this;
-      this.getElement().on("mousemove touchmove", function (event) {
-        self.elementEventOnCb(event);
-      });
+      this.getElement()
+        .off("mousemove touchmove")
+        .on("mousemove touchmove", function (event) {
+          self.elementEventOnCb(event);
+        });
       this.m_mouseTracking = true;
     } else {
       this.getElement().off("mousemove touchmove");

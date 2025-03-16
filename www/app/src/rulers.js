@@ -1103,7 +1103,9 @@ class WatchTable {
             " /></td>"
         );
         row.append(valueElem);
-        $("#" + elemId).on("change", watch.cb);
+        $("#" + elemId)
+          .off("change")
+          .on("change", watch.cb);
       } else {
         var row2 = $(
           "<tr><td>" + watchVariable + "</td><td>" + value + "</td></tr>"

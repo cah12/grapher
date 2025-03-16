@@ -70,16 +70,18 @@ class AlertDlg {
 
       if (!self.initialized) {
         self.initialized = true;
-        $(".alertDoNotShow").on("change", function () {
-          if ($(this)[0].checked) {
-            doNotShowList.push(doNotShowOptionId);
-          } else {
-            const n = doNotShowList.indexOf(doNotShowOptionId);
-            if (n != -1) {
-              doNotShowList.splice(n, 1);
+        $(".alertDoNotShow")
+          .off("change")
+          .on("change", function () {
+            if ($(this)[0].checked) {
+              doNotShowList.push(doNotShowOptionId);
+            } else {
+              const n = doNotShowList.indexOf(doNotShowOptionId);
+              if (n != -1) {
+                doNotShowList.splice(n, 1);
+              }
             }
-          }
-        });
+          });
       }
 
       dlg.modal({
@@ -118,16 +120,18 @@ class AlertDlg {
 
       if (!self.initialized) {
         self.initialized = true;
-        $(".alertDoNotShow").on("change", function () {
-          if ($(this)[0].checked) {
-            doNotShowList.push(doNotShowOptionId);
-          } else {
-            const n = doNotShowList.indexOf(doNotShowOptionId);
-            if (n != -1) {
-              doNotShowList.splice(n, 1);
+        $(".alertDoNotShow")
+          .off("change")
+          .on("change", function () {
+            if ($(this)[0].checked) {
+              doNotShowList.push(doNotShowOptionId);
+            } else {
+              const n = doNotShowList.indexOf(doNotShowOptionId);
+              if (n != -1) {
+                doNotShowList.splice(n, 1);
+              }
             }
-          }
-        });
+          });
       }
 
       dlg.modal({
@@ -159,7 +163,7 @@ class AlertDlg {
       self.alertYesCb(Cancel);
     });
 
-    dlg.on("hidden.bs.modal", function () {
+    dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {
       dlg.detach();
     });
 
@@ -230,50 +234,60 @@ class PromptDlg {
       });
     };
 
-    $("#prompt_msg").on("keydown", function (e) {
-      if (e.keyCode == 13) {
-        e.preventDefault();
-        $("#prompt_ok").click(); // Not working?
-      }
-    });
+    $("#prompt_msg")
+      .off("keydown")
+      .on("keydown", function (e) {
+        if (e.keyCode == 13) {
+          e.preventDefault();
+          $("#prompt_ok").click(); // Not working?
+        }
+      });
 
-    prompt_dlg.on("shown.bs.modal", function () {
+    prompt_dlg.off("shown.bs.modal").on("shown.bs.modal", function () {
       $("#prompt_ok").trigger("focus");
     });
 
-    prompt_dlg.on("hidden.bs.modal", function () {
+    prompt_dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {
       $("#progressSpinner").show();
       $("#error").hide();
       prompt_dlg.detach();
     });
 
-    $("#prompt_ok").on("mouseenter", function () {
-      $("#progressSpinner").css("animation", "spin 2s linear infinite");
-    });
+    $("#prompt_ok")
+      .off("mouseenter")
+      .on("mouseenter", function () {
+        $("#progressSpinner").css("animation", "spin 2s linear infinite");
+      });
 
-    $("#prompt_ok").on("mouseleave", function () {
-      if (!Utility.promptProgress)
-        $("#progressSpinner").css("animation", "none");
-    });
+    $("#prompt_ok")
+      .off("mouseleave")
+      .on("mouseleave", function () {
+        if (!Utility.promptProgress)
+          $("#progressSpinner").css("animation", "none");
+      });
 
-    $("#prompt_ok").on("click", function () {
-      Utility.promptProgress = true;
-      if (self.cb($("#prompt_msg").val())) {
-        $(".close").click();
-      } else {
-        $("#prompt_msg").select();
-        $("#progressSpinner").hide();
-        $("#error").attr("title", Utility.promptErrorMsg);
-        $("#error").show();
-      }
-      //$("#progressSpinner").show();
-      Utility.promptProgress = false;
-    });
+    $("#prompt_ok")
+      .off("click")
+      .on("click", function () {
+        Utility.promptProgress = true;
+        if (self.cb($("#prompt_msg").val())) {
+          $(".close").click();
+        } else {
+          $("#prompt_msg").select();
+          $("#progressSpinner").hide();
+          $("#error").attr("title", Utility.promptErrorMsg);
+          $("#error").show();
+        }
+        //$("#progressSpinner").show();
+        Utility.promptProgress = false;
+      });
 
-    $("#prompt_msg").on("input", function () {
-      $("#progressSpinner").show();
-      $("#error").hide();
-    });
+    $("#prompt_msg")
+      .off("input")
+      .on("input", function () {
+        $("#progressSpinner").show();
+        $("#error").hide();
+      });
 
     prompt_dlg.detach();
   }
@@ -3193,7 +3207,7 @@ class Utility {
       //Utility.progressWait();
       //console.time("discontinuity");
       function bindEquationEditorAngleModeChanged() {
-        $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
+        Static.bind("equationEditorAngleModeChanged", function (e, mode) {
           console.log(mode);
           Utility.mode = mode;
         });

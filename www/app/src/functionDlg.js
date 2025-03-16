@@ -281,47 +281,57 @@ class MFunctionDlg {
 
     Replacement.replace();
 
-    $('input[name="math_mode"]').on("change", async function () {
-      Static.math_mode = $(this).val();
-      Replacement.config.angles = $(this).val();
-      if (Static.imagePath != "images/") {
-        try {
-          let res = await mode(Replacement.config.angles);
-          //console.log(res);
-        } catch (error) {
-          console.log(error);
+    $('input[name="math_mode"]')
+      .off("change")
+      .on("change", async function () {
+        Static.math_mode = $(this).val();
+        Replacement.config.angles = $(this).val();
+        if (Static.imagePath != "images/") {
+          try {
+            let res = await mode(Replacement.config.angles);
+            //console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
         }
-      }
-      $("#fnDlg_ok").trigger("focus");
-    });
-
-    $("#fnDlg_variable").on("input", function () {
-      const mf = $("#fnDlg_function")[0];
-      let fnDlgFunctionVal = mf.getValue("ascii-math");
-      if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-        $(".limit_x").html($(this).val());
-      }
-    });
-
-    $("#fnDlg_variable").on("keydown", function (e) {
-      if (e.keyCode == 13) {
         $("#fnDlg_ok").trigger("focus");
-      }
-    });
+      });
 
-    $("#fnDlg_parametric_variable").on("keydown", function (e) {
-      if (e.keyCode == 13) {
-        $("#fnDlg_ok").trigger("focus");
-      }
-    });
+    $("#fnDlg_variable")
+      .off("input")
+      .on("input", function () {
+        const mf = $("#fnDlg_function")[0];
+        let fnDlgFunctionVal = mf.getValue("ascii-math");
+        if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+          $(".limit_x").html($(this).val());
+        }
+      });
 
-    $("#fnDlg_parametric_variable").on("input", function () {
-      const mf = $("#fnDlg_function")[0];
-      let fnDlgFunctionVal = mf.getValue("ascii-math");
-      if (Utility.isParametricFunction(fnDlgFunctionVal)) {
-        $(".limit_x").html($(this).val());
-      }
-    });
+    $("#fnDlg_variable")
+      .off("keydown")
+      .on("keydown", function (e) {
+        if (e.keyCode == 13) {
+          $("#fnDlg_ok").trigger("focus");
+        }
+      });
+
+    $("#fnDlg_parametric_variable")
+      .off("keydown")
+      .on("keydown", function (e) {
+        if (e.keyCode == 13) {
+          $("#fnDlg_ok").trigger("focus");
+        }
+      });
+
+    $("#fnDlg_parametric_variable")
+      .off("input")
+      .on("input", function () {
+        const mf = $("#fnDlg_function")[0];
+        let fnDlgFunctionVal = mf.getValue("ascii-math");
+        if (Utility.isParametricFunction(fnDlgFunctionVal)) {
+          $(".limit_x").html($(this).val());
+        }
+      });
 
     function uniqueChars(str) {
       var result = [];
@@ -473,20 +483,23 @@ class MFunctionDlg {
     Static.enterButton = null;
 
     this.init = function (cb) {
-      $("#functionModal").on("shown.bs.modal", function () {
-        $("#fnDlg_ok").trigger("focus");
-      });
-
-      $("#functionModal").on("hidden.bs.modal", function () {
-        $("#executeButton").trigger("focus");
-      });
-
-      $("#fnDlg_numberOfPoints,#fnDlg_color1,#fnDlg_color2").on(
-        "change",
-        (e) => {
+      $("#functionModal")
+        .off("shown.bs.modal")
+        .on("shown.bs.modal", function () {
           $("#fnDlg_ok").trigger("focus");
-        }
-      );
+        });
+
+      $("#functionModal")
+        .off("hidden.bs.modal")
+        .on("hidden.bs.modal", function () {
+          $("#executeButton").trigger("focus");
+        });
+
+      $("#fnDlg_numberOfPoints,#fnDlg_color1,#fnDlg_color2")
+        .off("change")
+        .on("change", (e) => {
+          $("#fnDlg_ok").trigger("focus");
+        });
 
       const els = document.getElementsByClassName("math-field-limits-enter");
       for (let i = 0; i < els.length; i++) {
@@ -2797,29 +2810,31 @@ class MFunctionDlg {
         return true;
       };
 
-      $("#fnDlg_function").on("input", function () {
-        $("#fnDlg_function2").val($(this).val());
-        var fn = $(this).val();
-        if (!self.threeD) {
-          if (uniqueChars(fn).length > 1 || fn.indexOf("x") == -1) {
-            $("#cont_variable").show();
+      $("#fnDlg_function")
+        .off("input")
+        .on("input", function () {
+          $("#fnDlg_function2").val($(this).val());
+          var fn = $(this).val();
+          if (!self.threeD) {
+            if (uniqueChars(fn).length > 1 || fn.indexOf("x") == -1) {
+              $("#cont_variable").show();
+            } else {
+              $("#cont_variable").hide();
+            }
           } else {
-            $("#cont_variable").hide();
+            if (
+              uniqueChars(fn).length > 2 ||
+              fn.indexOf("x") == -1 ||
+              fn.indexOf("y") == -1
+            ) {
+              $("#cont_variable").show();
+              $("#cont_variableY").show();
+            } else {
+              $("#cont_variable").hide();
+              $("#cont_variableY").hide();
+            }
           }
-        } else {
-          if (
-            uniqueChars(fn).length > 2 ||
-            fn.indexOf("x") == -1 ||
-            fn.indexOf("y") == -1
-          ) {
-            $("#cont_variable").show();
-            $("#cont_variableY").show();
-          } else {
-            $("#cont_variable").hide();
-            $("#cont_variableY").hide();
-          }
-        }
-      });
+        });
 
       //m_dlg1.detach();
     };
@@ -2846,10 +2861,6 @@ class MFunctionDlg {
         $(".limit_x").html($("#fnDlg_variable").val());
       }
     };
-
-    // m_dlg1.on("hidden.bs.modal", function () {
-    //   //m_dlg1.detach();
-    // });
 
     this.close = function () {
       $("#fnDlg_cancel").click();

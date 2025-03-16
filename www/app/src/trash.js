@@ -86,16 +86,18 @@ class Trash extends ModalDlg {
         }
 
         self.selector("restore").hide();
-        $(".selectedForTrash").on("change", function () {
-          const entries = self.selector("trashTable").find("INPUT");
-          for (let i = 0; i < entries.length; i++) {
-            if (entries[i].checked) {
-              self.selector("restore").show();
-              return;
+        $(".selectedForTrash")
+          .off("change")
+          .on("change", function () {
+            const entries = self.selector("trashTable").find("INPUT");
+            for (let i = 0; i < entries.length; i++) {
+              if (entries[i].checked) {
+                self.selector("restore").show();
+                return;
+              }
             }
-          }
-          self.selector("restore").hide();
-        });
+            self.selector("restore").hide();
+          });
       }
     };
 

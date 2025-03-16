@@ -397,7 +397,7 @@ class PropertiesPane extends Pane {
         options.type == "radio"
       ) {
         selector = $(row[0].getElementsByTagName("INPUT"));
-        selector.on("change", function () {
+        selector.off("change").on("change", function () {
           if (options.fun) {
             if (options.type == "checkbox") {
               options.fun($(this)[0].checked);
@@ -409,7 +409,7 @@ class PropertiesPane extends Pane {
       }
       if (options.type == "select") {
         selector = $(row[0].getElementsByTagName("SELECT"));
-        selector.on("change", function () {
+        selector.off("change").on("change", function () {
           if (options.fun) {
             options.fun($(this)[0].selectedIndex);
           }
@@ -417,7 +417,7 @@ class PropertiesPane extends Pane {
       }
       if (options.type == "button") {
         selector = $(row[0].getElementsByTagName("INPUT"));
-        selector.on("click", function () {
+        selector.off("click").on("click", function () {
           if (options.fun) {
             options.fun();
           }

@@ -897,14 +897,5 @@ require([
 
 /*
 TODO
-this code in drawCurve in MyCurve is buggy
-if (Static.panning && !self.unboundedDiscontinuity) {
-            console.log(456);
-            self.unboundedDiscontinuity = await Utility.discontinuity(
-              self.fn,
-              left,
-              right,
-              self.variable
-            );
-          }
+
 */

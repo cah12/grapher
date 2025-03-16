@@ -21,7 +21,7 @@ class Pane {
           '<div><button class="closeButton" style="position: absolute; right:5px" title="Close">X</button></div>'
         );
         headerElement.append(closeButton);
-        closeButton.on("click", function () {
+        closeButton.off("click").on("click", function () {
           Static.trigger("paneClose", headerElement);
         });
       }

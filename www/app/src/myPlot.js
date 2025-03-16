@@ -94,25 +94,6 @@ class MyPlot extends Plot {
     let decimalPlacesY = self.axisDecimalPlaces(Axis.AxisId.yLeft);
     let decimalPlacesX = self.axisDecimalPlaces(Axis.AxisId.xBottom);
 
-    let mouseIsDown = false;
-    $("#centralDiv").mousedown(function () {
-      mouseIsDown = true;
-      // console.log("mouseDown");
-    });
-
-    $("#centralDiv").mousemove(function () {
-      if (mouseIsDown) {
-        Static.panning = true;
-        // console.log("dragging");
-      }
-    });
-
-    $("#centralDiv").bind("mouseleave mouseup", function () {
-      Static.panning = false;
-      mouseIsDown = false;
-      // console.log("mouseleave mouseup");
-    });
-
     function getCoffsVal() {
       var result = [];
       var coeffs = self._functionDlg.coeffs || [];
@@ -3593,17 +3574,19 @@ class MyPlot extends Plot {
         super(options);
         const self = this;
 
-        $(window).on("beforeSave", () => {});
+        Static.bind("beforeSave", () => {});
 
-        $(window).on("afterSave", () => {
+        Static.bind("afterSave", () => {
           $("#myText").focus();
         });
 
-        $("#myText").on("input", () => {
-          self.currentFileModified();
-        });
+        $("#myText")
+          .off("input")
+          .on("input", () => {
+            self.currentFileModified();
+          });
 
-        $(window).bind("connected", () => {
+        Static.bind("connected", () => {
           $("#fileInput").parent().prop("disabled", true);
 
           $("#fileInput")
@@ -3613,7 +3596,7 @@ class MyPlot extends Plot {
               "Upload data files. (This function is not availabe while you are logged in to the momgo fileSystemServices."
             );
         });
-        $(window).bind("disconnected", () => {
+        Static.bind("disconnected", () => {
           $("#fileInput").parent().prop("disabled", false);
           $("#fileInput")
             .parent()
@@ -3857,9 +3840,7 @@ class MyPlot extends Plot {
 
     // console.log(edlg)
 
-    /* $(window).bind("equationEditorAngleModeChanged", function (e, mode) {
-      console.log(mode);
-    });
+    /* 
 
     var core = nerdamer.getCore();
     var _ = core.PARSER;
@@ -3953,86 +3934,88 @@ class MyPlot extends Plot {
     let originalLeftDividerPos = leftDividerPos;
 
     //aspectRatioUpdate
-    $("body").on("mousemove", (e) => {
-      const doAutoReplot = self.autoReplot();
-      self.setAutoReplot(false);
-      const oneToOne = Static.aspectRatioOneToOne;
+    $("body")
+      .off("mousemove")
+      .on("mousemove", (e) => {
+        const doAutoReplot = self.autoReplot();
+        self.setAutoReplot(false);
+        const oneToOne = Static.aspectRatioOneToOne;
 
-      //e.preventDefault();
+        //e.preventDefault();
 
-      //////Left Sidebar Code////////
-      if (!onLeftDividerDrag) {
-        if (Math.abs(e.clientX + 3 - leftDividerPos) < 6) {
-          $("body").addClass("ewResizeCursor");
-          onLeftDivider = true;
-        } else {
-          if (!onRightDividerDrag) {
-            $("body").removeClass("ewResizeCursor");
+        //////Left Sidebar Code////////
+        if (!onLeftDividerDrag) {
+          if (Math.abs(e.clientX + 3 - leftDividerPos) < 6) {
+            $("body").addClass("ewResizeCursor");
+            onLeftDivider = true;
+          } else {
+            if (!onRightDividerDrag) {
+              $("body").removeClass("ewResizeCursor");
+            }
+            onLeftDivider = false;
           }
-          onLeftDivider = false;
         }
-      }
-      if (onLeftDividerDrag) {
+        if (onLeftDividerDrag) {
+          if (oneToOne) {
+            Static.aspectRatioOneToOne = false;
+            self.plotPropertiesPane.aspectRatioUpdate();
+          }
+          const oldWidth = parseFloat(leftSidebarSelector.css("width"));
+          const delta = e.clientX - oldWidth;
+          let percentW = self.elementWidthToPercentage(oldWidth + delta);
+          leftSidebarSelector.css("width", percentW);
+          percentW = self.elementWidthToPercentage(
+            parseFloat(plotContainerSelector.css("left")) + delta
+          );
+          plotContainerSelector.css("left", percentW);
+          percentW = self.elementWidthToPercentage(
+            parseFloat(plotContainerSelector.css("width")) - delta
+          );
+          plotContainerSelector.css("width", percentW);
+          leftDividerPos = oldWidth + delta;
+        }
+
+        //////Right Sidebar Code////////
+        if (!onRightDividerDrag) {
+          if (Math.abs(e.clientX - rightDividerPos) < 6) {
+            rightSidebarSelector.css("cursor", "ew-resize");
+            $("body").css("cursor", "ew-resize");
+            onRightDivider = true;
+          } else {
+            rightSidebarSelector.css("cursor", originalCursor);
+            $("body").css("cursor", originalCursor);
+            onRightDivider = false;
+          }
+        }
+        if (onRightDividerDrag) {
+          if (oneToOne) {
+            Static.aspectRatioOneToOne = false;
+            self.plotPropertiesPane.aspectRatioUpdate();
+          }
+          const delta = rightDividerPos - e.clientX;
+          let percentW = self.elementWidthToPercentage(
+            parseFloat(rightSidebarSelector.css("left")) - delta
+          );
+          rightSidebarSelector.css("left", percentW);
+          percentW = self.elementWidthToPercentage(
+            parseFloat(rightSidebarSelector.css("width")) + delta
+          );
+          rightSidebarSelector.css("width", percentW);
+          percentW = self.elementWidthToPercentage(
+            parseFloat(plotContainerSelector.css("width")) - delta
+          );
+          plotContainerSelector.css("width", percentW);
+          rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
+        }
         if (oneToOne) {
-          Static.aspectRatioOneToOne = false;
+          Static.aspectRatioOneToOne = true;
           self.plotPropertiesPane.aspectRatioUpdate();
         }
-        const oldWidth = parseFloat(leftSidebarSelector.css("width"));
-        const delta = e.clientX - oldWidth;
-        let percentW = self.elementWidthToPercentage(oldWidth + delta);
-        leftSidebarSelector.css("width", percentW);
-        percentW = self.elementWidthToPercentage(
-          parseFloat(plotContainerSelector.css("left")) + delta
-        );
-        plotContainerSelector.css("left", percentW);
-        percentW = self.elementWidthToPercentage(
-          parseFloat(plotContainerSelector.css("width")) - delta
-        );
-        plotContainerSelector.css("width", percentW);
-        leftDividerPos = oldWidth + delta;
-      }
+        self.setAutoReplot(doAutoReplot);
+        self.autoRefresh();
+      });
 
-      //////Right Sidebar Code////////
-      if (!onRightDividerDrag) {
-        if (Math.abs(e.clientX - rightDividerPos) < 6) {
-          rightSidebarSelector.css("cursor", "ew-resize");
-          $("body").css("cursor", "ew-resize");
-          onRightDivider = true;
-        } else {
-          rightSidebarSelector.css("cursor", originalCursor);
-          $("body").css("cursor", originalCursor);
-          onRightDivider = false;
-        }
-      }
-      if (onRightDividerDrag) {
-        if (oneToOne) {
-          Static.aspectRatioOneToOne = false;
-          self.plotPropertiesPane.aspectRatioUpdate();
-        }
-        const delta = rightDividerPos - e.clientX;
-        let percentW = self.elementWidthToPercentage(
-          parseFloat(rightSidebarSelector.css("left")) - delta
-        );
-        rightSidebarSelector.css("left", percentW);
-        percentW = self.elementWidthToPercentage(
-          parseFloat(rightSidebarSelector.css("width")) + delta
-        );
-        rightSidebarSelector.css("width", percentW);
-        percentW = self.elementWidthToPercentage(
-          parseFloat(plotContainerSelector.css("width")) - delta
-        );
-        plotContainerSelector.css("width", percentW);
-        rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
-      }
-      if (oneToOne) {
-        Static.aspectRatioOneToOne = true;
-        self.plotPropertiesPane.aspectRatioUpdate();
-      }
-      self.setAutoReplot(doAutoReplot);
-      self.autoRefresh();
-    });
-
-    leftSidebarSelector.on("mousedown", (e) => {
+    leftSidebarSelector.off("mousedown").on("mousedown", (e) => {
       // e.preventDefault();
       // if (Static.aspectRatioOneToOne) {
       //   return;
@@ -4043,7 +4026,7 @@ class MyPlot extends Plot {
       }
     });
 
-    rightSidebarSelector.on("mousedown", (e) => {
+    rightSidebarSelector.off("mousedown").on("mousedown", (e) => {
       //e.preventDefault();
       // if (Static.aspectRatioOneToOne) {
       //   return;
@@ -4119,16 +4102,18 @@ class MyPlot extends Plot {
     //   //Static.trigger("callAspectRatioFunction", [checked, false]);
     // });
 
-    $("body").on("mouseup", (e) => {
-      //e.preventDefault();
-      // if (Static.aspectRatioOneToOne) {
-      //   return;
-      // }
-      leftSidebarSelector.css({ "border-right": originalBorder });
-      onLeftDividerDrag = false;
-      rightSidebarSelector.css({ "border-left": originalBorder });
-      onRightDividerDrag = false;
-    });
+    $("body")
+      .off("mouseup")
+      .on("mouseup", (e) => {
+        //e.preventDefault();
+        // if (Static.aspectRatioOneToOne) {
+        //   return;
+        // }
+        leftSidebarSelector.css({ "border-right": originalBorder });
+        onLeftDividerDrag = false;
+        rightSidebarSelector.css({ "border-left": originalBorder });
+        onRightDividerDrag = false;
+      });
 
     //f(x) is horizontal and x is vertical
     this.swapAxes = function (enableWatch = false) {
@@ -4249,23 +4234,6 @@ class MyPlot extends Plot {
       this.axesSwapped = false;
       return true;
     };
-
-    //const centralDiv = self.getCentralWidget().getElement();
-
-    /* let mousedown = false;
-    centralDiv.on("mousedown", (e) => {
-      mousedown = true;
-    });
-    centralDiv.on("mouseup", (e) => {
-      mousedown = false;
-    });
-    centralDiv.on("mousemove", (e) => {
-      if (mousedown) {
-        Static.mousemove = true;
-      } else {
-        Static.mousemove = false;
-      }
-    }); */
   }
 }
 MyPlot.init();

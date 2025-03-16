@@ -46,23 +46,27 @@ class DefinesDlg extends ModalDlg {
 
     const mf = self.selector("definesValue")[0];
 
-    $(mf).on("focusin", () => {
-      if (self.showKeyboard) {
-        mathVirtualKeyboard.container = self.getDlgModal()[0];
-        mathVirtualKeyboard.show();
-        $(".modal-dialog").css("top", "63%");
-        this.getDlgModal()[0].scrollBy(0, 1000);
-        this.getDlgModal().css("overflow", "hidden");
-      }
-    });
+    $(mf)
+      .off("focusin")
+      .on("focusin", () => {
+        if (self.showKeyboard) {
+          mathVirtualKeyboard.container = self.getDlgModal()[0];
+          mathVirtualKeyboard.show();
+          $(".modal-dialog").css("top", "63%");
+          this.getDlgModal()[0].scrollBy(0, 1000);
+          this.getDlgModal().css("overflow", "hidden");
+        }
+      });
 
-    $(mf).on("focusout", () => {
-      if (self.showKeyboard) {
-        mathVirtualKeyboard.container = $("body")[0];
-        mathVirtualKeyboard.hide();
-        $(".modal-dialog").css("top", "0%");
-      }
-    });
+    $(mf)
+      .off("focusout")
+      .on("focusout", () => {
+        if (self.showKeyboard) {
+          mathVirtualKeyboard.container = $("body")[0];
+          mathVirtualKeyboard.hide();
+          $(".modal-dialog").css("top", "0%");
+        }
+      });
 
     Utility.extendGetValue(mf);
 
@@ -384,26 +388,29 @@ class DefinesDlg extends ModalDlg {
       }
     };
 
-    self.selector("definesTable").on("click dblclick", function (e) {
-      removeAllHighlight();
-      const row = $(e.target).closest("tr");
-      row.addClass("definesTableRowselected");
-      const tds = $(row).find("TD");
-      const name = $(tds[0]).html().replace(/\s/g, "");
-      self.selector("definesName").val(name);
-      const { latexValue } = self.defines.getDefineObj(name);
+    self
+      .selector("definesTable")
+      .off("click dblclick")
+      .on("click dblclick", function (e) {
+        removeAllHighlight();
+        const row = $(e.target).closest("tr");
+        row.addClass("definesTableRowselected");
+        const tds = $(row).find("TD");
+        const name = $(tds[0]).html().replace(/\s/g, "");
+        self.selector("definesName").val(name);
+        const { latexValue } = self.defines.getDefineObj(name);
 
-      mf.setValue(latexValue, { suppressChangeNotifications: true });
+        mf.setValue(latexValue, { suppressChangeNotifications: true });
 
-      //self.selector("definesValue").val($(tds[1]).html().replace(/\s/g, ""));
-      self.selector("definesAdd").attr("disabled", true);
-      self.selector("definesRemove").attr("disabled", false);
-      self.selector("definesRemove").focus();
+        //self.selector("definesValue").val($(tds[1]).html().replace(/\s/g, ""));
+        self.selector("definesAdd").attr("disabled", true);
+        self.selector("definesRemove").attr("disabled", false);
+        self.selector("definesRemove").focus();
 
-      if (e.type === "dblclick") {
-        self.selector("definesRemove").click();
-      }
-    });
+        if (e.type === "dblclick") {
+          self.selector("definesRemove").click();
+        }
+      });
   }
 
   initializeDialog() {
@@ -1047,7 +1054,7 @@ class MDefines extends Defines {
       dlg.showDlg();
     };
 
-    $(window).bind("fileOpened", function (e, data, filename, ext, editorName) {
+    Static.bind("fileOpened", function (e, data, filename, ext, editorName) {
       // if (ext !== ".txt" && ext !== ".def") {
       //   return;
       // }
@@ -1059,7 +1066,7 @@ class MDefines extends Defines {
       // }
     });
 
-    $(window).bind("defineAdded", async function (e, name, value) {
+    Static.bind("defineAdded", async function (e, name, value) {
       try {
         value = await self.expandDefines(value, null, false);
         let latexValue = Utility.toLatex(value);

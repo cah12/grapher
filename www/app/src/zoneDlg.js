@@ -99,9 +99,11 @@ class ZoneDlg {
 
     $("body").append(dlg);
 
-    $("#zoneModal").on("shown.bs.modal", function () {
-      $("#zoneDlg_ok").trigger("focus");
-    });
+    $("#zoneModal")
+      .off("shown.bs.modal")
+      .on("shown.bs.modal", function () {
+        $("#zoneDlg_ok").trigger("focus");
+      });
 
     $("#zoneDlg_ok").click(function () {
       if (_plot.findPlotCurve($("#zoneTitle").val())) {
@@ -179,7 +181,7 @@ class ZoneDlg {
       showDlg();
     };
 
-    dlg.on("hidden.bs.modal", function () {
+    dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {
       dlg.detach();
     });
 

@@ -673,13 +673,13 @@ class LegendMenu {
         if (!on) m_curve = 0;
       });
 
-      table.on("touchstart", function (e) {
+      table.off("touchstart").on("touchstart", function (e) {
         var x = e.originalEvent.touches[0].pageX;
         var y = e.originalEvent.touches[0].pageY;
         doLegenMenu(x, y);
       });
 
-      table.on("mousedown", function (e) {
+      table.off("mousedown").on("mousedown", function (e) {
         if (!Static.isMobile && e.button != 2) {
           //not right button
           return;

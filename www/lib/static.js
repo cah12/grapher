@@ -92,8 +92,6 @@ Array.prototype.containsPoint = function (point) {
   return false;
 };
 
-Static.panning = false;
-
 Static.NoPen = "noPen";
 Static.NoBrush = "noBrush";
 Static._eps = 1.0e-300;
@@ -300,9 +298,11 @@ Static.keywords = [
 ]; //"deg" comes before "e", deliberately.
 
 ///Prevent default right click menu
-$("body").on("contextmenu", function (e) {
-  e.preventDefault();
-});
+$("body")
+  .off("contextmenu")
+  .on("contextmenu", function (e) {
+    e.preventDefault();
+  });
 
 Static.enableRightClickLight = function (el) {
   el.addEventListener("contextmenu", Static.bringBackDefault, true);
