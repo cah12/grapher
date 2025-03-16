@@ -1020,6 +1020,10 @@ class Utility {
         curve.setSamples(Utility.pointsFromXYObjectArray(curveData.samples));
       }
 
+      // if (curveData.functionDlgData.legendAttributes) {
+      //   curve.setLegendAttribute(curveData.functionDlgData.legendAttributes);
+      // }
+
       if (curveData.symbolType !== Symbol2.Style.NoSymbol) {
         let sym = new Symbol2();
         sym.setStyle(curveData.symbolType);
@@ -1095,6 +1099,8 @@ class Utility {
     } else {
       d.samples = curve.data().samples();
     }
+
+    d.functionDlgData.legendAttributes = curve.legendAttributes();
 
     d.fn = curve.fn;
     // d.parametricFnX = curve.parametricFnX;

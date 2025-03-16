@@ -442,7 +442,7 @@ class MyPlot extends Plot {
       if (functionDlgData.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
         self._functionDlg.coeffs = functionDlgData.coeffs;
         self._functionDlg.expandedFn = functionDlgData.expandedFn;
-        //_plot._functionDlg.fn = functionDlgData.fn;
+        self._functionDlg.legendAttributes = functionDlgData.legendAttributes;
         self._functionDlg.expandedParametricFnX =
           functionDlgData.expandedParametricFnX;
         self._functionDlg.expandedParametricFnY =
@@ -1114,6 +1114,11 @@ class MyPlot extends Plot {
         /////////////////////////////////////////
 
         newCurve.setSamples(m_samples);
+
+        if (self._functionDlg.legendAttributes != undefined) {
+          newCurve.setLegendAttribute(self._functionDlg.legendAttributes, true);
+          self._functionDlg.legendAttributes = undefined;
+        }
 
         if (!functionDlgData) newCurve.attach(self);
 
