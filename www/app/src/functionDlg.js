@@ -787,6 +787,18 @@ class MFunctionDlg {
         Static.g_solution_arr = null;
         Utility.progressWait2();
 
+        self.coeffs = null;
+        self.variable = null;
+        self.parametric_variable = null;
+
+        self.expandedFn = null;
+        self.parametricFnX = null;
+        self.parametricFnY = null;
+        self.expandedParametricFnX = null;
+        self.expandedParametricFnY = null;
+        self.unboundedRange = null;
+        self.numOfPoints = null;
+
         if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
           const mf = $("#fnDlg_function")[0];
           mf.setValue("?....?");
