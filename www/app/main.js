@@ -897,5 +897,5 @@ require([
 
 /*
 TODO
-
+$$ x^2-3x=4-f\left(x\right) $$
 */

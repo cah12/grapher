@@ -1831,7 +1831,7 @@ class MFunctionDlg {
                     return;
                   }
 
-                  if (forceDefine(fnDlgFunctionVal, m_rhs_fnDec)) {
+                  if (await forceDefine(fnDlgFunctionVal, m_rhs_fnDec)) {
                     // alert(`Tried but failed to define "${m_rhs_fnDec}".`);
                     // return;
 
