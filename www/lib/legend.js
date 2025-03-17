@@ -276,6 +276,7 @@ class AbstractLegend {
     };
 
     this.setTooltip = function (rowIndex, tooltip) {
+      this.removeTooltip(rowIndex);
       const toolTipSpanElem = $($(tbl.find("TR")[rowIndex]).find("SPAN")[1]);
       const tooltipParts = tooltip.split("\n");
 
@@ -304,6 +305,14 @@ class AbstractLegend {
           toolTipSpanElem[0].appendChild(child);
         }
       } catch (err) {}
+    };
+
+    this.removeTooltip = function (rowIndex) {
+      const toolTipSpanElem = $($(tbl.find("TR")[rowIndex]).find("SPAN")[1]);
+      let chldrn = toolTipSpanElem.children();
+      for (let i = 0; i < chldrn.length; i++) {
+        chldrn[i].remove();
+      }
     };
 
     let rightClickActive = false;

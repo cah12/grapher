@@ -58,7 +58,10 @@ class MyLegend extends Legend {
           fnStr = `f(${_curve.variable}): ${fn_y}`;
         }
       }
-      if (_curve.rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+      if (
+        _curve.rtti == PlotItem.RttiValues.Rtti_PlotMarker &&
+        _curve.toolTipValueName
+      ) {
         const val = _curve.value();
         fnStr = `${_curve.toolTipValueName} (${Utility.toPrecision(
           Utility.adjustForDecimalPlaces(val.x, decimalPlacesX),
@@ -69,6 +72,9 @@ class MyLegend extends Legend {
         )})`;
       }
       var rowNumber = self.indexInLegend(_curve);
+      if (rowNumber < 0) {
+        return;
+      }
       const horizontal =
         _curve.xAxis() == Axis.AxisId.xBottom ? "Bottom" : "Top";
       const vertical = _curve.yAxis() == Axis.AxisId.yLeft ? "Left" : "Right";
@@ -165,7 +171,7 @@ class MyLegend extends Legend {
       self.updateLegendToolTip(_curve);
     });
 
-    Static.bind("updateCalculationDecimalPlaces", function (e) {
+    Static.bind("calculationDecimalPlacesUpdated", function (e) {
       const L = self.plot().itemList();
       for (let index = 0; index < L.length; index++) {
         const plotItem = L[index];

@@ -358,8 +358,6 @@ class PlotPropertiesPane extends PropertiesPane {
             t.parent().parent()[0].scrollLeft = c - w + 80;
           }
           if (e.key === "Enter" || e.keyCode === 13) {
-            // $("#executeButton").click();
-
             mathVirtualKeyboard.hide();
             $("#executeButton").click();
           }
@@ -2105,15 +2103,23 @@ class PlotPropertiesPane extends PropertiesPane {
           right_decimalPlaces.val(20);
         }
       }
-      Static.trigger("updateCalculationDecimalPlaces");
+      Static.trigger("calculationDecimalPlacesUpdated");
     }
 
     this.updateCalculationDecimalPlaces = function (curve) {
       updateCalculationDecimalPlaces(curve);
     };
 
-    Static.bind("replot", function () {
-      updateCalculationDecimalPlaces();
+    // Static.bind("replot", function () {
+    //   updateCalculationDecimalPlaces();
+    // });
+
+    Static.bind("itemAttached", (e, item, on) => {
+      if (!on) {
+        updateCalculationDecimalPlaces();
+      } else {
+        updateCalculationDecimalPlaces(item);
+      }
     });
 
     function setReadonlyUserDecimalPlacesForCalculation(on) {
@@ -2452,8 +2458,6 @@ class PlotPropertiesPane extends PropertiesPane {
       if (Static.aspectRatioOneToOne) {
         var doReplot = plot.autoReplot();
         plot.setAutoReplot(false);
-        // aspectRatioChkBx.click();
-        // aspectRatioChkBx.click();
         self.aspectRatioUpdate();
         plot.setAutoReplot(doReplot);
         plot.autoRefresh();

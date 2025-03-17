@@ -143,21 +143,18 @@ class AlertDlg {
     };
 
     $(".alertYes").click(function () {
-      //$(".close").click();
       $("#alert_Modal").modal("hide");
       Utility.res = Yes;
       self.alertYesCb(Yes);
     });
 
     $(".alertNo").click(function () {
-      //$(".close").click();
       $("#alert_Modal").modal("hide");
       Utility.res = No;
       self.alertYesCb(No);
     });
 
     $(".alertCancel").click(function () {
-      // $(".close").click();
       $("#alert_Modal").modal("hide");
       Utility.res = Cancel;
       self.alertYesCb(Cancel);
@@ -1869,6 +1866,50 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
+    function handleError(xVal) {
+      if (Utility.errorResponse == Utility.warn) {
+        Utility.alert(
+          "f(" +
+            xVal +
+            "): is an error. Perhaps " +
+            xVal +
+            " is an invalid input or f(" +
+            xVal +
+            ') causes a "divide by zero" error.'
+        );
+        return null;
+      } else if (Utility.errorResponse == Utility.warnIgnore) {
+        Utility.alertYesNo(
+          "Error found!!! Do you want to silently ignore errors?",
+          function (answer) {
+            if (answer == Cancel) {
+              //console.log("C");
+              return null;
+            }
+            if (answer == Yes) {
+              //console.log("Y");
+              Utility.errorResponse = Utility.silentIgnore;
+              Utility.errorResponseChanged = true;
+              samples = [];
+              obj.warnIgnoreCb && obj.warnIgnoreCb();
+              //Utility.makeSamples(obj);
+              return null;
+            }
+            if (answer == No) {
+              console.log("N");
+              return null;
+            }
+            //return 1
+          }
+        );
+
+        samples = [];
+        return null;
+      } else {
+        return -1; //Just continue to loop
+      }
+    }
+
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
       return Utility.makeParametricSamples(obj);
@@ -1973,7 +2014,11 @@ class Utility {
         yVal = parser.eval({ x: xVal });
         try {
           if (math.isNaN(yVal) || !isFinite(yVal)) {
-            continue;
+            if (handleError(xVal) == -1) {
+              continue;
+            }
+            //continue;
+            return null;
           }
         } catch (error) {
           console.log(error);
@@ -1989,7 +2034,10 @@ class Utility {
 
       //if (!isFinite(yVal) || (Utility.errorResponse != Utility.adjustDomain && obj.discontinuity.length)) {
       if (!isFinite(yVal)) {
-        if (Utility.errorResponse == Utility.warn) {
+        if (handleError(xVal) == -1) {
+          continue;
+        }
+        /* if (Utility.errorResponse == Utility.warn) {
           Utility.alert(
             "f(" +
               xVal +
@@ -2029,8 +2077,8 @@ class Utility {
           return null;
         } else {
           continue;
-        }
-      }
+        } */
+      } /////
       if (obj.threeD && !isFinite(zVal)) {
         if (Utility.errorResponse == Utility.warn) {
           Utility.alert(

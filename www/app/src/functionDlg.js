@@ -511,45 +511,6 @@ class MFunctionDlg {
         });
       }
 
-      /* $("#fnDlg_lowerLimit")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      });
-      $("#fnDlg_upperLimit")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      });
-      $("#fnDlg_lowerLimitY")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      });
-      $("#fnDlg_upperLimitY")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      });
-      $("#fnDlg_lowerLimitFxy")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      });
-      $("#fnDlg_upperLimitFxy")[0].addEventListener("beforeinput", (e) => {
-        if (e.inputType === "insertLineBreak") {
-          e.preventDefault();
-          $("#fnDlg_ok").click();
-        }
-      }); */
-
-      //$("#cont_parametric_variable").hide();
-      //$("#cont_variable").hide();
       $("#cont_variableY").hide();
       $("#threedTypeContainer").hide();
       $("#colorInterval").hide();

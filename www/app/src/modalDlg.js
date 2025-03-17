@@ -168,6 +168,9 @@ class ModalDlg {
      *
      */
     this.showDlg = function () {
+      if (dlg) {
+        dlg.detach();
+      }
       $("body").append(dlg);
       m_appended = true;
       self.initializeDialog();

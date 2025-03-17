@@ -1,7 +1,7 @@
 "include []";
 "use strict";
 class MCurveSettings {
-  constructor(_plot) {
+  /*constructor(_plot) {
     let self = this;
     //let _plot = null;
     let _curveFitCb = null;
@@ -328,5 +328,5 @@ class MCurveSettings {
     };
 
     this.init();
-  }
+  }*/
 }

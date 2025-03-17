@@ -4012,7 +4012,7 @@ class MyPlot extends Plot {
           self.plotPropertiesPane.aspectRatioUpdate();
         }
         self.setAutoReplot(doAutoReplot);
-        self.autoRefresh();
+        //self.autoRefresh();
       });
 
     leftSidebarSelector.off("mousedown").on("mousedown", (e) => {

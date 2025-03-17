@@ -400,9 +400,6 @@ class InfoPropertiesPane extends Pane {
             $("#onchange").trigger("change"); */
           startAnimation();
           function startAnimation() {
-            //$("#onchange")[0].checked = false;
-            //if ($("#onchange")[0].checked) $("#onchange").click();
-
             const option = {
               duration: Static.animationDuration,
               step: function () {
