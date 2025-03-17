@@ -121,6 +121,18 @@ class HObject {
         if (on) {
           self
             .getElement()
+            .off(
+              mousedownEvent +
+                " " +
+                mouseupEvent +
+                " " +
+                mousemoveEvent +
+                " " +
+                "mouseenter mouseleave mousewheel click dblclick",
+              function (event) {
+                self.elementEventOnCb(event);
+              }
+            )
             .on(
               mousedownEvent +
                 " " +
@@ -133,16 +145,27 @@ class HObject {
                 self.elementEventOnCb(event);
               }
             );
-          $("body").on("keydown keyup", function (event) {
-            if (self.m_filterObjs.length) {
-              self.m_filterObjs.forEach(function (filterObj) {
-                if (!filterObj.eventFilter(self, event))
-                  return self.event(event);
-              });
-            } else {
-              return self.event(event);
-            }
-          });
+          $("body")
+            .off("keydown keyup", function (event) {
+              if (self.m_filterObjs.length) {
+                self.m_filterObjs.forEach(function (filterObj) {
+                  if (!filterObj.eventFilter(self, event))
+                    return self.event(event);
+                });
+              } else {
+                return self.event(event);
+              }
+            })
+            .on("keydown keyup", function (event) {
+              if (self.m_filterObjs.length) {
+                self.m_filterObjs.forEach(function (filterObj) {
+                  if (!filterObj.eventFilter(self, event))
+                    return self.event(event);
+                });
+              } else {
+                return self.event(event);
+              }
+            });
         } else {
           self
             .getElement()

@@ -27,6 +27,11 @@ class Trash extends ModalDlg {
     );
 
     this.addHandler("empty", "click", function () {
+      for (let i = 0; i < trashCollection.length; i++) {
+        let e = trashCollection[i];
+        e = null;
+        trashCollection[i] = null;
+      }
       trashCollection = [];
     });
 

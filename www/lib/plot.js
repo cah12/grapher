@@ -1315,6 +1315,7 @@ class Plot {
     const removeItem = function (item) {
       var index = m_plotItemStore.indexOf(item);
       if (index > -1) {
+        m_plotItemStore[index] = null;
         m_plotItemStore.splice(index, 1);
       }
     };

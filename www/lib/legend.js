@@ -344,6 +344,7 @@ class AbstractLegend {
           }, 500);
         } else {
           toolTipSpanElem.css("visibility", "hidden");
+          clearTimeout(tm);
         }
       }
 
@@ -554,6 +555,7 @@ class AbstractLegend {
 
     function removeElementAt(index) {
       if (index > -1) {
+        m_itemList[index] = null;
         m_itemList.splice(index, 1);
       }
     }
