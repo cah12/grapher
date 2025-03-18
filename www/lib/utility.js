@@ -5583,7 +5583,7 @@ class Utility {
 
     const ord = nerdamer(`deg(${exp},${variable})`).toString();
     if (ord === "1") {
-      return exp;
+      return math.simplify(exp).toString();
     }
 
     const ikws = this.getIncludedKeywords(exp);

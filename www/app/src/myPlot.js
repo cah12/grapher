@@ -1672,7 +1672,6 @@ class MyPlot extends Plot {
             } catch (error) {
               console.log(error);
             }
-
             combinedFn = combinedFn.replaceAll("mod", " mod ");
 
             var order = nerdamer(`deg(${combinedFn})`).toString();
