@@ -3173,7 +3173,7 @@ class Utility {
   }
 
   static replaceTrigKeyword(exp, keyword, replacement) {
-    if (exp.indexOf(keyword) == -1) return exp;
+    if (!exp || exp.indexOf(keyword) == -1) return exp;
     while (exp.indexOf(keyword) !== -1) {
       const indexOfKeyword = exp.indexOf(keyword);
 
@@ -3196,7 +3196,7 @@ class Utility {
   }
 
   static replaceTrigTanKeyword(exp, keyword, replacement1, replacement2) {
-    if (exp.indexOf(keyword) == -1) return exp;
+    if (!exp || exp.indexOf(keyword) == -1) return exp;
     while (exp.indexOf(keyword) !== -1) {
       const indexOfKeyword = exp.indexOf(keyword);
 
@@ -5096,6 +5096,9 @@ class Utility {
   }
 
   static insertProductSign_total(str, variable = null, defines) {
+    if (!str) {
+      return null;
+    }
     const arr = str.split("=");
     if (arr.length == 0) {
       return str;
@@ -6235,6 +6238,7 @@ class Utility {
       //result = Utility.removeUnwantedParentheses(result);
       result = Utility.insertProductSign(result);
       result = result.replaceAll("*(", "(");
+      result = result.replaceAll(",)", "),");
 
       return result;
     }

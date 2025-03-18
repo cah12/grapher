@@ -755,12 +755,13 @@ class MyPlot extends Plot {
       let discont = [];
       ///////////////////////
       try {
-        discont = await Utility.discontinuity(
-          fn,
-          makeSamplesData.lowerX,
-          makeSamplesData.upperX,
-          self._functionDlg.variable
-        );
+        discont =
+          (await Utility.discontinuity(
+            fn,
+            makeSamplesData.lowerX,
+            makeSamplesData.upperX,
+            self._functionDlg.variable
+          )) || [];
       } catch (error) {
         discont = [];
       }

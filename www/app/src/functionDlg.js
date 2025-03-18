@@ -2661,6 +2661,7 @@ class MFunctionDlg {
             _newCurve = await cb();
             Utility.progressWait2(false);
           } catch (error) {
+            console.log(error);
             Utility.progressWait2(false);
             return false;
           }
