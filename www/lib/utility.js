@@ -5579,7 +5579,7 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
-    const places = 4;
+    const places = 3;
     if (!exp || exp.indexOf(variable) == -1) return null;
 
     //const ord = nerdamer(`deg(${exp},${variable})`).toString();
@@ -5644,7 +5644,11 @@ class Utility {
       ) {
         linr = false;
         break;
-      } else if (!element.y.re && element.y != element.x) {
+        //} else if (!element.y.re && element.y != element.x) {
+      } else if (
+        !element.y.re &&
+        this.adjustForDecimalPlaces(element.y, places) != element.x
+      ) {
         linr = false;
         break;
       }
@@ -5661,7 +5665,11 @@ class Utility {
       ) {
         linr = false;
         break;
-      } else if (!element.y.re && element.y * -1 != element.x) {
+        //} else if (!element.y.re && element.y * -1 != element.x) {
+      } else if (
+        !element.y.re &&
+        this.adjustForDecimalPlaces(element.y, places) * -1 != element.x
+      ) {
         linr = false;
         break;
       }
@@ -5680,7 +5688,7 @@ class Utility {
           eps
         )
       ) {
-        return null;
+        return exp;
       }
     }
 
