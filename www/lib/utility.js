@@ -5579,7 +5579,7 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
-    const places = 10;
+    const places = 8;
     if (!exp || exp.indexOf(variable) == -1) return null;
 
     //const ord = nerdamer(`deg(${exp},${variable})`).toString();
