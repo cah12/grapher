@@ -5580,27 +5580,12 @@ class Utility {
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
     const places = 3;
-    if (!exp || exp.indexOf(variable) == -1) return null;
-
-    //const ord = nerdamer(`deg(${exp},${variable})`).toString();
-    // if (ord === "1") {
-    //   return math.simplify(exp).toString();
-    // }
+    if (!exp || exp.indexOf(variable) == -1) return exp;
 
     const ikws = this.getIncludedKeywords(exp);
     if (ikws.length === 1 && ikws[0] != "sqrt") {
       return null;
     }
-
-    // if (
-    //   exp.indexOf("sqrt") != -1 ||
-    //   exp.indexOf("log") != -1 ||
-    //   exp.indexOf("ln") != -1
-    // ) {
-    //   return null;
-    // }
-
-    // exp = nerdamer(exp).toString();
 
     let xArr;
     try {
@@ -5615,7 +5600,7 @@ class Utility {
       p = math.parse(exp);
     } catch (error) {
       console.log(error);
-      return null;
+      return exp;
     }
     const scope = new Map();
     scope.set(variable, 1);
@@ -5623,7 +5608,7 @@ class Utility {
     try {
       const val = p.evaluate(scope);
     } catch (error) {
-      return null;
+      return exp;
     }
 
     const points = xArr.map((val) => {
@@ -5638,17 +5623,10 @@ class Utility {
     let linr = true;
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      if (
-        element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, places) != element.x
-      ) {
+      if (element.y.re && element.y.re != element.x) {
         linr = false;
         break;
-        //} else if (!element.y.re && element.y != element.x) {
-      } else if (
-        !element.y.re &&
-        this.adjustForDecimalPlaces(element.y, places) != element.x
-      ) {
+      } else if (!element.y.re && element.y != element.x) {
         linr = false;
         break;
       }
@@ -5659,17 +5637,10 @@ class Utility {
 
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      if (
-        element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, places) * -1 != element.x
-      ) {
+      if (element.y.re && element.y.re * -1 != element.x) {
         linr = false;
         break;
-        //} else if (!element.y.re && element.y * -1 != element.x) {
-      } else if (
-        !element.y.re &&
-        this.adjustForDecimalPlaces(element.y, places) * -1 != element.x
-      ) {
+      } else if (!element.y.re && element.y * -1 != element.x) {
         linr = false;
         break;
       }
