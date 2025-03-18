@@ -5581,13 +5581,13 @@ class Utility {
   static isLinear(exp, variable = "x", eps = 1e-6) {
     if (!exp || exp.indexOf(variable) == -1) return null;
 
-    const ord = nerdamer(`deg(${exp},${variable})`).toString();
-    if (ord === "1") {
-      return math.simplify(exp).toString();
-    }
+    //const ord = nerdamer(`deg(${exp},${variable})`).toString();
+    // if (ord === "1") {
+    //   return math.simplify(exp).toString();
+    // }
 
     const ikws = this.getIncludedKeywords(exp);
-    if (ikws.length) {
+    if (ikws.length === 1 && ikws[0] != "sqrt") {
       return null;
     }
 

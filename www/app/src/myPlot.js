@@ -1674,6 +1674,8 @@ class MyPlot extends Plot {
             }
             combinedFn = combinedFn.replaceAll("mod", " mod ");
 
+            combinedFn = Utility.isLinear(combinedFn, variable);
+
             var order = nerdamer(`deg(${combinedFn})`).toString();
             if (order === "1") {
               const combinedFnTest = combinedFn.replaceAll(variable, "U");
