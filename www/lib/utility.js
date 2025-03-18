@@ -5579,6 +5579,7 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
+    const places = 10;
     if (!exp || exp.indexOf(variable) == -1) return null;
 
     //const ord = nerdamer(`deg(${exp},${variable})`).toString();
@@ -5627,7 +5628,10 @@ class Utility {
 
     const points = xArr.map((val) => {
       scope.set(variable, val);
-      return { x: val, y: this.adjustForDecimalPlaces(p.evaluate(scope), 12) };
+      return {
+        x: val,
+        y: this.adjustForDecimalPlaces(p.evaluate(scope), places),
+      };
     });
     const data = points._data;
 
@@ -5636,7 +5640,7 @@ class Utility {
       const element = data[index];
       if (
         element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, 12) != element.x
+        this.adjustForDecimalPlaces(element.y.re, places) != element.x
       ) {
         linr = false;
         break;
@@ -5653,7 +5657,7 @@ class Utility {
       const element = data[index];
       if (
         element.y.re &&
-        this.adjustForDecimalPlaces(element.y.re, 12) * -1 != element.x
+        this.adjustForDecimalPlaces(element.y.re, places) * -1 != element.x
       ) {
         linr = false;
         break;
