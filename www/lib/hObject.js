@@ -249,7 +249,9 @@ class HObject {
     if (this.getElement() && on) {
       let self = this;
       this.getElement()
-        .off("mousemove touchmove")
+        .off("mousemove touchmove", function (event) {
+          self.elementEventOnCb(event);
+        })
         .on("mousemove touchmove", function (event) {
           self.elementEventOnCb(event);
         });
