@@ -5579,7 +5579,7 @@ class Utility {
   }
 
   static isLinear(exp, variable = "x", eps = 1e-6) {
-    const places = 8;
+    const places = 4;
     if (!exp || exp.indexOf(variable) == -1) return null;
 
     //const ord = nerdamer(`deg(${exp},${variable})`).toString();
@@ -5604,7 +5604,7 @@ class Utility {
 
     let xArr;
     try {
-      xArr = math.range(-50, 50, 1, true);
+      xArr = math.range(-50, 50, 2, true);
     } catch (error) {
       console.log(error);
     }
