@@ -4864,6 +4864,9 @@ class Utility {
   }
 
   static purgeAndMarkKeywords(str, exclude_e = false) {
+    if (!str) {
+      return null;
+    }
     let result = str;
     for (var i = 0; i < Static.keywords.length; ++i) {
       if (Static.keywords[i] == "e" && exclude_e) {
@@ -6247,6 +6250,18 @@ class Utility {
       return str;
     }
 
+    if (Utility.isParametricFunction(str)) {
+      let { operand, base } = Utility.splitParametricFunction(str);
+      const parametricX = doParametize(operand);
+      const parametricY = doParametize(base);
+      const arr = str.split("{");
+      if (arr.length === 2) {
+        str = `(${parametricX},${parametricY}){${arr[1]}`;
+      } else {
+        str = `(${parametricX},${parametricY})`;
+      }
+    }
+
     const equalSigns = Utility.countString(str, "=");
     if ((equalSigns == 3 && str.indexOf("{") == -1) || equalSigns > 3) {
       return str;
@@ -6272,6 +6287,7 @@ class Utility {
       const result = `${left}=${right}{${arr[1]}`;
       return result;
     }
+
     if (str.indexOf("{") != -1 && str.indexOf("}") != -1) {
       const arr = str.split("{");
       if (arr.length != 2) {
