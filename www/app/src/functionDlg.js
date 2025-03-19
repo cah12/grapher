@@ -1152,10 +1152,52 @@ class MFunctionDlg {
               return;
             } */
             async function handleDomain() {
+              ////////
               try {
-                domainRangeRestriction = domainRangeRestriction.replace(
-                  variablePlus,
-                  "~"
+                domainRangeRestriction = domainRangeRestriction.replaceAll(
+                  "''",
+                  "doublePrime"
+                );
+                domainRangeRestriction = domainRangeRestriction.replaceAll(
+                  "'",
+                  "singlePrime"
+                );
+
+                const arr = domainRangeRestriction.split(variablePlus);
+                if (arr && arr.length < 2) {
+                  Utility.displayErrorMessage(
+                    mf,
+                    `Improperly declared domain. Expected "${variable}" as the variable.`
+                  );
+                  Utility.progressWait2(false);
+                  return false;
+                }
+
+                let ss = arr[0];
+                let ind = 1;
+
+                for (; ind < arr.length; ind++) {
+                  try {
+                    math.parse(ss);
+                    math.parse(arr[ind]);
+                    ss += "~";
+                    ss += arr[ind];
+                    break;
+                  } catch (error) {
+                    ss += variablePlus;
+                    ss += arr[ind];
+                    continue;
+                  }
+                }
+
+                domainRangeRestriction = ss;
+                domainRangeRestriction = domainRangeRestriction.replaceAll(
+                  "doublePrime",
+                  "''"
+                );
+                domainRangeRestriction = domainRangeRestriction.replaceAll(
+                  "singlePrime",
+                  "'"
                 );
 
                 domainRangeRestriction = domainRangeRestriction.split("~");

@@ -5441,29 +5441,23 @@ class Utility {
     return -1; //Invalid index
   }
 
-  /* f^{\doubleprime}\left(x\right)
-
-f^{\prime}\left(x\right)
-
-\mathrm{f}\left(3\right)
-
-f^H~\left(-2\right)
- */
   static toLatex(str) {
     let latexValue = str;
     try {
-      str = str.replaceAll("''", "^{\\doubleprime}");
-      str = str.replaceAll("'", "^{\\prime}");
+      str = str.replaceAll("''", "doublePrimePlaceHolder");
+      str = str.replaceAll("'", "primePlaceHolder");
       let node = math.parse(str);
       latexValue = node.toTex({ parenthesis: "auto", implicit: "hide" });
     } catch (error) {
       console.log(error);
     }
+    latexValue = latexValue.replaceAll("doublePrimePlaceHolder", "''");
+    latexValue = latexValue.replaceAll("primePlaceHolder", "'");
     latexValue = latexValue
       .replaceAll("^H~", "'")
       .replaceAll("\\mathrm{", "")
       .replaceAll("}\\left", "\\left");
-    console.log(latexValue);
+    //console.log(latexValue);
     return latexValue;
   }
 
@@ -6035,7 +6029,13 @@ f^H~\left(-2\right)
         .replaceAll("\\prime", "primePlaceHolder")
         //.replaceAll("{\\prime}", "primePlaceHolder")
         .replaceAll("{primePlaceHolder}", "primePlaceHolder")
+        .replaceAll("{primePlaceHolder", "primePlaceHolder")
+        .replaceAll("\\^primePlaceHolder", "primePlaceHolder")
+
         .replaceAll("{\\doubleprime}", "doublePrimePlaceHolder")
+        .replaceAll("{doublePrimePlaceHolder}", "doublePrimePlaceHolder")
+        .replaceAll("\\^doublePrimePlaceHolder", "doublePrimePlaceHolder")
+
         // .replaceAll(
         //   "primePlaceHolderprimePlaceHolder",
         //   "doublePrimePlaceHolder"
