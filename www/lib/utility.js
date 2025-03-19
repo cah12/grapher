@@ -2918,6 +2918,9 @@ class Utility {
   }
 
   static getFullDerivativeDeclaration(str) {
+    if (!str) {
+      return null;
+    }
     let m_str = Utility.purgeAndMarkKeywords(str);
     let ind = m_str.lastIndexOf("'(");
     for (let index = ind - 1; index > 0; index--) {
@@ -5438,14 +5441,29 @@ class Utility {
     return -1; //Invalid index
   }
 
+  /* f^{\doubleprime}\left(x\right)
+
+f^{\prime}\left(x\right)
+
+\mathrm{f}\left(3\right)
+
+f^H~\left(-2\right)
+ */
   static toLatex(str) {
     let latexValue = str;
     try {
+      str = str.replaceAll("''", "^{\\doubleprime}");
+      str = str.replaceAll("'", "^{\\prime}");
       let node = math.parse(str);
       latexValue = node.toTex({ parenthesis: "auto", implicit: "hide" });
     } catch (error) {
-      //
+      console.log(error);
     }
+    latexValue = latexValue
+      .replaceAll("^H~", "'")
+      .replaceAll("\\mathrm{", "")
+      .replaceAll("}\\left", "\\left");
+    console.log(latexValue);
     return latexValue;
   }
 
@@ -5925,7 +5943,8 @@ class Utility {
 
     mf.getValue = function (format = "ascii-math") {
       let latex = mf.getValueTemp("latex");
-      //latex = latex.replaceAll("{}}", "");
+      //latex = latex.replaceAll("^H~", "^{\\prime}");
+      //latex = latex.replaceAll("^H~", "'");
       //Handle \frac start
       let index = latex.indexOf("\\frac");
       while (index !== -1) {
@@ -6027,10 +6046,14 @@ class Utility {
       //   result = result.replace()
       // }
 
+      result = result.replaceAll("''", "doublePrimePlaceHolder");
+      result = result.replaceAll("'", "primePlaceHolder");
       mf.value = result;
 
       result = mf.getValueTemp(format);
       mf.latexValue = latex;
+      result = result.replaceAll("doublePrimePlaceHolder", "''");
+      result = result.replaceAll("primePlaceHolder", "'");
 
       // const matches1 = result.match(
       //   /(\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)(?=mod)|.(?=mod))/
@@ -6060,6 +6083,8 @@ class Utility {
         .replace(/\\operatorname{abs}/g, "abs")
         .replace(/\\lbrace/g, "{")
         .replace(/\\rbrace/g, "}");
+
+      //result = result.replaceAll("^'", "'");
 
       //console.log(457, result);
 
@@ -6160,6 +6185,9 @@ class Utility {
         m++;
         index = result.indexOf("|");
       }
+
+      result = result.replaceAll(/\^'/gi, "'");
+      //result = result.replaceAll("\\^'", "'");
 
       result = Utility.insertProductSign(result);
 

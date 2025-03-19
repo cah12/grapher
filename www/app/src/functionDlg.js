@@ -456,7 +456,7 @@ class MFunctionDlg {
           null,
           "upper_equal_lower_limit"
         );
-        return true;
+        return false;
       }
       if (lowerLimit > upperLimit) {
         Utility.alert("Upper limit must be greater than Lower limit.");
@@ -1444,9 +1444,10 @@ class MFunctionDlg {
                   self.variable,
                   true
                 );
-                domainRangeRestriction[0] = handleCoeffs(
+                const v = await plot.defines.expandDefines(
                   domainRangeRestriction[0]
                 );
+                domainRangeRestriction[0] = handleCoeffs(v);
 
                 if (!domainRangeRestriction[0]) {
                   Utility.displayErrorMessage(
@@ -1462,9 +1463,10 @@ class MFunctionDlg {
                   self.variable,
                   true
                 );
-                domainRangeRestriction[1] = handleCoeffs(
+                const v2 = await plot.defines.expandDefines(
                   domainRangeRestriction[1]
                 );
+                domainRangeRestriction[1] = handleCoeffs(v2);
 
                 if (!domainRangeRestriction[1]) {
                   Utility.displayErrorMessage(
@@ -2432,8 +2434,14 @@ class MFunctionDlg {
           }
 
           if (domainRangeRestriction.length) {
-            handleCoeffs(domainRangeRestriction[0]);
-            handleCoeffs(domainRangeRestriction[1]);
+            const arr_0 = await plot.defines.expandDefines(
+              domainRangeRestriction[0]
+            );
+            const arr_1 = await plot.defines.expandDefines(
+              domainRangeRestriction[1]
+            );
+            handleCoeffs(arr_0);
+            handleCoeffs(arr_1);
           }
 
           function replaceParameterWith_1(str) {
@@ -2449,7 +2457,6 @@ class MFunctionDlg {
 
           try {
             self.lowerLimit = $("#fnDlg_lowerLimit")[0].getValue("ascii-math");
-            //handleCoeffs(self.lowerLimit);
             const lw = await plot.defines.expandDefines(
               self.lowerLimit,
               self.variable
@@ -2480,7 +2487,6 @@ class MFunctionDlg {
 
           try {
             self.upperLimit = $("#fnDlg_upperLimit")[0].getValue("ascii-math");
-            //handleCoeffs(self.upperLimit);
             const ul = await plot.defines.expandDefines(
               self.upperLimit,
               self.variable
@@ -2507,6 +2513,12 @@ class MFunctionDlg {
             Utility.progressWait2(false);
             return false;
             //}
+          }
+
+          if (!validateLimits(self.lowerLimit, self.upperLimit)) {
+            $("#settingsButton").click();
+            Utility.progressWait2(false);
+            return false;
           }
 
           self.title = $("#fnDlg_title").val();
@@ -2578,6 +2590,7 @@ class MFunctionDlg {
               )
             ) {
               $("#settingsButton").click();
+              Utility.progressWait2(false);
               return false;
             }
             self.unboundedRange = $("#fnDlg_unboundedRange")[0].checked;
@@ -2612,7 +2625,6 @@ class MFunctionDlg {
             try {
               self.lowerLimitY =
                 $("#fnDlg_lowerLimitY")[0].getValue("ascii-math");
-              //handleCoeffs(self.lowerLimitY);
               self.lowerLimitY = math.evaluate(self.lowerLimitY);
             } catch (err) {
               Utility.alert("Please enter a valid lower(y) limit.");
@@ -2622,7 +2634,6 @@ class MFunctionDlg {
             try {
               self.upperLimitY =
                 $("#fnDlg_upperLimitY")[0].getValue("ascii-math");
-              //handleCoeffs(self.upperLimitY);
               self.upperLimitY = math.evaluate(self.upperLimitY);
             } catch (err) {
               Utility.alert("Please enter a valid upper(y) limit.");
@@ -2633,7 +2644,6 @@ class MFunctionDlg {
               self.lowerLimitFxy = $("#fnDlg_lowerLimitFxy")[0].getValue(
                 "ascii-math"
               );
-              //handleCoeffs(self.lowerLimitFxy);
               self.lowerLimitFxy = math.evaluate(self.lowerLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid lower(f(xy)) limit.");
@@ -2644,7 +2654,6 @@ class MFunctionDlg {
               self.upperLimitFxy = $("#fnDlg_upperLimitFxy")[0].getValue(
                 "ascii-math"
               );
-              //handleCoeffs(self.upperLimitFxy);
               self.upperLimitFxy = math.evaluate(self.upperLimitFxy);
             } catch (err) {
               Utility.alert("Please enter a valid upper(f(xy)) limit.");
@@ -2843,7 +2852,7 @@ class MFunctionDlg {
 
     function handleCoeffs(str) {
       if (!str) return null;
-      //if (!self.coeffs) self.coeffs = [];
+
       let s = Utility.purgeAndMarkKeywords(str);
       for (let index = 0; index < s.length; index++) {
         if (Utility.isAlpha(s[index]) && !plot.defines.hasDefine(s[index])) {
