@@ -743,6 +743,7 @@ class MyPlot extends Plot {
         variable: self._functionDlg.variable,
         // lowerX: provided_m_lowerX || m_lowerX,
         // upperX: provided_m_upperX || m_upperX,
+        //providedFn: providedFn, ///Added Today
         lowerX: m_lowerX,
         upperX: m_upperX,
         numOfSamples: self._functionDlg.numOfPoints,
@@ -830,11 +831,18 @@ class MyPlot extends Plot {
 
         const samples = Utility.makeSamples(makeSamplesData);
 
-        if (!samples || (samples.length == 0 && !self.relationFn)) {
+        if (
+          !samples ||
+          (samples.length == 0 &&
+            !self.relationFn &&
+            !providedFn &&
+            !Static.inverseFunction) //Added Today
+        ) {
           // if (self.relationFn) {
           //   return;
           // }
           self.relationFn = makeSamplesData.fx;
+
           const mf = $("#fnDlg_function")[0];
 
           const ikws = Utility.getIncludedKeywords(fn).join(", ");
