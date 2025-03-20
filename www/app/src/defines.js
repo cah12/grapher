@@ -524,6 +524,11 @@ class Defines {
                 m_defn.value,
                 variable
               );
+
+              if (!solution || (solution && solution.length === 0)) {
+                solution = "failedInverse";
+              }
+
               if (solution === "failedInverse") {
                 Utility.alert(
                   `Grapher tried but failed to get an inverse function of <b>"${m_defn.value}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. The inverse <b>relation</b> is plotted.`,
