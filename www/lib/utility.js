@@ -3029,7 +3029,10 @@ class Utility {
     let operand = "";
     let lBracket = 0;
     for (let i = indexOfKeyword + keyword.length; i < exp.length; i++) {
-      if (!lBracket && (exp[i] === "+" || exp[i] === "-" || exp[i] === ")")) {
+      if (
+        !lBracket &&
+        (exp[i] === "<" || exp[i] === "+" || exp[i] === "-" || exp[i] === ")")
+      ) {
         break;
       }
       if (exp[i] == "(") {
@@ -5460,9 +5463,12 @@ class Utility {
     latexValue = latexValue
       .replaceAll("\\cdot", "")
       .replaceAll("^H~", "'")
-      .replaceAll("\\mathrm{", "")
-      .replaceAll("}\\left", "\\left");
+      .replaceAll("\\mathrm{", "");
+    //.replaceAll("}\\left", "\\left");
     //console.log(latexValue);
+    if (latexValue.indexOf("{") === -1) {
+      latexValue = latexValue.replaceAll("}\\left", "\\left");
+    }
     return latexValue;
   }
 
@@ -5704,7 +5710,12 @@ class Utility {
       return str.indexOf("{");
     }
     if (count == 1 && str.indexOf(",") > str.indexOf("{")) {
-      return str.indexOf(",");
+      if (
+        str.indexOf("ln") < str.indexOf("{") &&
+        str.indexOf("log") < str.indexOf("{")
+      ) {
+        return str.indexOf(",");
+      }
     }
     count = Utility.countString(str, "}");
     if (count > 1) {
@@ -6245,9 +6256,9 @@ class Utility {
             i + 1 < purgeStr.length &&
             $.isNumeric(purgeStr[i]))
         ) {
-          delimiter = 0;
+          /* delimiter = 0;
           result += "(";
-          bracketAdded = true;
+          bracketAdded = true; */
         } else if (
           delimiter === 2 &&
           purgeStr[i] === ")" &&
@@ -6262,6 +6273,7 @@ class Utility {
           bracketAdded &&
           (purgeStr[i + 1] === "+" ||
             purgeStr[i + 1] === "-" ||
+            purgeStr[i + 1] === "<" ||
             (purgeStr[i + 1] === "(" &&
               !$.isNumeric(purgeStr[i]) &&
               !Utility.isAlpha(purgeStr[i])) ||
@@ -6340,7 +6352,8 @@ class Utility {
         return str;
       }
       const s = doParametize(arr[0]);
-      const result = `${s}{${arr[1]}`;
+      const ss = doParametize(arr[1]);
+      const result = `${s}{${ss}`;
       return result;
     }
 
