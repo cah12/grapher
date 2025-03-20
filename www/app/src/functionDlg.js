@@ -759,7 +759,7 @@ class MFunctionDlg {
         self.expandedParametricFnX = null;
         self.expandedParametricFnY = null;
         self.unboundedRange = null;
-        self.numOfPoints = null;
+        self.numOfPoints = 200;
 
         if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
           const mf = $("#fnDlg_function")[0];
