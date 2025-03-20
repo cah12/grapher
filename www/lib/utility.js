@@ -5442,7 +5442,11 @@ class Utility {
   }
 
   static toLatex(str) {
-    let latexValue = str;
+    if (!str) {
+      return null;
+    }
+
+    let latexValue = (str = Utility.parametizeKeywordArg(str));
     try {
       str = str.replaceAll("''", "doublePrimePlaceHolder");
       str = str.replaceAll("'", "primePlaceHolder");
@@ -5454,6 +5458,7 @@ class Utility {
     latexValue = latexValue.replaceAll("doublePrimePlaceHolder", "''");
     latexValue = latexValue.replaceAll("primePlaceHolder", "'");
     latexValue = latexValue
+      .replaceAll("\\cdot", "")
       .replaceAll("^H~", "'")
       .replaceAll("\\mathrm{", "")
       .replaceAll("}\\left", "\\left");
@@ -6201,12 +6206,20 @@ class Utility {
       let result = "";
       let bracketAdded = false;
       let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+      if (str === purgeStr) {
+        return str;
+      }
       for (let i = 0; i < purgeStr.length; i++) {
         let c = purgeStr[i];
+        if (c === "'") {
+          result += c;
+          continue;
+        }
         result += c;
         if (c === "%") {
           delimiter++;
         }
+
         if (
           delimiter === 2 &&
           i + 1 < purgeStr.length &&
@@ -6225,9 +6238,12 @@ class Utility {
           result += "(";
           bracketAdded = true;
         } else if (
-          delimiter === 2 &&
-          ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
-          purgeStr[i - 1] === "^"
+          (delimiter === 2 &&
+            ($.isNumeric(purgeStr[i]) || Utility.isAlpha(purgeStr[i])) &&
+            purgeStr[i - 1] === "^") ||
+          (delimiter === 2 &&
+            i + 1 < purgeStr.length &&
+            $.isNumeric(purgeStr[i]))
         ) {
           delimiter = 0;
           result += "(";
@@ -6246,7 +6262,9 @@ class Utility {
           bracketAdded &&
           (purgeStr[i + 1] === "+" ||
             purgeStr[i + 1] === "-" ||
-            purgeStr[i + 1] === "(" ||
+            (purgeStr[i + 1] === "(" &&
+              !$.isNumeric(purgeStr[i]) &&
+              !Utility.isAlpha(purgeStr[i])) ||
             purgeStr[i + 1] === ")" ||
             (purgeStr[i + 1] === "(" &&
               i + 2 < purgeStr.length &&
