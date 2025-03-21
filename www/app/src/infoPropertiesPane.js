@@ -624,18 +624,22 @@ class InfoPropertiesPane extends Pane {
           parametricFnY = curCurve.parametricFnY;
         fn = Utility.purgeAndMarkKeywords(parametricFnX);
         for (var i = 0; i < coeffs.length; ++i) {
-          while (fn.indexOf(coeffs[i]) != -1) {
+          /* while (fn.indexOf(coeffs[i]) != -1) {
             fn = fn.replace(coeffs[i], $("#coeff_val" + i).val());
-          }
+          } */
+          const v = $("#coeff_val" + i).val();
+          fn = fn.replaceAll(coeffs[i], `(${v})`);
           curCurve.coeffsVal[i] = $("#coeff_val" + i).val();
         }
         parametricFnX = Utility.replaceKeywordMarkers(fn);
 
         fn = Utility.purgeAndMarkKeywords(parametricFnY);
         for (var i = 0; i < coeffs.length; ++i) {
-          while (fn.indexOf(coeffs[i]) != -1) {
-            fn = fn.replace(coeffs[i], $("#coeff_val" + i).val());
-          }
+          // while (fn.indexOf(coeffs[i]) != -1) {
+          //   fn = fn.replace(coeffs[i], $("#coeff_val" + i).val());
+          // }
+          const v = $("#coeff_val" + i).val();
+          fn = fn.replaceAll(coeffs[i], `(${v})`);
           curCurve.coeffsVal[i] = $("#coeff_val" + i).val();
         }
         parametricFnY = Utility.replaceKeywordMarkers(fn);
