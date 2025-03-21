@@ -2995,6 +2995,9 @@ class Utility {
 
   static getFunctionDeclaration(str, variable = "x") {
     //f(x)
+    if (!str || (str && str.length === 0)) {
+      return null;
+    }
     let m_str = Utility.purgeAndMarkKeywords(str);
     for (let i = 3; i < m_str.length; i++) {
       if (
