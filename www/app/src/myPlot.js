@@ -916,7 +916,7 @@ class MyPlot extends Plot {
               const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
               c.setSamples(samples);
               c.attach(self);
-              Utility.displayErrorMessage(
+              Utility.displayWarnMessage(
                 mf,
                 `Grapher tried but failed to find an inverse function for "${fn}". An inverse relation, "${c.title()}", is provided.`
               );

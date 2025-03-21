@@ -325,10 +325,7 @@ class PlotPropertiesPane extends PropertiesPane {
       //if (m_value) {
       plot._functionDlg.doEnter(m_value, true);
       executeButtonClicked = false;
-      // Utility.progressWait(false);
-      // } else {
-      //   Utility.displayErrorMessage(mf, Static.errorMessage); //add error message
-      // }
+
       $("#fnDlg_function")[0].executeCommand("selectAll");
       $("#fnDlg_function").focus();
     });
@@ -338,6 +335,13 @@ class PlotPropertiesPane extends PropertiesPane {
       .on("input", function (e) {
         Static.errorMessage = "";
         Utility.displayErrorMessage(mf, null); //clear error message
+      });
+
+    $("#fnDlg_function")
+      .off("input")
+      .on("input", function (e) {
+        Static.errorMessage = "";
+        Utility.displayWarnMessage(mf, null); //clear warn message
       });
 
     $("#fnDlg_function")

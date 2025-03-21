@@ -2428,11 +2428,6 @@ class Utility {
       solution = await Static.solveFor(_defn, "y", variable);
       Utility.progressWait(false);
       if (!solution.length) {
-        // const mf = $("#fnDlg_function")[0];
-        // Utility.displayErrorMessage(
-        //   mf,
-        //   `Grapher tried but was unable to find a solution for for the inverse of "${_defn}". The inverse relation is plotted.`
-        // );
         Utility.progressWait(false);
         return "failedInverse";
       }
@@ -5583,7 +5578,7 @@ class Utility {
 
     if (arg !== variable) {
       let _dec = dec.replace(arg, variable);
-      Utility.displayErrorMessage(
+      Utility.displayWarnMessage(
         mf,
         `Tried but failed to plot inverse relation. Unable to resolve independent variable. Found ${relationFn}. Expected ${_dec}.`
       );
@@ -6652,6 +6647,20 @@ class Utility {
       $(mf).tooltip("hide");
       $(mf).attr("data-original-title", Utility.toolTip);
       $(mf).removeClass("red-tooltip");
+    }
+  }
+
+  static displayWarnMessage(mf, errorMessage) {
+    if (errorMessage) {
+      Utility.toolTip = $(mf).attr("data-original-title");
+      mf.applyStyle({ backgroundColor: "#ffff00" }, { range: [-1, 0] });
+      $(mf)
+        .addClass("yellow-tooltip")
+        .attr("data-original-title", errorMessage);
+    } else {
+      $(mf).tooltip("hide");
+      $(mf).attr("data-original-title", Utility.toolTip);
+      $(mf).removeClass("yellow-tooltip");
     }
   }
 

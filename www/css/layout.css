@@ -447,6 +447,11 @@ input.noInputBorders {
   background-color: #f00; 
 }
 
+.yellow-tooltip + .tooltip > .tooltip-inner {
+  background-color: #ffff00; 
+  color: darkgreen;
+}
+
 
 /* #legendDiv {
   --tooltip-bg-color: #7e5730;
