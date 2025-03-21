@@ -833,8 +833,10 @@ class MyPlot extends Plot {
 
         if (
           !samples ||
-          (samples.length == 0 && !self.relationFn && !providedFn) /* &&
-            !Static.inverseFunction */ //Added Today
+          (samples.length == 0 &&
+            !self.relationFn &&
+            !providedFn &&
+            !Static.inverseFunction) //Added Today
         ) {
           // if (self.relationFn) {
           //   return;
