@@ -619,9 +619,12 @@ class InfoPropertiesPane extends Pane {
           }
           data.setSamples(s);
         }
-      } else if (curCurve.parametricFnX && curCurve.parametricFnY) {
-        let parametricFnX = curCurve.parametricFnX,
-          parametricFnY = curCurve.parametricFnY;
+      } else if (
+        curCurve.expandedParametricFnX &&
+        curCurve.expandedParametricFnY
+      ) {
+        let parametricFnX = curCurve.expandedParametricFnX,
+          parametricFnY = curCurve.expandedParametricFnY;
         fn = Utility.purgeAndMarkKeywords(parametricFnX);
         for (var i = 0; i < coeffs.length; ++i) {
           /* while (fn.indexOf(coeffs[i]) != -1) {
