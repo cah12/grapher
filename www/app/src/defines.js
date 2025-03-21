@@ -519,7 +519,7 @@ class Defines {
             //console.log(degOfPoly.toString());
 
             if (m_defn) {
-              Static.inverseFunction = true;
+              //Static.inverseFunction = true;
               Static.g_solution_arr = solution = await Utility.inverseFunction(
                 m_defn.value,
                 variable
