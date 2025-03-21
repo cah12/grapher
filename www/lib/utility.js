@@ -2014,6 +2014,9 @@ class Utility {
         yVal = parser.eval({ x: xVal });
         try {
           if (math.isNaN(yVal) || !isFinite(yVal)) {
+            if (Static.inverseFunction) {
+              return [];
+            }
             if (handleError(xVal) == -1) {
               continue;
             }
@@ -2394,22 +2397,27 @@ class Utility {
 
     let exponent = null;
     let lhs = null;
-    try {
-      if (
-        degOfPoly &&
-        degOfPoly.toString() != "0" &&
-        math.evaluate(degOfPoly.toString()) < 1
-      ) {
-        exponent = math.evaluate(degOfPoly.toString());
-        exponent = math.inv(exponent);
-        lhs = `x^${exponent}`;
-        const rhs = nerdamer(`simplify((${_defn})^${exponent})`).toString();
-        _defn = `${lhs}=${rhs}`;
-      } else {
-        _defn = `${_defn}=${variable}`;
+
+    if (Static.imagePath === "images/") {
+      try {
+        if (
+          degOfPoly &&
+          degOfPoly.toString() != "0" &&
+          math.evaluate(degOfPoly.toString()) < 1
+        ) {
+          exponent = math.evaluate(degOfPoly.toString());
+          exponent = math.inv(exponent);
+          lhs = `x^${exponent}`;
+          const rhs = nerdamer(`simplify((${_defn})^${exponent})`).toString();
+          _defn = `${lhs}=${rhs}`;
+        } else {
+          _defn = `${_defn}=${variable}`;
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      _defn = `${_defn}=${variable}`;
     }
 
     let eq = null;

@@ -1944,6 +1944,7 @@ class MyPlot extends Plot {
            * This operation
            */
           if (operationType == "Inverse") {
+            Static.inverseFunction = true;
             self.relationFn = null;
             self.inverseOperation = true;
             const curve = curves[i];
@@ -1988,6 +1989,7 @@ class MyPlot extends Plot {
                     max_x
                   );
                 }
+                Static.inverseFunction = false;
               } catch (error) {
                 console.log(error);
               }

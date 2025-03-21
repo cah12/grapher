@@ -746,7 +746,7 @@ class MFunctionDlg {
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
         Static.g_solution_arr = null;
-        //Static.inverseFunction = false;
+        Static.inverseFunction = false;
         Utility.progressWait2();
 
         self.coeffs = null;
