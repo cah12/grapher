@@ -523,7 +523,12 @@ class Defines {
                 m_defn.value,
                 variable
               );
-              if (solution.length && solution.length < 2) {
+              //console.log(solution);
+              //Static.inverseFunction = true;
+              if (
+                str.length != dec.length ||
+                (solution.length && solution.length < 2)
+              ) {
                 Static.inverseFunction = true;
               }
 

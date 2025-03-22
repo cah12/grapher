@@ -745,7 +745,7 @@ class MFunctionDlg {
       }
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
-        Static.g_solution_arr = null;
+        tatic.g_solution_arr = null;
         Static.inverseFunction = false;
         Utility.progressWait2();
 
@@ -2764,7 +2764,7 @@ class MFunctionDlg {
             }
           }
 
-          if (Static.g_solution_arr) {
+          if (Static.g_solution_arr && !Static.inverseFunction) {
             for (let i = 1; i < Static.g_solution_arr.length; i++) {
               const m_fn = Static.g_solution_arr[i].toString();
               if (m_fn.indexOf("|") !== -1 || m_fn.indexOf("i") !== -1) {
