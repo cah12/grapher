@@ -2212,7 +2212,7 @@ class Utility {
       if (!obj.adjustingCurve) {
         const places = 300; //Math.min(60, obj.xDecimalPlaces);
         const inc = step / 30000;
-        const iteratn = 20000; //40000;
+        const iteratn = 80000; //40000;
         let reSample = false;
         let x_lower;
         let x_upper;
