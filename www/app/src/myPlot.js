@@ -1946,7 +1946,6 @@ class MyPlot extends Plot {
            * This operation
            */
           if (operationType == "Inverse") {
-            Static.inverseFunction = true;
             self.relationFn = null;
             self.inverseOperation = true;
             const curve = curves[i];
@@ -1956,6 +1955,9 @@ class MyPlot extends Plot {
                   curve.expandedFn,
                   curve.variable
                 );
+                if (invFn.length && invFn.length < 2) {
+                  Static.inverseFunction = true;
+                }
                 //return "failedInverse";
                 const min_x = curve.minYValue();
                 const max_x = curve.maxYValue();

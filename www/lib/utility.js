@@ -2014,6 +2014,7 @@ class Utility {
         yVal = parser.eval({ x: xVal });
         try {
           if (math.isNaN(yVal) || !isFinite(yVal)) {
+            // console.log(Static.g_solution_arr);
             if (Static.inverseFunction) {
               return [];
             }
