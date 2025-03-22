@@ -1971,8 +1971,8 @@ class MyPlot extends Plot {
                     self._functionDlg.title = Utility.generateCurveName(self);
                     if (i > 0) {
                       self._functionDlg.title = Utility.generateCurveName(
-                        self,
-                        "0~curve_"
+                        self /* ,
+                        "0~curve_" */
                       );
                     }
                     await self.functionDlgCb(
