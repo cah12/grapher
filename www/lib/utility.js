@@ -5665,12 +5665,12 @@ class Utility {
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
       if (
-        element.y.re &&
+        element.y.re != undefined &&
         this.adjustForDecimalPlaces(element.y.re, places) != element.x
       ) {
         linr = false;
         break;
-      } else if (!element.y.re && element.y != element.x) {
+      } else if (element.y.re === undefined && element.y != element.x) {
         linr = false;
         break;
       }
