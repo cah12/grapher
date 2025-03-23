@@ -5664,7 +5664,10 @@ class Utility {
     let linr = true;
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      if (element.y.re && element.y.re != element.x) {
+      if (
+        element.y.re &&
+        this.adjustForDecimalPlaces(element.y.re, places) != element.x
+      ) {
         linr = false;
         break;
       } else if (!element.y.re && element.y != element.x) {
@@ -5678,7 +5681,10 @@ class Utility {
 
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      if (element.y.re && element.y.re * -1 != element.x) {
+      if (
+        element.y.re &&
+        this.adjustForDecimalPlaces(element.y.re, places) * -1 != element.x
+      ) {
         linr = false;
         break;
       } else if (!element.y.re && element.y * -1 != element.x) {
