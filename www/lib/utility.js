@@ -4728,7 +4728,7 @@ class Utility {
   }
 
   static isParametricFunction(str) {
-    if (!str && str.length && str.indexOf(",") != -1) {
+    if (!str || (str && str.length === 0) || str.indexOf(",") === -1) {
       return false;
     }
     const indOfCurly = str.indexOf("{");
