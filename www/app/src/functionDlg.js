@@ -1594,11 +1594,15 @@ class MFunctionDlg {
             self.variable !== "y"
           ) {
             try {
-              lhs = await plot.defines.expandDefines(
-                arr[0],
-                self.variable,
-                true
-              );
+              if (arr[0] === "y") {
+                lhs = "y";
+              } else {
+                lhs = await plot.defines.expandDefines(
+                  arr[0],
+                  self.variable,
+                  true
+                );
+              }
               if (!Utility.isValidExpression(lhs, "y", arr[1], self.variable)) {
                 Utility.displayErrorMessage(
                   mf,
@@ -1630,6 +1634,7 @@ class MFunctionDlg {
                 self.variable,
                 true
               );
+              expanded = true;
               if (!Utility.isValidExpression(rhs, "y", arr[0], self.variable)) {
                 Utility.displayErrorMessage(
                   mf,
@@ -1959,13 +1964,20 @@ class MFunctionDlg {
                   }
                 }
               }
-              if (m_lhs !== "0" && fnDlgFunctionVal !== m_lhs) {
+              if (
+                self.variable != "y" &&
+                m_lhs != "y" &&
+                m_lhs !== "0" &&
+                fnDlgFunctionVal !== m_lhs
+              ) {
                 try {
-                  m_lhs = await doExpandDefinesAndAdjustLogBase(
-                    m_lhs,
-                    self.variable,
-                    false
-                  );
+                  if (!expanded) {
+                    m_lhs = await doExpandDefinesAndAdjustLogBase(
+                      m_lhs,
+                      self.variable,
+                      false
+                    );
+                  }
                   if (!m_lhs) {
                     // alert(
                     //   `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
@@ -1986,11 +1998,15 @@ class MFunctionDlg {
               m_rhs = arr[1];
               if (arr.length == 2) {
                 try {
-                  m_rhs = await doExpandDefinesAndAdjustLogBase(
-                    m_rhs,
-                    self.variable,
-                    false
-                  );
+                  if (m_rhs != "y") {
+                    if (!expanded) {
+                      m_rhs = await doExpandDefinesAndAdjustLogBase(
+                        m_rhs,
+                        self.variable,
+                        false
+                      );
+                    }
+                  }
                   if (!m_rhs /*  && m_lhs !== "0" */) {
                     // alert(
                     //   `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`
@@ -2006,6 +2022,7 @@ class MFunctionDlg {
                   console.log(error);
                   return;
                 }
+                expanded = true;
               }
 
               if (arr.length == 2) {
@@ -2228,7 +2245,7 @@ class MFunctionDlg {
             arr.length == 1 &&
             !Utility.isParametricFunction(fnDlgFunctionVal)
           ) {
-            expanded = true;
+            //expanded = true;
             let dec = Utility.getFullDerivativeDeclaration(
               fnDlgFunctionVal,
               self.variable
@@ -2236,14 +2253,19 @@ class MFunctionDlg {
             if (!dec) {
               try {
                 //console.time("timer");
-                self.expandedFn =
-                  self.fn =
-                  fnDlgFunctionVal =
-                    await plot.defines.expandDefines(
-                      fnDlgFunctionVal,
-                      self.variable,
-                      false
-                    );
+                if (!expanded) {
+                  self.expandedFn =
+                    self.fn =
+                    fnDlgFunctionVal =
+                      await plot.defines.expandDefines(
+                        fnDlgFunctionVal,
+                        self.variable,
+                        false
+                      );
+                  expanded = true;
+                } else {
+                  self.expandedFn = self.fn = fnDlgFunctionVal;
+                }
                 //console.timeEnd("timer");
                 if (!self.expandedFn) {
                   Utility.progressWait2(false);

@@ -2999,7 +2999,12 @@ class Utility {
 
   static getFunctionDeclaration(str, variable = "x") {
     //f(x)
-    if (!str || (str && str.length === 0)) {
+    if (
+      !str ||
+      str.length < 4 ||
+      str.indexOf("(") === -1 ||
+      str.indexOf(")") === -1
+    ) {
       return null;
     }
     let m_str = Utility.purgeAndMarkKeywords(str);

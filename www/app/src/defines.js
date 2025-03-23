@@ -840,7 +840,7 @@ class Defines {
     };
 
     this.expandDefines = async function (str, variable, derive = true) {
-      if ($.isNumeric(str)) {
+      if ($.isNumeric(str) || (str === "y" && variable != "y")) {
         return str;
       }
       if (!str || str.length === 0) {
