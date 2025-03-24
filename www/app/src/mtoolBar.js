@@ -800,7 +800,12 @@ class MToolBar extends ToolBar {
           self.disable(sBar);
           _plot.tbar.hideDropdownItem("View", 10);
           if (_plot.rightSidebar && _plot.rightSidebar.isSideBarVisible()) {
-            Utility.alert("Ooops!! Nothing to watch.");
+            //Utility.alert("Ooops!! Nothing to watch.");
+            Utility.alert(
+              "Ooops!! Nothing to watch.",
+              null,
+              "Nothing_to_watch"
+            );
             _plot.rightSidebar.showSidebar(false);
             _plot.sidebar.setSidebarReDisplay(true);
           }
