@@ -2284,7 +2284,7 @@ class PlotPropertiesPane extends PropertiesPane {
       type: "select",
       selectorOptions: ["Display data", "remove it", "Modify it"],
     });
-    var addRemovePoint = this.addProperty({
+    const addRemovePoint = this.addProperty({
       name: "Add/Remove Point",
       title:
         "If checked, point addition (with double click) and point removal (with left click) is enabled. Point selection (P-Sel), is disabled.",
@@ -2292,6 +2292,8 @@ class PlotPropertiesPane extends PropertiesPane {
       type: "checkbox",
       parentId: "graphSettings",
     });
+
+    plot.addRemovePointSelector = addRemovePoint;
 
     this.init(); //call this method after adding all properties
 
@@ -3589,6 +3591,8 @@ class PlotPropertiesPane extends PropertiesPane {
       if (this.checked) {
         plot.panner.setEnabled(false);
         plot.tbar.setButtonCheck(plot.tbar.pan, false);
+        plot.tbar.disable(plot.tbar.pan);
+
         plot.zm.setEnabled(false);
         plot.tbar.setButtonCheck(plot.tbar.zoom, false);
       }

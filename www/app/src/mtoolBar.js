@@ -46,6 +46,11 @@ class MToolBar extends ToolBar {
         _plot.zm.setZoomBase(_plot.zm.scaleRect());
 
         _plot.curveSelector.abortSelection();
+
+        _plot.tbar.setButtonCheck(self.pSel, false);
+        if (_plot.addRemovePointSelector[0].checked) {
+          _plot.addRemovePointSelector.click();
+        }
         //_plot.rv.preventDragging(false);
       }
       //if (checkedValue == Static.getTranslation(document.documentElement.getAttribute("lang"), "Pan")) {
@@ -54,6 +59,12 @@ class MToolBar extends ToolBar {
         _plot.zm.setEnabled(false);
         _plot.pan.setEnabled(true);
         _plot.curveSelector.abortSelection();
+
+        _plot.tbar.setButtonCheck(self.pSel, false);
+
+        if (_plot.addRemovePointSelector[0].checked) {
+          _plot.addRemovePointSelector.click();
+        }
 
         Utility.setAutoScale(_plot, false);
         Static.trigger("autoScalingEnabled", false);
@@ -438,6 +449,8 @@ class MToolBar extends ToolBar {
       tooltip:
         'Turn on "Point Selection" and turns off "Add/Remove Point". This may affect response.',
     });
+
+    this.pSel = pSel;
 
     Static.bind("addRemovePoint curveSel", function (e, on) {
       if (on) {
