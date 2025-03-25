@@ -3584,6 +3584,15 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.zm.setTrackerMode(Picker.DisplayMode.ActiveOnly);
       }
       Static.trigger("addRemovePoint", this.checked);
+
+      ///////Added///////////
+      if (this.checked) {
+        plot.panner.setEnabled(false);
+        plot.tbar.setButtonCheck(plot.tbar.pan, false);
+        plot.zm.setEnabled(false);
+        plot.tbar.setButtonCheck(plot.tbar.zoom, false);
+      }
+      ///////////////
     });
     errorResponse.change(function () {
       var index = $(this)[0].selectedIndex;

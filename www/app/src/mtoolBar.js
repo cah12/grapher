@@ -293,6 +293,7 @@ class MToolBar extends ToolBar {
       name: "viewMode",
       cb: radioButtonCb,
     });
+    self.zoom = zoom;
     self.pan = this.addToolButton("radio", {
       label: "Pa&n",
       tooltip:
@@ -422,6 +423,16 @@ class MToolBar extends ToolBar {
       cb: function (on) {
         _plot.curveClosestPoint.setEnabled(on);
         _plot.curveSelector.abortSelection();
+
+        ///////Added///////////
+        if (on) {
+          _plot.panner.setEnabled(false);
+          self.setButtonCheck(self.pan, false);
+          _plot.zm.setEnabled(false);
+          self.setButtonCheck(zoom, false);
+        }
+        ///////////////
+
         Static.trigger("pSel", on);
       },
       tooltip:
