@@ -265,7 +265,7 @@ class MyCurve extends Curve {
     }
   }
 
-  doDraw(painter, style, xMap, yMap, from, to, samples) {
+  async doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
     if (!self.discontinuity.length && !self.discontinuosCurvePending) {

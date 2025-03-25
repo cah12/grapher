@@ -500,7 +500,7 @@ Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
 Static.solveFor = function (exp, v, indepVar = "x") {
-  console.log(456);
+  //console.log(456);
   //Utility.progressWait();
   // exp = Utility.insertProductSign(exp, indepVar);
   if (exp.indexOf("=") != -1) {

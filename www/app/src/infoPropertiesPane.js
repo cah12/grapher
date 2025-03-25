@@ -413,6 +413,7 @@ class InfoPropertiesPane extends Pane {
                 $("#coeff_val" + c).trigger("input");
               },
             };
+
             $("#coeff_val" + c)
               .val(parseFloat($("#coeff_val" + c + "_min").val()))
               .animate({ value: maxValue }, option);
@@ -589,7 +590,7 @@ class InfoPropertiesPane extends Pane {
             numOfSamples: curCurve.numOfSamples,
           }); */
 
-          let xValues, expr;
+          /* let xValues, expr;
           try {
             expr = math.compile(fn);
             // evaluate the expression repeatedly for different values of x
@@ -612,7 +613,11 @@ class InfoPropertiesPane extends Pane {
             scope.set(curCurve.variable, x);
             return new Misc.Point(x, expr.evaluate(scope));
           });
+ */
 
+          let s = makeAnimationSaples(curCurve);
+
+          ///////////////////////////////////
           if (!s) {
             console.log(784);
             return;
@@ -702,10 +707,89 @@ class InfoPropertiesPane extends Pane {
       plot.autoRefresh();
     }
 
+    function makeAnimationSaples(curCurve) {
+      //console.time("makeAnimationSaples");
+      let xValues, expr;
+      const step = (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples;
+      try {
+        expr = math.compile(curCurve.expandedFn);
+        // evaluate the expression repeatedly for different values of x
+        xValues = math
+          .range(curCurve.lowerX - step, curCurve.upperX + step, step)
+          .toArray();
+      } catch (error) {
+        console.log(error);
+      }
+
+      const scope = new Map();
+      let s = xValues.map(function (x, index) {
+        scope.set(curCurve.variable, x);
+        let y = expr.evaluate(scope);
+        let p = null;
+        if (!isFinite(y) && y.re != undefined) {
+          y = y.re;
+          if (index < xValues.length - 1)
+            p = new Misc.Point(curCurve.lowerX /* xValues[index + 1] */, y);
+        } else {
+          p = new Misc.Point(x, y);
+        }
+        return p;
+      });
+      s = s.filter(function (p, index) {
+        if (!p) {
+          return false;
+        }
+        if (index > 0 && s[index - 1] && s[index - 1].y === p.y) {
+          return false;
+        }
+        return p;
+      });
+
+      const plot = curCurve.plot();
+      //console.log(plot);
+      const xdec = plot.axisDecimalPlaces(curCurve.xAxis());
+      const ydec = plot.axisDecimalPlaces(curCurve.yAxis());
+
+      scope.set(curCurve.variable, curCurve.lowerX - step);
+
+      let y = null;
+      const inc = step / 3000;
+      let n = 0;
+      let x = curCurve.lowerX - step;
+      while (!isFinite(y) && n < 8000) {
+        x += inc * n;
+        scope.set(curCurve.variable, x);
+        y = expr.evaluate(scope);
+        n++;
+      }
+      s[0] = new Misc.Point(
+        Utility.adjustForDecimalPlaces(curCurve.lowerX, xdec),
+        Utility.adjustForDecimalPlaces(y, ydec)
+      );
+
+      n = 0;
+      x = curCurve.upperX + step;
+      while (!isFinite(y) && n < 8000) {
+        x -= inc * n;
+        scope.set(curCurve.variable, x);
+        y = expr.evaluate(scope);
+        n++;
+      }
+
+      s[s.length - 1] = new Misc.Point(
+        Utility.adjustForDecimalPlaces(curCurve.upperX, xdec),
+        Utility.adjustForDecimalPlaces(y, ydec)
+      );
+
+      //console.timeEnd("makeAnimationSaples");
+      return s;
+    }
+
     function adjustCurveNonUnique(selector) {
       //console.time();
-      // const doReplot = plot.autoReplot();
-      // plot.setAutoReplot(false);
+
+      const doReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       const currentCurveCoeffs = plot.findPlotCurve(
         self.currentCurveName()
       ).coeffs;
@@ -746,40 +830,23 @@ class InfoPropertiesPane extends Pane {
               if (curCurve.unboundedRange) {
                 data.setFn(curCurve.expandedFn);
               } else {
-                //console.time();
+                /*  //console.time();
 
-                /* var s = Utility.makeSamples({
+                var s = Utility.makeSamples({
                   adjustingCurve: true,
                   fx: curCurve.expandedFn,
                   lowerX: curCurve.lowerX,
                   upperX: curCurve.upperX,
                   numOfSamples: curCurve.numOfSamples,
-                }); */
-
-                let xValues, expr;
-                try {
-                  expr = math.compile(curCurve.expandedFn);
-                  // evaluate the expression repeatedly for different values of x
-                  xValues = math
-                    .range(
-                      curCurve.lowerX,
-                      curCurve.upperX,
-                      (curCurve.upperX - curCurve.lowerX) /
-                        curCurve.numOfSamples
-                    )
-                    .toArray();
-                } catch (error) {
-                  console.log(error);
-                }
-
-                if (xValues[xValues.length - 1] < curCurve.upperX) {
-                  xValues.push(curCurve.upperX);
-                }
-                const scope = new Map();
-                const s = xValues.map(function (x) {
-                  scope.set(curCurve.variable, x);
-                  return new Misc.Point(x, expr.evaluate(scope));
                 });
+               // console.timeEnd(); */
+
+                //console.time();
+                let s = makeAnimationSaples(curCurve);
+
+                //console.log("length", s.length);
+
+                //console.timeEnd();
 
                 if (!s) {
                   console.log(782);
@@ -896,7 +963,7 @@ class InfoPropertiesPane extends Pane {
         }
       }
       Static.trigger("curveAdjusted");
-      //plot.setAutoReplot(doReplot);
+      plot.setAutoReplot(doReplot);
       plot.autoRefresh();
     }
 
