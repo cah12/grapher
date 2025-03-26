@@ -83,6 +83,129 @@ class Plot {
 
    */
   constructor(_plotDiv, pTitle) {
+    class AxesWidgetOverlay extends WidgetOverlay {
+      constructor(w) {
+        super(w);
+      }
+      drawOverlay(painter) {
+        var m_tickLength = [];
+        m_tickLength[ScaleDiv.TickType.MinorTick] = 4.0;
+        m_tickLength[ScaleDiv.TickType.MediumTick] = 6.0;
+        m_tickLength[ScaleDiv.TickType.MajorTick] = 8.0;
+        const self = this;
+        const scaleDrawX = self.scaleDrawX;
+        const m_scaleDivX = scaleDrawX.scaleDiv();
+
+        const scaleDrawY = self.scaleDrawY;
+        const m_scaleDivY = scaleDrawY.scaleDiv();
+
+        painter.setFont(new Misc.Font());
+
+        //painter.canvasWidth()
+        //console.log(self.getCanvas().css("height"));
+
+        // console.log(painter.canvasWidth());
+        // console.log(painter.canvasHeight());
+
+        if (scaleDrawY.alignment() === ScaleDraw.Alignment.LeftScale) {
+          if (
+            scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
+          ) {
+            var majorTicks = m_scaleDivY.ticks(ScaleDiv.TickType.MajorTick);
+
+            for (var i = 0; i < majorTicks.length; i++) {
+              var v = majorTicks[i];
+              if (m_scaleDivY.contains(v)) {
+                //scaleDraw.drawLabel(painter, v);
+                var pos = scaleDrawY.labelPosition(painter.context(), v);
+                painter.drawText(
+                  scaleDrawY.label(v),
+                  pos.x / 2,
+                  pos.y,
+                  "right"
+                );
+              }
+            }
+          }
+          if (scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Ticks)) {
+            painter.save();
+            painter.setPen(new Misc.Pen("grey", 1));
+            for (
+              var tickType = ScaleDiv.TickType.MinorTick;
+              tickType < ScaleDiv.TickType.NTickTypes;
+              tickType++
+            ) {
+              var ticks = m_scaleDivY.ticks(tickType);
+              const ctx = painter.context();
+              ctx.translate((-1 * painter.canvasWidth()) / 2, 0);
+              for (i = 0; i < ticks.length; i++) {
+                var v = ticks[i];
+                if (m_scaleDivY.contains(v))
+                  scaleDrawY.drawTick(painter, v, m_tickLength[tickType]);
+              }
+              ctx.translate(painter.canvasWidth() / 2, 0);
+            }
+            painter.restore();
+          }
+        }
+        if (scaleDrawX.alignment() === ScaleDraw.Alignment.BottomScale) {
+          if (
+            scaleDrawX.hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
+          ) {
+            var majorTicks = m_scaleDivX.ticks(ScaleDiv.TickType.MajorTick);
+
+            for (var i = 0; i < majorTicks.length; i++) {
+              var v = majorTicks[i];
+              if (m_scaleDivX.contains(v)) {
+                //scaleDraw.drawLabel(painter, v);
+                var pos = scaleDrawX.labelPosition(painter.context(), v);
+                painter.drawText(
+                  scaleDrawX.label(v),
+                  pos.x,
+                  pos.y + painter.canvasHeight() / 2,
+                  "center"
+                );
+              }
+            }
+          }
+          if (scaleDrawX.hasComponent(AbstractScaleDraw.ScaleComponent.Ticks)) {
+            painter.save();
+            painter.setPen(new Misc.Pen("grey", 1));
+            for (
+              var tickType = ScaleDiv.TickType.MinorTick;
+              tickType < ScaleDiv.TickType.NTickTypes;
+              tickType++
+            ) {
+              var ticks = m_scaleDivX.ticks(tickType);
+              const ctx = painter.context();
+              const delta = painter.canvasHeight() / 2 - 1;
+              ctx.translate(0, delta);
+              for (i = 0; i < ticks.length; i++) {
+                var v = ticks[i];
+                if (m_scaleDivX.contains(v))
+                  scaleDrawX.drawTick(painter, v, m_tickLength[tickType]);
+              }
+              ctx.translate(0, -delta);
+            }
+            painter.restore();
+          }
+        }
+
+        painter.drawLine(
+          painter.canvasWidth() / 2,
+          0,
+          painter.canvasWidth() / 2,
+          painter.canvasHeight()
+        );
+        painter.drawLine(
+          0,
+          painter.canvasHeight() / 2,
+          painter.canvasWidth(),
+          painter.canvasHeight() / 2
+        );
+      }
+    }
+
     this.plotDiv = null;
     if (_plotDiv == undefined) {
       this.plotDiv = $("#plotDiv");
@@ -1548,6 +1671,13 @@ class Plot {
       this.autoRefresh();
     };
 
+    self.axesWidgetOverlay = new AxesWidgetOverlay(self.getCentralWidget());
+    //self.axesWidgetOverlay.setZ(200);
+
+    self.axesWidgetOverlay.scaleDrawY = d_axisData[0].scaleWidget.scaleDraw();
+
+    self.axesWidgetOverlay.scaleDrawX = d_axisData[2].scaleWidget.scaleDraw();
+
     /**
      * Redraw the plot.
      *
@@ -1581,6 +1711,21 @@ class Plot {
         );
         axisWidget.draw();
       }
+
+      //////////////////////////CenterAxis/////////////////
+
+      if (Static.CenterAxes) {
+        //if (self.axesWidgetOverlay) {
+        // self.axesWidgetOverlay.scaleDraw =
+        //   d_axisData[0].scaleWidget.scaleDraw();
+        self.axesWidgetOverlay.draw();
+
+        // self.axesWidgetOverlay.scaleDraw =
+        //   d_axisData[2].scaleWidget.scaleDraw();
+        // self.axesWidgetOverlay.draw();
+        //}
+      }
+      /////////////////////////////////////////////////
 
       this.drawTitle();
       this.drawFooter();
@@ -1698,5 +1843,27 @@ class Plot {
         changeOfHeight,
       ]);
     });
+
+    //////////////////////////CenterAxis/////////////////
+    this.alignAxisCenter = function (on = true) {
+      if (on) {
+        self.setAxisTitle(Axis.AxisId.yLeft, "");
+        self.setAxisTitle(Axis.AxisId.xBottom, "");
+        self.enableAxis(Axis.AxisId.yLeft, false);
+        self.enableAxis(Axis.AxisId.xBottom, false);
+        self.enableAxis(Axis.AxisId.yRight, false);
+        self.enableAxis(Axis.AxisId.xTop, false);
+      } else {
+        self.setAxisTitle(Axis.AxisId.yLeft, "Left scale");
+        self.setAxisTitle(Axis.AxisId.xBottom, "Bottom scale");
+        self.enableAxis(Axis.AxisId.yLeft, true);
+        self.enableAxis(Axis.AxisId.xBottom, true);
+        self.enableAxis(Axis.AxisId.yRight, false);
+        self.enableAxis(Axis.AxisId.xTop, false);
+
+        self.axesWidgetOverlay.clearCanvas();
+      }
+    };
+    ///////////////////////////////////////////////////
   }
 }

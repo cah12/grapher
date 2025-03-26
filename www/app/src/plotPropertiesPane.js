@@ -966,6 +966,17 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "scalePosition",
       parentId: "scaleSettings",
     });
+    //////////////////////////CenterAxis/////////////////
+    this.addProperty({
+      name: "Center Axes",
+      id: "centerAxes",
+      parentId: "scalePosition",
+      type: "checkbox",
+      //checked: true,
+      title: "Enable center axes and disable rectangular axes.",
+      fun: setScaleAxes,
+    });
+    ///////////////////////////////////////////////////
     this.addProperty({
       name: "Bottom",
       title: "Configure bottom scale type",
@@ -2946,6 +2957,15 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.setAxisTitleFont(Axis.AxisId.yRight, font);
     }
 
+    //////////////////////////CenterAxis/////////////////
+    function setScaleAxes(checked) {
+      Static.CenterAxes = checked;
+      plot.alignAxisCenter(checked);
+      plot.autoRefresh();
+      $(window).trigger("resize"); //Why this line
+    }
+    /////////////////////////////
+
     /////////////
     function scaleLabelFont(index) {
       var font = plot.axisLabelFont(Axis.AxisId.xBottom);
@@ -3539,7 +3559,7 @@ class PlotPropertiesPane extends PropertiesPane {
         AbstractScaleDraw.ScaleComponent.Ticks,
         this.checked
       );
-      tickLengthRow.toggle(this.checked);
+      //tickLengthRow.toggle(this.checked);
     });
 
     tick_length.change(function () {

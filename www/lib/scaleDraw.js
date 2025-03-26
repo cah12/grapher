@@ -2,10 +2,10 @@
 
 /**
  * A class for drawing scales.
- * 
- * ScaleDraw can be used to draw linear or logarithmic scales. A scale has a position, an 
+ *
+ * ScaleDraw can be used to draw linear or logarithmic scales. A scale has a position, an
  * alignment and a length, which can be specified.
- * After a scale division has been specified as a ScaleDiv object using {@link AbstractScaleDraw#setScaleDiv setScaleDiv()}, the 
+ * After a scale division has been specified as a ScaleDiv object using {@link AbstractScaleDraw#setScaleDiv setScaleDiv()}, the
  * scale can be drawn with the {@link AbstractScaleDraw#draw draw()} member.
  * @extends AbstractScaleDraw
  */
@@ -14,12 +14,12 @@ class ScaleDraw extends AbstractScaleDraw {
     super();
     const Enum = Enumerator.getDefaultEnumNampespace();
     //AbstractScaleDraw.call(this);
-    var m_alignment = ScaleDraw.Alignment.BottomScale;    
+    var m_alignment = ScaleDraw.Alignment.BottomScale;
 
     /**
      * Return the orientation
-     * 
-     * TopScale, BottomScale are horizontal (Static.Horizontal) scales, 
+     *
+     * TopScale, BottomScale are horizontal (Static.Horizontal) scales,
      * LeftScale, RightScale are vertical (Static.Vertical) scales.
      * @returns {Number} Orientation of the scale
      * @see {@link ScaleDraw#alignment alignment()}
@@ -33,7 +33,6 @@ class ScaleDraw extends AbstractScaleDraw {
       return Static.Vertical;
     };
 
-    
     /**
      * Return alignment of the scale
      * @returns {ScaleDraw.Alignment} Alignment of the scale
@@ -42,11 +41,10 @@ class ScaleDraw extends AbstractScaleDraw {
     this.alignment = function () {
       return m_alignment;
     };
-    
 
     /**
      * Sets the alignment of the scale
-     * 
+     *
      * The default alignment is ScaleDraw.Alignment.BottomScale
      * @param {ScaleDraw.Alignment} align Alignment of the scale
      * @see {@link ScaleDraw#alignment alignment()}
@@ -55,11 +53,10 @@ class ScaleDraw extends AbstractScaleDraw {
       m_alignment = align;
     };
 
-    
     /**
      *  Determine the minimum border distance
-     * 
-     * This member function returns the minimum space needed to draw the 
+     *
+     * This member function returns the minimum space needed to draw the
      * mark labels at the scale's endpoints.
      * @param {Misc.Font} font Font
      * @param {object} startAndEndObj Object with start and end properties
@@ -122,10 +119,8 @@ class ScaleDraw extends AbstractScaleDraw {
             end = qCeil( e );*/
     };
 
-    
-
     /**
-     * 
+     *
      * @returns  {String}  A string representing the object.
      */
     this.toString = function () {
@@ -182,7 +177,6 @@ class ScaleDraw extends AbstractScaleDraw {
       }
     };
 
-    
     /**
      * Draws the baseline of the scale
      * @param {PaintUtil.Painter} painter Painter
@@ -221,11 +215,10 @@ class ScaleDraw extends AbstractScaleDraw {
       }
     };
 
-    
     /**
      * Find the position, where to paint a label.
-     * 
-     * The position has a distance that depends on the length of the ticks 
+     *
+     * The position has a distance that depends on the length of the ticks
      * in direction of the alignment().
      * @param {object} ctx 2d context for the central div canvas
      * @param {Number} value Value
@@ -276,14 +269,13 @@ class ScaleDraw extends AbstractScaleDraw {
       return new Misc.Point(px, py);
     };
 
-    
     /**
      * Draws the label for a major scale tick
-     * @param {PaintUtil.Painter} painter 
+     * @param {PaintUtil.Painter} painter
      * @param {Number} value Value
      * @see {@link ScaleDraw#drawTick drawTick()}
      * @see {@link ScaleDraw#drawBackbone drawBackbone()}
-     * 
+     *
      */
     this.drawLabel = function (painter, value) {
       value = Utility.toPrecision(value, this.precision());
@@ -294,6 +286,7 @@ class ScaleDraw extends AbstractScaleDraw {
       if (lbl === "") return;
 
       var pos = this.labelPosition(painter.context(), value);
+
       if (
         this.orientation() == Static.Horizontal &&
         (pos.x === 0 || pos.x == painter.canvasWidth())
@@ -339,7 +332,7 @@ class ScaleDraw extends AbstractScaleDraw {
 }
 /**
  * <div style="border-bottom: 1px solid #7393B3; font-size: 20px">enum{@link ScaleDraw.Alignment}</div>
- * 
+ *
  * Alignment of the scale
  * @name ScaleDraw.Alignment
  * @readonly

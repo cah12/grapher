@@ -14,6 +14,7 @@
 class AbstractScaleDraw {
   constructor() {
     Utility.makeAbstract(this, AbstractScaleDraw);
+
     const Enum = Enumerator.getDefaultEnumNampespace();
 
     var m_components =
