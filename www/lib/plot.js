@@ -84,10 +84,16 @@ class Plot {
    */
   constructor(_plotDiv, pTitle) {
     class AxesWidgetOverlay extends WidgetOverlay {
-      constructor(w) {
-        super(w);
+      constructor(plot) {
+        super(plot.getCentralWidget());
+        this.plot = plot;
+
+        this.scaleDrawY = plot.axisWidget(0).scaleDraw();
+        this.scaleDrawX = plot.axisWidget(2).scaleDraw();
+        this.setZ(4000);
       }
       drawOverlay(painter) {
+        this.clearCanvas();
         var m_tickLength = [];
         m_tickLength[ScaleDiv.TickType.MinorTick] = 4.0;
         m_tickLength[ScaleDiv.TickType.MediumTick] = 6.0;
@@ -99,13 +105,15 @@ class Plot {
         const scaleDrawY = self.scaleDrawY;
         const m_scaleDivY = scaleDrawY.scaleDiv();
 
-        painter.setFont(new Misc.Font());
+        let backBoneSpacing = 0;
+        if (
+          scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Backbone)
+        ) {
+          backBoneSpacing = 1;
+        }
 
-        //painter.canvasWidth()
-        //console.log(self.getCanvas().css("height"));
-
-        // console.log(painter.canvasWidth());
-        // console.log(painter.canvasHeight());
+        var font = this.plot.axisLabelFont(Axis.AxisId.xBottom);
+        painter.setFont(font);
 
         if (scaleDrawY.alignment() === ScaleDraw.Alignment.LeftScale) {
           if (
@@ -116,11 +124,10 @@ class Plot {
             for (var i = 0; i < majorTicks.length; i++) {
               var v = majorTicks[i];
               if (m_scaleDivY.contains(v)) {
-                //scaleDraw.drawLabel(painter, v);
-                var pos = scaleDrawY.labelPosition(painter.context(), v);
+                const pos = scaleDrawY.labelPosition(painter.context(), v);
                 painter.drawText(
                   scaleDrawY.label(v),
-                  pos.x / 2,
+                  pos.x / 2 - 6 - backBoneSpacing,
                   pos.y,
                   "right"
                 );
@@ -137,14 +144,28 @@ class Plot {
             ) {
               var ticks = m_scaleDivY.ticks(tickType);
               const ctx = painter.context();
-              ctx.translate((-1 * painter.canvasWidth()) / 2, 0);
+              const delta = painter.canvasWidth() / 2 + backBoneSpacing;
+              ctx.translate(-delta, 0);
               for (i = 0; i < ticks.length; i++) {
                 var v = ticks[i];
                 if (m_scaleDivY.contains(v))
                   scaleDrawY.drawTick(painter, v, m_tickLength[tickType]);
               }
-              ctx.translate(painter.canvasWidth() / 2, 0);
+              ctx.translate(delta, 0);
             }
+            painter.restore();
+          }
+
+          if (
+            scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Backbone)
+          ) {
+            painter.save();
+            const ctx = painter.context();
+            const delta = painter.canvasWidth() / 2 + backBoneSpacing;
+            ctx.translate(-delta, 0);
+            painter.setPen(new Misc.Pen("grey", 1));
+            scaleDrawY.drawBackbone(painter);
+            ctx.translate(delta, 0);
             painter.restore();
           }
         }
@@ -178,7 +199,7 @@ class Plot {
             ) {
               var ticks = m_scaleDivX.ticks(tickType);
               const ctx = painter.context();
-              const delta = painter.canvasHeight() / 2 - 1;
+              const delta = painter.canvasHeight() / 2 - 1 + backBoneSpacing;
               ctx.translate(0, delta);
               for (i = 0; i < ticks.length; i++) {
                 var v = ticks[i];
@@ -187,6 +208,18 @@ class Plot {
               }
               ctx.translate(0, -delta);
             }
+            painter.restore();
+          }
+          if (
+            scaleDrawX.hasComponent(AbstractScaleDraw.ScaleComponent.Backbone)
+          ) {
+            painter.save();
+            const ctx = painter.context();
+            const delta = painter.canvasHeight() / 2 - 1 + backBoneSpacing;
+            ctx.translate(0, delta);
+            painter.setPen(new Misc.Pen("grey", 1));
+            scaleDrawX.drawBackbone(painter);
+            ctx.translate(0, -delta);
             painter.restore();
           }
         }
@@ -230,6 +263,7 @@ class Plot {
 
     const self = this; //'self' is used in place of 'this' in callbacks
     var m_plotItemStore = [];
+    let m_centerAxesEnabled = false;
     var d_axisData = [];
     var plotDivHeightAsPercentOfPlotDivParent = 0;
 
@@ -250,6 +284,8 @@ class Plot {
     var legendEnable = false;
     var m_cursor = "";
     var m_defaultCursor = "";
+
+    let m_axisTitleY, m_axisTitleX;
 
     var m_autoReplot = false;
     var m_legend = null;
@@ -1671,12 +1707,51 @@ class Plot {
       this.autoRefresh();
     };
 
-    self.axesWidgetOverlay = new AxesWidgetOverlay(self.getCentralWidget());
-    //self.axesWidgetOverlay.setZ(200);
+    self.axesWidgetOverlay = new AxesWidgetOverlay(self);
 
-    self.axesWidgetOverlay.scaleDrawY = d_axisData[0].scaleWidget.scaleDraw();
+    this.enableCenterAxes = function (on) {
+      m_centerAxesEnabled = on;
+      if (on) {
+        m_axisTitleY = self.axisTitle(Axis.AxisId.yLeft);
+        self.setAxisTitle(Axis.AxisId.yLeft, "");
+        m_axisTitleX = self.axisTitle(Axis.AxisId.xBottom);
+        self.setAxisTitle(Axis.AxisId.xBottom, "");
+        self.enableAxis(Axis.AxisId.yLeft, false);
+        self.enableAxis(Axis.AxisId.xBottom, false);
+        self.enableAxis(Axis.AxisId.yRight, false);
+        self.enableAxis(Axis.AxisId.xTop, false);
+        self.tbar.setDropdownItemCheck("View", 0, false);
+        self.tbar.setDropdownItemCheck("View", 1, false);
+        self.tbar.setDropdownItemCheck("View", 2, false);
+        self.tbar.setDropdownItemCheck("View", 3, false);
+      } else {
+        self.setAxisTitle(Axis.AxisId.yLeft, m_axisTitleY);
+        self.setAxisTitle(Axis.AxisId.xBottom, m_axisTitleX);
+        self.enableAxis(Axis.AxisId.yLeft, true);
+        self.enableAxis(Axis.AxisId.xBottom, true);
 
-    self.axesWidgetOverlay.scaleDrawX = d_axisData[2].scaleWidget.scaleDraw();
+        if (self.tbar.isDropdownItemChecked("View", 2)) {
+          self.enableAxis(Axis.AxisId.yRight, true);
+        }
+        if (self.tbar.isDropdownItemChecked("View", 3)) {
+          self.enableAxis(Axis.AxisId.xTop, true);
+        }
+
+        if (self.axisEnabled(0)) {
+          self.tbar.setDropdownItemCheck("View", 0, true);
+        }
+        if (self.axisEnabled(2)) {
+          self.tbar.setDropdownItemCheck("View", 1, true);
+        }
+        if (self.axisEnabled(1)) {
+          self.tbar.setDropdownItemCheck("View", 2, true);
+        }
+        if (self.axisEnabled(3)) {
+          self.tbar.setDropdownItemCheck("View", 3, true);
+        }
+        self.axesWidgetOverlay.clearCanvas();
+      }
+    };
 
     /**
      * Redraw the plot.
@@ -1712,20 +1787,9 @@ class Plot {
         axisWidget.draw();
       }
 
-      //////////////////////////CenterAxis/////////////////
-
-      if (Static.CenterAxes) {
-        //if (self.axesWidgetOverlay) {
-        // self.axesWidgetOverlay.scaleDraw =
-        //   d_axisData[0].scaleWidget.scaleDraw();
+      if (m_centerAxesEnabled) {
         self.axesWidgetOverlay.draw();
-
-        // self.axesWidgetOverlay.scaleDraw =
-        //   d_axisData[2].scaleWidget.scaleDraw();
-        // self.axesWidgetOverlay.draw();
-        //}
       }
-      /////////////////////////////////////////////////
 
       this.drawTitle();
       this.drawFooter();
@@ -1843,27 +1907,5 @@ class Plot {
         changeOfHeight,
       ]);
     });
-
-    //////////////////////////CenterAxis/////////////////
-    this.alignAxisCenter = function (on = true) {
-      if (on) {
-        self.setAxisTitle(Axis.AxisId.yLeft, "");
-        self.setAxisTitle(Axis.AxisId.xBottom, "");
-        self.enableAxis(Axis.AxisId.yLeft, false);
-        self.enableAxis(Axis.AxisId.xBottom, false);
-        self.enableAxis(Axis.AxisId.yRight, false);
-        self.enableAxis(Axis.AxisId.xTop, false);
-      } else {
-        self.setAxisTitle(Axis.AxisId.yLeft, "Left scale");
-        self.setAxisTitle(Axis.AxisId.xBottom, "Bottom scale");
-        self.enableAxis(Axis.AxisId.yLeft, true);
-        self.enableAxis(Axis.AxisId.xBottom, true);
-        self.enableAxis(Axis.AxisId.yRight, false);
-        self.enableAxis(Axis.AxisId.xTop, false);
-
-        self.axesWidgetOverlay.clearCanvas();
-      }
-    };
-    ///////////////////////////////////////////////////
   }
 }

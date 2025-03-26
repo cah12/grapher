@@ -99,10 +99,6 @@ Static._eps = 1.0e-300;
 Static.Horizontal = 1;
 Static.Vertical = 2;
 
-//////////////////////////CenterAxis/////////////////
-Static.CenterAxes = false;
-////////////////////////////////////
-
 Static.NoButton = -1;
 Static.LeftButton = 0;
 Static.MidButton = 1;

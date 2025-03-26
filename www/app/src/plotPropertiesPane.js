@@ -2957,14 +2957,10 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.setAxisTitleFont(Axis.AxisId.yRight, font);
     }
 
-    //////////////////////////CenterAxis/////////////////
     function setScaleAxes(checked) {
-      Static.CenterAxes = checked;
-      plot.alignAxisCenter(checked);
+      plot.enableCenterAxes(checked);
       plot.autoRefresh();
-      $(window).trigger("resize"); //Why this line
     }
-    /////////////////////////////
 
     /////////////
     function scaleLabelFont(index) {
