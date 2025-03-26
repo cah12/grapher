@@ -32,6 +32,8 @@ class MFile {
       p.footer = _plot.footer();
       p.footerFont = _plot.footerFont();
 
+      p.centerAxesEnabled = _plot.isCenterAxesEnable();
+
       p.axisTitleFont = _plot.axisTitleFont(Axis.AxisId.xBottom);
       p.xBottomAxisTitle = _plot.axisTitle(Axis.AxisId.xBottom);
       p.xTopAxisTitle = _plot.axisTitle(Axis.AxisId.xTop);
@@ -269,6 +271,10 @@ class MFile {
           Utility.setAutoScale(_plot, true);
         }
         //setAutoScale(true)
+
+        if (p.centerAxesEnabled) {
+          _plot.enableCenterAxes(true);
+        }
 
         _plot.setTitleFont(new Misc.Font(p.titleFont));
         _plot.setFooterFont(new Misc.Font(p.footerFont));

@@ -1709,6 +1709,10 @@ class Plot {
 
     self.axesWidgetOverlay = new AxesWidgetOverlay(self);
 
+    this.isCenterAxesEnabled = function () {
+      return m_centerAxesEnabled;
+    };
+
     this.enableCenterAxes = function (on) {
       m_centerAxesEnabled = on;
       if (on) {
