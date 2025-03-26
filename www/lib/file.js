@@ -32,7 +32,7 @@ class MFile {
       p.footer = _plot.footer();
       p.footerFont = _plot.footerFont();
 
-      p.centerAxesEnabled = _plot.isCenterAxesEnable();
+      p.centerAxesEnabled = _plot.isCenterAxesEnabled();
 
       p.axisTitleFont = _plot.axisTitleFont(Axis.AxisId.xBottom);
       p.xBottomAxisTitle = _plot.axisTitle(Axis.AxisId.xBottom);
