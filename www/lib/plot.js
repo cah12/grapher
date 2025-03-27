@@ -94,6 +94,9 @@ class Plot {
       }
       drawOverlay(painter) {
         this.clearCanvas();
+
+        const precisionX = this.plot.axisPrecision(Axis.AxisId.xBottom);
+        const precisionY = this.plot.axisPrecision(Axis.AxisId.yLeft);
         var m_tickLength = [];
         m_tickLength[ScaleDiv.TickType.MinorTick] = 4.0;
         m_tickLength[ScaleDiv.TickType.MediumTick] = 6.0;
@@ -126,7 +129,7 @@ class Plot {
               if (m_scaleDivY.contains(v)) {
                 const pos = scaleDrawY.labelPosition(painter.context(), v);
                 painter.drawText(
-                  scaleDrawY.label(v),
+                  scaleDrawY.label(math.format(v, precisionY)),
                   pos.x / 2 - 6 - backBoneSpacing,
                   pos.y,
                   "right"
@@ -181,7 +184,7 @@ class Plot {
                 //scaleDraw.drawLabel(painter, v);
                 var pos = scaleDrawX.labelPosition(painter.context(), v);
                 painter.drawText(
-                  scaleDrawX.label(v),
+                  scaleDrawX.label(math.format(v, precisionX)),
                   pos.x,
                   pos.y + painter.canvasHeight() / 2,
                   "center"
