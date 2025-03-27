@@ -967,7 +967,7 @@ class PlotPropertiesPane extends PropertiesPane {
       parentId: "scaleSettings",
     });
     //////////////////////////CenterAxis/////////////////
-    this.addProperty({
+    const centerAxes = this.addProperty({
       name: "Center Axes",
       id: "centerAxes",
       parentId: "scalePosition",
@@ -975,6 +975,10 @@ class PlotPropertiesPane extends PropertiesPane {
       //checked: true,
       title: "Enable center axes and disable rectangular axes.",
       fun: setScaleAxes,
+    });
+
+    Static.bind("centerAxesEnabled", function (e, on) {
+      centerAxes[0].checked = on;
     });
     ///////////////////////////////////////////////////
     this.addProperty({

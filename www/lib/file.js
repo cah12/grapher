@@ -274,6 +274,7 @@ class MFile {
 
         if (p.centerAxesEnabled) {
           _plot.enableCenterAxes(true);
+          Static.trigger("centerAxesEnabled", true);
         }
 
         _plot.setTitleFont(new Misc.Font(p.titleFont));
