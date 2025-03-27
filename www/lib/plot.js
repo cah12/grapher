@@ -129,7 +129,7 @@ class Plot {
               if (m_scaleDivY.contains(v)) {
                 const pos = scaleDrawY.labelPosition(painter.context(), v);
                 painter.drawText(
-                  scaleDrawY.label(math.format(v, precisionY)),
+                  scaleDrawY.label(v.toPrecision(precisionY)),
                   pos.x / 2 - 6 - backBoneSpacing,
                   pos.y,
                   "right"
@@ -184,7 +184,7 @@ class Plot {
                 //scaleDraw.drawLabel(painter, v);
                 var pos = scaleDrawX.labelPosition(painter.context(), v);
                 painter.drawText(
-                  scaleDrawX.label(math.format(v, precisionX)),
+                  scaleDrawX.label(v.toPrecision(precisionX)),
                   pos.x,
                   pos.y + painter.canvasHeight() / 2,
                   "center"
