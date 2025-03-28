@@ -118,11 +118,20 @@ class Plot {
         var font = this.plot.axisLabelFont(Axis.AxisId.xBottom);
         painter.setFont(font);
 
+        const centAxesAtZero = this.plot.centerAxesZero;
+        const x_0 = this.plot.transform(2, 0);
+        const y_0 = this.plot.transform(0, 0);
         if (scaleDrawY.alignment() === ScaleDraw.Alignment.LeftScale) {
           if (
             scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
           ) {
             var majorTicks = m_scaleDivY.ticks(ScaleDiv.TickType.MajorTick);
+            const ctx = painter.context();
+            //const delta = painter.canvasWidth() - x_0; /// 2 + backBoneSpacing;
+            const delta = !centAxesAtZero
+              ? painter.canvasWidth() / 2 + backBoneSpacing
+              : painter.canvasWidth() - x_0 + backBoneSpacing;
+            ctx.translate(-delta, 0);
 
             for (var i = 0; i < majorTicks.length; i++) {
               var v = majorTicks[i];
@@ -130,12 +139,13 @@ class Plot {
                 const pos = scaleDrawY.labelPosition(painter.context(), v);
                 painter.drawText(
                   scaleDrawY.label(v.toPrecision(precisionY)),
-                  pos.x / 2 - 6 - backBoneSpacing,
+                  pos.x,
                   pos.y,
                   "right"
                 );
               }
             }
+            ctx.translate(delta, 0);
           }
           if (scaleDrawY.hasComponent(AbstractScaleDraw.ScaleComponent.Ticks)) {
             painter.save();
@@ -147,7 +157,10 @@ class Plot {
             ) {
               var ticks = m_scaleDivY.ticks(tickType);
               const ctx = painter.context();
-              const delta = painter.canvasWidth() / 2 + backBoneSpacing;
+              //const delta = painter.canvasWidth() - x_0; /// 2 + backBoneSpacing;
+              const delta = !centAxesAtZero
+                ? painter.canvasWidth() / 2 + backBoneSpacing
+                : painter.canvasWidth() - x_0 + backBoneSpacing;
               ctx.translate(-delta, 0);
               for (i = 0; i < ticks.length; i++) {
                 var v = ticks[i];
@@ -164,7 +177,10 @@ class Plot {
           ) {
             painter.save();
             const ctx = painter.context();
-            const delta = painter.canvasWidth() / 2 + backBoneSpacing;
+            //const delta = painter.canvasWidth() - x_0; /// 2 + backBoneSpacing;
+            const delta = !centAxesAtZero
+              ? painter.canvasWidth() / 2 + backBoneSpacing
+              : painter.canvasWidth() - x_0 + backBoneSpacing;
             ctx.translate(-delta, 0);
             painter.setPen(new Misc.Pen("grey", 1));
             scaleDrawY.drawBackbone(painter);
@@ -177,20 +193,25 @@ class Plot {
             scaleDrawX.hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
           ) {
             var majorTicks = m_scaleDivX.ticks(ScaleDiv.TickType.MajorTick);
+            const ctx = painter.context();
+            const delta = /* y_0; */ !centAxesAtZero
+              ? painter.canvasHeight() / 2 - 1 + backBoneSpacing
+              : y_0;
+            ctx.translate(0, delta);
 
             for (var i = 0; i < majorTicks.length; i++) {
               var v = majorTicks[i];
               if (m_scaleDivX.contains(v)) {
-                //scaleDraw.drawLabel(painter, v);
                 var pos = scaleDrawX.labelPosition(painter.context(), v);
                 painter.drawText(
                   scaleDrawX.label(v.toPrecision(precisionX)),
                   pos.x,
-                  pos.y + painter.canvasHeight() / 2,
+                  pos.y,
                   "center"
                 );
               }
             }
+            ctx.translate(0, -delta);
           }
           if (scaleDrawX.hasComponent(AbstractScaleDraw.ScaleComponent.Ticks)) {
             painter.save();
@@ -202,7 +223,9 @@ class Plot {
             ) {
               var ticks = m_scaleDivX.ticks(tickType);
               const ctx = painter.context();
-              const delta = painter.canvasHeight() / 2 - 1 + backBoneSpacing;
+              const delta = /* y_0; */ !centAxesAtZero
+                ? painter.canvasHeight() / 2 - 1 + backBoneSpacing
+                : y_0;
               ctx.translate(0, delta);
               for (i = 0; i < ticks.length; i++) {
                 var v = ticks[i];
@@ -218,7 +241,9 @@ class Plot {
           ) {
             painter.save();
             const ctx = painter.context();
-            const delta = painter.canvasHeight() / 2 - 1 + backBoneSpacing;
+            const delta = /* y_0; */ !centAxesAtZero
+              ? painter.canvasHeight() / 2 - 1 + backBoneSpacing
+              : y_0;
             ctx.translate(0, delta);
             painter.setPen(new Misc.Pen("grey", 1));
             scaleDrawX.drawBackbone(painter);
@@ -227,18 +252,28 @@ class Plot {
           }
         }
 
-        painter.drawLine(
-          painter.canvasWidth() / 2,
-          0,
-          painter.canvasWidth() / 2,
-          painter.canvasHeight()
-        );
-        painter.drawLine(
-          0,
-          painter.canvasHeight() / 2,
-          painter.canvasWidth(),
-          painter.canvasHeight() / 2
-        );
+        //console.log(x_0);
+        painter.save();
+        //y line
+        painter.setPen(new Misc.Pen("#A9A9A9", 1));
+        if (centAxesAtZero) {
+          painter.drawLine(x_0, 0, x_0, painter.canvasHeight());
+          painter.drawLine(0, y_0, painter.canvasWidth(), y_0);
+        } else {
+          painter.drawLine(
+            painter.canvasWidth() / 2,
+            0,
+            painter.canvasWidth() / 2,
+            painter.canvasHeight()
+          );
+          painter.drawLine(
+            0,
+            painter.canvasHeight() / 2,
+            painter.canvasWidth(),
+            painter.canvasHeight() / 2
+          );
+        }
+        painter.restore();
       }
     }
 
@@ -271,6 +306,7 @@ class Plot {
     var plotDivHeightAsPercentOfPlotDivParent = 0;
 
     var plotDivContainer = this.plotDiv.parent();
+    this.centerAxesZero = false;
 
     let titleVisible = true;
     let footerVisible = true;
@@ -534,8 +570,12 @@ class Plot {
         //d.scaleWidget->setTitle( text );
 
         d.doAutoScale = true;
-        d.minValue = 0.0;
-        d.maxValue = 1000.0;
+        // d.minValue = 0.0;
+        // d.maxValue = 1000.0;
+
+        d.minValue = -10.0;
+        d.maxValue = 10.0;
+
         d.stepSize = 0.0;
         d.maxMinor = 5;
         d.maxMajor = 8;

@@ -34,6 +34,8 @@ class MFile {
 
       p.centerAxesEnabled = _plot.isCenterAxesEnabled();
 
+      p.centerAxesZero = _plot.centerAxesZero;
+
       p.axisTitleFont = _plot.axisTitleFont(Axis.AxisId.xBottom);
       p.xBottomAxisTitle = _plot.axisTitle(Axis.AxisId.xBottom);
       p.xTopAxisTitle = _plot.axisTitle(Axis.AxisId.xTop);
@@ -273,9 +275,13 @@ class MFile {
         //setAutoScale(true)
 
         if (p.centerAxesEnabled) {
+          //this.plot.centerAxesZero
           _plot.enableCenterAxes(true);
           Static.trigger("centerAxesEnabled", true);
         }
+
+        _plot.centerAxesZero = p.centerAxesZero;
+        Static.trigger("centerAxesZero", p.centerAxesZero);
 
         _plot.setTitleFont(new Misc.Font(p.titleFont));
         _plot.setFooterFont(new Misc.Font(p.footerFont));

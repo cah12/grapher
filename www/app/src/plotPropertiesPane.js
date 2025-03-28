@@ -977,8 +977,28 @@ class PlotPropertiesPane extends PropertiesPane {
       fun: setScaleAxes,
     });
 
+    const centerAxesZero = this.addProperty({
+      name: "Center Axes at (0, 0)",
+      id: "centerAxesZero",
+      parentId: "scalePosition",
+      type: "checkbox",
+      //checked: true,
+      title: "Lock center axes at origin (0, 0).",
+      fun: function (checked) {
+        plot.centerAxesZero = checked;
+        plot.autoRefresh();
+      },
+    });
+
+    Static.bind("centerAxesZero", function (e, on) {
+      centerAxesZero[0].checked = on;
+    });
+
     Static.bind("centerAxesEnabled", function (e, on) {
       centerAxes[0].checked = on;
+      if (on) {
+        self.show("centerAxesZero");
+      }
     });
     ///////////////////////////////////////////////////
     this.addProperty({
@@ -2962,6 +2982,11 @@ class PlotPropertiesPane extends PropertiesPane {
     }
 
     function setScaleAxes(checked) {
+      if (checked) {
+        self.show("centerAxesZero");
+      } else {
+        self.hide("centerAxesZero");
+      }
       plot.enableCenterAxes(checked);
       plot.autoRefresh();
     }
@@ -4217,6 +4242,8 @@ class PlotPropertiesPane extends PropertiesPane {
       //console.log(minor_line_color)
 
       self.hide("pointSelected");
+
+      self.hide("centerAxesZero");
       /* self.hide("lowerLimitY");
       self.hide("upperLimitY");
       self.hide("lowerLimitXY");
