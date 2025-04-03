@@ -181,12 +181,14 @@ class PolarGrid extends PlotGrid {
 
       const drawSticks = function (painter, xMap, yMap, from, to) {
         const m_baseline = _self.baseline();
-        const x0 = self.pole.x + m_baseline; //xMap.transform(m_baseline);
-        const y0 = self.pole.y; //yMap.transform(m_baseline);
+        const x0 = self.pole.x; // + self.transformRadial(m_baseline, yMap); //xMap.transform(m_baseline);
+        const y0 = self.pole.y; //+ self.transformRadial(m_baseline, yMap); //yMap.transform(m_baseline);
 
         const o = _self.orientation();
 
         const samples = validTransformPoints();
+
+        to = samples.length - 1;
 
         for (let i = from; i <= to; i++) {
           const sample = samples[i];
