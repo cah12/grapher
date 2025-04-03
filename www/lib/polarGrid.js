@@ -180,9 +180,9 @@ class PolarGrid extends PlotGrid {
       };
 
       const drawSticks = function (painter, xMap, yMap, from, to) {
-        const m_baseline = _self.baseline();
-        const x0 = self.pole.x; // + self.transformRadial(m_baseline, yMap); //xMap.transform(m_baseline);
-        const y0 = self.pole.y; //+ self.transformRadial(m_baseline, yMap); //yMap.transform(m_baseline);
+        const m_baseline = parseFloat(_self.baseline());
+        // const x0 = self.pole.x; // + self.transformRadial(m_baseline, yMap); //xMap.transform(m_baseline);
+        // const y0 = self.pole.y; //+ self.transformRadial(m_baseline, yMap); //yMap.transform(m_baseline);
 
         const o = _self.orientation();
 
@@ -190,13 +190,22 @@ class PolarGrid extends PlotGrid {
 
         to = samples.length - 1;
 
+        const ctx = painter.context();
+        const _y = ctx.canvas.height / 2;
+        const _x = ctx.canvas.width / 2;
+
         for (let i = from; i <= to; i++) {
           const sample = samples[i];
+          const x0 = m_baseline * math.cos(sample.x) + _x;
+          const y0 = _y - m_baseline * math.sin(sample.x);
           const xi = sample.x;
           const yi = sample.y;
 
-          if (o == Static.Horizontal) painter.drawLine(x0, yi, xi, yi);
-          else painter.drawLine(xi, y0, xi, yi);
+          if (o == Static.Horizontal) painter.drawLine(x0, y0, xi, yi);
+          else painter.drawLine(x0, y0, xi, yi);
+
+          // if (o == Static.Horizontal) painter.drawLine(x0, yi, xi, yi);
+          // else painter.drawLine(xi, y0, xi, yi);
         }
       };
 
