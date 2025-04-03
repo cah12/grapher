@@ -5,6 +5,7 @@ class PlotPropertiesPane extends PropertiesPane {
   constructor(_parent, plot) {
     super(_parent);
     var self = this;
+    self.grid = plot.grid;
     self.setHeader(
       plot.leftSidebar.gridItem(1).headerElement,
       "Easy Grapher",
@@ -2227,6 +2228,15 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "gridSettings",
       parentId: "graphSettings",
     });
+    var gridType = this.addProperty({
+      name: "Grid type",
+      id: "gridType",
+      parentId: "gridSettings",
+      type: "select",
+      selectorOptions: ["Cartesian", "Polar"],
+      //disabled: true,
+    });
+
     this.addProperty({
       name: "Minor Lines",
       id: "gridMinorLines",
@@ -3987,6 +3997,34 @@ class PlotPropertiesPane extends PropertiesPane {
       minor_gridLines[0].checked = on;
     });
 
+    /////////////////////////
+    gridType.change(function () {
+      if ($(this)[0].selectedIndex == 0) {
+        // const g = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        // g.detach();
+        // const plotGrid = new PlotGrid();
+        // initGrid(plotGrid, g);
+        // plotGrid.attach(plot);
+        plot.polarGrid.hide();
+        plot.plotGrid.show();
+      } else {
+        // const g = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        // g.detach();
+        // const polarGrid = new PolarGrid();
+        // initGrid(polarGrid, g);
+        // polarGrid.attach(plot);
+        plot.plotGrid.hide();
+        plot.polarGrid.show();
+      }
+
+      function initGrid(plotGrid, g) {
+        plotGrid.enableX(g.xEnabled());
+        plotGrid.enableY(g.yEnabled());
+        plotGrid.enableXMin(g.xMinEnabled());
+        plotGrid.enableYMin(g.yMinEnabled());
+      }
+    });
+
     /////////////////////////////////////////////////
     Static.bind("currentCurveChanged", function (e, _curve) {
       curve = _curve;
@@ -4228,7 +4266,11 @@ class PlotPropertiesPane extends PropertiesPane {
       setBrushIcon(watchShadeColor.val());
       plotTitleTitleSelector.val(plot.title());
       initLimitsInput();
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid;
+      grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      if (!grid) {
+        grid = plot.itemList(PlotItem.RttiValues.Rtti_PolarGrid)[0];
+      }
       //console.log(grid.xMinEnabled())
       minor_gridLines[0].checked = grid.xMinEnabled();
       major_gridLines[0].checked = grid.xEnabled();

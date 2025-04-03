@@ -6,6 +6,9 @@ class MyLegend extends Legend {
     const self = this;
 
     this.updateLegendToolTip = function (_curve) {
+      if (!_curve) {
+        return;
+      }
       let indepVarX = null;
       let indepVarY = null;
       let precisionY = _curve.plot().axisPrecision(_curve.yAxis());

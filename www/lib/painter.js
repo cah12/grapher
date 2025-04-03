@@ -369,13 +369,16 @@ PaintUtil.ContextPainter = function (ctx) {
   //    }
 
   //rotation is clockwise from the x-axis
-  this.drawRotatedText = function (txt, tx, ty, rotation) {
+  this.drawRotatedText = function (txt, tx, ty, rotation, radians = false) {
     // var bottomUp = -1;
     // if(typeof(topDown) !== "undefined"){
     //     if(topDown === true)
     //         bottomUp = 1;
     // }
-    var thetaRad = (Math.PI * rotation) / 180; //radians
+    var thetaRad = rotation;
+    if (!radians) {
+      thetaRad = (Math.PI * rotation) / 180; //radians
+    }
     var size = m_ctx.measureText(txt);
     m_ctx.save();
     // var x = tx;// + size.width/2;
@@ -1039,9 +1042,9 @@ PaintUtil.Painter = function (param) {
    * @param {Number} ty The y-axis coordinate of the baseline on which to begin drawing the text, in pixels.
    * @param {Number} rotation Clockwise rotation measured in degrees.
    */
-  this.drawRotatedText = function (txt, tx, ty, rotation) {
+  this.drawRotatedText = function (txt, tx, ty, rotation, radians = false) {
     if (m_graphicPainter) return;
-    m_painter.drawRotatedText(txt, tx, ty, rotation);
+    m_painter.drawRotatedText(txt, tx, ty, rotation, radians);
   };
 
   /**

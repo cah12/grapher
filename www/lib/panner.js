@@ -212,6 +212,9 @@ class Panner extends HObject {
      * @param {Event} event Mouse press
      */
     this.widgetMousePressEvent = function (event) {
+      if (Static.polarGrid) {
+        return;
+      }
       var isMobile = Static.isMobile();
 
       if (!isMobile) {
@@ -247,6 +250,7 @@ class Panner extends HObject {
       showCursor(false);
       if (deltaX != 0 || deltaY != 0) {
         self.rescaleAndRedraw(deltaX, deltaY);
+
         deltaX = 0;
         deltaY = 0;
       }

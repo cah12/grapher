@@ -53,7 +53,9 @@ class MyPlot extends Plot {
     var self = this;
     var m_curveShapeEnabledByPlotSettings = true;
 
-    this.grid = new PlotGrid();
+    this.plotGrid = new PlotGrid();
+    this.polarGrid = new PolarGrid();
+    this.grid = this.plotGrid;
 
     this.fileSystemServices = null;
 
@@ -63,6 +65,11 @@ class MyPlot extends Plot {
 
     this.grid.attach(this);
     Utility.minorGridLines(this.grid, true);
+
+    this.polarGrid.attach(this);
+    Utility.minorGridLines(this.polarGrid, true);
+    this.polarGrid.hide();
+
     //console.log(this.grid)
 
     this.insertLegend(new MyLegend());

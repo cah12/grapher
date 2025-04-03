@@ -34,6 +34,7 @@ require([
   "legend",
   "magnifier",
   "plotGrid",
+  "polarGrid",
   "widgetOverlay",
   "myZoomer",
   "curveFitter",
@@ -893,6 +894,9 @@ require([
   // console.log(solutions);
 
   //console.log(Utility.insertProductSign("f(x)", "x"));
+
+  // const ppGrid = new PolarGrid("Polar Grid");
+  // console.log(ppGrid, ppGrid.rtti);
 });
 
 /*

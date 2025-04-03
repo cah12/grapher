@@ -230,8 +230,10 @@ class PlotItem {
      *
      * @returns {object} 2d context for the central div canvas
      */
-    this.getContext = function () {
-      syncSizes();
+    this.getContext = function (sync_sizes = true) {
+      if (sync_sizes) {
+        syncSizes();
+      }
       if (!cnvs) return null;
       return cnvs[0].getContext("2d");
     };
@@ -276,16 +278,16 @@ class PlotItem {
     /**
      * Show the item
      */
-    this.show = function () {
-      this.setVisible(true);
-    };
+    // this.show = function () {
+    //   this.setVisible(true);
+    // };
 
     /**
      * Hide the item.
      */
-    this.hide = function () {
-      this.setVisible(false);
-    };
+    // this.hide = function () {
+    //   this.setVisible(false);
+    // };
 
     //Helper
     this.doSetVisible = function (on) {
@@ -626,6 +628,20 @@ class PlotItem {
       element.delete();
     });
   }
+
+  /**
+   * Hide the item.
+   */
+  hide() {
+    this.setVisible(false);
+  }
+
+  /**
+   * Show the item.
+   */
+  show() {
+    this.setVisible(true);
+  }
 }
 
 /**
@@ -657,7 +673,7 @@ class PlotItem {
  */
 Enumerator.enum(
   "RttiValues {\
-    Rtti_PlotItem = 0 , Rtti_PlotGrid , Rtti_PlotScale , Rtti_PlotLegend ,\
+    Rtti_PlotItem = 0 , Rtti_PlotGrid , Rtti_PolarGrid , Rtti_PlotScale , Rtti_PlotLegend ,\
     Rtti_PlotMarker , Rtti_PlotCurve , Rtti_PlotSpectroCurve , Rtti_PlotIntervalCurve ,\
     Rtti_PlotHistogram , Rtti_PlotSpectrogram , Rtti_PlotGraphic , Rtti_PlotTradingCurve ,\
     Rtti_PlotBarChart , Rtti_PlotMultiBarChart , Rtti_PlotShape , Rtti_PlotTextLabel ,\

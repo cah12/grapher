@@ -1510,8 +1510,25 @@ class Plot {
       });
     };
 
+    this.itemListReplace = function (type, item) {
+      for (let i = 0; i < m_plotItemStore.length; i++) {
+        if (m_plotItemStore[i].rtti === type) {
+          m_plotItemStore[i] = item;
+          break;
+        }
+      }
+    };
+
+    this.setItemList = function (list) {
+      m_plotItemStore = list;
+    };
+
     const insertItem = function (item) {
-      m_plotItemStore.push(item);
+      if (item.rtti === PlotItem.RttiValues.Rtti_PlotGrid) {
+        m_plotItemStore.unshift(item);
+      } else {
+        m_plotItemStore.push(item);
+      }
     };
 
     const removeItem = function (item) {
