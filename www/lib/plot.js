@@ -1678,8 +1678,8 @@ class Plot {
       }
 
       // Adjust scales
-
-      for (var axisId = 0; axisId < Axis.AxisId.axisCnt; axisId++) {
+      const axisCnt = !Static.polarGrid ? Axis.AxisId.axisCnt : 1;
+      for (var axisId = 0; axisId < axisCnt; axisId++) {
         var d = d_axisData[axisId];
         var minValue = d.minValue;
         var maxValue = d.maxValue;
@@ -1691,8 +1691,10 @@ class Plot {
           //alert("here")
           d.isValid = false;
 
-          minValue = intv[axisId].minValue();
-          maxValue = intv[axisId].maxValue();
+          minValue = !Static.polarGrid ? intv[axisId].minValue() : 0;
+          maxValue = !Static.polarGrid
+            ? intv[axisId].maxValue()
+            : intv[axisId].maxValue() * 1.05;
 
           if (Utility.mFuzzyCompare(maxValue, minValue)) {
             //minValue = minValue - 1.0e-6;

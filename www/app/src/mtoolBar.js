@@ -903,6 +903,7 @@ class MToolBar extends ToolBar {
           )
             self.enable(sBar);
           self.enable(cProp);
+          self.setButtonCheck(cProp, false);
         } else {
           //detached
           if (
@@ -912,6 +913,7 @@ class MToolBar extends ToolBar {
             _plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram).length == 0
           ) {
             self.disable(cProp);
+            self.setButtonCheck(cProp, false);
           }
           if (
             !_plot

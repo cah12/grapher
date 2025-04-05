@@ -707,8 +707,8 @@ class Curve extends PlotSeriesItem {
       if (this.brush() != "noBrush" /* doFill */) {
         this.fillCurve(painter, xMap, yMap, points);
       }
-      //if ( this.brush() != "noBrush" )
-      //            fillCurve( painter, xMap, yMap, canvasRect, polygon );
+      if (this.brush() != "noBrush")
+        fillCurve(painter, xMap, yMap, canvasRect, polygon);
     };
 
     /**

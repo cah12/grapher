@@ -909,7 +909,9 @@ class CurvePropertiesPane extends PropertiesPane {
     }
     Static.bind("curveBrushChanged", function (e, curve) {
       initDlg(curve);
-      fillCurveCheckBox[0].checked = true;
+      //fillCurveCheckBox[0].checked = true;
+      fillCurveCheckBox[0].checked =
+        curve.brush().color != "noBrush" ? true : false;
     });
     var baselineElement = this.getElementValueDataAttribute("baseline");
     function baseline(val) {
@@ -943,6 +945,9 @@ class CurvePropertiesPane extends PropertiesPane {
       if (!curve || curve.title() !== curveSelectProp.val()) {
         return;
       }
+
+      fillCurveCheckBox[0].checked =
+        curve.brush().color != "noBrush" ? true : false;
 
       aspectRatioOneToOneFn();
       if (curve.axesSwapped) {
@@ -1081,7 +1086,9 @@ class CurvePropertiesPane extends PropertiesPane {
         self.setPenIcon();
         self.setSymbolIcon();
 
-        fillCurveElement[0].checked = curve.fill;
+        //fillCurveElement[0].checked = curve.fill;
+        fillCurveCheckBox[0].checked =
+          curve.brush().color != "noBrush" ? true : false;
         curveFillBrushColorElement.val(curve.brush().color);
         self.setBrushIcon();
 

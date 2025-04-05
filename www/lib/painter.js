@@ -986,8 +986,10 @@ PaintUtil.Painter = function (param) {
    * @param {Array<Misc.Point>} polyline List of points
    */
   this.drawPolyline = function (polyline) {
-    if (m_graphicPainter) return;
-    m_painter.drawPolyline(polyline);
+    if (polyline && polyline.length) {
+      if (m_graphicPainter) return;
+      m_painter.drawPolyline(polyline);
+    }
   };
 
   /**

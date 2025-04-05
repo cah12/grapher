@@ -18,8 +18,6 @@ class PolarGrid extends PlotGrid {
     let s1 = null;
     let s2 = null;
 
-    Static.polarGrid = true; //paaner checks dthis flag and ignores panning
-
     let radialPrecision = 4;
     let rayPrecision = 4;
 
@@ -55,12 +53,17 @@ class PolarGrid extends PlotGrid {
         for (let i = 0; i < L.length; i++) {
           L[i].originalDraw = L[i].drawSeries;
           L[i].drawSeries = self.drawSeries;
+
+          L[i].originalClosePolyline = L[i].closePolyline;
+          L[i].closePolyline = self.closePolyline;
         }
       } else {
         const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
         for (let i = 0; i < L.length; i++) {
           if (L[i].originalDraw) {
             L[i].drawSeries = L[i].originalDraw;
+
+            L[i].closePolyline = L[i].originalClosePolyline;
           }
         }
       }
@@ -77,13 +80,49 @@ class PolarGrid extends PlotGrid {
         if (on && self.polarGridAttached) {
           plotItem.originalDraw = plotItem.drawSeries;
           plotItem.drawSeries = self.drawSeries;
+
+          plotItem.originalClosePolyline = self.closePolyline;
+          plotItem.closePolyline = self.closePolyline;
         } else if (!on && plotItem.originalDraw) {
           plotItem.drawSeries = plotItem.originalDraw;
+          plotItem.closePolyline = plotItem.originalClosePolyline;
         }
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     });
+
+    this.closePolyline = function (xMap, yMap, polygon) {
+      if (polygon.length < 2) return;
+
+      const _self = this;
+
+      const x = self.ctx.canvas.width / 2;
+      const y = self.ctx.canvas.height / 2;
+
+      const baseline = parseFloat(_self.baseline());
+      if (baseline <= 0) {
+        polygon.unshift(new Misc.Point(x, y));
+        polygon.push(new Misc.Point(x, y));
+      } else {
+        const samples = _self.data().samples();
+
+        const _validTransformPoints = self.transformedBaseline(
+          baseline,
+          yMap,
+          samples,
+          x,
+          y
+        );
+
+        _validTransformPoints.reverse();
+
+        for (let i = 0; i < _validTransformPoints.length; i++) {
+          polygon.push(_validTransformPoints[i]);
+        }
+        polygon.push(new Misc.Point(polygon[0]));
+      }
+    };
 
     //self === grid this === curve
     this.drawSeries = function (xMap, yMap, from = 0, to = -1) {
@@ -92,15 +131,14 @@ class PolarGrid extends PlotGrid {
       }
       const _self = this; //
       /*********** Helpers Start *************************** */
-      function validTransformPoints(untransformedPoints = null) {
+      function validTransformPoints() {
         const points = [];
+        let untransformedPoints = [];
         const _validTransformPoints = [];
         const samples = _self.data().samples();
         for (let i = 0; i < samples.length; i++) {
           const pt = samples[i];
-          if (untransformedPoints) {
-            untransformedPoints.push(new Misc.Point(pt));
-          }
+          untransformedPoints.push(new Misc.Point(pt));
           points.push({ x: pt.x, y: self.transformRadial(pt.y, yMap) });
         }
         const x = self.ctx.canvas.width / 2;
@@ -121,33 +159,37 @@ class PolarGrid extends PlotGrid {
             untransformedPoints[i] = null;
           }
         }
-        if (untransformedPoints) {
-          untransformedPoints = untransformedPoints.filter(function (pt) {
-            return pt;
-          });
-        }
-        return _validTransformPoints;
+        untransformedPoints = untransformedPoints.filter(function (pt) {
+          if (pt) return true;
+          return false;
+        });
+
+        return { _validTransformPoints, untransformedPoints };
       }
 
       const drawDots = function (painter, xMap, yMap, from, to) {
-        const points = validTransformPoints();
+        const points = validTransformPoints()._validTransformPoints;
         for (let i = 0; i < points.length; i++) {
           painter.drawPoint(points[i]);
         }
       };
 
       const drawLines = function (painter, xMap, yMap, from, to) {
-        const points = validTransformPoints();
+        const points = validTransformPoints()._validTransformPoints;
+        if (!points.length) return;
         painter.drawPolyline(points);
+        if (_self.brush().color != "noBrush" /* doFill */) {
+          _self.fillCurve(painter, xMap, yMap, points);
+        }
       };
 
       const drawSymbols = function (ctx, symbol, xMap, yMap, from, to) {
-        const points = validTransformPoints();
+        const points = validTransformPoints()._validTransformPoints;
         if (points.length > 0) symbol.drawSymbols(ctx, points);
       };
 
       const drawSteps = function (painter, xMap, yMap, from, to) {
-        const samples = validTransformPoints();
+        const samples = validTransformPoints()._validTransformPoints;
         let points = [];
         from = 0;
         to = samples.length - 1;
@@ -184,60 +226,38 @@ class PolarGrid extends PlotGrid {
         }
 
         painter.drawPolyline(points);
-        if (_self.brush() != "noBrush" /* doFill */) {
-          _self.fillCurve(painter, xMap, yMap, points);
-        }
+        // if (_self.brush() != "noBrush" /* doFill */) {
+        //   _self.fillCurve(painter, xMap, yMap, points);
+        // }
       };
 
       const drawSticks = function (painter, xMap, yMap, from, to) {
-        const plot = self.plot();
-        const auto = Utility.isAutoScale(plot);
-        /* Steps somehow require a lower scale limit of zero for non-zero base line*/
-        let bs = parseFloat(_self.baseline());
-
-        if (bs != 0) {
-          const x_max = plot.axisScaleDiv(0).upperBound();
-          if (bs < 0) {
-            //A baseline less than zero does not make sense
-            bs = 0;
-          }
-          plot.setAxisScale(0, 0, x_max);
-          if (!self.skipReplot) {
-            self.skipReplot = true;
-            plot.replot();
-          }
-        }
-
-        //const o = _self.orientation();
-        const unTransPoints = [];
-        const samples = validTransformPoints(unTransPoints);
+        const { _validTransformPoints, untransformedPoints } =
+          validTransformPoints();
+        const samples = _validTransformPoints;
+        const unTransPoints = untransformedPoints;
         if (!samples.length) return;
 
         to = samples.length - 1;
 
         const ctx = painter.context();
-        const _y = ctx.canvas.height / 2;
-        const _x = ctx.canvas.width / 2;
+
+        const transPoints = self.transformedBaseline(
+          parseFloat(_self.baseline()),
+          yMap,
+          unTransPoints,
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2
+        );
 
         for (let i = from; i <= to; i++) {
-          const xi = samples[i].x;
-          const yi = samples[i].y;
-
-          const rp = Math.sqrt((_x - xi) * (_x - xi) + (_y - yi) * (_y - yi));
-          const rs = unTransPoints[i].y;
-          const bp = (bs * rp) / rs;
-
-          const angl = unTransPoints[i].x;
-          const x0 = bp * math.cos(angl) + _x;
-          const y0 = _y - bp * math.sin(angl);
-
-          // if (o == Static.Horizontal) painter.drawLine(x0, y0, xi, yi);
-          // else painter.drawLine(x0, y0, xi, yi);
-
-          painter.drawLine(x0, y0, xi, yi);
+          painter.drawLine(
+            transPoints[i].x,
+            transPoints[i].y,
+            samples[i].x,
+            samples[i].y
+          );
         }
-        self.skipReplot = false;
-        Utility.setAutoScale(plot, auto);
       };
 
       const doDrawCurve = function (painter, style, xMap, yMap, from, to) {
@@ -574,6 +594,32 @@ class PolarGrid extends PlotGrid {
     };
   }
 
+  transformedBaseline(baseline, yMap, samples, pole_x, pole_y) {
+    const self = this;
+    const _baseline = self.transformRadial(baseline, yMap);
+    const baselineSamples = samples.map(function (pt) {
+      return new Misc.Point(pt.x, _baseline);
+    });
+    const plot = self.plot();
+    const auto = Utility.isAutoScale(plot);
+
+    const _validTransformPoints = [];
+    const radius = baselineSamples[0].y;
+    for (let i = 0; i < baselineSamples.length; i++) {
+      const angl = baselineSamples[i].x;
+
+      baselineSamples[i].x = pole_x + radius * math.cos(angl);
+      baselineSamples[i].y = radius * math.sin(-angl) + pole_y;
+      let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
+      if (Math.abs(radius) < Math.abs(restrictRadius)) {
+        _validTransformPoints.push(
+          new Misc.Point(baselineSamples[i].x, baselineSamples[i].y)
+        );
+      }
+    }
+    return _validTransformPoints;
+  }
+
   angleStep(ticks) {
     let delta = (2 * Math.PI) / 8;
     if (Utility.mathMode() === "deg") {
@@ -586,11 +632,13 @@ class PolarGrid extends PlotGrid {
   hide() {
     Static.trigger("polarGridVisible", false);
     super.hide();
+    Static.polarGrid = false; //paaner checks dthis flag and ignores panning
     //Static.trigger("polarGridVisible", false);
   }
   show() {
     //Static.trigger("polarGridVisible", true);
     super.show();
+    Static.polarGrid = true; //paaner checks dthis flag and ignores panning
     Static.trigger("polarGridVisible", true);
   }
 }

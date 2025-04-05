@@ -3999,23 +3999,18 @@ class PlotPropertiesPane extends PropertiesPane {
 
     /////////////////////////
     gridType.change(function () {
+      /* Prevent replot during grid change allows for Static.polarGrid to be properly set. */
+      const autoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       if ($(this)[0].selectedIndex == 0) {
-        // const g = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
-        // g.detach();
-        // const plotGrid = new PlotGrid();
-        // initGrid(plotGrid, g);
-        // plotGrid.attach(plot);
         plot.polarGrid.hide();
         plot.plotGrid.show();
       } else {
-        // const g = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
-        // g.detach();
-        // const polarGrid = new PolarGrid();
-        // initGrid(polarGrid, g);
-        // polarGrid.attach(plot);
         plot.plotGrid.hide();
         plot.polarGrid.show();
       }
+      plot.setAutoReplot(autoReplot);
+      plot.autoRefresh();
 
       function initGrid(plotGrid, g) {
         plotGrid.enableX(g.xEnabled());
