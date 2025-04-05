@@ -92,12 +92,15 @@ class PolarGrid extends PlotGrid {
       }
       const _self = this; //
       /*********** Helpers Start *************************** */
-      function validTransformPoints() {
+      function validTransformPoints(untransformedPoints = null) {
         const points = [];
         const _validTransformPoints = [];
         const samples = _self.data().samples();
         for (let i = 0; i < samples.length; i++) {
           const pt = samples[i];
+          if (untransformedPoints) {
+            untransformedPoints.push(new Misc.Point(pt));
+          }
           points.push({ x: pt.x, y: self.transformRadial(pt.y, yMap) });
         }
         const x = self.ctx.canvas.width / 2;
@@ -114,7 +117,14 @@ class PolarGrid extends PlotGrid {
             _validTransformPoints.push(
               new Misc.Point(points[i].x, points[i].y)
             );
+          } else if (untransformedPoints) {
+            untransformedPoints[i] = null;
           }
+        }
+        if (untransformedPoints) {
+          untransformedPoints = untransformedPoints.filter(function (pt) {
+            return pt;
+          });
         }
         return _validTransformPoints;
       }
@@ -180,13 +190,28 @@ class PolarGrid extends PlotGrid {
       };
 
       const drawSticks = function (painter, xMap, yMap, from, to) {
-        const m_baseline = parseFloat(_self.baseline());
-        // const x0 = self.pole.x; // + self.transformRadial(m_baseline, yMap); //xMap.transform(m_baseline);
-        // const y0 = self.pole.y; //+ self.transformRadial(m_baseline, yMap); //yMap.transform(m_baseline);
+        const plot = self.plot();
+        const auto = Utility.isAutoScale(plot);
+        /* Steps somehow require a lower scale limit of zero for non-zero base line*/
+        let bs = parseFloat(_self.baseline());
 
-        const o = _self.orientation();
+        if (bs != 0) {
+          const x_max = plot.axisScaleDiv(0).upperBound();
+          if (bs < 0) {
+            //A baseline less than zero does not make sense
+            bs = 0;
+          }
+          plot.setAxisScale(0, 0, x_max);
+          if (!self.skipReplot) {
+            self.skipReplot = true;
+            plot.replot();
+          }
+        }
 
-        const samples = validTransformPoints();
+        //const o = _self.orientation();
+        const unTransPoints = [];
+        const samples = validTransformPoints(unTransPoints);
+        if (!samples.length) return;
 
         to = samples.length - 1;
 
@@ -195,18 +220,24 @@ class PolarGrid extends PlotGrid {
         const _x = ctx.canvas.width / 2;
 
         for (let i = from; i <= to; i++) {
-          const sample = samples[i];
-          const x0 = m_baseline * math.cos(sample.x) + _x;
-          const y0 = _y - m_baseline * math.sin(sample.x);
-          const xi = sample.x;
-          const yi = sample.y;
+          const xi = samples[i].x;
+          const yi = samples[i].y;
 
-          if (o == Static.Horizontal) painter.drawLine(x0, y0, xi, yi);
-          else painter.drawLine(x0, y0, xi, yi);
+          const rp = Math.sqrt((_x - xi) * (_x - xi) + (_y - yi) * (_y - yi));
+          const rs = unTransPoints[i].y;
+          const bp = (bs * rp) / rs;
 
-          // if (o == Static.Horizontal) painter.drawLine(x0, yi, xi, yi);
-          // else painter.drawLine(xi, y0, xi, yi);
+          const angl = unTransPoints[i].x;
+          const x0 = bp * math.cos(angl) + _x;
+          const y0 = _y - bp * math.sin(angl);
+
+          // if (o == Static.Horizontal) painter.drawLine(x0, y0, xi, yi);
+          // else painter.drawLine(x0, y0, xi, yi);
+
+          painter.drawLine(x0, y0, xi, yi);
         }
+        self.skipReplot = false;
+        Utility.setAutoScale(plot, auto);
       };
 
       const doDrawCurve = function (painter, style, xMap, yMap, from, to) {
@@ -237,10 +268,9 @@ class PolarGrid extends PlotGrid {
 
       /*********** Helpers End *************************** */
 
-      // const plot = this.plot();
-      // const autoReplot = plot.autoReplot();
-      // plot.setAutoReplot(false);
-      // this.clearCanvas();
+      const plot = this.plot();
+      const autoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
 
       const ctx = _self.getContext();
 
@@ -250,7 +280,6 @@ class PolarGrid extends PlotGrid {
       if (numSamples <= 0) return;
 
       if (to < 0) to = numSamples - 1;
-      //doDrawCurve(painter, style, xMap, yMap, from, to);
       if (Curve.mVerifyRange(numSamples, from, to) > 0) {
         painter.save();
         painter.setPen(_self.pen());
@@ -269,8 +298,8 @@ class PolarGrid extends PlotGrid {
       }
       painter = null;
 
-      // plot.setAutoReplot(autoReplot);
-      // plot.autoRefresh();
+      plot.setAutoReplot(autoReplot);
+      plot.autoRefresh();
     };
 
     this.transformRadial = function (s, yMap) {

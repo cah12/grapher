@@ -3009,11 +3009,11 @@ class MyPlot extends Plot {
       }
     });
 
-    // Static.bind("rescaled", (e, auto) => {
-    //   if (auto) {
-    //     self.zm.setEnabled(false);
-    //   }
-    // });
+    Static.bind("rescaled", (e, auto) => {
+      if (Utility.isAutoScale(self)) {
+        self.tbar.setButtonCheck(self.tbar.auto, true);
+      }
+    });
 
     this.pan = new Panner(this);
     this.pan.setCursor("move");
