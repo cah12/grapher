@@ -614,7 +614,7 @@ class Plot {
      * @see {@link Plot#axisMaxMinor axisMaxMinor()}
      */
     this.setAxisMaxMinor = function (axisId, maxMinor) {
-      if (this.axisValid(axisId)) {
+      if (this.axisValid(axisId) && !Static.polarGrid) {
         var maxMinor = Utility.qBound(0, maxMinor, 100);
 
         var d = d_axisData[axisId];
@@ -633,7 +633,7 @@ class Plot {
      * @see {@link Plot#axisMaxMajor axisMaxMajor()}
      */
     this.setAxisMaxMajor = function (axisId, maxMajor) {
-      if (this.axisValid(axisId)) {
+      if (this.axisValid(axisId) && !Static.polarGrid) {
         var maxMajor = Utility.qBound(1, maxMajor, 10000);
 
         var d = d_axisData[axisId];
@@ -1691,10 +1691,8 @@ class Plot {
           //alert("here")
           d.isValid = false;
 
-          minValue = !Static.polarGrid ? intv[axisId].minValue() : 0;
-          maxValue = !Static.polarGrid
-            ? intv[axisId].maxValue()
-            : intv[axisId].maxValue() * 1.05;
+          minValue = intv[axisId].minValue();
+          maxValue = intv[axisId].maxValue();
 
           if (Utility.mFuzzyCompare(maxValue, minValue)) {
             //minValue = minValue - 1.0e-6;
@@ -1708,6 +1706,8 @@ class Plot {
           d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
           minValue = xValues["x1"];
           maxValue = xValues["x2"];
+
+          minValue = !Static.polarGrid ? minValue : 0;
         }
         if (!d.isValid) {
           //alert("or here")

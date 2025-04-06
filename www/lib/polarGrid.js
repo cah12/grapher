@@ -27,6 +27,10 @@ class PolarGrid extends PlotGrid {
 
     //this.rtti = PlotItem.RttiValues.Rtti_PolarGrid;
 
+    // Static.bind("mathModeChanged", function (e, mode) {
+
+    // });
+
     Static.bind("magnifyingStart", function () {
       magnifying = true;
     });
@@ -100,28 +104,35 @@ class PolarGrid extends PlotGrid {
       const x = self.ctx.canvas.width / 2;
       const y = self.ctx.canvas.height / 2;
 
-      const baseline = parseFloat(_self.baseline());
-      if (baseline <= 0) {
-        polygon.unshift(new Misc.Point(x, y));
-        polygon.push(new Misc.Point(x, y));
-      } else {
-        const samples = _self.data().samples();
+      let bs = parseFloat(_self.baseline());
 
-        const _validTransformPoints = self.transformedBaseline(
-          baseline,
-          yMap,
-          samples,
-          x,
-          y
-        );
-
-        _validTransformPoints.reverse();
-
-        for (let i = 0; i < _validTransformPoints.length; i++) {
-          polygon.push(_validTransformPoints[i]);
-        }
-        polygon.push(new Misc.Point(polygon[0]));
+      const samples = _self.data().samples();
+      bs = parseFloat(_self.baseline());
+      const min = yMap.s1();
+      if (bs < min) {
+        bs = min;
       }
+
+      const _validTransformPoints = self.transformedBaseline(
+        bs,
+        yMap,
+        samples,
+        x,
+        y
+      );
+
+      if (_validTransformPoints.length === 0) {
+        polygon.splice(0, polygon.length); //no closed polygon available. clear the array
+        return;
+      }
+
+      _validTransformPoints.reverse();
+
+      for (let i = 0; i < _validTransformPoints.length; i++) {
+        polygon.push(_validTransformPoints[i]);
+      }
+      polygon.push(new Misc.Point(polygon[0]));
+      //}
     };
 
     //self === grid this === curve
@@ -242,13 +253,21 @@ class PolarGrid extends PlotGrid {
 
         const ctx = painter.context();
 
+        let bs = parseFloat(_self.baseline());
+        const min = yMap.s1();
+        if (bs < min) {
+          bs = min;
+        }
+
         const transPoints = self.transformedBaseline(
-          parseFloat(_self.baseline()),
+          bs,
           yMap,
           unTransPoints,
           ctx.canvas.width / 2,
           ctx.canvas.height / 2
         );
+
+        if (transPoints.length === 0 || samples.length === 0) return;
 
         for (let i = from; i <= to; i++) {
           painter.drawLine(
@@ -382,6 +401,8 @@ class PolarGrid extends PlotGrid {
         return;
       }
 
+      ticks = 12;
+
       const ctx = painter.context();
 
       const x = ctx.canvas.width / 2;
@@ -389,7 +410,7 @@ class PolarGrid extends PlotGrid {
 
       const th = painter.textSize("8888");
 
-      const radius = y - th.width;
+      const radius = 0.75 * y; // - th.width;
 
       let angle = 0;
 
@@ -398,35 +419,42 @@ class PolarGrid extends PlotGrid {
         s2 = yMap.s2();
       }
 
-      //const s_space = (s2 - s1) / ticks;
+      const degArr = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
+      let v = "\u03c0";
+      const radArr = [
+        `0`,
+        `${v}/6`,
+        `${v}/3`,
+        `${v}/2`,
+        `2${v}/3`,
+        `5${v}/6`,
+        `${v}`,
+        `7${v}/6`,
+        `4${v}/3`,
+        `3${v}/2`,
+        `5${v}/3`,
+        `11${v}/6`,
+      ];
+
       const s_space =
         Utility.mathMode() === "rad" ? (2 * Math.PI) / ticks : 360 / ticks;
 
-      const labelArr = [0];
+      let labelArr = Utility.mathMode() === "rad" ? radArr : degArr;
 
-      let v = 0; //s1;
-      for (let i = 1; i < ticks; i++) {
-        v += s_space;
-        labelArr.push(v);
-      }
-
-      let delta = (2 * Math.PI) / 8;
-      if (Utility.mathMode() === "deg") {
-        delta = 360 / ticks;
-      }
-
-      //for (let i = 0; i < ticks.length; i++) {
-      for (let i = 0; i < ticks; i++) {
+      for (let i = 0; i < labelArr.length; i++) {
+        if (i === 0 || i === 3 || i === 6 || i === 9) {
+          angle += s_space;
+          continue;
+        }
         const x2 = radius * math.cos(angle) + x;
-        const y2 = y - radius * math.sin(angle) + 0.5 * th.height;
+        const y2 = y - radius * math.sin(angle); // + 0.5 * th.height;
         painter.drawText(
-          labelArr[i].toPrecision(rayPrecision),
+          labelArr[i] /* .toPrecision(rayPrecision) */,
           x2,
           y2,
           "center"
         );
-        //painter.drawRotatedText("789", x2, y2, -1 * angle /* degrees */);
-        angle += delta;
+        angle += s_space;
       }
     }
 
@@ -467,37 +495,32 @@ class PolarGrid extends PlotGrid {
         const x2_ = x + radius * math.cos(mode == "rad" ? 3.50811 : 21 + 180);
         const y2_ = y - radius * math.sin(mode == "rad" ? 3.50811 : 21 + 180);
 
-        if (mode === "rad") {
-          painter.drawRotatedText(
-            `${ticks[i].toPrecision(radialPrecision)}`,
-            x2,
-            y2,
-            1.15192,
-            true
-          );
+        painter.drawText(
+          `${ticks[i].toPrecision(radialPrecision)}`,
+          x - radius,
+          y + th.height,
+          "center"
+        );
+        painter.drawText(
+          `${ticks[i].toPrecision(radialPrecision)}`,
+          radius + x,
+          y + th.height,
+          "center"
+        );
 
-          painter.drawRotatedText(
-            `${ticks[i].toPrecision(radialPrecision)}`,
-            x2_,
-            y2_,
-            1.20428,
-            true
-          );
-        } else {
-          painter.drawRotatedText(
-            `${ticks[i].toPrecision(radialPrecision)}`,
-            x2,
-            y2,
-            -24 + 90
-          );
+        painter.drawText(
+          `${ticks[i].toPrecision(radialPrecision)}`,
+          x,
+          radius + y + 0.5 * th.height,
+          "center"
+        );
 
-          painter.drawRotatedText(
-            `${ticks[i].toPrecision(radialPrecision)}`,
-            x2_,
-            y2_,
-            -21 + 90
-          );
-        }
+        painter.drawText(
+          `${ticks[i].toPrecision(radialPrecision)}`,
+          x,
+          y - radius + 0.5 * th.height,
+          "center"
+        );
       }
     }
 
@@ -575,14 +598,17 @@ class PolarGrid extends PlotGrid {
 
       if (yEnabled && yMinEnabled) {
         painter.setPen(new Misc.Pen(_minorPen));
-        drawRays(painter, yMap, axisMaxMinorRay * axisMaxMajorRay);
+        drawRays(painter, yMap, 6 * 4);
       }
 
       if (yEnabled) {
         painter.setPen(new Misc.Pen(_majorPen));
-        drawRays(painter, yMap, axisMaxMajorRay);
+        drawRays(painter, yMap, 4);
         const font = p.axisLabelFont(Axis.AxisId.xBottom);
-        painter.setFont(font);
+        //font.fontColor = "#D3D3D3";
+        const _f = new Misc.Font(font);
+        _f.fontColor = "#808080";
+        painter.setFont(_f);
         drawRayLabel(painter, yMap, axisMaxMajorRay);
       }
       plot.setAutoReplot(autoReplot);
@@ -621,7 +647,7 @@ class PolarGrid extends PlotGrid {
   }
 
   angleStep(ticks) {
-    let delta = (2 * Math.PI) / 8;
+    let delta = (2 * Math.PI) / ticks;
     if (Utility.mathMode() === "deg") {
       delta = 360 / ticks;
     }
@@ -631,14 +657,27 @@ class PolarGrid extends PlotGrid {
   //The order of triggering is important
   hide() {
     Static.trigger("polarGridVisible", false);
+
     super.hide();
     Static.polarGrid = false; //paaner checks dthis flag and ignores panning
     //Static.trigger("polarGridVisible", false);
+    const plot = this.plot();
+    if (this._axisMaxMinor !== undefined) {
+      plot.setAxisMaxMinor(0, this._axisMaxMinor);
+      plot.setAxisMaxMajor(0, this._axisMaxMajor);
+    }
   }
   show() {
     //Static.trigger("polarGridVisible", true);
     super.show();
-    Static.polarGrid = true; //paaner checks dthis flag and ignores panning
+    //Set
+    //Static.polarGrid = true; //panner checks this flag and ignores panning
+    const plot = this.plot();
+    this._axisMaxMinor = plot.axisMaxMinor(0);
+    this._axisMaxMajor = plot.axisMaxMajor(0);
+    plot.setAxisMaxMinor(0, 6);
+    plot.setAxisMaxMajor(0, 4);
+    Static.polarGrid = true;
     Static.trigger("polarGridVisible", true);
   }
 }

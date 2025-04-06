@@ -285,6 +285,7 @@ class MFunctionDlg {
       .off("change")
       .on("change", async function () {
         Static.math_mode = $(this).val();
+        Static.trigger("mathModeChanged", Static.math_mode);
         Replacement.config.angles = $(this).val();
         if (Static.imagePath != "images/") {
           try {
@@ -295,6 +296,7 @@ class MFunctionDlg {
           }
         }
         $("#fnDlg_ok").trigger("focus");
+        plot.autoRefresh();
       });
 
     $("#fnDlg_variable")
