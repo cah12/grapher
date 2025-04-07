@@ -763,13 +763,17 @@ class InfoPropertiesPane extends Pane {
         n++;
       }
 
-      if (y && curCurve.lowerX && isFinite(y)) {
-        s[0] = new Misc.Point(
-          Utility.adjustForDecimalPlaces(curCurve.lowerX, xdec),
-          Utility.adjustForDecimalPlaces(y, ydec)
-        );
+      if (!y) {
+        scope.set(curCurve.variable, curCurve.lowerX);
+        y = expr.evaluate(scope);
       }
 
+      s[0] = new Misc.Point(
+        Utility.adjustForDecimalPlaces(curCurve.lowerX, xdec),
+        Utility.adjustForDecimalPlaces(y, ydec)
+      );
+
+      y = null;
       n = 0;
       x = curCurve.upperX + step;
       while (!isFinite(y) && n < 8000) {
@@ -779,12 +783,15 @@ class InfoPropertiesPane extends Pane {
         n++;
       }
 
-      if (y && curCurve.upperX && isFinite(y)) {
-        s[s.length - 1] = new Misc.Point(
-          Utility.adjustForDecimalPlaces(curCurve.upperX, xdec),
-          Utility.adjustForDecimalPlaces(y, ydec)
-        );
+      if (!y) {
+        scope.set(curCurve.variable, curCurve.upperX);
+        y = expr.evaluate(scope);
       }
+
+      s[s.length - 1] = new Misc.Point(
+        Utility.adjustForDecimalPlaces(curCurve.upperX, xdec),
+        Utility.adjustForDecimalPlaces(y, ydec)
+      );
 
       //console.timeEnd("makeAnimationSaples");
       return s;
