@@ -505,6 +505,7 @@ class PolarGrid extends PlotGrid {
       plot.setAxisMaxMajor(0, this._axisMaxMajor);
     }
     super.hide();
+    Static.trigger("polarGridStatus", Static.polarGrid);
   }
   show() {
     //super.show();
@@ -516,6 +517,7 @@ class PolarGrid extends PlotGrid {
     Static.polarGrid = true; //panner checks this flag and ignores panning
     this.polarGridVisible(true);
     super.show();
+    Static.trigger("polarGridStatus", Static.polarGrid);
   }
 
   validTransformPoints(boundingRect, xMap, yMap, series, from, to, round) {

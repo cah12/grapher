@@ -1599,7 +1599,7 @@ class PlotPropertiesPane extends PropertiesPane {
       disabled: true,
     });
     this.addProperty({
-      name: "Left",
+      name: "Left (Radius)",
       id: "limitsLeft",
       parentId: "scaleLimits",
     });
@@ -4169,14 +4169,32 @@ class PlotPropertiesPane extends PropertiesPane {
     //     .innerHTML.replace("Left", "Hello");
     //this.getTableRowByPropertyId("limitsLeft").children()[0].innerText = "Aaa";
 
-    // let inner =
-    //   this.getTableRowByPropertyId("limitsLeft").children()[0].innerText;
+    // let inner = this.getTableRowByPropertyId("limitsLeft")[0].innerHTML;
     // inner = inner.replace("Left", "Hello");
-    // this.getTableRowByPropertyId("limitsLeft").children()[0].innerText = inner;
+    // this.getTableRowByPropertyId("limitsLeft")[0].innerHTML = inner;
+
+    // let mycel = this.getTableRowByPropertyId("limitsLeft")[0];
+    // let myceltext = mycel.childNodes.item(1);
+    // mycel.removeChild(myceltext);
+    // var newtxt = document.createTextNode("Radius");
+    // mycel.appendChild(newtxt);
     // console.log(
     //   //this.getTableRowByPropertyId("limitsLeft").children()[0].innerText
-    //   this.getElementValueDataAttribute("limitsLeft").innerText
+    //   this.getTableRowByPropertyId("limitsLeft")[0].childNodes.item(0)
     // );
+
+    Static.bind("polarGridStatus", function (e, on) {
+      console.log(Static.polarGrid);
+      if (on) {
+        self.hide("limitsTop");
+        self.hide("limitsBottom");
+        self.hide("limitsRight");
+      } else {
+        self.show("limitsTop");
+        self.show("limitsBottom");
+        self.show("limitsRight");
+      }
+    });
 
     function aspectRatioOneToOneFn() {
       /* if (Static.aspectRatioOneToOne) {
