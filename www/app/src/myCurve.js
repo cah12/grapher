@@ -204,7 +204,9 @@ class MyCurve extends Curve {
       if (!self.unboundedRange) {
         return self.doDraw(painter, style, xMap, yMap, from, to);
       } else {
+        const data = self.data();
         if (self.discontinuosCurvePending) {
+          data.discontinuitySamples = null;
           return;
         }
 
@@ -234,8 +236,11 @@ class MyCurve extends Curve {
           );
         }
 
-        const data = self.data();
-        const sz = Math.max(Static.min_discontinuity_samples, data.size());
+        let sz = self.data().size();
+        if (self.discontinuity && self.discontinuity.length) {
+          sz = Math.max(Static.min_discontinuity_samples, data.size());
+        }
+        //const sz = Math.max(Static.min_discontinuity_samples, data.size());
         data.setSize(sz);
 
         const obj = {
@@ -258,6 +263,7 @@ class MyCurve extends Curve {
           to,
           data.discontinuitySamples
         );
+        //data.discontinuitySamples = null;
         plot.autoRefresh();
       }
     } catch (error) {

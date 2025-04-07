@@ -916,7 +916,7 @@ class CurvePropertiesPane extends PropertiesPane {
     var baselineElement = this.getElementValueDataAttribute("baseline");
     function baseline(val) {
       let curve = plot.findPlotCurve(curveSelectProp.val());
-      curve.setBaseline(val);
+      curve.setBaseline(parseFloat(val));
     }
 
     var showContoursElement = self.getElementValueDataAttribute("showContours");

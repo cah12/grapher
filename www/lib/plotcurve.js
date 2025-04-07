@@ -664,17 +664,19 @@ class Curve extends PlotSeriesItem {
 
       var series = this.data();
 
+      ////////////////Added//////////////////
+      const mapper = new PointMapper();
+      var samples = mapper.toPointsF(xMap, yMap, this.data(), from, to);
+      ///////////////////////////////////////
+
       var i, ip;
       for (i = from, ip = 0; i <= to; i++, ip += 2) {
-        var sample = series.sample(i);
+        var sample = samples[i];
 
-        var xi = xMap.transform(sample.x);
-        var yi = yMap.transform(sample.y);
-        //            if ( doAlign )
-        //            {
-        //                xi = Math.round( xi );
-        //                yi = Math.round( yi );
-        //            }
+        // var xi = xMap.transform(sample.x);
+        // var yi = yMap.transform(sample.y);
+        var xi = sample.x;
+        var yi = sample.y;
 
         if (ip > 0) {
           var p0 = points[ip - 2];
@@ -825,6 +827,7 @@ class Curve extends PlotSeriesItem {
             }*/
 
       /*else*/
+
       if (m_paintAttributes & Curve.PaintAttribute.MinimizeMemory) {
         var series = this.data();
 

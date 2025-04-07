@@ -3999,7 +3999,7 @@ class PlotPropertiesPane extends PropertiesPane {
 
     /////////////////////////
     gridType.change(function () {
-      /* Prevent replot during grid change allows for Static.polarGrid to be properly set. */
+      /* Prevent replot during grid change might allow for Static.polarGrid to be properly set. */
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       if ($(this)[0].selectedIndex == 0) {
@@ -4011,13 +4011,6 @@ class PlotPropertiesPane extends PropertiesPane {
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
-
-      function initGrid(plotGrid, g) {
-        plotGrid.enableX(g.xEnabled());
-        plotGrid.enableY(g.yEnabled());
-        plotGrid.enableXMin(g.xMinEnabled());
-        plotGrid.enableYMin(g.yMinEnabled());
-      }
     });
 
     /////////////////////////////////////////////////
@@ -4168,6 +4161,22 @@ class PlotPropertiesPane extends PropertiesPane {
       gridSettings.html(horizontal + ", " + vertical);
     }
     /////////////////////////////////////////////////////
+
+    //this.getTableRowByPropertyId("limitsLeft").context.innerText = "Hello";
+    // this.getTableRowByPropertyId("limitsLeft").children()[0].innerHTML =
+    //   this.getTableRowByPropertyId("limitsLeft")
+    //     .children()[0]
+    //     .innerHTML.replace("Left", "Hello");
+    //this.getTableRowByPropertyId("limitsLeft").children()[0].innerText = "Aaa";
+
+    // let inner =
+    //   this.getTableRowByPropertyId("limitsLeft").children()[0].innerText;
+    // inner = inner.replace("Left", "Hello");
+    // this.getTableRowByPropertyId("limitsLeft").children()[0].innerText = inner;
+    // console.log(
+    //   //this.getTableRowByPropertyId("limitsLeft").children()[0].innerText
+    //   this.getElementValueDataAttribute("limitsLeft").innerText
+    // );
 
     function aspectRatioOneToOneFn() {
       /* if (Static.aspectRatioOneToOne) {
