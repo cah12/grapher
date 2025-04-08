@@ -11,8 +11,14 @@ class InfoSideBar extends SideBar {
       return m_plot;
     };
     Static.bind("paneClose", function (e, headerElement) {
-      if (self.anchorPosition() === "right") {
+      // if ($(this) === "right") {
+      //   plot.tbar.setButtonCheck(plot.sBar, false);
+      // }
+      //console.log(plot.infoPropertiesPane.headerElement() === headerElement);
+      if (plot.infoPropertiesPane.headerElement() === headerElement) {
+        //if (self.anchorPosition() === "right") {
         plot.tbar.setButtonCheck(plot.sBar, false);
+        self.hideGridItemWithHeaderElement(headerElement);
       }
       //self.hideGridItemWithHeaderElement(headerElement);
     });

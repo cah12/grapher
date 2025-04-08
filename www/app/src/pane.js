@@ -4,6 +4,10 @@
 class Pane {
   constructor(_parent) {
     var self = this;
+    let m_headerElement = null;
+    this.headerElement = function () {
+      return m_headerElement[0];
+    };
     self.paneParent = $("<div/>");
     _parent.append(self.paneParent);
     _parent.parent().css("border", "4px ridge white");
@@ -14,6 +18,7 @@ class Pane {
     };
 
     this.setHeader = function (headerElement, caption, close) {
+      m_headerElement = headerElement;
       var close = close || false;
       var _header = this.header(caption);
       if (close) {

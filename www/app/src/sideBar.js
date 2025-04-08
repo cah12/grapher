@@ -11,7 +11,7 @@ class SideBar {
 
     this.sidebarOriginalWidth = 0;
 
-    var m_anchorPosition = anchorPosition || "right";
+    var m_anchorPosition = anchorPosition;
 
     var m_html = null; // background-color:#ffc9ae;
 

@@ -739,7 +739,12 @@ class InfoPropertiesPane extends Pane {
         if (!p) {
           return false;
         }
-        if (index > 0 && s[index - 1] && s[index - 1].y === p.y) {
+        if (
+          index > 0 &&
+          s[index - 1] &&
+          s[index - 1].x === p.x &&
+          s[index - 1].y === p.y
+        ) {
           return false;
         }
         return p;
@@ -756,7 +761,7 @@ class InfoPropertiesPane extends Pane {
       const inc = step / 3000;
       let n = 0;
       let x = curCurve.lowerX - step;
-      while (!isFinite(y) && n < 8000) {
+      while ((!y || !isFinite(y)) && n < 8000) {
         x += inc * n;
         scope.set(curCurve.variable, x);
         y = expr.evaluate(scope);
@@ -776,7 +781,7 @@ class InfoPropertiesPane extends Pane {
       y = null;
       n = 0;
       x = curCurve.upperX + step;
-      while (!isFinite(y) && n < 8000) {
+      while ((!y || !isFinite(y)) && n < 8000) {
         x -= inc * n;
         scope.set(curCurve.variable, x);
         y = expr.evaluate(scope);
@@ -997,7 +1002,17 @@ class InfoPropertiesPane extends Pane {
       }
     });
 
+    self.initialized = false;
     Static.bind("itemAttached", function (e, plotItem, on) {
+      //This hack is required to keep the right sidebar anchored to the right.
+      //Somehow if a the leftsidbar is hidden before the right sidebar is displayed for the first time
+      //the right sidebar is displayed on the left.
+      if (!self.initialized) {
+        plot.tbar.setButtonCheck(plot.sBar, true);
+        plot.tbar.setButtonCheck(plot.sBar, false);
+        self.initialized = true;
+      }
+
       for (var i = 0; i < 5; ++i) {
         $("#coeff_val" + i).stop(true);
         $("#coeff_val" + i + "_playButton")[0].children[0].src =

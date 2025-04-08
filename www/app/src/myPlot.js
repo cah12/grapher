@@ -3023,7 +3023,7 @@ class MyPlot extends Plot {
     var m_settings = null;
     this.leftSidebar = new PlotSideBar(this, self.plotDiv);
     this.leftSidebar.setTop(parseInt($("#toolBar1").css("height")) + 2);
-    var pp = new CurvePropertiesPane(
+    this.curvePropertiesPane = new CurvePropertiesPane(
       this.leftSidebar.gridItem(0).bodyElement,
       this,
       Static.curvePropPane
@@ -3120,7 +3120,7 @@ class MyPlot extends Plot {
 
     this.rightSidebar = new InfoSideBar(this, self.plotDiv);
     this.rightSidebar.setTop(parseInt($("#toolBar1").css("height")) + 2);
-    var pp = new InfoPropertiesPane(
+    this.infoPropertiesPane = new InfoPropertiesPane(
       this.rightSidebar.gridItem(0).bodyElement,
       this,
       Static.infoPropPane
@@ -4255,6 +4255,8 @@ class MyPlot extends Plot {
       this.axesSwapped = false;
       return true;
     };
+
+    self.tbar.setButtonCheck(self.sBar, false);
 
     ////////////////////////////////////////////////////
 

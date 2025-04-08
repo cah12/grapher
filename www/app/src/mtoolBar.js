@@ -419,7 +419,10 @@ class MToolBar extends ToolBar {
                         } */
           //console.log(458, on)
         }
-        if (!on) _plot.sidebar.setSidebarReDisplay(false);
+        if (!on) {
+          //Static.trigger("paneClose", _plot.infoPropertiesPane.headerElement());
+          _plot.sidebar.setSidebarReDisplay(false);
+        }
         _plot.setAutoReplot(doReplot);
         _plot.autoRefresh();
       },

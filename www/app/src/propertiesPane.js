@@ -235,6 +235,21 @@ class PropertiesPane extends Pane {
       return null;
     };
 
+    this.replacePropertNameText = function (id, text_to_replace, replacement) {
+      const element = propertiesTable.treetable("node", id).treeCell[0];
+
+      if (!element) {
+        return false;
+      }
+      propertiesTable.treetable("expandNode", id);
+      element.innerHTML = element.innerHTML.replace(
+        text_to_replace,
+        replacement
+      );
+      propertiesTable.treetable("collapseNode", id);
+      return true;
+    };
+
     this.getElementValueDataByPropertyName = function (name) {
       //"data-tt-id" val
       var row = null;

@@ -1599,7 +1599,7 @@ class PlotPropertiesPane extends PropertiesPane {
       disabled: true,
     });
     this.addProperty({
-      name: "Left (Radius)",
+      name: "Left",
       id: "limitsLeft",
       parentId: "scaleLimits",
     });
@@ -4189,7 +4189,9 @@ class PlotPropertiesPane extends PropertiesPane {
         self.hide("limitsTop");
         self.hide("limitsBottom");
         self.hide("limitsRight");
+        self.replacePropertNameText("limitsLeft", "Left", "Radius");
       } else {
+        self.replacePropertNameText("limitsLeft", "Radius", "Left");
         self.show("limitsTop");
         self.show("limitsBottom");
         self.show("limitsRight");
