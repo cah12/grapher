@@ -377,6 +377,7 @@ class PolarGrid extends PlotGrid {
       }
     }
 
+    self.setTitle = false;
     //Azimuth (y) 0 - 360
     //Radial (x) 0 - 10 default
     this.draw = function (xMap, yMap) {
@@ -464,6 +465,7 @@ class PolarGrid extends PlotGrid {
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
+      self.setTitle = false;
     };
 
     this.mToPoints = function (
@@ -657,7 +659,11 @@ class PolarGrid extends PlotGrid {
     const plot = self.plot();
     const autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
+    // const leftAxisWidget = plot.axisWidget(0);
+    // const bottomAxisWidget = plot.axisWidget(2);
     if (on) {
+      // self.leftAxisTile = plot.axisTitle(0);
+      // self.bottomAxisTile = plot.axisTitle(2);
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
         // L[i].originalDraw = L[i].drawSeries;
@@ -674,11 +680,19 @@ class PolarGrid extends PlotGrid {
         Static.mToPoints = self.mToPoints; //Static.mToPolylineFiltered
         self.original_mToPolylineFiltered = Static.mToPolylineFiltered;
         Static.mToPolylineFiltered = self.mToPolylineFiltered;
+
+        // self.original_drawLeftTitle = leftAxisWidget.drawTitle;
+        // leftAxisWidget.drawTitle = function () {};
+        // self.original_drawBottomTitle = bottomAxisWidget.drawTitle;
+        // bottomAxisWidget.drawTitle = function () {};
       }
     } else {
       if (Static.polarGrid) {
         Static.mToPoints = self.original_mToPoints;
         Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
+
+        // leftAxisWidget.drawTitle = self.original_drawLeftTitle;
+        // bottomAxisWidget.drawTitle = self.original_drawBottomTitle;
       }
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {

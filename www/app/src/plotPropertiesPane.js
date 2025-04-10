@@ -4198,11 +4198,13 @@ class PlotPropertiesPane extends PropertiesPane {
           title: "Configure the radius(r) scale precision",
         });
         self.centerAxesBefore = centerAxes[0].checked;
-        self.centerAxesZero = centerAxesZero[0].checked;
-        centerAxes[0].checked = false;
-        centerAxes.trigger("change");
-        self.hide("centerAxes");
-        self.hide("centerAxesZero");
+        self.centerAxesZeroBefore = centerAxesZero[0].checked;
+        if (self.centerAxesBefore) {
+          centerAxes[0].checked = false;
+          centerAxes.trigger("change");
+          self.hide("centerAxes");
+          self.hide("centerAxesZero");
+        }
         self.hide("scalePositionBottom");
         self.hide("scalePositionRight");
         self.hide("scalePositionTop");
@@ -4232,13 +4234,15 @@ class PlotPropertiesPane extends PropertiesPane {
 
         self.show("centerAxes");
 
-        centerAxes[0].checked = self.centerAxesBefore;
-        centerAxes.trigger("change");
-        centerAxesZero[0].checked = self.centerAxesZero;
-        centerAxesZero.trigger("change");
+        if (self.centerAxesBefore) {
+          centerAxes[0].checked = self.centerAxesBefore;
+          centerAxes.trigger("change");
+          centerAxesZero[0].checked = self.centerAxesZeroBefore;
+          centerAxesZero.trigger("change");
+        }
 
         if (centerAxes[0].checked) {
-          self.show("centerAxesZero");
+          // self.show("centerAxesZero");
         }
         self.show("scalePositionBottom");
         self.show("scalePositionRight");

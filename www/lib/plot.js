@@ -1850,6 +1850,7 @@ class Plot {
         axisWidget.scaleDraw().data.plotBorderWidth = parseFloat(
           this.getLayout().getCentralDiv().css("border-width")
         );
+        //console.log(axisWidget.title());
         axisWidget.draw();
       }
 
