@@ -901,6 +901,5 @@ require([
 
 /*
 TODO
-$$ \colorbox{red}{$ \frac{2\cos^2x}{\cos x\sin x} $} $$
-$$ \colorbox{red}{$ \frac{2\cos^2x}{\sin xcosx} $} $$
+inverted scale in polar grid -- bug
 */

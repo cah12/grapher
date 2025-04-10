@@ -962,7 +962,7 @@ class PlotPropertiesPane extends PropertiesPane {
       fun: scaleTitleBold,
     });
     this.addProperty({
-      name: "Type & precision",
+      name: "Type, precision & attributes",
       title: "Configure scale type and precision",
       id: "scalePosition",
       parentId: "scaleSettings",
@@ -1578,7 +1578,8 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     this.addProperty({
-      name: "Bottom",
+      name: "Bottom(x)",
+      title: "Set limits for the cartesian grid bottom(x) axis",
       id: "limitsBottom",
       parentId: "scaleLimits",
     });
@@ -1600,7 +1601,7 @@ class PlotPropertiesPane extends PropertiesPane {
     });
     this.addProperty({
       title: "Set limits for the cartesian grid left(y) axis",
-      name: "Left",
+      name: "Left(y)",
       id: "limitsLeft",
       parentId: "scaleLimits",
     });
@@ -1620,7 +1621,12 @@ class PlotPropertiesPane extends PropertiesPane {
       value: "0",
       disabled: true,
     });
-    this.addProperty({ name: "Top", id: "limitsTop", parentId: "scaleLimits" });
+    this.addProperty({
+      name: "Top(x)",
+      title: "Set limits for the cartesian grid top(x) axis",
+      id: "limitsTop",
+      parentId: "scaleLimits",
+    });
     var top_min = this.addProperty({
       name: "minimum",
       id: "limitsTopMinimum",
@@ -1638,7 +1644,8 @@ class PlotPropertiesPane extends PropertiesPane {
       disabled: true,
     });
     this.addProperty({
-      name: "Right",
+      name: "Right(y)",
+      title: "Set limits for the cartesian grid right(y) axis",
       id: "limitsRight",
       parentId: "scaleLimits",
     });
@@ -4185,19 +4192,58 @@ class PlotPropertiesPane extends PropertiesPane {
     // );
 
     Static.bind("polarGridStatus", function (e, on) {
-      console.log(Static.polarGrid);
       if (on) {
+        self.replaceNodeText("scalePosition", {
+          name: "Precision & attributes",
+          title: "Configure the radius(r) scale precision",
+        });
+        self.hide("centerAxes");
+        self.hide("centerAxesZero");
+        self.hide("scalePositionBottom");
+        self.hide("scalePositionRight");
+        self.hide("scalePositionTop");
+        self.hide("scaleMarginsRightAxis");
+        self.hide("scaleMarginsTopAxis");
+        self.hide("scaleMarginsBottomAxis");
+        self.replaceNodeText("scalePositionLeft", {
+          name: "Radius(r)",
+          title: "Configure the radius(r) scale type",
+        });
+        self.replaceNodeText("scaleMarginsLeftAxis", {
+          name: "Radius(r)",
+        });
+        ////////////////////////////////////
         self.hide("limitsTop");
         self.hide("limitsBottom");
         self.hide("limitsRight");
         self.replaceNodeText("limitsLeft", {
-          name: "Radius",
-          title: "Set limits for the polar grid radius",
+          name: "Radius(r)",
+          title: "Set limits for the polar grid radius(r).",
         });
       } else {
+        self.replaceNodeText("scalePosition", {
+          name: "Type, precision & attributes",
+          title: "Configure scale type and precision.",
+        });
+        self.show("centerAxes");
+        self.show("centerAxesZero");
+        self.show("scalePositionBottom");
+        self.show("scalePositionRight");
+        self.show("scalePositionTop");
+        self.show("scaleMarginsRightAxis");
+        self.show("scaleMarginsTopAxis");
+        self.show("scaleMarginsBottomAxis");
+        self.replaceNodeText("scalePositionLeft", {
+          name: "Left",
+          title: "Configure the left scale type",
+        });
+        self.replaceNodeText("scaleMarginsLeftAxis", {
+          name: "Left axis",
+        });
+        ////////////////////////////////////////
         self.replaceNodeText("limitsLeft", {
           title: "Set limits for the cartesian grid left(y) axis",
-          name: "Left",
+          name: "Left(y)",
         });
         self.show("limitsTop");
         self.show("limitsBottom");

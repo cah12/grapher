@@ -414,7 +414,8 @@ class LinearScaleEngine extends ScaleEngine {
       var interval = new Interval(xValueObject["x1"], xValueObject["x2"]);
       interval = interval.normalized();
 
-      interval.setMinValue(interval.minValue() - this.lowerMargin());
+      const minValue = !Static.polarGrid ? interval.minValue() : 0;
+      interval.setMinValue(minValue - this.lowerMargin());
       interval.setMaxValue(interval.maxValue() + this.upperMargin());
 
       if (this.testAttribute(ScaleEngine.Attributes.Symmetric))

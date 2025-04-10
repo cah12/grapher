@@ -1678,7 +1678,7 @@ class Plot {
       }
 
       // Adjust scales
-      const axisCnt = !Static.polarGrid ? Axis.AxisId.axisCnt : 1;
+      const axisCnt = 4; //!Static.polarGrid ? Axis.AxisId.axisCnt : 1;
       for (var axisId = 0; axisId < axisCnt; axisId++) {
         var d = d_axisData[axisId];
         var minValue = d.minValue;
@@ -1707,7 +1707,7 @@ class Plot {
           minValue = xValues["x1"];
           maxValue = xValues["x2"];
 
-          minValue = !Static.polarGrid ? minValue : 0;
+          //minValue = !Static.polarGrid ? minValue : 0;
         }
         if (!d.isValid) {
           //alert("or here")
