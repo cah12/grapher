@@ -4202,9 +4202,9 @@ class PlotPropertiesPane extends PropertiesPane {
         if (self.centerAxesBefore) {
           centerAxes[0].checked = false;
           centerAxes.trigger("change");
-          self.hide("centerAxes");
           self.hide("centerAxesZero");
         }
+        self.hide("centerAxes");
         self.hide("scalePositionBottom");
         self.hide("scalePositionRight");
         self.hide("scalePositionTop");
@@ -4242,7 +4242,7 @@ class PlotPropertiesPane extends PropertiesPane {
         }
 
         if (centerAxes[0].checked) {
-          // self.show("centerAxesZero");
+          //self.show("centerAxesZero");
         }
         self.show("scalePositionBottom");
         self.show("scalePositionRight");
