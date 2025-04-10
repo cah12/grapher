@@ -235,18 +235,31 @@ class PropertiesPane extends Pane {
       return null;
     };
 
-    this.replacePropertNameText = function (id, text_to_replace, replacement) {
-      const element = propertiesTable.treetable("node", id).treeCell[0];
-
+    this.replaceNodeText = function (id, obj) {
+      //const element = propertiesTable.treetable("node", id).treeCell[0];
+      const element = propertiesTable.treetable("node", id); //.row[0];
       if (!element) {
         return false;
       }
-      propertiesTable.treetable("expandNode", id);
-      element.innerHTML = element.innerHTML.replace(
-        text_to_replace,
-        replacement
-      );
-      propertiesTable.treetable("collapseNode", id);
+
+      // console.log(
+      //   $(propertiesTable.treetable("node", id).row[0]).attr("title")
+      // );
+      if (obj.title) {
+        $(element.row[0]).attr("title", obj.title);
+      }
+
+      if (obj.name) {
+        propertiesTable.treetable("expandNode", id);
+        const _name = element.treeCell[0].innerText.trim();
+
+        element.treeCell[0].innerHTML = element.treeCell[0].innerHTML.replace(
+          _name,
+          obj.name
+        );
+        propertiesTable.treetable("collapseNode", id);
+      }
+
       return true;
     };
 

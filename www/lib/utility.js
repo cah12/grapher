@@ -3265,8 +3265,58 @@ class Utility {
     }
   }
 
+  static isPeriodic(exp) {
+    return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
+  }
+
+  static handlePeriodic(discontinuitiesArr, lower, upper) {
+    if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
+      return discontinuitiesArr;
+    }
+    let d = discontinuitiesArr[1] - discontinuitiesArr[0];
+    let a1 = discontinuitiesArr[0];
+
+    if (d != 0) {
+      //a periodic function
+      // if (discontinuitiesArr[0] > lower) {
+      //   a1 =
+      //     discontinuitiesArr[0] -
+      //     Math.round((discontinuitiesArr[0] - lower) / d) * d;
+      // }
+      let n = 0;
+      while (a1 > lower && n < 5000) {
+        a1 = a1 - n * d;
+        n++;
+      }
+      n = 0;
+      while (a1 < lower && n < 5000) {
+        a1 = a1 + n * d;
+        n++;
+      }
+
+      a1 = a1 - 3 * d;
+      n = 0;
+      discontinuitiesArr.length = 0;
+
+      while (n < 5000) {
+        discontinuitiesArr.push(a1 + n * d);
+        if (discontinuitiesArr[n] > upper) {
+          break;
+        }
+        n++;
+      }
+      discontinuitiesArr.push(a1 + (n + 1) * d);
+      discontinuitiesArr.push(a1 + (n + 2) * d);
+      discontinuitiesArr.push(a1 + (n + 3) * d);
+    }
+    return discontinuitiesArr;
+  }
+
   static async discontinuity1(exp, lower, upper, indepVar) {
     ///////////////////////Variables//////////////////////
+    let result = [];
+    let d = 0;
+    let factors = [];
     let denominators = [];
     const trigs = [
       "sin",
@@ -3381,10 +3431,6 @@ class Utility {
       return coeff;
     }
 
-    function isPeriodic(exp) {
-      return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
-    }
-
     function getFactors(exp) {
       let factors = [];
       let node;
@@ -3481,6 +3527,7 @@ class Utility {
       denom = _.uniq(denom);
       return denom;
     }
+
     //////////////////Helper Functions End/////////////////
     try {
       if (!exp || exp.length === 0) {
@@ -3523,7 +3570,6 @@ class Utility {
       exp = exp.replaceAll("mod", " mod ");
       exp = adjustConstantForMode(exp);
 
-      let factors = [];
       denominators = denominators.concat(getDenominators(exp));
       denominators.forEach(function (d) {
         factors = factors.concat(getFactors(d));
@@ -3534,9 +3580,6 @@ class Utility {
       }
       //console.log(486, denominators);
 
-      let result = [];
-
-      let d = 0;
       for (let i = 0; i < factors.length; i++) {
         const e = factors[i];
 
@@ -3562,7 +3605,7 @@ class Utility {
         ) {
           /* let coeffs = getCoeff(e);
         if (coeffs.length) coeff = coeffs[0]; */
-          periodic = isPeriodic(e);
+          periodic = this.isPeriodic(e);
         }
 
         if (solution.length !== undefined) {
@@ -3587,27 +3630,7 @@ class Utility {
           //let periodic = true;
           if (solution.length > 1) {
             if (periodic) {
-              //a periodic function
-              //Check for periodic
-              d = m_result[1] - m_result[0];
-              let a1 = m_result[0];
-
-              if (d != 0) {
-                //a periodic function
-                if (m_result[0] > lower) {
-                  a1 = m_result[0] - Math.round((m_result[0] - lower) / d) * d;
-                }
-                m_result = [];
-
-                let n = 0;
-                while (1) {
-                  m_result.push(a1 + n * d);
-                  if (m_result[n] > upper) {
-                    break;
-                  }
-                  n++;
-                }
-              }
+              m_result = this.handlePeriodic(m_result, lower, upper);
             } else {
               //non periodic function with many solutions
             }
@@ -5800,7 +5823,7 @@ class Utility {
             );
             result = result.replace(
               `${prefix}^${oprnd.operand}`,
-              `(${prefix}${oprnd.operand})#${obj.operand}` //
+              `(${prefix}(${oprnd.operand}))#${obj.operand}` //
             );
           }
         }
@@ -6016,10 +6039,10 @@ class Utility {
       }
 
       //console.log(result);
-      //result = exponentOnKeyword(result);
+      result = exponentOnKeyword(result); //handle this before //parametizeKeywordArg()
       result = Utility.parametizeKeywordArg(result);
 
-      result = exponentOnKeyword(result);
+      //result = exponentOnKeyword(result);
 
       index = result.indexOf("log");
       if (index !== -1) {

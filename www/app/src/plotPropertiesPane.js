@@ -1599,6 +1599,7 @@ class PlotPropertiesPane extends PropertiesPane {
       disabled: true,
     });
     this.addProperty({
+      title: "Set limits for the cartesian grid left(y) axis",
       name: "Left",
       id: "limitsLeft",
       parentId: "scaleLimits",
@@ -4189,9 +4190,15 @@ class PlotPropertiesPane extends PropertiesPane {
         self.hide("limitsTop");
         self.hide("limitsBottom");
         self.hide("limitsRight");
-        self.replacePropertNameText("limitsLeft", "Left", "Radius");
+        self.replaceNodeText("limitsLeft", {
+          name: "Radius",
+          title: "Set limits for the polar grid radius",
+        });
       } else {
-        self.replacePropertNameText("limitsLeft", "Radius", "Left");
+        self.replaceNodeText("limitsLeft", {
+          title: "Set limits for the cartesian grid left(y) axis",
+          name: "Left",
+        });
         self.show("limitsTop");
         self.show("limitsBottom");
         self.show("limitsRight");

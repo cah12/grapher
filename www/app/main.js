@@ -901,5 +901,6 @@ require([
 
 /*
 TODO
-$$ x^2-3x=4-f\left(x\right) $$
+$$ \colorbox{red}{$ \frac{2\cos^2x}{\cos x\sin x} $} $$
+$$ \colorbox{red}{$ \frac{2\cos^2x}{\sin xcosx} $} $$
 */

@@ -228,12 +228,19 @@ class MyCurve extends Curve {
           self.discontinuosCurvePending = true;
           // left -= w;
           // right += w;
-          self.discontinuity = await Utility.discontinuity(
-            self.fn,
-            left,
-            right,
-            self.variable
-          );
+          // self.discontinuity = await Utility.discontinuity(
+          //   self.fn,
+          //   left,
+          //   right,
+          //   self.variable
+          // );
+          if (Utility.isPeriodic(self.fn)) {
+            self.discontinuity = Utility.handlePeriodic(
+              self.discontinuity,
+              self.left,
+              self.right
+            );
+          }
         }
 
         let sz = self.data().size();
@@ -328,7 +335,7 @@ class MyCurve extends Curve {
       super.drawCurve(painter, style, xMap, yMap, m_from, to);
     }
 
-    if (m_to < to && m_from < to) {
+    if ((m_to === undefined || m_to < to) && m_from < to) {
       super.drawCurve(painter, style, xMap, yMap, m_from, to);
     }
     // plot.autoRefresh();
@@ -454,12 +461,19 @@ class MyCurve extends Curve {
             //console.log(456);
             self.left = left;
             self.right = right;
-            self.discontinuity = await Utility.discontinuity(
-              self.fn,
-              left,
-              right,
-              self.variable
-            );
+            // self.discontinuity = await Utility.discontinuity(
+            //   self.fn,
+            //   left,
+            //   right,
+            //   self.variable
+            // );
+            if (Utility.isPeriodic(self.fn)) {
+              self.discontinuity = Utility.handlePeriodic(
+                self.discontinuity,
+                self.left,
+                self.right
+              );
+            }
           }
 
           if (!self.discontinuity.length) {
