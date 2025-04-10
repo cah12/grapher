@@ -6039,10 +6039,10 @@ class Utility {
       }
 
       //console.log(result);
-      result = exponentOnKeyword(result); //handle this before //parametizeKeywordArg()
+      //result = exponentOnKeyword(result); //handle this before //parametizeKeywordArg()
       result = Utility.parametizeKeywordArg(result);
 
-      //result = exponentOnKeyword(result);
+      result = exponentOnKeyword(result);
 
       index = result.indexOf("log");
       if (index !== -1) {
@@ -6157,6 +6157,12 @@ class Utility {
         result += c;
         if (c === "%") {
           delimiter++;
+        }
+
+        if (delimiter == 2 && c === "^") {
+          delimiter = 0;
+          bracketAdded = false;
+          continue;
         }
 
         if (

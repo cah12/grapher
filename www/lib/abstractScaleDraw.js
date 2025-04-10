@@ -36,6 +36,18 @@ class AbstractScaleDraw {
     this.data = {}; //any useful data can be stored here.
 
     /**
+     *
+     * @param {ScaleDiv.TickType} tickType
+     *  Valid values are ScaleDiv.TickType.MinorTick,
+     *  ScaleDiv.TickType.MediumTick,
+     *  ScaleDiv.TickType.MajorTick
+     * @returns {Number} Number length
+     */
+    this.tickLengths = function (tickType) {
+      return m_tickLength[tickType];
+    };
+
+    /**
      * Get the number precison.
      * @returns {Number} Number precision
      * @see {@link AbstractScaleDraw#setPrecision setPrecision()}

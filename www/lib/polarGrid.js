@@ -165,6 +165,14 @@ class PolarGrid extends PlotGrid {
     }
 
     function drawRayLabel(painter, yMap, ticks) {
+      if (
+        !self
+          .plot()
+          .axisScaleDraw(0)
+          .hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
+      ) {
+        return;
+      }
       //rays (lines from center)
       if (!ticks || ticks.length === 0) {
         return;
@@ -243,7 +251,9 @@ class PolarGrid extends PlotGrid {
       if (!ticks || ticks.length === 0) {
         return;
       }
+      const _majorPen = self.majorPen();
       //console.log(xMap);
+      const axisScaleDraw = self.plot().axisScaleDraw(0);
       const ctx = painter.context();
 
       const x = ctx.canvas.width / 2;
@@ -255,8 +265,42 @@ class PolarGrid extends PlotGrid {
 
       const mode = Utility.mathMode();
 
+      let backboneSpacing = 0;
+      const textSpace = 2;
+
+      let tickLength = 0;
+
+      if (axisScaleDraw.hasComponent(AbstractScaleDraw.ScaleComponent.Ticks)) {
+        tickLength = axisScaleDraw.tickLengths(ScaleDiv.TickType.MajorTick);
+      }
+
+      if (
+        axisScaleDraw.hasComponent(AbstractScaleDraw.ScaleComponent.Backbone)
+      ) {
+        backboneSpacing = 3;
+        painter.save();
+        painter.setPen(_majorPen);
+        //vertical
+        painter.drawLine(
+          x - backboneSpacing,
+          0.5 * backboneSpacing,
+          x - backboneSpacing,
+          2 * y - 0.5 * backboneSpacing
+        );
+        //Horizontal
+        painter.drawLine(
+          x - y - 0.5 * backboneSpacing,
+          y + backboneSpacing,
+          x + y - 0.5 * backboneSpacing,
+          y + backboneSpacing
+        );
+        painter.restore();
+      }
+
+      let trueRadius;
       for (let i = 1; i < ticks.length; i++) {
         radius = self.transformRadial(ticks[i], yMap) - 0.5 * th.height;
+        trueRadius = radius + 0.5 * th.height;
 
         const x2 = radius * math.cos(mode == "rad" ? 0.418879 : 24) + x;
         const y2 = y - radius * math.sin(mode == "rad" ? 0.418879 : 24);
@@ -264,32 +308,72 @@ class PolarGrid extends PlotGrid {
         const x2_ = x + radius * math.cos(mode == "rad" ? 3.50811 : 21 + 180);
         const y2_ = y - radius * math.sin(mode == "rad" ? 3.50811 : 21 + 180);
 
-        painter.drawText(
-          `${ticks[i].toPrecision(radialPrecision)}`,
-          x - radius,
-          y + th.height,
-          "center"
-        );
-        painter.drawText(
-          `${ticks[i].toPrecision(radialPrecision)}`,
-          radius + x,
-          y + th.height,
-          "center"
-        );
+        if (
+          axisScaleDraw.hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
+        ) {
+          painter.drawText(
+            `${ticks[i].toPrecision(radialPrecision)}`,
+            x - radius,
+            y + tickLength + backboneSpacing + textSpace + th.height,
+            "center"
+          );
+          painter.drawText(
+            `${ticks[i].toPrecision(radialPrecision)}`,
+            radius + x,
+            y + tickLength + backboneSpacing + textSpace + th.height,
+            "center"
+          );
 
-        painter.drawText(
-          `${ticks[i].toPrecision(radialPrecision)}`,
-          x,
-          radius + y + 0.5 * th.height,
-          "center"
-        );
+          if (trueRadius + 0.5 * th.height < y) {
+            painter.drawText(
+              `${ticks[i].toPrecision(radialPrecision)}`,
+              x - tickLength - backboneSpacing - textSpace,
+              y + trueRadius + 0.5 * th.height,
+              "right"
+            );
 
-        painter.drawText(
-          `${ticks[i].toPrecision(radialPrecision)}`,
-          x,
-          y - radius + 0.5 * th.height,
-          "center"
-        );
+            painter.drawText(
+              `${ticks[i].toPrecision(radialPrecision)}`,
+              x - tickLength - backboneSpacing - textSpace,
+              y - trueRadius + 0.5 * th.height,
+              "right"
+            );
+          }
+        }
+
+        if (tickLength) {
+          painter.save();
+          const tickPen = new Misc.Pen(_majorPen);
+          tickPen.width = 2;
+          painter.setPen(tickPen);
+          //Along horizontal diameter
+          painter.drawLine(
+            x - trueRadius,
+            y + backboneSpacing,
+            x - trueRadius,
+            y + tickLength + backboneSpacing
+          );
+          painter.drawLine(
+            x + trueRadius,
+            y + backboneSpacing,
+            x + trueRadius,
+            y + tickLength + backboneSpacing
+          );
+          //Along vertical diameter
+          painter.drawLine(
+            x - backboneSpacing,
+            y + trueRadius,
+            x - tickLength - backboneSpacing,
+            y + trueRadius
+          );
+          painter.drawLine(
+            x - backboneSpacing,
+            y - trueRadius,
+            x - tickLength - backboneSpacing,
+            y - trueRadius
+          );
+          painter.restore();
+        }
       }
     }
 
@@ -297,6 +381,7 @@ class PolarGrid extends PlotGrid {
     //Radial (x) 0 - 10 default
     this.draw = function (xMap, yMap) {
       const plot = this.plot();
+
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       this.xMap = xMap;
