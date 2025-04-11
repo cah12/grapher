@@ -19,8 +19,8 @@ class PolarGrid extends PlotGrid {
     super(tle);
     const self = this;
 
-    let s1 = null;
-    let s2 = null;
+    // let s1 = null;
+    // let s2 = null;
 
     let radialPrecision = 4;
     let rayPrecision = 4;
@@ -29,25 +29,12 @@ class PolarGrid extends PlotGrid {
 
     this.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
 
-    //this.rtti = PlotItem.RttiValues.Rtti_PolarGrid;
-
-    // Static.bind("mathModeChanged", function (e, mode) {
-
-    // });
-
     Static.bind("magnifyingStart", function () {
       magnifying = true;
     });
 
     Static.bind("magnifyingEnd", function () {
       magnifying = false;
-    });
-
-    Static.bind("rescaled", function (e, axisId, min, max) {
-      if (axisId === 0 && !magnifying) {
-        // s1 = min;
-        // s2 = max;
-      }
     });
 
     Static.bind("itemAttached", function (e, plotItem, on) {
@@ -165,9 +152,10 @@ class PolarGrid extends PlotGrid {
     }
 
     function drawRayLabel(painter, yMap, ticks) {
+      const plot = self.plot();
+
       if (
-        !self
-          .plot()
+        !plot
           .axisScaleDraw(0)
           .hasComponent(AbstractScaleDraw.ScaleComponent.Labels)
       ) {
@@ -191,12 +179,18 @@ class PolarGrid extends PlotGrid {
 
       let angle = 0;
 
-      if (s1 === null) {
-        s1 = yMap.s1();
-        s2 = yMap.s2();
-      }
+      // if (s1 === null) {
+      //   s1 = yMap.s1();
+      //   s2 = yMap.s2();
+      // }
 
-      const degArr = [0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330];
+      const degArrNormal = [
+        0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
+      ];
+      const degArrInverted = [
+        360, 330, 300, 270, 240, 210, 180, 150, 120, 90, 60, 30,
+      ];
+      let degArr = degArrNormal;
       let v = "\u03c0";
       const radArr = [
         `0`,
@@ -212,6 +206,12 @@ class PolarGrid extends PlotGrid {
         `5${v}/3`,
         `11${v}/6`,
       ];
+
+      const xScaleDiv = plot.axisScaleDiv(2);
+      if (xScaleDiv.upperBound() < xScaleDiv.lowerBound()) {
+        degArr = degArrInverted;
+        radArr.reverse();
+      }
 
       const s_space =
         Utility.mathMode() === "rad" ? (2 * Math.PI) / ticks : 360 / ticks;
@@ -377,7 +377,6 @@ class PolarGrid extends PlotGrid {
       }
     }
 
-    self.setTitle = false;
     //Azimuth (y) 0 - 360
     //Radial (x) 0 - 10 default
     this.draw = function (xMap, yMap) {
@@ -395,13 +394,13 @@ class PolarGrid extends PlotGrid {
       const yMinEnabled = self.yMinEnabled();
       const yEnabled = self.yEnabled();
       const p = this.plot();
-      const xScaleDiv = p.axisScaleDiv(this.xAxis());
+      //const xScaleDiv = p.axisScaleDiv(this.xAxis());
       const yScaleDiv = p.axisScaleDiv(this.yAxis());
 
-      const axisMaxMinorRadial = p.axisMaxMinor(1);
-      const axisMaxMinorRay = p.axisMaxMinor(0);
+      // const axisMaxMinorRadial = p.axisMaxMinor(1);
+      // const axisMaxMinorRay = p.axisMaxMinor(0);
 
-      const axisMaxMajorRadial = p.axisMaxMajor(1);
+      // const axisMaxMajorRadial = p.axisMaxMajor(1);
       const axisMaxMajorRay = p.axisMaxMajor(0);
 
       radialPrecision = p.axisPrecision(2);
@@ -465,7 +464,6 @@ class PolarGrid extends PlotGrid {
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
-      self.setTitle = false;
     };
 
     this.mToPoints = function (
@@ -583,8 +581,6 @@ class PolarGrid extends PlotGrid {
 
   hide() {
     this.polarGridVisible(false);
-
-    //super.hide();
     Static.polarGrid = false; //paaner checks dthis flag and ignores panning
     const plot = this.plot();
     if (this._axisMaxMinor !== undefined) {
@@ -595,7 +591,6 @@ class PolarGrid extends PlotGrid {
     Static.trigger("polarGridStatus", Static.polarGrid);
   }
   show() {
-    //super.show();
     const plot = this.plot();
     this._axisMaxMinor = plot.axisMaxMinor(0);
     this._axisMaxMajor = plot.axisMaxMajor(0);
@@ -615,10 +610,7 @@ class PolarGrid extends PlotGrid {
 
     let samples = [];
     if (series instanceof FunctionData) {
-      //for (let i = from; i <= to; i++) {
-      //samples.push(series.sample(i));
       samples = series.discontinuitySamples;
-      // }
     } else {
       samples = series.samples();
     }
@@ -648,57 +640,69 @@ class PolarGrid extends PlotGrid {
       if (pt) return true;
       return false;
     });
-
     return { _validTransformPoints, untransformedPoints };
   }
 
   polarGridVisible(on) {
     const self = this;
     self.polarGridAttached = on;
-    //console.log("self.polarGridAttached", self.polarGridAttached);
     const plot = self.plot();
     const autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
-    // const leftAxisWidget = plot.axisWidget(0);
-    // const bottomAxisWidget = plot.axisWidget(2);
+
+    const xScaleDiv = plot.axisScaleDiv(2);
+
     if (on) {
-      // self.leftAxisTile = plot.axisTitle(0);
-      // self.bottomAxisTile = plot.axisTitle(2);
+      //console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
+
+      self.xLowerBefore = xScaleDiv.lowerBound();
+      self.xUpperBefore = xScaleDiv.upperBound();
+      if (self.xUpperBefore > self.xLowerBefore) {
+        xScaleDiv.setLowerBound(0);
+        xScaleDiv.setUpperBound(360);
+      } else {
+        xScaleDiv.setUpperBound(0);
+        xScaleDiv.setLowerBound(360);
+      }
+
+      self.xAxisScaleEngineBefore = plot.axisScaleEngine(2);
+      //console.log(self.xAxisScaleEngineBefore);
+      // if (self.xAxisScaleEngineBefore instanceof LinearScaleEngine) {
+      //   self.xAxisScaleEngineBefore = null;
+      // } else {
+      //   plot.setAxisScaleEngine(2, new LinearScaleEngine());
+      // }
+
+      console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
+
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
-        // L[i].originalDraw = L[i].drawSeries;
-        // L[i].drawSeries = self.drawSeries;
-
         L[i].originalDrawSticks = L[i].drawSticks;
         L[i].drawSticks = self.drawSticks;
-
         L[i].originalClosePolyline = L[i].closePolyline;
         L[i].closePolyline = self.closePolyline;
       }
       if (Static.polarGrid) {
         self.original_mToPoints = Static.mToPoints;
-        Static.mToPoints = self.mToPoints; //Static.mToPolylineFiltered
+        Static.mToPoints = self.mToPoints;
         self.original_mToPolylineFiltered = Static.mToPolylineFiltered;
         Static.mToPolylineFiltered = self.mToPolylineFiltered;
-
-        // self.original_drawLeftTitle = leftAxisWidget.drawTitle;
-        // leftAxisWidget.drawTitle = function () {};
-        // self.original_drawBottomTitle = bottomAxisWidget.drawTitle;
-        // bottomAxisWidget.drawTitle = function () {};
       }
     } else {
       if (Static.polarGrid) {
         Static.mToPoints = self.original_mToPoints;
         Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
 
-        // leftAxisWidget.drawTitle = self.original_drawLeftTitle;
-        // bottomAxisWidget.drawTitle = self.original_drawBottomTitle;
+        // if (self.xAxisScaleEngineBefore) {
+        //   plot.setAxisScaleEngine(2, self.xAxisScaleEngineBefore);
+        // }
+        xScaleDiv.setLowerBound(self.xLowerBefore);
+        self.xUpperBefore = xScaleDiv.upperBound();
+        xScaleDiv.setUpperBound(self.xUpperBefore);
       }
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
         if (L[i].originalClosePolyline) {
-          //L[i].drawSeries = L[i].originalDraw;
-
           L[i].drawSticks = L[i].originalDrawSticks;
           L[i].closePolyline = L[i].originalClosePolyline;
         }

@@ -1127,7 +1127,7 @@ class PlotPropertiesPane extends PropertiesPane {
       name: "Precision",
       title:
         "Display scale labels either as exponential or fixed-point notation with the specified number of digits.",
-      id: "scalePositionBottomBottom",
+      id: "scalePositionBottomPrecision",
       parentId: "scalePositionBottom",
       type: "number",
       value: "4",
@@ -4192,6 +4192,7 @@ class PlotPropertiesPane extends PropertiesPane {
     // );
 
     Static.bind("polarGridStatus", function (e, on) {
+      let _theta = "\u0398";
       if (on) {
         self.replaceNodeText("scalePosition", {
           name: "Precision & attributes",
@@ -4205,7 +4206,7 @@ class PlotPropertiesPane extends PropertiesPane {
           self.hide("centerAxesZero");
         }
         self.hide("centerAxes");
-        self.hide("scalePositionBottom");
+
         self.hide("scalePositionRight");
         self.hide("scalePositionTop");
         self.hide("scaleMarginsRightAxis");
@@ -4215,6 +4216,20 @@ class PlotPropertiesPane extends PropertiesPane {
           name: "Radius(r)",
           title: "Configure the radius(r) scale type",
         });
+        ////////////////////////////////////////////////////////////
+        self.hide("scalePositionBottomLinear");
+        self.hide("scalePositionBottomLog");
+        self.hide("scalePositionBottomBase");
+        self.hide("scalePositionBottomPrecision");
+        self.hide("scalePositionBottomAttributeReference");
+        self.hide("scalePositionBottomAttributeIncludeReference");
+        self.hide("scalePositionBottomAttributeSymmetric");
+        self.hide("scalePositionBottomAttributeFloating");
+        self.replaceNodeText("scalePositionBottom", {
+          name: `Angle(${_theta})`,
+          title: "Configure the angle scale type",
+        });
+        /////////////////////////////////////////////////
         self.replaceNodeText("scaleMarginsLeftAxis", {
           name: "Radius(r)",
         });
@@ -4262,6 +4277,21 @@ class PlotPropertiesPane extends PropertiesPane {
           title: "Set limits for the cartesian grid left(y) axis",
           name: "Left(y)",
         });
+
+        ////////////////////////////////////////////////////////////
+        self.show("scalePositionBottomLinear");
+        self.show("scalePositionBottomLog");
+        self.show("scalePositionBottomBase");
+        self.show("scalePositionBottomPrecision");
+        self.show("scalePositionBottomAttributeReference");
+        self.show("scalePositionBottomAttributeIncludeReference");
+        self.show("scalePositionBottomAttributeSymmetric");
+        self.show("scalePositionBottomAttributeFloating");
+        self.replaceNodeText("scalePositionBottom", {
+          name: `Bottom`,
+          title: "Configure the bottom scale type",
+        });
+        /////////////////////////////////////////////////
         self.show("limitsTop");
         self.show("limitsBottom");
         self.show("limitsRight");
