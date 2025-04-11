@@ -68,7 +68,16 @@ class PolarGrid extends PlotGrid {
 
       let bs = _self.baseline();
 
-      const samples = _self.data().samples();
+      let samples = _self.data().samples();
+
+      const axisScaleDiv = self.plot().axisScaleDiv(2);
+
+      if (axisScaleDiv.upperBound() < axisScaleDiv.lowerBound()) {
+        samples = samples.map(function (pt) {
+          return new Misc.Point(-1 * pt.x, pt.y);
+        });
+      }
+
       bs = _self.baseline();
       const min = yMap.s1();
       if (bs < min) {
