@@ -192,7 +192,8 @@ class PolarGrid extends PlotGrid {
       ];
       let degArr = degArrNormal;
       let v = "\u03c0";
-      const radArr = [
+
+      const radArrNormal = [
         `0`,
         `${v}/6`,
         `${v}/3`,
@@ -207,10 +208,27 @@ class PolarGrid extends PlotGrid {
         `11${v}/6`,
       ];
 
+      let radArr = radArrNormal;
+
+      const radArrInverted = [
+        `2${v}`,
+        `11${v}/6`,
+        `5${v}/3`,
+        `3${v}/2`,
+        `4${v}/3`,
+        `7${v}/6`,
+        `${v}`,
+        `5${v}/6`,
+        `2${v}/3`,
+        `${v}/2`,
+        `${v}/3`,
+        `${v}/6`,
+      ];
+
       const xScaleDiv = plot.axisScaleDiv(2);
       if (xScaleDiv.upperBound() < xScaleDiv.lowerBound()) {
         degArr = degArrInverted;
-        radArr.reverse();
+        radArr = radArrInverted;
       }
 
       const s_space =
@@ -608,11 +626,21 @@ class PolarGrid extends PlotGrid {
     let untransformedPoints = [];
     const _validTransformPoints = [];
 
+    let angleFactor = 1;
+
+    const axisScaleDiv = self.plot().axisScaleDiv(2);
+
     let samples = [];
     if (series instanceof FunctionData) {
       samples = series.discontinuitySamples;
     } else {
       samples = series.samples();
+    }
+
+    if (axisScaleDiv.upperBound() < axisScaleDiv.lowerBound()) {
+      samples = samples.map(function (pt) {
+        return new Misc.Point(-1 * pt.x, pt.y);
+      });
     }
 
     for (let i = from; i <= to; i++) {
@@ -673,7 +701,7 @@ class PolarGrid extends PlotGrid {
       //   plot.setAxisScaleEngine(2, new LinearScaleEngine());
       // }
 
-      console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
+      //console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
 
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
