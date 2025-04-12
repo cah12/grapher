@@ -68,9 +68,16 @@ class PolarGrid extends PlotGrid {
 
       let bs = _self.baseline();
 
-      let samples = _self.data().samples();
+      const series = _self.data();
 
       const axisScaleDiv = self.plot().axisScaleDiv(2);
+
+      let samples = [];
+      if (series instanceof FunctionData) {
+        samples = series.discontinuitySamples;
+      } else {
+        samples = series.samples();
+      }
 
       if (axisScaleDiv.upperBound() < axisScaleDiv.lowerBound()) {
         samples = samples.map(function (pt) {
@@ -79,10 +86,15 @@ class PolarGrid extends PlotGrid {
       }
 
       bs = _self.baseline();
-      const min = yMap.s1();
-      if (bs < min) {
-        bs = min;
-      }
+      // const min = yMap.s1();
+      // if (bs < min) {
+      //   bs = min;
+      // }
+
+      // if (bs === 0 && polygon.length) {
+      //   polygon.push(polygon[0]);
+      //   return;
+      // }
 
       const _validTransformPoints = self.transformedBaseline(
         bs,
@@ -409,6 +421,11 @@ class PolarGrid extends PlotGrid {
     this.draw = function (xMap, yMap) {
       const plot = this.plot();
 
+      const axisScaleDiv = plot.axisScaleDiv(2);
+
+      self._upperBound = axisScaleDiv.upperBound();
+      self._lowerBound = axisScaleDiv.lowerBound();
+
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       this.xMap = xMap;
@@ -542,10 +559,10 @@ class PolarGrid extends PlotGrid {
       const ctx = painter.context();
 
       let bs = this.baseline();
-      const min = yMap.s1();
-      if (bs < min) {
-        bs = min;
-      }
+      // const min = yMap.s1();
+      // if (bs < min) {
+      //   bs = min;
+      // }
 
       const transPoints = self.transformedBaseline(
         bs,
@@ -589,7 +606,7 @@ class PolarGrid extends PlotGrid {
       baselineSamples[i].x = pole_x + radius * math.cos(angl);
       baselineSamples[i].y = radius * math.sin(-angl) + pole_y;
       let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
-      if (Math.abs(radius) < Math.abs(restrictRadius)) {
+      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
         _validTransformPoints.push(
           new Misc.Point(baselineSamples[i].x, baselineSamples[i].y)
         );
@@ -635,8 +652,6 @@ class PolarGrid extends PlotGrid {
     let untransformedPoints = [];
     const _validTransformPoints = [];
 
-    let angleFactor = 1;
-
     const axisScaleDiv = self.plot().axisScaleDiv(2);
 
     let samples = [];
@@ -667,7 +682,7 @@ class PolarGrid extends PlotGrid {
       points[i].x = x + radius * math.cos(angl);
       points[i].y = radius * math.sin(-angl) + y;
       let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
-      if (Math.abs(radius) < Math.abs(restrictRadius)) {
+      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
         _validTransformPoints.push(new Misc.Point(points[i].x, points[i].y));
       } else if (untransformedPoints) {
         untransformedPoints[i] = null;
