@@ -19,15 +19,35 @@ class PolarGrid extends PlotGrid {
     super(tle);
     const self = this;
 
-    // let s1 = null;
-    // let s2 = null;
-
     let radialPrecision = 4;
     let rayPrecision = 4;
 
     let magnifying = false;
 
+    self.detachedCurves = [];
+
     this.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
+
+    Static.bind("axisChanged", function (e, newAxis, item, oldAxis) {
+      if (
+        !Static.polarGrid ||
+        item.rtti != PlotItem.RttiValues.Rtti_PlotCurve
+      ) {
+        return;
+      }
+      if (newAxis === Axis.AxisId.xTop) {
+        item.setXAxis(Axis.AxisId.xBottom);
+      }
+
+      if (newAxis === Axis.AxisId.yRight) {
+        item.setYAxis(Axis.AxisId.yLeft);
+      }
+      Utility.alert(
+        `Cannot change the axis of "${item.title()}". Any curve in the polar grid is drawn to the bottom(x) and left(y) axes.`,
+        null,
+        "validAxesInPolarGridAxisChanged"
+      );
+    });
 
     Static.bind("magnifyingStart", function () {
       magnifying = true;
@@ -58,6 +78,22 @@ class PolarGrid extends PlotGrid {
       plot.autoRefresh();
     });
 
+    this.validAxes = function (curve) {
+      if (
+        curve &&
+        curve.xAxis() === Axis.AxisId.xBottom &&
+        curve.yAxis() === Axis.AxisId.yLeft
+      ) {
+        return true;
+      }
+      Utility.alert(
+        `Check that the curve "${curve.title()}" is drawn to the bottom(x) and left(y) axes.`,
+        null,
+        "validAxesInPolarGrig"
+      );
+      return false;
+    };
+
     this.closePolyline = function (xMap, yMap, polygon) {
       if (polygon.length < 2) return;
 
@@ -86,15 +122,6 @@ class PolarGrid extends PlotGrid {
       }
 
       bs = _self.baseline();
-      // const min = yMap.s1();
-      // if (bs < min) {
-      //   bs = min;
-      // }
-
-      // if (bs === 0 && polygon.length) {
-      //   polygon.push(polygon[0]);
-      //   return;
-      // }
 
       const _validTransformPoints = self.transformedBaseline(
         bs,
@@ -199,11 +226,6 @@ class PolarGrid extends PlotGrid {
       const radius = 0.75 * y; // - th.width;
 
       let angle = 0;
-
-      // if (s1 === null) {
-      //   s1 = yMap.s1();
-      //   s2 = yMap.s2();
-      // }
 
       const degArrNormal = [
         0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330,
@@ -438,13 +460,8 @@ class PolarGrid extends PlotGrid {
       const yMinEnabled = self.yMinEnabled();
       const yEnabled = self.yEnabled();
       const p = this.plot();
-      //const xScaleDiv = p.axisScaleDiv(this.xAxis());
       const yScaleDiv = p.axisScaleDiv(this.yAxis());
 
-      // const axisMaxMinorRadial = p.axisMaxMinor(1);
-      // const axisMaxMinorRay = p.axisMaxMinor(0);
-
-      // const axisMaxMajorRadial = p.axisMaxMajor(1);
       const axisMaxMajorRay = p.axisMaxMajor(0);
 
       radialPrecision = p.axisPrecision(2);
@@ -530,7 +547,9 @@ class PolarGrid extends PlotGrid {
           to,
           round
         );
+
       //console.log(_validTransformPoints, untransformedPoints);
+
       return _validTransformPoints;
     };
 
@@ -559,10 +578,6 @@ class PolarGrid extends PlotGrid {
       const ctx = painter.context();
 
       let bs = this.baseline();
-      // const min = yMap.s1();
-      // if (bs < min) {
-      //   bs = min;
-      // }
 
       const transPoints = self.transformedBaseline(
         bs,
@@ -667,6 +682,21 @@ class PolarGrid extends PlotGrid {
       });
     }
 
+    const auto = Utility.isAutoScale(self.plot());
+    if (!auto) {
+      const s_x1 = xMap.s1();
+      const s_x2 = xMap.s2();
+      samples = samples.filter(function (pt) {
+        if (pt.x >= s_x1 && pt.x <= s_x2) {
+          return true;
+        }
+        return false;
+      });
+      if (to > samples.length - 1) {
+        to = samples.length - 1;
+      }
+    }
+
     for (let i = from; i <= to; i++) {
       const pt = samples[i];
       untransformedPoints.push(new Misc.Point(pt));
@@ -675,7 +705,6 @@ class PolarGrid extends PlotGrid {
     const x = self.ctx.canvas.width / 2;
     const y = self.ctx.canvas.height / 2;
 
-    const auto = Utility.isAutoScale(self.plot());
     for (let i = 0; i < points.length; i++) {
       const angl = points[i].x;
       const radius = points[i].y;
@@ -705,30 +734,13 @@ class PolarGrid extends PlotGrid {
     const xScaleDiv = plot.axisScaleDiv(2);
 
     if (on) {
-      //console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
-
-      self.xLowerBefore = xScaleDiv.lowerBound();
-      self.xUpperBefore = xScaleDiv.upperBound();
-      if (self.xUpperBefore > self.xLowerBefore) {
-        xScaleDiv.setLowerBound(0);
-        xScaleDiv.setUpperBound(360);
-      } else {
-        xScaleDiv.setUpperBound(0);
-        xScaleDiv.setLowerBound(360);
-      }
-
-      self.xAxisScaleEngineBefore = plot.axisScaleEngine(2);
-      //console.log(self.xAxisScaleEngineBefore);
-      // if (self.xAxisScaleEngineBefore instanceof LinearScaleEngine) {
-      //   self.xAxisScaleEngineBefore = null;
-      // } else {
-      //   plot.setAxisScaleEngine(2, new LinearScaleEngine());
-      // }
-
-      //console.log(xScaleDiv.lowerBound(), xScaleDiv.upperBound());
-
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
+        if (!self.validAxes(L[i])) {
+          L[i].detach();
+          self.detachedCurves.push(L[i]);
+          continue;
+        }
         L[i].originalDrawSticks = L[i].drawSticks;
         L[i].drawSticks = self.drawSticks;
         L[i].originalClosePolyline = L[i].closePolyline;
@@ -744,13 +756,6 @@ class PolarGrid extends PlotGrid {
       if (Static.polarGrid) {
         Static.mToPoints = self.original_mToPoints;
         Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
-
-        // if (self.xAxisScaleEngineBefore) {
-        //   plot.setAxisScaleEngine(2, self.xAxisScaleEngineBefore);
-        // }
-        xScaleDiv.setLowerBound(self.xLowerBefore);
-        self.xUpperBefore = xScaleDiv.upperBound();
-        xScaleDiv.setUpperBound(self.xUpperBefore);
       }
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
@@ -759,6 +764,11 @@ class PolarGrid extends PlotGrid {
           L[i].closePolyline = L[i].originalClosePolyline;
         }
       }
+      for (let i = 0; i < self.detachedCurves.length; i++) {
+        const curve = self.detachedCurves[i];
+        curve.attach(plot);
+      }
+      self.detachedCurves.length = 0;
     }
     plot.setAutoReplot(autoReplot);
     plot.autoRefresh();

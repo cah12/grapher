@@ -101,10 +101,10 @@ class MAxisDlg extends ModalDlg {
     this.addHandler("ok", "click", function () {
       const xAxis = parseInt(self.selector("axisHorizontal1").val());
       _curve.setXAxis(xAxis);
-      Static.trigger("axisChanged", [xAxis, _curve]);
+      //Static.trigger("axisChanged", [xAxis, _curve]);
       const yAxis = parseInt(self.selector("axisVertical1").val());
       _curve.setYAxis(yAxis);
-      Static.trigger("axisChanged", [yAxis, _curve]);
+      //Static.trigger("axisChanged", [yAxis, _curve]);
     });
 
     this.axisCb = function (curve) {

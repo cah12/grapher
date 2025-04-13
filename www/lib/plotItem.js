@@ -335,8 +335,10 @@ class PlotItem {
     this._setXAxis = function (axis) {
       if (m_xAxis == axis) return;
       if (axis == Axis.AxisId.xBottom || axis == Axis.AxisId.xTop) {
+        const temp = m_xAxis;
         m_xAxis = axis;
         this.itemChanged();
+        Static.trigger("axisChanged", [axis, self, temp]);
       }
     };
 
@@ -344,8 +346,10 @@ class PlotItem {
     this._setYAxis = function (axis) {
       if (m_yAxis == axis) return;
       if (axis == Axis.AxisId.yLeft || axis == Axis.AxisId.yRight) {
+        const temp = m_yAxis;
         m_yAxis = axis;
         this.itemChanged();
+        Static.trigger("axisChanged", [axis, self, temp]);
       }
     };
 

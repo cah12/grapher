@@ -4235,11 +4235,15 @@ class PlotPropertiesPane extends PropertiesPane {
         });
         ////////////////////////////////////
         self.hide("limitsTop");
-        self.hide("limitsBottom");
+        //self.hide("limitsBottom");
         self.hide("limitsRight");
         self.replaceNodeText("limitsLeft", {
           name: "Radius(r)",
           title: "Set limits for the polar grid radius(r).",
+        });
+        self.replaceNodeText("limitsBottom", {
+          name: `Angle(${_theta})`,
+          title: `Set limits for the polar grid angle(${_theta}).`,
         });
       } else {
         self.replaceNodeText("scalePosition", {
@@ -4276,6 +4280,11 @@ class PlotPropertiesPane extends PropertiesPane {
         self.replaceNodeText("limitsLeft", {
           title: "Set limits for the cartesian grid left(y) axis",
           name: "Left(y)",
+        });
+
+        self.replaceNodeText("limitsBottom", {
+          title: "Set limits for the cartesian grid bottom(x) axis",
+          name: "Bottom(x)",
         });
 
         ////////////////////////////////////////////////////////////

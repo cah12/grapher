@@ -362,7 +362,7 @@ class Magnifier extends HObject {
       clearTimeout(tm);
       Static.trigger("magnifyingStart");
 
-      const axisCnt = !Static.polarGrid ? Axis.AxisId.axisCnt : 1;
+      const axisCnt = 4; //!Static.polarGrid ? Axis.AxisId.axisCnt : 1;
 
       for (var axisId = 0; axisId < axisCnt; axisId++) {
         var scaleDiv = this.plot().axisScaleDiv(axisId);
@@ -389,7 +389,7 @@ class Magnifier extends HObject {
             upper = center + width_2;
           }
 
-          lower = Static.polarGrid ? scaleDiv.lowerBound() : lower;
+          // lower = Static.polarGrid ? scaleDiv.lowerBound() : lower;
           plt.setAxisScale(axisId, lower, upper);
           doReplot = true;
         }
