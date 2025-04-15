@@ -2245,6 +2245,15 @@ class PlotPropertiesPane extends PropertiesPane {
       //disabled: true,
     });
 
+    var zeroMinRadius = this.addProperty({
+      name: "Zero minimum radius",
+      id: "zeroMinRadius",
+      parentId: "gridSettings",
+      type: "checkbox",
+      title: "Set the minimum radius to zero.",
+      checked: true,
+    });
+
     this.addProperty({
       name: "Minor Lines",
       id: "gridMinorLines",
@@ -4007,7 +4016,7 @@ class PlotPropertiesPane extends PropertiesPane {
 
     /////////////////////////
     gridType.change(function () {
-      /* Prevent replot during grid change might allow for Static.polarGrid to be properly set. */
+      /* Prevent replot during grid change might allow for polarGrid properties to be properly set. */
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       if ($(this)[0].selectedIndex == 0) {
@@ -4191,6 +4200,10 @@ class PlotPropertiesPane extends PropertiesPane {
     //   this.getTableRowByPropertyId("limitsLeft")[0].childNodes.item(0)
     // );
 
+    zeroMinRadius.change(function () {
+      plot.polarGrid.setZeroMinRadius($(this)[0].checked);
+    });
+
     Static.bind("polarGridStatus", function (e, on) {
       let _theta = "\u0398";
       if (on) {
@@ -4216,6 +4229,8 @@ class PlotPropertiesPane extends PropertiesPane {
           name: "Radius(r)",
           title: "Configure the radius(r) scale type",
         });
+
+        self.show("zeroMinRadius");
         ////////////////////////////////////////////////////////////
         self.hide("scalePositionBottomLinear");
         self.hide("scalePositionBottomLog");
@@ -4263,6 +4278,7 @@ class PlotPropertiesPane extends PropertiesPane {
         if (centerAxes[0].checked) {
           //self.show("centerAxesZero");
         }
+        self.hide("zeroMinRadius");
         self.show("scalePositionBottom");
         self.show("scalePositionRight");
         self.show("scalePositionTop");

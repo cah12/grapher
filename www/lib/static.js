@@ -357,8 +357,6 @@ Static.solveEquation = 3;
 
 Static.g_solution_arr = null;
 
-Static.polarGrid = false;
-
 ////////////////////////////////////////////////
 
 const originalParse = math.parse;

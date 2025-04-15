@@ -53,8 +53,12 @@ class MyPlot extends Plot {
     var self = this;
     var m_curveShapeEnabledByPlotSettings = true;
 
-    this.plotGrid = new PlotGrid();
-    this.polarGrid = new PolarGrid();
+    this.pan = new Panner(this);
+    this.pan.setCursor("move");
+    this.pan.setEnabled(false);
+
+    this.plotGrid = new PlotGrid(null);
+    this.polarGrid = new PolarGrid(null, this.pan);
     this.grid = this.plotGrid;
 
     this.fileSystemServices = null;
@@ -3015,9 +3019,9 @@ class MyPlot extends Plot {
       }
     });
 
-    this.pan = new Panner(this);
-    this.pan.setCursor("move");
-    this.pan.setEnabled(false);
+    // this.pan = new Panner(this);
+    // this.pan.setCursor("move");
+    // this.pan.setEnabled(false);
 
     this.zm = new MyPlotZoomer(this);
     var m_settings = null;
@@ -3034,6 +3038,8 @@ class MyPlot extends Plot {
       Static.plotPropPane
     );
     this.plotPropertiesPane = m_settings;
+
+    this.plotPropertiesPane.hide("zeroMinRadius");
 
     ///////////////////////////Handle Sidebars//////////////////
     Static.bind("sidebarShown", (e, anchorPosition, on) => {
@@ -3239,6 +3245,30 @@ class MyPlot extends Plot {
             subMenu: legendMenu.getPenSubMenu(),
           },
         ]);
+      }
+
+      if (self.polarGrid.polarGrid) {
+        legendMenu.modifyMenu("axis", {});
+        legendMenu.modifyMenu("fit", {});
+      } else {
+        legendMenu.modifyMenu(null, {
+          pos: 2,
+          name: "axis",
+          img: Static.imagePath + "axis.png",
+          title: "Sets the axes associated with the curve.",
+          fun: axisDlgFn,
+        });
+        legendMenu.modifyMenu(null, {
+          pos: 6,
+          name: "fit",
+          img: Static.imagePath + "fit.png",
+          title: "Defines a curve fitter.",
+          fun: function () {
+            var curve = legendMenu.getCurve();
+            if (!curve) return;
+            self.curveFitDlg.curveFitCb(curve);
+          },
+        });
       }
 
       if (curve.rtti === PlotItem.RttiValues.Rtti_PlotSpectroCurve) {

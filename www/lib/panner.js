@@ -212,9 +212,6 @@ class Panner extends HObject {
      * @param {Event} event Mouse press
      */
     this.widgetMousePressEvent = function (event) {
-      if (Static.polarGrid) {
-        return;
-      }
       var isMobile = Static.isMobile();
 
       if (!isMobile) {

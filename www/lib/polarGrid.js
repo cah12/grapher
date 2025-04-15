@@ -15,24 +15,25 @@ class PolarGrid extends PlotGrid {
    *
    * @param {String} tle Title of grid
    */
-  constructor(tle) {
+  constructor(tle, panner = null) {
     super(tle);
     const self = this;
+
+    this.polarGrid = false;
+
+    let m_zeroMinRadius = true;
 
     let radialPrecision = 4;
     let rayPrecision = 4;
 
-    let magnifying = false;
+    this.panner = panner;
 
     self.detachedCurves = [];
 
     this.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
 
     Static.bind("axisChanged", function (e, newAxis, item, oldAxis) {
-      if (
-        !Static.polarGrid ||
-        item.rtti != PlotItem.RttiValues.Rtti_PlotCurve
-      ) {
+      if (!self.polarGrid || item.rtti != PlotItem.RttiValues.Rtti_PlotCurve) {
         return;
       }
       if (newAxis === Axis.AxisId.xTop) {
@@ -47,14 +48,6 @@ class PolarGrid extends PlotGrid {
         null,
         "validAxesInPolarGridAxisChanged"
       );
-    });
-
-    Static.bind("magnifyingStart", function () {
-      magnifying = true;
-    });
-
-    Static.bind("magnifyingEnd", function () {
-      magnifying = false;
     });
 
     Static.bind("itemAttached", function (e, plotItem, on) {
@@ -77,6 +70,24 @@ class PolarGrid extends PlotGrid {
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     });
+
+    this.setZeroMinRadius = function (on) {
+      const plot = self.plot();
+      m_zeroMinRadius = on;
+      const auto = Utility.isAutoScale(plot);
+      const upper = plot.axisScaleDiv(0).upperBound();
+      if (!auto) {
+        Utility.setAutoScale(plot, true);
+        Utility.setAutoScale(plot, false);
+        plot.setAxisScale(0, 0, upper);
+      }
+
+      plot.autoRefresh();
+    };
+
+    this.zeroMinRadius = function () {
+      return m_zeroMinRadius;
+    };
 
     this.validAxes = function (curve) {
       if (
@@ -599,6 +610,140 @@ class PolarGrid extends PlotGrid {
       }
     };
 
+    this.updateAxes = function () {
+      // Find bounding interval of the item data
+      // for all axes, where autoscaling is enabled
+
+      const self = this;
+
+      const m_plotItemStore = this.plotItemStore();
+      const d_axisData = this.axisData();
+
+      var intv = [
+        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+      ];
+
+      let prevRect = new Misc.Rect();
+
+      for (var i = 0; i < m_plotItemStore.length; ++i) {
+        var item = m_plotItemStore[i];
+        if (!item.testItemAttribute(PlotItem.ItemAttribute.AutoScale)) continue;
+
+        if (!item.isVisible()) continue;
+
+        if (
+          this.axisAutoScale(item.xAxis()) ||
+          this.axisAutoScale(item.yAxis())
+        ) {
+          //alert(item)
+          var rect = item.boundingRect();
+          //if (!rect.isValid()) continue;
+
+          if (rect.isEqual(prevRect)) continue;
+          prevRect = rect;
+
+          //console.log(rect.toString());
+
+          if (rect.width() >= 0.0) {
+            //intv[item.xAxis()] |= new Interval( rect.left(), rect.right());
+            if (rect.left() < intv[item.xAxis()].minValue())
+              intv[item.xAxis()].setMinValue(rect.left());
+            if (rect.right() > intv[item.xAxis()].maxValue())
+              intv[item.xAxis()].setMaxValue(rect.right());
+            //intv[item.xAxis()].setInterval(rect.left(), rect.right())
+          }
+
+          if (rect.height() >= 0.0) {
+            //intv[item.yAxis()] |= new Interval( rect.top(), rect.bottom );
+            if (rect.top() < intv[item.yAxis()].minValue())
+              intv[item.yAxis()].setMinValue(rect.top());
+            if (rect.bottom() > intv[item.yAxis()].maxValue())
+              intv[item.yAxis()].setMaxValue(rect.bottom());
+          }
+
+          if (item.rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+            if (item.xValue() < intv[item.xAxis()].minValue())
+              intv[item.xAxis()].setMinValue(item.xValue());
+            if (item.xValue() > intv[item.xAxis()].maxValue())
+              intv[item.xAxis()].setMaxValue(item.xValue());
+
+            if (item.yValue() < intv[item.yAxis()].minValue())
+              intv[item.yAxis()].setMinValue(item.yValue());
+            if (item.yValue() > intv[item.yAxis()].maxValue())
+              intv[item.yAxis()].setMaxValue(item.yValue());
+          }
+        }
+      }
+
+      // Adjust scales
+      for (var axisId = 0; axisId < Axis.AxisId.axisCnt; axisId++) {
+        var d = d_axisData[axisId];
+        var minValue = d.minValue;
+        var maxValue = d.maxValue;
+        var stepSize = d.stepSize;
+        //alert(d.doAutoScale)
+
+        if (d.doAutoScale && intv[axisId].isValid()) {
+          //console.log(this);
+          //alert("here")
+          d.isValid = false;
+
+          minValue = intv[axisId].minValue();
+          maxValue = intv[axisId].maxValue();
+
+          if (Utility.mFuzzyCompare(maxValue, minValue)) {
+            //minValue = minValue - 1.0e-6;
+            minValue = minValue - Static._eps;
+          }
+
+          var xValues = {
+            //x1: minValue,
+            x1: axisId === 0 && m_zeroMinRadius ? 0 : minValue,
+            x2: maxValue,
+          };
+          d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
+          minValue = xValues["x1"];
+          //minValue = axisId === 0 && m_zeroMinRadius ? 0 : xValues["x1"];
+          maxValue = xValues["x2"];
+        }
+        if (!d.isValid) {
+          //alert("or here")
+          d.scaleDiv = d.scaleEngine.divideScale(
+            axisId === 0 && m_zeroMinRadius ? 0 : minValue,
+            //minValue,
+            maxValue,
+            d.maxMajor,
+            d.maxMinor,
+            stepSize
+          );
+          d.isValid = true;
+          //alert(d.scaleDiv.ticks(2))
+        }
+        var scaleWidget = this.axisWidget(axisId);
+        scaleWidget.setScaleDiv(d.scaleDiv);
+
+        //var startDist, endDist;
+        var startAndEndObj = {
+          start: undefined,
+          end: undefined,
+        };
+        scaleWidget.getBorderDistHint(startAndEndObj);
+        scaleWidget.setBorderDist(startAndEndObj.start, startAndEndObj.end);
+      }
+
+      m_plotItemStore.forEach(function (item) {
+        if (item.testItemInterest(PlotItem.ItemInterest.ScaleInterest)) {
+          item.updateScaleDiv(
+            self.axisScaleDiv(item.xAxis()),
+            self.axisScaleDiv(item.yAxis())
+          );
+        }
+      });
+    };
+
     this.toString = function () {
       return "[PolarGrid]";
     };
@@ -640,14 +785,14 @@ class PolarGrid extends PlotGrid {
 
   hide() {
     this.polarGridVisible(false);
-    Static.polarGrid = false; //paaner checks dthis flag and ignores panning
+    this.polarGrid = false;
     const plot = this.plot();
     if (this._axisMaxMinor !== undefined) {
       plot.setAxisMaxMinor(0, this._axisMaxMinor);
       plot.setAxisMaxMajor(0, this._axisMaxMajor);
     }
     super.hide();
-    Static.trigger("polarGridStatus", Static.polarGrid);
+    Static.trigger("polarGridStatus", this.polarGrid);
   }
   show() {
     const plot = this.plot();
@@ -655,10 +800,10 @@ class PolarGrid extends PlotGrid {
     this._axisMaxMajor = plot.axisMaxMajor(0);
     plot.setAxisMaxMinor(0, 6);
     plot.setAxisMaxMajor(0, 4);
-    Static.polarGrid = true; //panner checks this flag and ignores panning
+    this.polarGrid = true;
     this.polarGridVisible(true);
     super.show();
-    Static.trigger("polarGridStatus", Static.polarGrid);
+    Static.trigger("polarGridStatus", this.polarGrid);
   }
 
   validTransformPoints(boundingRect, xMap, yMap, series, from, to, round) {
@@ -686,11 +831,22 @@ class PolarGrid extends PlotGrid {
     if (!auto) {
       const s_x1 = xMap.s1();
       const s_x2 = xMap.s2();
+      const inverted = s_x1 > s_x2 ? true : false;
+
       samples = samples.filter(function (pt) {
-        if (pt.x >= s_x1 && pt.x <= s_x2) {
-          return true;
+        if (!inverted) {
+          //s_x2 > s_x1
+          if (pt.x >= s_x1 && pt.x <= s_x2) {
+            return true;
+          }
+          return false;
+        } else {
+          //s_x1 > s_x2
+          if (-1 * pt.x <= s_x1 && -1 * pt.x >= s_x2) {
+            return true;
+          }
+          return false;
         }
-        return false;
       });
       if (to > samples.length - 1) {
         to = samples.length - 1;
@@ -733,6 +889,8 @@ class PolarGrid extends PlotGrid {
 
     const xScaleDiv = plot.axisScaleDiv(2);
 
+    self.axisScaleEngine = plot.axisScaleEngine(0);
+
     if (on) {
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
@@ -746,16 +904,44 @@ class PolarGrid extends PlotGrid {
         L[i].originalClosePolyline = L[i].closePolyline;
         L[i].closePolyline = self.closePolyline;
       }
-      if (Static.polarGrid) {
+      if (self.polarGrid) {
         self.original_mToPoints = Static.mToPoints;
         Static.mToPoints = self.mToPoints;
         self.original_mToPolylineFiltered = Static.mToPolylineFiltered;
         Static.mToPolylineFiltered = self.mToPolylineFiltered;
+
+        self.original_widgetMousePressEvent_panner =
+          self.panner.widgetMousePressEvent;
+        self.panner.widgetMousePressEvent = function () {
+          return true;
+        };
+        self.original_setAxisMaxMinor = plot.setAxisMaxMinor;
+        plot.setAxisMaxMinor = function () {};
+        self.original_setAxisMaxMajor = plot.setAxisMaxMajor;
+        plot.setAxisMaxMajor = function () {};
+
+        if (self.zeroMinRadius()) {
+          self.original_updateAxes = plot.updateAxes;
+          plot.updateAxes = self.updateAxes;
+        } else {
+          if (self.original_updateAxes) {
+            plot.updateAxes = self.original_updateAxes;
+          }
+        }
       }
     } else {
-      if (Static.polarGrid) {
+      if (self.polarGrid) {
         Static.mToPoints = self.original_mToPoints;
         Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
+        self.panner.widgetMousePressEvent =
+          self.original_widgetMousePressEvent_panner;
+
+        plot.setAxisMaxMinor = self.original_setAxisMaxMinor;
+        plot.setAxisMaxMajor = self.original_setAxisMaxMajor;
+
+        if (self.original_updateAxes) {
+          plot.updateAxes = self.original_updateAxes;
+        }
       }
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {

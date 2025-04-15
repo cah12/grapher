@@ -405,6 +405,10 @@ class Plot {
       return layout;
     };
 
+    this.axisData = function () {
+      return d_axisData;
+    };
+
     /**
      * Return the current interval of the specified axis
      *
@@ -614,7 +618,7 @@ class Plot {
      * @see {@link Plot#axisMaxMinor axisMaxMinor()}
      */
     this.setAxisMaxMinor = function (axisId, maxMinor) {
-      if (this.axisValid(axisId) && !Static.polarGrid) {
+      if (this.axisValid(axisId)) {
         var maxMinor = Utility.qBound(0, maxMinor, 100);
 
         var d = d_axisData[axisId];
@@ -633,7 +637,7 @@ class Plot {
      * @see {@link Plot#axisMaxMajor axisMaxMajor()}
      */
     this.setAxisMaxMajor = function (axisId, maxMajor) {
-      if (this.axisValid(axisId) && !Static.polarGrid) {
+      if (this.axisValid(axisId)) {
         var maxMajor = Utility.qBound(1, maxMajor, 10000);
 
         var d = d_axisData[axisId];
@@ -1598,152 +1602,6 @@ class Plot {
     };
 
     /**
-     * Rebuild the axes scales
-     *
-     * In case of autoscaling the boundaries of a scale are calculated from the bounding rectangles
-     * of all plot items, having the PlotItem.ItemAttribute.AutoScale flag enabled ( ScaleEngine.autoScale() ).
-     * Then a scale division is calculated ( ScaleEngine.didvideScale() ) and assigned to scale widget.
-     * When the scale boundaries have been assigned with setAxisScale() a scale division is
-     * calculated ( QwtScaleEngine::didvideScale() ) for this interval and assigned to the scale widget.
-     * When the scale has been set explicitly by setAxisScaleDiv() the locally stored scale division gets
-     * assigned to the scale widget. The scale widget indicates modifications by triggering the scaleDivChanged event.
-     * updateAxes() is usually called by replot().
-     * @see {@link Plot#setAxisAutoScale setAxisAutoScale()}
-     * @see {@link Plot#setAxisScale setAxisScale()}
-     * @see {@link Plot#setAxisScaleDiv setAxisScaleDiv()}
-     * @see {@link Plot#replot replot()}
-     * @see {@link PlotItem#boundingRect boundingRect()}
-     */
-    this.updateAxes = function () {
-      // Find bounding interval of the item data
-      // for all axes, where autoscaling is enabled
-
-      var intv = [
-        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
-        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
-        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
-        new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
-      ];
-
-      let prevRect = new Misc.Rect();
-
-      for (var i = 0; i < m_plotItemStore.length; ++i) {
-        var item = m_plotItemStore[i];
-        if (!item.testItemAttribute(PlotItem.ItemAttribute.AutoScale)) continue;
-
-        if (!item.isVisible()) continue;
-
-        if (
-          this.axisAutoScale(item.xAxis()) ||
-          this.axisAutoScale(item.yAxis())
-        ) {
-          //alert(item)
-          var rect = item.boundingRect();
-          //if (!rect.isValid()) continue;
-
-          if (rect.isEqual(prevRect)) continue;
-          prevRect = rect;
-
-          //console.log(rect.toString());
-
-          if (rect.width() >= 0.0) {
-            //intv[item.xAxis()] |= new Interval( rect.left(), rect.right());
-            if (rect.left() < intv[item.xAxis()].minValue())
-              intv[item.xAxis()].setMinValue(rect.left());
-            if (rect.right() > intv[item.xAxis()].maxValue())
-              intv[item.xAxis()].setMaxValue(rect.right());
-            //intv[item.xAxis()].setInterval(rect.left(), rect.right())
-          }
-
-          if (rect.height() >= 0.0) {
-            //intv[item.yAxis()] |= new Interval( rect.top(), rect.bottom );
-            if (rect.top() < intv[item.yAxis()].minValue())
-              intv[item.yAxis()].setMinValue(rect.top());
-            if (rect.bottom() > intv[item.yAxis()].maxValue())
-              intv[item.yAxis()].setMaxValue(rect.bottom());
-          }
-
-          if (item.rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
-            if (item.xValue() < intv[item.xAxis()].minValue())
-              intv[item.xAxis()].setMinValue(item.xValue());
-            if (item.xValue() > intv[item.xAxis()].maxValue())
-              intv[item.xAxis()].setMaxValue(item.xValue());
-
-            if (item.yValue() < intv[item.yAxis()].minValue())
-              intv[item.yAxis()].setMinValue(item.yValue());
-            if (item.yValue() > intv[item.yAxis()].maxValue())
-              intv[item.yAxis()].setMaxValue(item.yValue());
-          }
-        }
-      }
-
-      // Adjust scales
-      const axisCnt = 4; //!Static.polarGrid ? Axis.AxisId.axisCnt : 1;
-      for (var axisId = 0; axisId < axisCnt; axisId++) {
-        var d = d_axisData[axisId];
-        var minValue = d.minValue;
-        var maxValue = d.maxValue;
-        var stepSize = d.stepSize;
-        //alert(d.doAutoScale)
-
-        if (d.doAutoScale && intv[axisId].isValid()) {
-          //console.log(this);
-          //alert("here")
-          d.isValid = false;
-
-          minValue = intv[axisId].minValue();
-          maxValue = intv[axisId].maxValue();
-
-          if (Utility.mFuzzyCompare(maxValue, minValue)) {
-            //minValue = minValue - 1.0e-6;
-            minValue = minValue - Static._eps;
-          }
-
-          var xValues = {
-            x1: minValue,
-            x2: maxValue,
-          };
-          d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
-          minValue = xValues["x1"];
-          maxValue = xValues["x2"];
-
-          //minValue = !Static.polarGrid ? minValue : 0;
-        }
-        if (!d.isValid) {
-          //alert("or here")
-          d.scaleDiv = d.scaleEngine.divideScale(
-            minValue,
-            maxValue,
-            d.maxMajor,
-            d.maxMinor,
-            stepSize
-          );
-          d.isValid = true;
-          //alert(d.scaleDiv.ticks(2))
-        }
-        var scaleWidget = this.axisWidget(axisId);
-        scaleWidget.setScaleDiv(d.scaleDiv);
-
-        //var startDist, endDist;
-        var startAndEndObj = {
-          start: undefined,
-          end: undefined,
-        };
-        scaleWidget.getBorderDistHint(startAndEndObj);
-        scaleWidget.setBorderDist(startAndEndObj.start, startAndEndObj.end);
-      }
-
-      m_plotItemStore.forEach(function (item) {
-        if (item.testItemInterest(PlotItem.ItemInterest.ScaleInterest)) {
-          item.updateScaleDiv(
-            self.axisScaleDiv(item.xAxis()),
-            self.axisScaleDiv(item.yAxis())
-          );
-        }
-      });
-    };
-
-    /**
      * Attach/Detach a plot item
      * @param {PlotItem} plotItem Plot item
      * @param {Boolean} on When true attach the item, otherwise detach it
@@ -1973,6 +1831,155 @@ class Plot {
         plotDivContainer,
         changeOfHeight,
       ]);
+    });
+  }
+
+  /**
+   * Rebuild the axes scales
+   *
+   * In case of autoscaling the boundaries of a scale are calculated from the bounding rectangles
+   * of all plot items, having the PlotItem.ItemAttribute.AutoScale flag enabled ( ScaleEngine.autoScale() ).
+   * Then a scale division is calculated ( ScaleEngine.didvideScale() ) and assigned to scale widget.
+   * When the scale boundaries have been assigned with setAxisScale() a scale division is
+   * calculated ( QwtScaleEngine::didvideScale() ) for this interval and assigned to the scale widget.
+   * When the scale has been set explicitly by setAxisScaleDiv() the locally stored scale division gets
+   * assigned to the scale widget. The scale widget indicates modifications by triggering the scaleDivChanged event.
+   * updateAxes() is usually called by replot().
+   * @see {@link Plot#setAxisAutoScale setAxisAutoScale()}
+   * @see {@link Plot#setAxisScale setAxisScale()}
+   * @see {@link Plot#setAxisScaleDiv setAxisScaleDiv()}
+   * @see {@link Plot#replot replot()}
+   * @see {@link PlotItem#boundingRect boundingRect()}
+   */
+  updateAxes() {
+    // Find bounding interval of the item data
+    // for all axes, where autoscaling is enabled
+
+    const self = this;
+
+    const m_plotItemStore = this.plotItemStore();
+    const d_axisData = this.axisData();
+
+    var intv = [
+      new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+      new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+      new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+      new Interval(Number.MAX_VALUE, -Number.MAX_VALUE),
+    ];
+
+    let prevRect = new Misc.Rect();
+
+    for (var i = 0; i < m_plotItemStore.length; ++i) {
+      var item = m_plotItemStore[i];
+      if (!item.testItemAttribute(PlotItem.ItemAttribute.AutoScale)) continue;
+
+      if (!item.isVisible()) continue;
+
+      if (
+        this.axisAutoScale(item.xAxis()) ||
+        this.axisAutoScale(item.yAxis())
+      ) {
+        //alert(item)
+        var rect = item.boundingRect();
+        //if (!rect.isValid()) continue;
+
+        if (rect.isEqual(prevRect)) continue;
+        prevRect = rect;
+
+        //console.log(rect.toString());
+
+        if (rect.width() >= 0.0) {
+          //intv[item.xAxis()] |= new Interval( rect.left(), rect.right());
+          if (rect.left() < intv[item.xAxis()].minValue())
+            intv[item.xAxis()].setMinValue(rect.left());
+          if (rect.right() > intv[item.xAxis()].maxValue())
+            intv[item.xAxis()].setMaxValue(rect.right());
+          //intv[item.xAxis()].setInterval(rect.left(), rect.right())
+        }
+
+        if (rect.height() >= 0.0) {
+          //intv[item.yAxis()] |= new Interval( rect.top(), rect.bottom );
+          if (rect.top() < intv[item.yAxis()].minValue())
+            intv[item.yAxis()].setMinValue(rect.top());
+          if (rect.bottom() > intv[item.yAxis()].maxValue())
+            intv[item.yAxis()].setMaxValue(rect.bottom());
+        }
+
+        if (item.rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+          if (item.xValue() < intv[item.xAxis()].minValue())
+            intv[item.xAxis()].setMinValue(item.xValue());
+          if (item.xValue() > intv[item.xAxis()].maxValue())
+            intv[item.xAxis()].setMaxValue(item.xValue());
+
+          if (item.yValue() < intv[item.yAxis()].minValue())
+            intv[item.yAxis()].setMinValue(item.yValue());
+          if (item.yValue() > intv[item.yAxis()].maxValue())
+            intv[item.yAxis()].setMaxValue(item.yValue());
+        }
+      }
+    }
+
+    // Adjust scales
+    for (var axisId = 0; axisId < Axis.AxisId.axisCnt; axisId++) {
+      var d = d_axisData[axisId];
+      var minValue = d.minValue;
+      var maxValue = d.maxValue;
+      var stepSize = d.stepSize;
+      //alert(d.doAutoScale)
+
+      if (d.doAutoScale && intv[axisId].isValid()) {
+        //console.log(this);
+        //alert("here")
+        d.isValid = false;
+
+        minValue = intv[axisId].minValue();
+        maxValue = intv[axisId].maxValue();
+
+        if (Utility.mFuzzyCompare(maxValue, minValue)) {
+          //minValue = minValue - 1.0e-6;
+          minValue = minValue - Static._eps;
+        }
+
+        var xValues = {
+          x1: minValue,
+          x2: maxValue,
+        };
+        d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
+        minValue = xValues["x1"];
+        maxValue = xValues["x2"];
+      }
+      if (!d.isValid) {
+        //alert("or here")
+        d.scaleDiv = d.scaleEngine.divideScale(
+          //axisId === 0 ? 0 : minValue,
+          minValue,
+          maxValue,
+          d.maxMajor,
+          d.maxMinor,
+          stepSize
+        );
+        d.isValid = true;
+        //alert(d.scaleDiv.ticks(2))
+      }
+      var scaleWidget = this.axisWidget(axisId);
+      scaleWidget.setScaleDiv(d.scaleDiv);
+
+      //var startDist, endDist;
+      var startAndEndObj = {
+        start: undefined,
+        end: undefined,
+      };
+      scaleWidget.getBorderDistHint(startAndEndObj);
+      scaleWidget.setBorderDist(startAndEndObj.start, startAndEndObj.end);
+    }
+
+    m_plotItemStore.forEach(function (item) {
+      if (item.testItemInterest(PlotItem.ItemInterest.ScaleInterest)) {
+        item.updateScaleDiv(
+          self.axisScaleDiv(item.xAxis()),
+          self.axisScaleDiv(item.yAxis())
+        );
+      }
     });
   }
 }
