@@ -705,14 +705,17 @@ class PolarGrid extends PlotGrid {
             maxValue =
               !setZeroMin && axisId === 0 && m_zeroMinRadius ? 0 : maxValue;
           }
-          d.scaleDiv = d.scaleEngine.divideScale(
-            minValue,
-            maxValue,
-            d.maxMajor,
-            d.maxMinor,
-            stepSize
-          );
-          d.isValid = true;
+
+          if (minValue != maxValue) {
+            d.scaleDiv = d.scaleEngine.divideScale(
+              minValue,
+              maxValue,
+              d.maxMajor,
+              d.maxMinor,
+              stepSize
+            );
+            d.isValid = true;
+          }
         }
         var scaleWidget = this.axisWidget(axisId);
         scaleWidget.setScaleDiv(d.scaleDiv);
