@@ -72,17 +72,8 @@ class PolarGrid extends PlotGrid {
     });
 
     this.setZeroMinRadius = function (on) {
-      const plot = self.plot();
       m_zeroMinRadius = on;
-      const auto = Utility.isAutoScale(plot);
-      const upper = plot.axisScaleDiv(0).upperBound();
-      if (!auto) {
-        Utility.setAutoScale(plot, true);
-        Utility.setAutoScale(plot, false);
-        plot.setAxisScale(0, 0, upper);
-      }
-
-      plot.autoRefresh();
+      self.plot().autoRefresh();
     };
 
     this.zeroMinRadius = function () {
@@ -678,49 +669,50 @@ class PolarGrid extends PlotGrid {
         }
       }
 
+      let setZeroMin = false;
       // Adjust scales
       for (var axisId = 0; axisId < Axis.AxisId.axisCnt; axisId++) {
         var d = d_axisData[axisId];
         var minValue = d.minValue;
         var maxValue = d.maxValue;
         var stepSize = d.stepSize;
-        //alert(d.doAutoScale)
 
         if (d.doAutoScale && intv[axisId].isValid()) {
-          //console.log(this);
-          //alert("here")
           d.isValid = false;
-
           minValue = intv[axisId].minValue();
           maxValue = intv[axisId].maxValue();
 
           if (Utility.mFuzzyCompare(maxValue, minValue)) {
-            //minValue = minValue - 1.0e-6;
             minValue = minValue - Static._eps;
           }
 
           var xValues = {
-            //x1: minValue,
             x1: axisId === 0 && m_zeroMinRadius ? 0 : minValue,
             x2: maxValue,
           };
+          setZeroMin = true;
           d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
           minValue = xValues["x1"];
-          //minValue = axisId === 0 && m_zeroMinRadius ? 0 : xValues["x1"];
           maxValue = xValues["x2"];
         }
         if (!d.isValid) {
-          //alert("or here")
+          if (minValue < maxValue) {
+            //Not inverted
+            minValue =
+              !setZeroMin && axisId === 0 && m_zeroMinRadius ? 0 : minValue;
+          } else {
+            //Inverted
+            maxValue =
+              !setZeroMin && axisId === 0 && m_zeroMinRadius ? 0 : maxValue;
+          }
           d.scaleDiv = d.scaleEngine.divideScale(
-            axisId === 0 && m_zeroMinRadius ? 0 : minValue,
-            //minValue,
+            minValue,
             maxValue,
             d.maxMajor,
             d.maxMinor,
             stepSize
           );
           d.isValid = true;
-          //alert(d.scaleDiv.ticks(2))
         }
         var scaleWidget = this.axisWidget(axisId);
         scaleWidget.setScaleDiv(d.scaleDiv);
@@ -732,6 +724,8 @@ class PolarGrid extends PlotGrid {
         };
         scaleWidget.getBorderDistHint(startAndEndObj);
         scaleWidget.setBorderDist(startAndEndObj.start, startAndEndObj.end);
+
+        setZeroMin = false;
       }
 
       m_plotItemStore.forEach(function (item) {
@@ -887,10 +881,6 @@ class PolarGrid extends PlotGrid {
     const autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
 
-    const xScaleDiv = plot.axisScaleDiv(2);
-
-    self.axisScaleEngine = plot.axisScaleEngine(0);
-
     if (on) {
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
@@ -915,19 +905,14 @@ class PolarGrid extends PlotGrid {
         self.panner.widgetMousePressEvent = function () {
           return true;
         };
+
         self.original_setAxisMaxMinor = plot.setAxisMaxMinor;
         plot.setAxisMaxMinor = function () {};
         self.original_setAxisMaxMajor = plot.setAxisMaxMajor;
         plot.setAxisMaxMajor = function () {};
 
-        if (self.zeroMinRadius()) {
-          self.original_updateAxes = plot.updateAxes;
-          plot.updateAxes = self.updateAxes;
-        } else {
-          if (self.original_updateAxes) {
-            plot.updateAxes = self.original_updateAxes;
-          }
-        }
+        self.original_updateAxes = plot.updateAxes;
+        plot.updateAxes = self.updateAxes;
       }
     } else {
       if (self.polarGrid) {
@@ -939,9 +924,7 @@ class PolarGrid extends PlotGrid {
         plot.setAxisMaxMinor = self.original_setAxisMaxMinor;
         plot.setAxisMaxMajor = self.original_setAxisMaxMajor;
 
-        if (self.original_updateAxes) {
-          plot.updateAxes = self.original_updateAxes;
-        }
+        plot.updateAxes = self.original_updateAxes;
       }
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
