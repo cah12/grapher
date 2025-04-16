@@ -123,15 +123,24 @@ class PolarGrid extends PlotGrid {
         });
       }
 
-      bs = _self.baseline();
-
-      const _validTransformPoints = self.transformedBaseline(
-        bs,
-        yMap,
-        samples,
-        x,
-        y
-      );
+      let _validTransformPoints = [];
+      if (_self.orientation() == Static.Vertical) {
+        _validTransformPoints = self.transformedBaseline_circle(
+          bs,
+          yMap,
+          samples,
+          x,
+          y
+        );
+      } else {
+        _validTransformPoints = self.transformedBaseline_ray(
+          bs,
+          yMap,
+          samples,
+          x,
+          y
+        );
+      }
 
       if (_validTransformPoints.length === 0) {
         polygon.splice(0, polygon.length); //no closed polygon available. clear the array
@@ -143,8 +152,12 @@ class PolarGrid extends PlotGrid {
       for (let i = 0; i < _validTransformPoints.length; i++) {
         polygon.push(_validTransformPoints[i]);
       }
+      const fp = polygon[0];
+      const lp = polygon[polygon.length - 1];
+      if (fp.x === lp.x && fp.y === lp.y) {
+        return;
+      }
       polygon.push(new Misc.Point(polygon[0]));
-      //}
     };
 
     this.transformRadial = function (s, yMap) {
@@ -308,7 +321,6 @@ class PolarGrid extends PlotGrid {
       return result;
     };
 
-    //this.maxTickLength = function () {
     function drawRadialLabel(painter, xMap, yMap, ticks) {
       //circles
       if (!ticks || ticks.length === 0) {
@@ -550,8 +562,6 @@ class PolarGrid extends PlotGrid {
           round
         );
 
-      //console.log(_validTransformPoints, untransformedPoints);
-
       return _validTransformPoints;
     };
 
@@ -581,13 +591,24 @@ class PolarGrid extends PlotGrid {
 
       let bs = this.baseline();
 
-      const transPoints = self.transformedBaseline(
-        bs,
-        yMap,
-        unTransPoints,
-        ctx.canvas.width / 2,
-        ctx.canvas.height / 2
-      );
+      let transPoints = [];
+      if (this.orientation() === Static.Vertical) {
+        transPoints = self.transformedBaseline_circle(
+          bs,
+          yMap,
+          unTransPoints,
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2
+        );
+      } else {
+        transPoints = self.transformedBaseline_ray(
+          bs,
+          yMap,
+          unTransPoints,
+          ctx.canvas.width / 2,
+          ctx.canvas.height / 2
+        );
+      }
 
       if (transPoints.length === 0 || samples.length === 0) return;
 
@@ -629,14 +650,10 @@ class PolarGrid extends PlotGrid {
           this.axisAutoScale(item.xAxis()) ||
           this.axisAutoScale(item.yAxis())
         ) {
-          //alert(item)
           var rect = item.boundingRect();
-          //if (!rect.isValid()) continue;
 
           if (rect.isEqual(prevRect)) continue;
           prevRect = rect;
-
-          //console.log(rect.toString());
 
           if (rect.width() >= 0.0) {
             //intv[item.xAxis()] |= new Interval( rect.left(), rect.right());
@@ -746,7 +763,36 @@ class PolarGrid extends PlotGrid {
     };
   }
 
-  transformedBaseline(baseline, yMap, samples, pole_x, pole_y) {
+  transformedBaseline_ray(baseline, yMap, samples, pole_x, pole_y) {
+    const self = this;
+    //The baseline is a ray with an angle === bs
+    const baselineSamples = samples.map(function (pt) {
+      let angl = pt.x - baseline;
+      let r_n = pt.y * math.cos(angl);
+      return new Misc.Point(baseline, self.transformRadial(r_n, yMap));
+    });
+    const plot = self.plot();
+    const auto = Utility.isAutoScale(plot);
+
+    const _validTransformPoints = [];
+
+    const angl = baseline;
+    for (let i = 0; i < baselineSamples.length; i++) {
+      const radius = baselineSamples[i].y;
+
+      baselineSamples[i].x = pole_x + radius * math.cos(angl);
+      baselineSamples[i].y = radius * math.sin(-angl) + pole_y;
+      let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
+      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
+        _validTransformPoints.push(
+          new Misc.Point(baselineSamples[i].x, baselineSamples[i].y)
+        );
+      }
+    }
+    return _validTransformPoints;
+  }
+
+  transformedBaseline_circle(baseline, yMap, samples, pole_x, pole_y) {
     const self = this;
     const _baseline = self.transformRadial(baseline, yMap);
     const baselineSamples = samples.map(function (pt) {
