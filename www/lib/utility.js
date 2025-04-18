@@ -5881,7 +5881,15 @@ class Utility {
 
     mf.getValue = function (format = "ascii-math") {
       let latex = mf.getValueTemp("latex");
-      //latex = latex.replaceAll("^H~", "^{\\prime}");
+
+      if (latex.indexOf("T") !== -1) {
+        return "T";
+      }
+
+      if (latex.indexOf("y") !== -1 && latex.indexOf("r") !== -1) {
+        return "R";
+      }
+
       //latex = latex.replaceAll("^H~", "'");
       //Handle \frac start
       let index = latex.indexOf("\\frac");
@@ -6014,6 +6022,9 @@ class Utility {
       //     );
       //   });
       // }
+
+      //allow for inputs like 4*theta and r=4*theta
+      result = result.replaceAll("theta", "T").replaceAll("r", "y");
 
       result = result.replaceAll("primePlaceHolder", "'");
       result = result.replaceAll("doublePrimePlaceHolder", "''");

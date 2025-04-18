@@ -224,7 +224,8 @@ class MFunctionDlg {
                 <br>\
                 <div id="cont_variable" class="row">\
                 <div class="col-sm-3">Enter variable(x):</div>\
-                <div class="col-sm-1"><input id="fnDlg_variable" style="width:100%" type="text" value="x" /></div>\
+                <!--div class="col-sm-2"><input id="fnDlg_variable" style="width:100%" type="text" value="x" /></div-->\
+                <div class="col-sm-2"><math-field class="math-field-limits math-field-limits-enter" style="width:100%; font-size:1.2em;" id="fnDlg_variable" style="width:100%" value="x"/></math-field></div>\
                 </div>\
                 <br>\
                 <div id="cont_parametric_variable" class="row">\
@@ -279,6 +280,8 @@ class MFunctionDlg {
     Utility.extendGetValue($("#fnDlg_lowerLimitFxy")[0]);
     Utility.extendGetValue($("#fnDlg_upperLimitFxy")[0]);
 
+    Utility.extendGetValue($("#fnDlg_variable")[0]);
+
     Replacement.replace();
 
     $('input[name="math_mode"]')
@@ -301,11 +304,18 @@ class MFunctionDlg {
 
     $("#fnDlg_variable")
       .off("input")
-      .on("input", function () {
-        const mf = $("#fnDlg_function")[0];
-        let fnDlgFunctionVal = mf.getValue("ascii-math");
-        if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
-          $(".limit_x").html($(this).val());
+      .on("input", function (e) {
+        if (e.target instanceof MathfieldElement) {
+          const mf = $("#fnDlg_function")[0];
+          let fnDlgFunctionVal = mf.getValue("ascii-math");
+          if (!Utility.isParametricFunction(fnDlgFunctionVal)) {
+            let value = $(this).val();
+            if (value === "T") {
+              $(".limit_x").html("\u0398");
+            } else {
+              $(".limit_x").html(value);
+            }
+          }
         }
       });
 
@@ -763,9 +773,48 @@ class MFunctionDlg {
         self.unboundedRange = null;
         self.numOfPoints = 200;
 
+        if (fnDlgFunctionVal === "T") {
+          const mf = $("#fnDlg_function")[0];
+          const _theta = "\u0398";
+          Utility.displayErrorMessage(
+            mf,
+            `You cannot use "T" in expressions. It is used internally for working with "${_theta}".`
+          );
+          Utility.progressWait2(false);
+          return;
+        }
+
+        if (fnDlgFunctionVal === "R") {
+          const mf = $("#fnDlg_function")[0];
+          const _theta = "\u0398";
+          Utility.displayErrorMessage(
+            mf,
+            `You cannot have two different dependent variables, "r" and "y", in the same equation. You must choose either "y" or "r". Generally, you should use "y" with cartesian graphs and "r" with polar graphs.`
+          );
+          Utility.progressWait2(false);
+          return;
+        }
+
+        if (
+          fnDlgFunctionVal &&
+          fnDlgFunctionVal.indexOf("T") != -1 &&
+          $("#fnDlg_variable")[0].getValue() !== "T"
+        ) {
+          const oldVariable = $("#fnDlg_variable")[0].getValue();
+          $("#fnDlg_variable")[0].setValue("\\theta", {
+            suppressChangeNotifications: true,
+          });
+          const _theta = "\u0398";
+          Utility.alert(
+            `The Grapher changed the independent variable from "${oldVariable}" to "${_theta}" because it found "${_theta}" in the expression. The Grapher always treat "${_theta}" as the independent variable.`,
+            null,
+            "independent_variable_in_any_expression"
+          );
+        }
+
         if (!fnDlgFunctionVal || fnDlgFunctionVal.length == 0) {
           const mf = $("#fnDlg_function")[0];
-          mf.setValue("?....?");
+          mf.setValue("?....?", { suppressChangeNotifications: true });
           Utility.displayErrorMessage(mf, `You made an invalid entry.`);
           Utility.progressWait2(false);
           return;
@@ -2869,7 +2918,7 @@ class MFunctionDlg {
       //m_dlg1.detach();
     };
 
-    this.functionDlg = async function (curveName) {
+    this.functionDlg = async function (curveName = null) {
       if (Static.imagePath != "images/") {
         try {
           let res = await mode(Replacement.config.angles);
@@ -2882,13 +2931,17 @@ class MFunctionDlg {
       $("#functionModal").modal({
         backdrop: "static",
       });
-      $("#fnDlg_title").val(curveName);
+      if (curveName) {
+        $("#fnDlg_title").val(curveName);
+      }
       const mf = $("#fnDlg_function")[0];
       let fnDlgFunctionVal = mf.getValue("ascii-math");
       if (Utility.isParametricFunction(fnDlgFunctionVal)) {
         $(".limit_x").html($("#fnDlg_parametric_variable").val());
       } else {
-        $(".limit_x").html($("#fnDlg_variable").val());
+        let value = $("#fnDlg_variable").val();
+        value = value === "T" ? "\u0398" : value;
+        $(".limit_x").html(value);
       }
     };
 

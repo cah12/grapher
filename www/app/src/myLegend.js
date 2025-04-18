@@ -159,9 +159,11 @@ class MyLegend extends Legend {
         title = title
           .replaceAll("log_{undefined}", "ln")
           .replaceAll("*", "\\cdot")
+          .replaceAll("T", "\u0398")
           .replaceAll("+-", "-")
           .replaceAll("-+", "-");
       }
+
       self.setTooltip(rowNumber, title);
       _curve = 0;
     };
