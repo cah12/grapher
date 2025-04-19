@@ -784,7 +784,7 @@ class MFunctionDlg {
           return;
         }
 
-        if (fnDlgFunctionVal === "R") {
+        /* if (fnDlgFunctionVal === "R") {
           const mf = $("#fnDlg_function")[0];
           const _theta = "\u0398";
           Utility.displayErrorMessage(
@@ -793,7 +793,7 @@ class MFunctionDlg {
           );
           Utility.progressWait2(false);
           return;
-        }
+        } */
 
         if (
           fnDlgFunctionVal &&

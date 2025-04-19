@@ -209,7 +209,13 @@ class InfoPropertiesPane extends Pane {
               ")=" +
               curCurve.fn;
           } else {
-            m_html = "f(" + curCurve.variable + ")=" + curCurve.fn;
+            let _s = null;
+            try {
+              _s = math.simplify(curCurve.fn).toString().replaceAll(" ", "");
+              m_html = "f(" + curCurve.variable + ")=" + _s;
+            } catch (error) {
+              _s = curCurve.fn;
+            }
           }
         } else {
           m_html = `(${curCurve.parametricFnX}, ${curCurve.parametricFnY})`;
@@ -223,17 +229,14 @@ class InfoPropertiesPane extends Pane {
           $("#fnDisplay")[0].innerHTML = "";
           let child = null;
           if (!curCurve.parametricFnX) {
-            child = Utility.tex2svgMultiline(
-              math
-                .parse(m_html)
-                .toTex({ parenthesis: "auto", implicit: "hide" }),
-              60,
-              {
-                em: 16,
-                ex: 6,
-                display: false,
-              }
-            );
+            let p = math.parse(m_html);
+            p = p.toTex({ parenthesis: "auto", implicit: "hide" });
+            p = p.replaceAll("T", "\\theta");
+            child = Utility.tex2svgMultiline(p, 60, {
+              em: 16,
+              ex: 6,
+              display: false,
+            });
             //$("#fnDisplay")[0].appendChild(child);
           } else {
             child = Utility.tex2svgMultiline(
@@ -253,11 +256,18 @@ class InfoPropertiesPane extends Pane {
       function copyTextCb() {
         try {
           if (!curCurve.parametricFnX) {
+            let _s = null;
+            try {
+              _s = math.simplify(curCurve.fn).toString().replaceAll(" ", "");
+            } catch (error) {
+              _s = curCurve.fn;
+            }
             navigator.clipboard.writeText(
               math
-                .parse(curCurve.fn.replaceAll("mod", " mod "))
+                .parse(_s.replaceAll("mod", " mod "))
                 .toTex({ em: 16, ex: 6, display: false })
                 .replaceAll("{}}", "")
+                .replaceAll("T", "\\theta")
             );
           } else {
             const s1 = math
