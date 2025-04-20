@@ -62,9 +62,14 @@ class PolarGrid extends PlotGrid {
 
           plotItem.originalClosePolyline = plotItem.closePolyline;
           plotItem.closePolyline = self.closePolyline;
+
+          plotItem.originalDrawCurve = plotItem.drawCurve;
+          plotItem.drawCurve = self.drawCurve;
         } else if (!on && plotItem.originalDraw) {
           plotItem.drawSticks = plotItem.originalDrawSticks;
           plotItem.closePolyline = plotItem.originalClosePolyline;
+
+          plotItem.drawCurve = plotItem.originalDrawCurve;
         }
       }
       plot.setAutoReplot(autoReplot);
@@ -569,6 +574,17 @@ class PolarGrid extends PlotGrid {
       return self.mToPoints(null, xMap, yMap, series, from, to, round);
     };
 
+    this.drawCurve = function (painter, style, xMap, yMap, from, to) {
+      const ctx = painter.context();
+      ctx.beginPath();
+      ctx.arc(self.pole.x, self.pole.y, self.pole.y, 0, 2 * Math.PI); // Full circle
+      ctx.closePath();
+      // Clip to the circle
+      ctx.clip();
+
+      this.originalDrawCurve(painter, style, xMap, yMap, from, to);
+    };
+
     this.drawSticks = function (painter, xMap, yMap, from, to) {
       /* "this" references the curve and "self" references the grid*/
       const { _validTransformPoints, untransformedPoints } =
@@ -782,8 +798,8 @@ class PolarGrid extends PlotGrid {
 
       baselineSamples[i].x = pole_x + radius * math.cos(angl);
       baselineSamples[i].y = radius * math.sin(-angl) + pole_y;
-      let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
-      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
+      //let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
+      if (1 /* Math.abs(radius) <= Math.abs(restrictRadius) */) {
         _validTransformPoints.push(
           new Misc.Point(baselineSamples[i].x, baselineSamples[i].y)
         );
@@ -808,8 +824,8 @@ class PolarGrid extends PlotGrid {
 
       baselineSamples[i].x = pole_x + radius * math.cos(angl);
       baselineSamples[i].y = radius * math.sin(-angl) + pole_y;
-      let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
-      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
+      //let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
+      if (1 /* Math.abs(radius) <= Math.abs(restrictRadius) */) {
         _validTransformPoints.push(
           new Misc.Point(baselineSamples[i].x, baselineSamples[i].y)
         );
@@ -909,17 +925,17 @@ class PolarGrid extends PlotGrid {
       const radius = points[i].y;
       points[i].x = x + radius * math.cos(angl);
       points[i].y = radius * math.sin(-angl) + y;
-      let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
-      if (Math.abs(radius) <= Math.abs(restrictRadius)) {
-        _validTransformPoints.push(new Misc.Point(points[i].x, points[i].y));
-      } else if (untransformedPoints) {
-        untransformedPoints[i] = null;
-      }
+      //let restrictRadius = auto ? self.pole.y : self.pole.y - 8;
+      //if (1 /* Math.abs(radius) <= Math.abs(restrictRadius) */) {
+      _validTransformPoints.push(new Misc.Point(points[i].x, points[i].y));
+      // } else if (untransformedPoints) {
+      //untransformedPoints[i] = null;
+      //}
     }
-    untransformedPoints = untransformedPoints.filter(function (pt) {
-      if (pt) return true;
-      return false;
-    });
+    // untransformedPoints = untransformedPoints.filter(function (pt) {
+    //   if (pt) return true;
+    //   return false;
+    // });
     return { _validTransformPoints, untransformedPoints };
   }
 
@@ -942,6 +958,9 @@ class PolarGrid extends PlotGrid {
         L[i].drawSticks = self.drawSticks;
         L[i].originalClosePolyline = L[i].closePolyline;
         L[i].closePolyline = self.closePolyline;
+
+        L[i].originalDrawCurve = L[i].drawCurve;
+        L[i].drawCurve = self.drawCurve;
       }
       if (self.polarGrid) {
         self.original_mToPoints = Static.mToPoints;
@@ -980,6 +999,8 @@ class PolarGrid extends PlotGrid {
         if (L[i].originalClosePolyline) {
           L[i].drawSticks = L[i].originalDrawSticks;
           L[i].closePolyline = L[i].originalClosePolyline;
+
+          L[i].drawCurve = L[i].originalDrawCurve;
         }
       }
       for (let i = 0; i < self.detachedCurves.length; i++) {
@@ -992,3 +1013,14 @@ class PolarGrid extends PlotGrid {
     plot.autoRefresh();
   }
 }
+
+/* // Draw the circle (or any other shape) to define the clipping path
+this.ctx.beginPath();
+this.ctx.arc(x, y, y, 0, 2 * Math.PI); // Full circle
+this.ctx.closePath();
+// Clip to the circle
+this.ctx.clip();
+
+ctx.fillStyle = "red";
+ctx.fillRect(0, 0, 2 * x, 2 * y);
+ */
