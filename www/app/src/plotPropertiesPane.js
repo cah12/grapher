@@ -2254,6 +2254,15 @@ class PlotPropertiesPane extends PropertiesPane {
       checked: true,
     });
 
+    var zeroMinAngle = this.addProperty({
+      name: "Zero minimum angle",
+      id: "zeroMinAngle",
+      parentId: "gridSettings",
+      type: "checkbox",
+      title: "Set the minimum angle to zero.",
+      //checked: true,
+    });
+
     this.addProperty({
       name: "Minor Lines",
       id: "gridMinorLines",
@@ -4204,6 +4213,10 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.polarGrid.setZeroMinRadius($(this)[0].checked);
     });
 
+    zeroMinAngle.change(function () {
+      plot.polarGrid.setZeroMinAngle($(this)[0].checked);
+    });
+
     Static.bind("polarGridStatus", function (e, on) {
       let _theta = "\u0398";
       if (on) {
@@ -4231,6 +4244,7 @@ class PlotPropertiesPane extends PropertiesPane {
         });
 
         self.show("zeroMinRadius");
+        self.show("zeroMinAngle");
         ////////////////////////////////////////////////////////////
         self.hide("scalePositionBottomLinear");
         self.hide("scalePositionBottomLog");
@@ -4260,6 +4274,24 @@ class PlotPropertiesPane extends PropertiesPane {
           name: `Angle(${_theta})`,
           title: `Set limits for the polar grid angle(${_theta}).`,
         });
+
+        self.hide("magnifierRightAxis");
+        self.hide("magnifierTopAxis");
+
+        self.replaceNodeText("magnifierLeftAxis", {
+          name: `Polar radius enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.replaceNodeText("magnifierBottomAxis", {
+          name: `Polar angle enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        if (magnifierBottomAxis[0].checked) {
+          magnifierBottomAxis.click();
+          self.magnifierBottomAxisEnabledChanged = true;
+        }
       } else {
         self.replaceNodeText("scalePosition", {
           name: "Type, precision & attributes",
@@ -4279,6 +4311,7 @@ class PlotPropertiesPane extends PropertiesPane {
           //self.show("centerAxesZero");
         }
         self.hide("zeroMinRadius");
+        self.hide("zeroMinAngle");
         self.show("scalePositionBottom");
         self.show("scalePositionRight");
         self.show("scalePositionTop");
@@ -4302,6 +4335,27 @@ class PlotPropertiesPane extends PropertiesPane {
           title: "Set limits for the cartesian grid bottom(x) axis",
           name: "Bottom(x)",
         });
+
+        self.replaceNodeText("magnifierLeftAxis", {
+          name: `Left axis enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.replaceNodeText("magnifierBottomAxis", {
+          name: `Bottom axis enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.show("magnifierRightAxis");
+        self.show("magnifierTopAxis");
+
+        if (
+          self.magnifierBottomAxisEnabledChanged &&
+          !magnifierBottomAxis[0].checked
+        ) {
+          magnifierBottomAxis.click();
+          self.magnifierBottomAxisEnabledChanged = false;
+        }
 
         ////////////////////////////////////////////////////////////
         self.show("scalePositionBottomLinear");

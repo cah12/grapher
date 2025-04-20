@@ -22,6 +22,7 @@ class PolarGrid extends PlotGrid {
     this.polarGrid = false;
 
     let m_zeroMinRadius = true;
+    let m_zeroMinAngle = false;
 
     let radialPrecision = 4;
     let rayPrecision = 4;
@@ -83,6 +84,15 @@ class PolarGrid extends PlotGrid {
 
     this.zeroMinRadius = function () {
       return m_zeroMinRadius;
+    };
+
+    this.setZeroMinAngle = function (on) {
+      m_zeroMinAngle = on;
+      self.plot().autoRefresh();
+    };
+
+    this.zeroMinAngle = function () {
+      return m_zeroMinAngle;
     };
 
     this.validAxes = function (curve) {
@@ -723,6 +733,10 @@ class PolarGrid extends PlotGrid {
             x1: axisId === 0 && m_zeroMinRadius ? 0 : minValue,
             x2: maxValue,
           };
+          var xValues = {
+            x1: axisId === 2 && m_zeroMinAngle ? 0 : minValue,
+            x2: maxValue,
+          };
           setZeroMin = true;
           d.scaleEngine.autoScale(d.maxMajor, xValues, stepSize);
           minValue = xValues["x1"];
@@ -733,10 +747,15 @@ class PolarGrid extends PlotGrid {
             //Not inverted
             minValue =
               !setZeroMin && axisId === 0 && m_zeroMinRadius ? 0 : minValue;
+
+            minValue =
+              !setZeroMin && axisId === 2 && m_zeroMinAngle ? 0 : minValue;
           } else {
             //Inverted
             maxValue =
               !setZeroMin && axisId === 0 && m_zeroMinRadius ? 0 : maxValue;
+            maxValue =
+              !setZeroMin && axisId === 2 && m_zeroMinAngle ? 0 : maxValue;
           }
 
           if (minValue != maxValue) {
