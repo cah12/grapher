@@ -6025,16 +6025,16 @@ class Utility {
         latex.indexOf("y") !== -1 &&
         latex.indexOf("r") !== -1
       ) {
-        //const mf = $("#fnDlg_function")[0];
-        //const _theta = "\u0398";
         Utility.alert(
           `The equation contains both "r" and "y". The Grapher treated "r" as an unknown. Generally, for explicit dependent variable, you should use "y" with cartesian graphs and "r" with polar graphs.`,
           null,
           "y_with_cartesian_graphs_and_r_with_polar_graphs"
         );
-      } else {
-        result = result.replaceAll("theta", "T").replaceAll("r", "y");
+      } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
+        result = result.replaceAll("r", "y");
       }
+
+      result = result.replaceAll("theta", "T");
 
       result = result.replaceAll("primePlaceHolder", "'");
       result = result.replaceAll("doublePrimePlaceHolder", "''");
