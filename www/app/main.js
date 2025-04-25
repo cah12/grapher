@@ -35,6 +35,7 @@ require([
   "magnifier",
   "plotGrid",
   "polarGrid",
+  "threeDgrid",
   "widgetOverlay",
   "myZoomer",
   "curveFitter",

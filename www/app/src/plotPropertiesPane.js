@@ -2241,7 +2241,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "gridType",
       parentId: "gridSettings",
       type: "select",
-      selectorOptions: ["Cartesian", "Polar"],
+      selectorOptions: ["Cartesian", "Polar", "3 D"],
       //disabled: true,
     });
 
@@ -4029,11 +4029,17 @@ class PlotPropertiesPane extends PropertiesPane {
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       if ($(this)[0].selectedIndex == 0) {
-        plot.polarGrid.hide();
+        plot.grid.hide();
+        plot.grid = plot.plotGrid;
         plot.plotGrid.show();
-      } else {
-        plot.plotGrid.hide();
+      } else if ($(this)[0].selectedIndex == 1) {
+        plot.grid.hide();
+        plot.grid = plot.polarGrid;
         plot.polarGrid.show();
+      } else {
+        plot.grid.hide();
+        plot.grid = plot.threeDgrid;
+        plot.threeDgrid.show();
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();

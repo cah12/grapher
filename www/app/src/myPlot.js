@@ -53,12 +53,15 @@ class MyPlot extends Plot {
     var self = this;
     var m_curveShapeEnabledByPlotSettings = true;
 
+    this.magnifier = new Magnifier(this);
+
     this.pan = new Panner(this);
     this.pan.setCursor("move");
     this.pan.setEnabled(false);
 
     this.plotGrid = new PlotGrid(null);
     this.polarGrid = new PolarGrid(null, this.pan);
+    this.threeDgrid = new ThreeDGrid(null, this.pan, this.magnifier);
     this.grid = this.plotGrid;
 
     this.fileSystemServices = null;
@@ -71,8 +74,12 @@ class MyPlot extends Plot {
     Utility.minorGridLines(this.grid, true);
 
     this.polarGrid.attach(this);
+    this.threeDgrid.attach(this);
+
     Utility.minorGridLines(this.polarGrid, true);
     this.polarGrid.hide();
+    //Utility.minorGridLines(this.threeDgrid, true);
+    this.threeDgrid.hide();
 
     //console.log(this.grid)
 
@@ -3002,7 +3009,7 @@ class MyPlot extends Plot {
     this.setAxisTitle(Axis.AxisId.yLeft, "Left scale");
     this.setAxisTitle(Axis.AxisId.yRight, "Right scale");
 
-    this.magnifier = new Magnifier(this);
+    //this.magnifier = new Magnifier(this);
 
     Static.bind("magnifyingStart", function () {
       if (self.tbar.isButtonChecked(self.tbar.auto)) {
