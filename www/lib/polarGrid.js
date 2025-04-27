@@ -865,17 +865,17 @@ class PolarGrid extends PlotGrid {
     this.polarGridVisible(false);
     this.polarGrid = false;
     const plot = this.plot();
-    if (this._axisMaxMinor !== undefined) {
-      plot.setAxisMaxMinor(0, this._axisMaxMinor);
-      plot.setAxisMaxMajor(0, this._axisMaxMajor);
-    }
+    // if (this._axisMaxMinor !== undefined) {
+    //   plot.setAxisMaxMinor(0, this._axisMaxMinor);
+    //   plot.setAxisMaxMajor(0, this._axisMaxMajor);
+    // }
     super.hide();
     Static.trigger("polarGridStatus", this.polarGrid);
   }
   show() {
     const plot = this.plot();
-    this._axisMaxMinor = plot.axisMaxMinor(0);
-    this._axisMaxMajor = plot.axisMaxMajor(0);
+    // this._axisMaxMinor = plot.axisMaxMinor(0);
+    // this._axisMaxMajor = plot.axisMaxMajor(0);
     plot.setAxisMaxMinor(0, 6);
     plot.setAxisMaxMajor(0, 4);
     this.polarGrid = true;

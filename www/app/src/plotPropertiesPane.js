@@ -3999,15 +3999,15 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.setAxisMaxMajor(Axis.AxisId.xBottom, $(this).val());
     });
     minor_line_color.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       grid.setMinorPen(minor_line_color[0].value);
     });
     major_line_color.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       grid.setMajorPen(major_line_color[0].value);
     });
     major_gridLines.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       Utility.majorGridLines(grid, $(this)[0].checked);
       minor_gridLines.attr("disabled", !$(this)[0].checked);
     });
@@ -4016,7 +4016,7 @@ class PlotPropertiesPane extends PropertiesPane {
       minor_gridLines.attr("disabled", !on);
     });
     minor_gridLines.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       Utility.minorGridLines(grid, $(this)[0].checked);
     }); //gridAxisHorizontal
     Static.bind("minorGridLines", function (e, grid, on) {
@@ -4041,6 +4041,22 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.grid = plot.threeDgrid;
         plot.threeDgrid.show();
       }
+
+      /* //Enabled
+      if (plot.grid.xEnabled() && !major_gridLines[0].checked) {
+        major_gridLines.click();
+      }
+      if (plot.grid.xMinEnabled() && !minor_gridLines[0].checked) {
+        minor_gridLines.click();
+      }
+
+      //Not Enabled
+      if (!plot.grid.xEnabled() && major_gridLines[0].checked) {
+        major_gridLines.click();
+      }
+      if (!plot.grid.xMinEnabled() && minor_gridLines[0].checked) {
+        minor_gridLines.click();
+      } */
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     });
@@ -4049,7 +4065,7 @@ class PlotPropertiesPane extends PropertiesPane {
     Static.bind("currentCurveChanged", function (e, _curve) {
       curve = _curve;
       if (curve) {
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxes[0].checked) {
           grid.setAxes(curve.xAxis(), curve.yAxis());
         } else {
@@ -4070,7 +4086,7 @@ class PlotPropertiesPane extends PropertiesPane {
     Static.bind(
       "curveAxisChangedViaPropertiesPane axisChanged",
       function (e, axis, curve) {
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxes[0].checked) {
           grid.setAxes(curve.xAxis(), curve.yAxis());
         } else {
@@ -4117,7 +4133,7 @@ class PlotPropertiesPane extends PropertiesPane {
     }
 
     gridAxisVertical.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if ($(this)[0].selectedIndex == 0) {
         grid.setAxes(grid.xAxis(), Axis.AxisId.yLeft);
       } else {
@@ -4127,7 +4143,7 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     gridAxisHorizontal.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if ($(this)[0].selectedIndex == 0) {
         grid.setAxes(Axis.AxisId.xBottom, grid.yAxis());
       } else {
@@ -4141,7 +4157,7 @@ class PlotPropertiesPane extends PropertiesPane {
         gridAxisControlsDisabled(true);
       } else {
         gridAxisControlsDisabled(false);
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxisHorizontal[0].selectedIndex == 0) {
           grid.setAxes(Axis.AxisId.xBottom, grid.yAxis());
         } else {
@@ -4162,7 +4178,7 @@ class PlotPropertiesPane extends PropertiesPane {
       //gridAxisHorizontal[0].selectedIndex = 0;
       var vertical = "";
       //gridAxisVertical[0].selectedIndex = 0;
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if (gridAxes[0].checked && curve) {
         if (curve.yAxis() == Axis.AxisId.yRight) {
           vertical = "Right";
@@ -4476,7 +4492,7 @@ class PlotPropertiesPane extends PropertiesPane {
       plotTitleTitleSelector.val(plot.title());
       initLimitsInput();
       var grid;
-      grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if (!grid) {
         grid = plot.itemList(PlotItem.RttiValues.Rtti_PolarGrid)[0];
       }

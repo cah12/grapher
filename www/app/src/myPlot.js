@@ -78,7 +78,7 @@ class MyPlot extends Plot {
 
     Utility.minorGridLines(this.polarGrid, true);
     this.polarGrid.hide();
-    //Utility.minorGridLines(this.threeDgrid, true);
+    Utility.minorGridLines(this.threeDgrid, true);
     this.threeDgrid.hide();
 
     //console.log(this.grid)

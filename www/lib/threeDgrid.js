@@ -1,15 +1,21 @@
 "use strict";
 
-class ThreeDgrid {
+class ThreeJs {
   constructor(canvas, resizeCb = null) {
     const self = this;
     this.lines;
+
+    let p_limit = 0.7;
 
     this.color = "#222222";
 
     let numOfYlines = 10;
     let numOfXlines = 10;
     let scene = new THREE.Scene();
+
+    this.getPlimit = function () {
+      return p_limit;
+    };
 
     //y - green x-red z- blue
     //const axesHelper = new THREE.AxesHelper(6);
@@ -40,7 +46,7 @@ class ThreeDgrid {
     function getAxesLinesPosition() {
       const positions = [];
       //Generate Axes
-      positions.push(-0.7);
+      positions.push(-p_limit);
       positions.push(0);
       positions.push(0);
       ///////////////
@@ -49,7 +55,7 @@ class ThreeDgrid {
       positions.push(0);
 
       positions.push(0);
-      positions.push(-0.7);
+      positions.push(-p_limit);
       positions.push(0);
       ///////////////
       positions.push(0);
@@ -58,7 +64,7 @@ class ThreeDgrid {
 
       positions.push(0);
       positions.push(0);
-      positions.push(-0.7);
+      positions.push(-p_limit);
       ///////////////
       positions.push(0);
       positions.push(0);
@@ -122,156 +128,201 @@ class ThreeDgrid {
       const positions = [];
 
       //Draw front bound plane
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
 
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
 
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
 
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
 
       //Draw back bound plane
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
 
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
 
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
 
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
 
       //Draw bottom bound plane
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
 
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(-0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(-p_limit);
 
       //Draw top bound plane
-      positions.push(-0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
       ////////////
-      positions.push(-0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
 
-      positions.push(0.7);
-      positions.push(-0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(p_limit);
       ////////////
-      positions.push(0.7);
-      positions.push(0.7);
-      positions.push(0.7);
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(p_limit);
 
       return positions;
     }
 
-    function getGridLinesPosition() {
+    function getMajGridLinesPosition(data) {
       const positions = [];
 
-      //Draw y gridlines
-
-      const yspacing = 1.4 / (numOfYlines - 1);
-      for (let i = 0; i < numOfYlines; i++) {
-        positions.push(-0.7);
-        positions.push(-0.7 + i * yspacing);
-        positions.push(0);
-        positions.push(0.7);
-        positions.push(-0.7 + i * yspacing);
-        positions.push(0);
-      }
-
       //Draw x gridlines
-      const xspacing = 1.4 / (numOfXlines - 1);
-      for (let i = 0; i < numOfXlines; i++) {
-        positions.push(-0.7 + i * xspacing);
-        positions.push(-0.7);
+      //major
+      const xMajPaintTicks = data.xMajPaintTicks;
+      for (let i = 0; i < xMajPaintTicks.length; i++) {
+        const p = xMajPaintTicks[i].p;
+
+        positions.push(p);
+        positions.push(-p_limit);
         positions.push(0);
         //////////////3
-        positions.push(-0.7 + i * xspacing);
-        positions.push(0.7);
+        positions.push(p);
+        positions.push(p_limit);
         positions.push(0);
       }
+      //Permanent Edge
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(0);
+      //////////////3
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(0);
+      ////
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(0);
+      //////////////3
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(0);
+
+      const yMajPaintTicks = data.yMajPaintTicks;
+      for (let i = 0; i < yMajPaintTicks.length; i++) {
+        const p = yMajPaintTicks[i].p;
+        positions.push(-p_limit);
+        positions.push(p);
+        positions.push(0);
+        ///////////////////
+        positions.push(p_limit);
+        positions.push(p);
+        positions.push(0);
+      }
+      //Permanent Edge
+      positions.push(-p_limit);
+      positions.push(p_limit);
+      positions.push(0);
+      ///////////////////
+      positions.push(p_limit);
+      positions.push(p_limit);
+      positions.push(0);
+      ///
+      positions.push(-p_limit);
+      positions.push(-p_limit);
+      positions.push(0);
+      ///////////////////
+      positions.push(p_limit);
+      positions.push(-p_limit);
+      positions.push(0);
 
       return positions;
     }
 
-    /* function getPositions1() {
-              let n = self.xGridLines * self.yGridLines * self.zGridLines;
-              let positions = [];
-              //xSpacing = (self.xGridLines - 1)/2
-              for (let i = 0; i < n; i++) {
-                let p = mapTo3D(i);
-                positions.push(
-                  (p.x - (self.xGridLines - 1) / 2) / (self.xGridLines - 1)
-                );
-                positions.push(
-                  (p.y - (self.yGridLines - 1) / 2) / (self.yGridLines - 1)
-                );
-                positions.push(
-                  (p.z - (self.zGridLines - 1) / 2) / (self.zGridLines - 1)
-                );
-              }
-              return positions;
-            } */
+    function getMinGridLinesPosition(data) {
+      const positions = [];
+      //minor
+      const xMinPaintTicks = data.xMinPaintTicks;
+      for (let i = 0; i < xMinPaintTicks.length; i++) {
+        const p = xMinPaintTicks[i];
+
+        positions.push(p);
+        positions.push(-p_limit);
+        positions.push(0);
+        //////////////3
+        positions.push(p);
+        positions.push(p_limit);
+        positions.push(0);
+      }
+
+      const yMinPaintTicks = data.yMinPaintTicks;
+      for (let i = 0; i < yMinPaintTicks.length; i++) {
+        const p = yMinPaintTicks[i];
+        positions.push(-p_limit);
+        positions.push(p);
+        positions.push(0);
+        positions.push(p_limit);
+        positions.push(p);
+        positions.push(0);
+      }
+      return positions;
+    }
 
     const clipPlanes = [
       new THREE.Plane(new THREE.Vector3(1, 0, 0), 0.700001), //left
@@ -296,8 +347,8 @@ class ThreeDgrid {
     //scene.add(helper4);
     //scene.add(helper5);
 
-    function generateAxesLines() {
-      let geometry = getGeometry(getAxesLinesPosition());
+    this.generateAxesLines = function (data) {
+      let geometry = getGeometry(getAxesLinesPosition(data));
 
       // let indexPairs = getIndexPairs();
       // geometry.setIndex(indexPairs);
@@ -314,10 +365,10 @@ class ThreeDgrid {
 
       scene.add(lines);
       //scene.rotateX(-Math.PI / 2);
-    }
+    };
 
-    function generateBoundLines() {
-      let geometry = getGeometry(getBoundLinesPosition());
+    this.generateBoundLines = function (data) {
+      let geometry = getGeometry(getBoundLinesPosition(data));
 
       // let indexPairs = getIndexPairs();
       // geometry.setIndex(indexPairs);
@@ -334,35 +385,62 @@ class ThreeDgrid {
 
       scene.add(lines);
       //scene.rotateX(-Math.PI / 2);
-    }
+    };
 
-    function generateGridLines() {
-      let geometry = getGeometry(getGridLinesPosition());
+    this.generateMajGridLines = function (data) {
+      self.gridLinesData = data;
+      let geometry = getGeometry(getMajGridLinesPosition(data));
 
-      // let indexPairs = getIndexPairs();
-      // geometry.setIndex(indexPairs);
-      self.lines = new THREE.LineSegments(
+      self.majLines = new THREE.LineSegments(
         geometry,
         new THREE.LineBasicMaterial({
-          color: self.color,
+          color: data.majColor,
           clippingPlanes: clipPlanes,
-          //clipIntersection: true,
+        })
+      );
+      scene.add(self.majLines);
+    };
+
+    this.generateMinGridLines = function (data) {
+      self.gridLinesData = data;
+
+      let geometry = getGeometry(getMinGridLinesPosition(data));
+
+      self.minLines = new THREE.LineSegments(
+        geometry,
+        new THREE.LineBasicMaterial({
+          color: data.minColor,
+          clippingPlanes: clipPlanes,
         })
       );
 
-      // console.log(self.lines);
-
-      scene.add(self.lines);
-      //scene.rotateX(-Math.PI / 2);
-    }
+      scene.add(self.minLines);
+    };
 
     scene.rotateX(-Math.PI / 2);
 
-    this.updateGridLines = function () {
-      //let indexPairs = getIndexPairs();
-      const geometry = getGeometry(getGridLinesPosition());
-      //geometry.setIndex(indexPairs);
-      self.lines.geometry = geometry;
+    this.updateMajGridLines = function (data) {
+      let geometry = getGeometry(getMajGridLinesPosition(data));
+
+      self.majLines.material.setValues({
+        color: data.majColor,
+        clippingPlanes: clipPlanes,
+      });
+
+      self.majLines.geometry.dispose();
+      self.majLines.geometry = geometry;
+    };
+
+    this.updateMinGridLines = function (data) {
+      let geometry = getGeometry(getMinGridLinesPosition(data));
+
+      self.minLines.material.setValues({
+        color: data.minColor,
+        clippingPlanes: clipPlanes,
+      });
+
+      self.minLines.geometry.dispose();
+      self.minLines.geometry = geometry;
     };
 
     if (!canvas) {
@@ -379,7 +457,7 @@ class ThreeDgrid {
       200
     );
     //camera.position.z = 1;
-    camera.position.set(0.7, 0.7, 1);
+    camera.position.set(p_limit, p_limit, 1);
     //camera.lookAt(scene.position);
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -393,12 +471,11 @@ class ThreeDgrid {
     const orbit = new OrbitControls(camera, $("#centralDiv")[0]);
 
     // const orbit = new OrbitControls(camera, canvas);
-    //orbit.enableDamping = true;
-    //orbit.dampingFactor = 0.01;
-    //orbit.enableZoom = false;
+    orbit.enableDamping = true;
+    orbit.dampingFactor = 0.05;
+    orbit.enableZoom = false;
     //orbit.autoRotate = true;
-    // orbit.enableDamping = true;
-    orbit.update();
+    //orbit.update();
 
     function animate() {
       resizeCb(canvas);
@@ -408,12 +485,20 @@ class ThreeDgrid {
       renderer.render(scene, camera);
     }
 
-    renderer.setAnimationLoop(animate);
+    //renderer.setAnimationLoop(animate);
 
-    generateBoundLines();
+    this.startAnimation = function () {
+      renderer.setAnimationLoop(animate);
+    };
 
-    generateGridLines();
-    generateAxesLines();
+    this.stopAnimation = function () {
+      renderer.setAnimationLoop(null);
+    };
+
+    this.generateBoundLines();
+
+    //this.generateGridLines();
+    this.generateAxesLines();
 
     /*  window.addEventListener("resize", function () {
       if (resizeCb) {
@@ -424,36 +509,36 @@ class ThreeDgrid {
       renderer.setSize(canvas.width, canvas.height);
     }); */
   }
-  setGridLineColor(color) {
+  /* setGridLineColor(color) {
     this.color = color;
     this.lines.material = new THREE.LineBasicMaterial({
       color: this.color,
     });
-  }
+  } */
 
-  setXgridLines(num) {
+  /* setXgridLines(num) {
     if (this.xGridLines === num || num < 2) {
       return;
     }
     this.xGridLines = num;
     this.updateGridLines();
-  }
+  } */
 
-  setYgridLines(num) {
+  /* setYgridLines(num) {
     if (this.yGridLines === num || num < 2) {
       return;
     }
     this.yGridLines = num;
     this.updateGridLines();
-  }
+  } */
 
-  setZgridLines(num) {
+  /* setZgridLines(num) {
     if (this.zGridLines === num || num < 2) {
       return;
     }
     this.zGridLines = num;
     this.updateGridLines();
-  }
+  } */
 
   visibility() {
     return this.lines.visible;
@@ -477,6 +562,8 @@ class ThreeDGrid extends PlotGrid {
 
     this.threeDGrid = false;
 
+    this.grid = null;
+
     let m_zeroMinRadius = true;
     let m_zeroMinAngle = false;
 
@@ -497,8 +584,107 @@ class ThreeDGrid extends PlotGrid {
     this.threeDgrid = null;
     this.canvas = null;
 
-    this.draw = function (xMap, yMap) {
+    function transform(s, Map) {
+      const s1 = Map.s1();
+      const s2 = Map.s2();
+      const pl = self.grid.getPlimit();
+      return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
+    }
+
+    /* this.draw = function (xMap, yMap) {
       const plot = this.plot();
+    }; */
+    this.draw = function (xMap, yMap) {
+      //console.log("here");
+      var p = this.plot();
+      var xScaleDiv = p.axisScaleDiv(this.xAxis());
+      var yScaleDiv = p.axisScaleDiv(this.yAxis());
+
+      var ctx = this.getContext();
+
+      /* majColor: "#333333",
+          minColor: "#222222", */
+
+      const _minorPen = self.minorPen();
+      const _majorPen = self.majorPen();
+      const xMinEnabled = self.xMinEnabled();
+      const xEnabled = self.xEnabled();
+      const yMinEnabled = self.yMinEnabled();
+      const yEnabled = self.yEnabled();
+      //const p = this.plot();
+
+      ctx.strokeStyle = _minorPen;
+
+      let scaleTicks = xScaleDiv.ticks(ScaleDiv.TickType.MinorTick);
+      const xMinPaintTicks = scaleTicks.map(function (s) {
+        return transform(s, xMap);
+      });
+
+      scaleTicks = yScaleDiv.ticks(ScaleDiv.TickType.MinorTick);
+      const yMinPaintTicks = scaleTicks.map(function (s) {
+        return transform(s, yMap);
+      });
+
+      scaleTicks = xScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
+      const xMajPaintTicks = scaleTicks.map(function (s) {
+        return { p: transform(s, xMap), s: s };
+      });
+
+      scaleTicks = yScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
+      const yMajPaintTicks = scaleTicks.map(function (s) {
+        return { p: transform(s, yMap), s: s };
+      });
+
+      const data = {
+        xMinPaintTicks,
+        yMinPaintTicks,
+        xMajPaintTicks,
+        yMajPaintTicks,
+        majColor: _majorPen,
+        minColor: _minorPen,
+      };
+
+      if (xEnabled && xMinEnabled) {
+        // console.log(data);
+        if (!self.grid.majLines) {
+          self.grid.generateMajGridLines(data);
+        } else {
+          self.grid.updateMajGridLines(data);
+        }
+        if (!self.grid.minLines) {
+          self.grid.generateMinGridLines(data);
+        } else {
+          self.grid.updateMinGridLines(data);
+        }
+        self.grid.majLines.visible = true;
+        self.grid.minLines.visible = true;
+      }
+
+      /* if (yEnabled && yMinEnabled) {
+      } */
+      //ctx.strokeStyle = _majorPen;
+      else if (xEnabled && !xMinEnabled) {
+        if (!self.grid.majLines) {
+          self.grid.generateMajGridLines(data);
+        } else {
+          self.grid.updateMajGridLines(data);
+        }
+        if (self.grid.minLines) {
+          self.grid.minLines.visible = false;
+        }
+        self.grid.majLines.visible = true;
+      } else if (!xEnabled) {
+        if (self.grid.minLines) {
+          self.grid.minLines.visible = false;
+        }
+        if (self.grid.majLines) {
+          self.grid.majLines.visible = false;
+        }
+      }
+
+      /* if (yEnabled) {
+        
+      } */
     };
 
     this.toString = function () {
@@ -507,23 +693,30 @@ class ThreeDGrid extends PlotGrid {
   }
 
   hide() {
+    const plot = this.plot();
+    if (this.grid) {
+      this.grid.stopAnimation();
+    }
     $(this.canvas).hide();
     //$(this.canvas_2d).show();
     for (let i = 0; i < this.detachedCurves.length; i++) {
       const element = this.detachedCurves[i];
       element.attach(this.plot());
     }
+
+    super.hide();
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
   show() {
     // this.clearCanvas();
+    const plot = this.plot();
 
     function adjustSize(_canvas) {
       _canvas.width = parseFloat($("#centralDiv").css("width"));
       _canvas.height = parseFloat($("#centralDiv").css("height"));
     }
 
-    const L = this.plot().itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+    const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
     for (let i = 0; i < L.length; i++) {
       if (1) {
         L[i].detach();
@@ -537,10 +730,15 @@ class ThreeDGrid extends PlotGrid {
       this.canvas = document.createElement("canvas");
       $("#centralDiv").append(this.canvas);
       $(this.canvas).css("zIndex", 5000);
-      const grid = new ThreeDgrid(this.canvas, adjustSize);
+      this.grid = new ThreeJs(this.canvas, adjustSize);
     } else {
       $(this.canvas).show();
     }
+    this.grid.startAnimation();
+    this.setMinorPen("#222222");
+    this.setMajorPen("#333333");
+    super.show();
+    //plot.replot();
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
 
