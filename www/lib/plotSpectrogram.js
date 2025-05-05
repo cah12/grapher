@@ -290,7 +290,7 @@ class PlotSpectrogram extends PlotRasterItem {
      *
      */
     this.renderTile = function (xMap, yMap, tile, image) {
-      console.time();
+      //console.time();
       var range = d_data.data.interval(Static.ZAxis);
       if (!range.isValid()) return;
 
