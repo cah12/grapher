@@ -839,28 +839,6 @@ class ThreeDGrid extends PlotGrid {
       } */
     };
 
-    const mToPoints = function (xMap, yMap, series, from, to, round) {
-      let samples = [];
-      if (series instanceof FunctionData) {
-        samples = series.discontinuitySamples;
-      } else {
-        samples = series.samples();
-      }
-
-      const result = samples.map(function (pt) {
-        //return new Misc.Point(transform(pt.x, xMap), transform(pt.y, yMap));
-        return { x: transform(pt.x, xMap), y: transform(pt.y, yMap), z: 0 };
-      });
-
-      return result;
-    };
-
-    this.drawCurve = function (painter, style, xMap, yMap, from, to) {
-      //console.log(this);
-      const transformedSamples = mToPoints(xMap, yMap, this.data(), from, to);
-      console.log(transformedSamples);
-    };
-
     this.toString = function () {
       return "[ThreeDGrid]";
     };
@@ -868,21 +846,8 @@ class ThreeDGrid extends PlotGrid {
 
   hide() {
     const plot = this.plot();
-
     if (this.grid) {
       this.grid.stopAnimation();
-    }
-    // Static.mToPoints = self.original_mToPoints;
-    // Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
-
-    const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
-    for (let i = 0; i < L.length; i++) {
-      // if (L[i].originalClosePolyline) {
-      // L[i].drawSticks = L[i].originalDrawSticks;
-      // L[i].closePolyline = L[i].originalClosePolyline;
-
-      L[i].drawCurve = L[i].originalDrawCurve;
-      // }
     }
     $(this.canvas).hide();
     //$(this.canvas_2d).show();
@@ -895,7 +860,6 @@ class ThreeDGrid extends PlotGrid {
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
   show() {
-    const self = this;
     // this.clearCanvas();
     const plot = this.plot();
 
@@ -904,34 +868,13 @@ class ThreeDGrid extends PlotGrid {
       _canvas.height = parseFloat($("#centralDiv").css("height"));
     }
 
-    /* const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+    const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
     for (let i = 0; i < L.length; i++) {
       if (1) {
         L[i].detach();
         this.detachedCurves.push(L[i]);
       }
-    } */
-
-    const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
-    for (let i = 0; i < L.length; i++) {
-      if (!Utility.validAxes(L[i])) {
-        L[i].detach();
-        self.detachedCurves.push(L[i]);
-        continue;
-      }
-      // L[i].originalDrawSticks = L[i].drawSticks;
-      // L[i].drawSticks = self.drawSticks;
-      // L[i].originalClosePolyline = L[i].closePolyline;
-      // L[i].closePolyline = self.closePolyline;
-
-      L[i].originalDrawCurve = L[i].drawCurve;
-      L[i].drawCurve = self.drawCurve;
     }
-
-    // self.original_mToPoints = Static.mToPoints;
-    // Static.mToPoints = self.mToPoints;
-    // self.original_mToPolylineFiltered = Static.mToPolylineFiltered;
-    // Static.mToPolylineFiltered = self.mToPolylineFiltered;
 
     // this.panner.setEnabled(false);
     // this.magnifier.setEnabled_1(false);

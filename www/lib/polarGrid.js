@@ -95,7 +95,7 @@ class PolarGrid extends PlotGrid {
       return m_zeroMinAngle;
     };
 
-    /* this.validAxes = function (curve) {
+    this.validAxes = function (curve) {
       if (
         curve &&
         curve.xAxis() === Axis.AxisId.xBottom &&
@@ -109,7 +109,7 @@ class PolarGrid extends PlotGrid {
         "validAxesInPolarGrig"
       );
       return false;
-    }; */
+    };
 
     this.closePolyline = function (xMap, yMap, polygon) {
       if (polygon.length < 2) return;
@@ -968,7 +968,7 @@ class PolarGrid extends PlotGrid {
     if (on) {
       const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
       for (let i = 0; i < L.length; i++) {
-        if (!Utility.validAxes(L[i])) {
+        if (!self.validAxes(L[i])) {
           L[i].detach();
           self.detachedCurves.push(L[i]);
           continue;
