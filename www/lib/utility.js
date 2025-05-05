@@ -1408,6 +1408,22 @@ class Utility {
     return true;
   }
 
+  static validAxes(curve) {
+    if (
+      curve &&
+      curve.xAxis() === Axis.AxisId.xBottom &&
+      curve.yAxis() === Axis.AxisId.yLeft
+    ) {
+      return true;
+    }
+    Utility.alert(
+      `Check that the curve "${curve.title()}" is drawn to the bottom(x) and left(y) axes.`,
+      null,
+      "validAxesInPolarGrig"
+    );
+    return false;
+  }
+
   /**
    * Toggles the major gridlines for both x and Y on and off
    *
