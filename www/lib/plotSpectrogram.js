@@ -355,7 +355,20 @@ class PlotSpectrogram extends PlotRasterItem {
           }
         }
       }
-      console.timeEnd();
+      //console.timeEnd();
+    };
+
+    /**
+     * Draw the spectrogram
+     * @param {ScaleMap} xMap Maps x-values into pixel coordinates.
+     * @param {ScaleMap} yMap Maps y-values into pixel coordinates.
+     * @see {@link PlotSpectrogram#setDisplayMode setDisplayMode()}
+     * @see {@link PlotSpectrogram#renderImage renderImage()}
+     * @see {@link PlotSpectrogram#renderContourLines renderContourLines()}
+     * @see {@link PlotRasterItem#draw PlotRasterItem.draw()}
+     */
+    this.draw = function (xMap, yMap) {
+      this.doDraw(xMap, yMap);
     };
 
     /**
@@ -408,7 +421,7 @@ class PlotSpectrogram extends PlotRasterItem {
    * @see {@link PlotSpectrogram#renderContourLines renderContourLines()}
    * @see {@link PlotRasterItem#draw PlotRasterItem.draw()}
    */
-  draw(xMap, yMap) {
+  doDraw(xMap, yMap) {
     var autoReplot = this.plot().autoReplot();
     this.plot().setAutoReplot(false);
     var d_data = this.privateData();

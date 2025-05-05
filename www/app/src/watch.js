@@ -56,6 +56,14 @@ class Watch {
     //subclass reimplement
     this.computeWatch = function () {};
     this.value = function () {
+      if (typeof this._value === "undefined") {
+        return "0";
+      }
+      const value = parseFloat(this._value);
+      if (!Number.isNaN(value)) {
+        return value;
+      }
+
       return this._value;
     };
 

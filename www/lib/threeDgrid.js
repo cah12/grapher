@@ -367,6 +367,114 @@ class ThreeJs {
       //scene.rotateX(-Math.PI / 2);
     };
 
+    function transform(s, Map) {
+      const s1 = Map.s1();
+      const s2 = Map.s2();
+      const pl = self.getPlimit();
+      return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
+    }
+
+    function transformZ(s, z_min, z_max) {
+      const s1 = z_min;
+      const s2 = z_max;
+      const pl = self.getPlimit();
+      return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
+    }
+
+    this.doDrawMesh = function (plotItem, xMap, yMap) {
+      function equation(x, y) {
+        return x * x + y * y; // Example: z = sin(sqrt(x^2 + y^2))
+      }
+
+      const numberOfPoints = 60;
+      let sx1 = xMap.s1();
+      const sx2 = xMap.s2();
+      let sy1 = yMap.s1();
+      const sy2 = yMap.s2();
+      const xStep = (sx2 - sx1) / (numberOfPoints - 1);
+      const yStep = (sy2 - sy1) / (numberOfPoints - 1);
+
+      const parser = math.parse(plotItem.fn);
+      const scope = new Map();
+
+      const pl = self.getPlimit();
+      const geometry = new THREE.PlaneGeometry(
+        transform(sx2, xMap) - transform(sx1, xMap),
+        transform(sy2, yMap) - transform(sy1, yMap),
+        numberOfPoints,
+        numberOfPoints
+      ); // Adjust size and subdivisions as needed
+      const vertices = geometry.attributes.position.array;
+
+      for (let i = 0; i <= numberOfPoints; i++) {
+        for (let j = 0; j <= numberOfPoints; j++) {
+          const x = (i / numberOfPoints) * (sx2 - sx1) - sx2; // Scale x to range -5 to 5
+          const y = (j / numberOfPoints) * (sy2 - sy1) - sy2; // Scale y to range -5 to 5
+          scope.set("x", x);
+          scope.set("y", y);
+
+          const z = transformZ(parser.evaluate(scope), 0, 200);
+          vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
+        }
+      }
+
+      geometry.attributes.position.needsUpdate = true;
+      geometry.computeVertexNormals();
+      /* for (let i = 0; i < numberOfPoints; i++) {
+        let y = sy1 + i * yStep;
+        for (let j = 0; i < numberOfPoints; i++) {
+          let x = sx1 + i * xStep;
+          scope.set("x", x);
+          scope.set("y", y);
+          const z = transformZ(parser.evaluate(scope), 0, 200);
+          //console.log(z);
+          vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
+        }
+        //indices.push(i);
+      } */
+
+      geometry.attributes.position.needsUpdate = true;
+      geometry.computeVertexNormals();
+
+      if (plotItem.lines) {
+        plotItem.lines.geometry.dispose();
+        plotItem.lines.geometry = geometry;
+      } else {
+        plotItem.lines = new THREE.Mesh(
+          geometry,
+          new THREE.MeshBasicMaterial({
+            //color: 0xff0000,
+            // wireframe: true,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.5,
+            clippingPlanes: clipPlanes,
+          })
+        );
+      }
+
+      scene.add(plotItem.lines);
+    };
+
+    this.doDrawSeries = function (plotItem, positions) {
+      const geometry = getGeometry(positions);
+
+      if (plotItem.lines) {
+        plotItem.lines.geometry.dispose();
+        plotItem.lines.geometry = geometry;
+      } else {
+        plotItem.lines = new THREE.LineSegments(
+          geometry,
+          new THREE.LineBasicMaterial({
+            color: 0xff0000,
+            clippingPlanes: clipPlanes,
+          })
+        );
+      }
+
+      scene.add(plotItem.lines);
+    };
+
     this.generateBoundLines = function (data) {
       let geometry = getGeometry(getBoundLinesPosition(data));
 
@@ -591,9 +699,53 @@ class ThreeDGrid extends PlotGrid {
       return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
     }
 
-    /* this.draw = function (xMap, yMap) {
-      const plot = this.plot();
-    }; */
+    function transformZ(s, z_min, z_max) {
+      const s1 = z_min;
+      const s2 = z_max;
+      const pl = self.grid.getPlimit();
+      return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
+    }
+
+    this.drawSeries = function (xMap, yMap, from, to) {
+      var ctx = this.getContext();
+
+      var painter = new PaintUtil.Painter(ctx);
+
+      //if ( !painter || this.dataSize() <= 0 )
+      if (this.dataSize() <= 0) return;
+
+      if (to < 0) to = this.dataSize() - 1;
+
+      if (from < 0) from = 0;
+
+      if (from > to) return;
+
+      const samples = this.data().samples();
+      const positions = [];
+      for (let i = 1; i < samples.length; i++) {
+        const pt0 = samples[i - 1];
+        positions.push(transform(pt0.x, xMap));
+        positions.push(transform(pt0.y, yMap));
+        positions.push(transformZ(pt0.z, this.minZ, this.maxZ));
+        const pt = samples[i];
+        positions.push(transform(pt.x, xMap));
+        positions.push(transform(pt.y, yMap));
+        positions.push(transformZ(pt.z, this.minZ, this.maxZ));
+      }
+
+      self.grid.doDrawSeries(this, positions);
+      //console.log(positions);
+
+      //this.drawDots(painter, xMap, yMap, /*canvasRect,*/ from, to);
+      painter = null;
+    };
+
+    this.draw2 = function (xMap, yMap) {
+      var ctx = this.getContext();
+
+      self.grid.doDrawMesh(this, xMap, yMap);
+    };
+
     this.draw = function (xMap, yMap) {
       //console.log("here");
       var p = this.plot();
@@ -688,7 +840,7 @@ class ThreeDGrid extends PlotGrid {
     };
 
     this.toString = function () {
-      return "[PolarGrid]";
+      return "[ThreeDGrid]";
     };
   }
 
@@ -703,7 +855,7 @@ class ThreeDGrid extends PlotGrid {
       const element = this.detachedCurves[i];
       element.attach(this.plot());
     }
-
+    this.threeDGridVisible(false);
     super.hide();
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
@@ -737,10 +889,75 @@ class ThreeDGrid extends PlotGrid {
     this.grid.startAnimation();
     this.setMinorPen("#222222");
     this.setMajorPen("#333333");
+    this.threeDGridVisible(true);
     super.show();
     //plot.replot();
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
 
-  threeDGridVisible(on) {}
+  threeDGridVisible(on) {
+    const self = this;
+    self.threeDGridAttached = on;
+    const plot = self.plot();
+    const autoReplot = plot.autoReplot();
+    plot.setAutoReplot(false);
+
+    self.threeDGrid = on;
+
+    if (on) {
+      let L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+      for (let i = 0; i < L.length; i++) {
+        self.detachedCurves.push(L[i]);
+      }
+      L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve);
+      for (let i = 0; i < L.length; i++) {
+        L[i].originalDrawSeries = L[i].drawSeries;
+        L[i].drawSeries = self.drawSeries;
+      }
+      L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
+      for (let i = 0; i < L.length; i++) {
+        L[i].originalDraw = L[i].draw;
+        L[i].draw = self.draw2;
+      }
+      if (self.threeDGrid) {
+        self.original_widgetMousePressEvent_panner =
+          self.panner.widgetMousePressEvent;
+        self.panner.widgetMousePressEvent = function () {
+          return true;
+        };
+
+        //self.original_updateAxes = plot.updateAxes;
+        //plot.updateAxes = self.updateAxes;
+      }
+    } else {
+      if (self.threeDGrid) {
+        //Static.mToPoints = self.original_mToPoints;
+        //Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
+        self.panner.widgetMousePressEvent =
+          self.original_widgetMousePressEvent_panner;
+
+        //plot.updateAxes = self.original_updateAxes;
+      }
+      let L = plot.itemList(PlotItem.RttiValues.Rtti_SpectroCurve);
+      for (let i = 0; i < L.length; i++) {
+        if (L[i].originalDrawSeries) {
+          L[i].drawSeries = L[i].originalDrawSeries;
+        }
+      }
+      L = plot.itemList(PlotItem.RttiValues.Rtti_Spectrogram);
+      for (let i = 0; i < L.length; i++) {
+        if (L[i].originalDraw) {
+          L[i].draw = L[i].originalDraw;
+        }
+      }
+      for (let i = 0; i < self.detachedCurves.length; i++) {
+        const curve = self.detachedCurves[i];
+        curve.attach(plot);
+      }
+      self.detachedCurves.length = 0;
+    }
+    plot.setAutoReplot(autoReplot);
+    plot.autoRefresh();
+    //console.log(456);
+  }
 }
