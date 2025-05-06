@@ -324,13 +324,14 @@ class ThreeJs {
       return positions;
     }
 
+    const clippingLimit = p_limit + 0.000001;
     const clipPlanes = [
-      new THREE.Plane(new THREE.Vector3(1, 0, 0), 0.700001), //left
-      new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0.70001), //right
-      new THREE.Plane(new THREE.Vector3(0, 1, 0), 0.70001), //bottom
-      new THREE.Plane(new THREE.Vector3(0, -1, 0), 0.70001), //top
-      new THREE.Plane(new THREE.Vector3(0, 0, 1), 0.70001), //back
-      new THREE.Plane(new THREE.Vector3(0, 0, -1), 0.70001), //front
+      new THREE.Plane(new THREE.Vector3(1, 0, 0), clippingLimit), //left
+      new THREE.Plane(new THREE.Vector3(-1, 0, 0), clippingLimit), //right
+      new THREE.Plane(new THREE.Vector3(0, 1, 0), clippingLimit), //bottom
+      new THREE.Plane(new THREE.Vector3(0, -1, 0), clippingLimit), //top
+      new THREE.Plane(new THREE.Vector3(0, 0, 1), clippingLimit), //back
+      new THREE.Plane(new THREE.Vector3(0, 0, -1), clippingLimit), //front
     ];
 
     const helper0 = new THREE.PlaneHelper(clipPlanes[0], 2, 0xff0000);
@@ -382,10 +383,6 @@ class ThreeJs {
     }
 
     this.doDrawMesh = function (plotItem, xMap, yMap) {
-      function equation(x, y) {
-        return x * x + y * y; // Example: z = sin(sqrt(x^2 + y^2))
-      }
-
       const numberOfPoints = 60;
       let sx1 = xMap.s1();
       const sx2 = xMap.s2();
@@ -413,7 +410,7 @@ class ThreeJs {
           scope.set("x", x);
           scope.set("y", y);
 
-          const z = transformZ(parser.evaluate(scope), 0, 200);
+          const z = transformZ(parser.evaluate(scope), -5, 5);
           vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
         }
       }
@@ -671,12 +668,6 @@ class ThreeDGrid extends PlotGrid {
     this.threeDGrid = false;
 
     this.grid = null;
-
-    let m_zeroMinRadius = true;
-    let m_zeroMinAngle = false;
-
-    let radialPrecision = 4;
-    let rayPrecision = 4;
 
     this.panner = panner;
     this.magnifier = magnifier;
