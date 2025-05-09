@@ -7,11 +7,18 @@ class ThreeJs {
 
     let p_limit = 0.7;
 
-    this.color = "#222222";
-
     let numOfYlines = 10;
     let numOfXlines = 10;
+    self._reverseContrast = false;
     let scene = new THREE.Scene();
+
+    this.getScene = function () {
+      return scene;
+    };
+
+    // const al = new THREE.SpotLight(0x0000ff, 1);
+    // al.position.set(p_limit, p_limit, 1);
+    // scene.add(al);
 
     this.getPlimit = function () {
       return p_limit;
@@ -23,18 +30,6 @@ class ThreeJs {
 
     const aspect = canvas.width / canvas.height;
 
-    /* function mapFrom3D(x, y, z) {
-              return x + y * self.xGridLines + z * self.xGridLines * self.yGridLines;
-            }
-        
-            function mapTo3D(i) {
-              let z = Math.floor(i / (self.xGridLines * self.yGridLines));
-              i -= z * self.xGridLines * self.yGridLines;
-              let y = Math.floor(i / self.xGridLines);
-              let x = i % self.xGridLines;
-              return { x: x, y: y, z: z };
-            } */
-
     function getGeometry(positions) {
       let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
       let geometry = new THREE.BufferGeometry();
@@ -43,6 +38,114 @@ class ThreeJs {
       return geometry;
     }
 
+    function getXaxisLinePosition() {
+      const positions = [];
+      //Generate Axes
+      positions.push(-p_limit);
+      positions.push(0);
+      positions.push(0);
+      ///////////////
+      positions.push(1);
+      positions.push(0);
+      positions.push(0);
+
+      //X arrow
+      positions.push(1);
+      positions.push(0);
+      positions.push(0);
+      /////////
+      positions.push(0.95);
+      positions.push(0);
+      positions.push(0.02);
+
+      positions.push(1);
+      positions.push(0);
+      positions.push(0);
+      /////////
+      positions.push(0.95);
+      positions.push(0);
+      positions.push(-0.02);
+
+      return positions;
+    }
+
+    function getYaxisLinePosition() {
+      const positions = [];
+      /* //Generate Axes
+      positions.push(-p_limit);
+      positions.push(0);
+      positions.push(0);
+      ///////////////
+      positions.push(1);
+      positions.push(0);
+      positions.push(0); */
+
+      positions.push(0);
+      positions.push(-p_limit);
+      positions.push(0);
+      ///////////////
+      positions.push(0);
+      positions.push(1);
+      positions.push(0);
+
+      /* positions.push(0);
+      positions.push(0);
+      positions.push(-p_limit);
+      ///////////////
+      positions.push(0);
+      positions.push(0);
+      positions.push(1);     */
+
+      //Y arrow
+      positions.push(0);
+      positions.push(1);
+      positions.push(0);
+      /////////
+      positions.push(0.02);
+      positions.push(0.95);
+      positions.push(0);
+
+      positions.push(0);
+      positions.push(1);
+      positions.push(0);
+      /////////
+      positions.push(-0.02);
+      positions.push(0.95);
+      positions.push(0);
+
+      return positions;
+    }
+
+    function getZaxisLinePosition() {
+      const positions = [];
+
+      positions.push(0);
+      positions.push(0);
+      positions.push(-p_limit);
+      ///////////////
+      positions.push(0);
+      positions.push(0);
+      positions.push(1);
+
+      //Z arrow
+      positions.push(0);
+      positions.push(0);
+      positions.push(1);
+      /////////
+      positions.push(0.02);
+      positions.push(0);
+      positions.push(0.95);
+
+      positions.push(0);
+      positions.push(0);
+      positions.push(1);
+      /////////
+      positions.push(-0.02);
+      positions.push(0);
+      positions.push(0.95);
+
+      return positions;
+    }
     function getAxesLinesPosition() {
       const positions = [];
       //Generate Axes
@@ -348,24 +451,199 @@ class ThreeJs {
     //scene.add(helper4);
     //scene.add(helper5);
 
-    this.generateAxesLines = function (data) {
-      let geometry = getGeometry(getAxesLinesPosition(data));
+    const loader = new FontLoader();
+    const fontSize = 0.06;
+    self.textMeshZ = null;
+    self.textMeshY = null;
+    self.textMeshX = null;
 
-      // let indexPairs = getIndexPairs();
-      // geometry.setIndex(indexPairs);
-      const lines = new THREE.LineSegments(
+    self.labelMeshes = [];
+    self.zLabelMeshes = [];
+
+    this.xyGridGroup = new THREE.Group();
+
+    this.generateAxesLines = function (data) {
+      if (this.xAxisLines) {
+        this.xAxisLines.geometry.dispose();
+        this.yAxisLines.geometry.dispose();
+        this.zAxisLines.geometry.dispose();
+        scene.remove(this.xyGridGroup);
+        //scene.remove(this.xAxisLines);
+        // scene.remove(this.yAxisLines);
+        scene.remove(this.zAxisLines);
+      }
+
+      //create a group and add the two cubes
+      //These cubes can now be rotated / scaled etc as a group
+
+      let geometry = getGeometry(getXaxisLinePosition(data));
+      this.xAxisLines = new THREE.LineSegments(
         geometry,
         new THREE.LineBasicMaterial({
           color: "#636363",
-          //clippingPlanes: clipPlanes,
-          //clipIntersection: true,
         })
       );
+      this.xyGridGroup.add(this.xAxisLines);
+      //scene.add(this.xAxisLines);
 
-      // console.log(self.lines);
+      geometry = getGeometry(getYaxisLinePosition(data));
+      this.yAxisLines = new THREE.LineSegments(
+        geometry,
+        new THREE.LineBasicMaterial({
+          color: "#636363",
+        })
+      );
+      this.xyGridGroup.add(this.yAxisLines);
+      //scene.add(this.yAxisLines);
 
-      scene.add(lines);
-      //scene.rotateX(-Math.PI / 2);
+      scene.add(this.xyGridGroup);
+
+      geometry = getGeometry(getZaxisLinePosition(data));
+      this.zAxisLines = new THREE.LineSegments(
+        geometry,
+        new THREE.LineBasicMaterial({
+          color: "#636363",
+        })
+      );
+      scene.add(this.zAxisLines);
+
+      loader.load(
+        "https://cdn.jsdelivr.net/npm/three@0.176.0/examples/fonts/helvetiker_bold.typeface.json",
+        function (font) {
+          const _majorPen = self._reverseContrast ? "#333333" : "#aaaaaa";
+          if (self.textMeshX) {
+            self.textMeshX.material.setValues({ color: _majorPen });
+            self.textMeshY.material.setValues({ color: _majorPen });
+            self.textMeshZ.material.setValues({ color: _majorPen });
+          } else {
+            const textGeometryY = new TextGeometry("Y", {
+              font: font,
+              size: fontSize,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+            // console.log(textGeometry);
+
+            const textMaterial = new THREE.MeshBasicMaterial({
+              color: _majorPen,
+            });
+            self.textMeshY = new THREE.Mesh(textGeometryY, textMaterial);
+            self.textMeshY.position.y = 1;
+            //self.textMeshY.position.x = -fontSize * 0.4;
+            self.textMeshY.position.z = -fontSize * 0.4;
+            self.textMeshY.rotateY(Math.PI / 2);
+            self.textMeshY.rotateZ(Math.PI / 2);
+            scene.add(self.textMeshY);
+
+            const textGeometryX = new TextGeometry("X", {
+              font: font,
+              size: fontSize,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+
+            self.textMeshX = new THREE.Mesh(textGeometryX, textMaterial);
+            //self.textMeshX.position.y = -fontSize * 0.5;
+            self.textMeshX.position.z = -fontSize * 0.5;
+            self.textMeshX.position.x = 1;
+            self.textMeshX.rotateX(Math.PI / 2);
+            scene.add(self.textMeshX);
+
+            const textGeometryZ = new TextGeometry("Z", {
+              font: font,
+              size: fontSize,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+
+            self.textMeshZ = new THREE.Mesh(textGeometryZ, textMaterial);
+            self.textMeshZ.position.z = 1;
+
+            self.textMeshZ.geometry.computeBoundingBox();
+            self.textMeshZ.geometry.translate(
+              -self.textMeshZ.geometry.boundingBox.max.x / 2,
+              0,
+              0
+            );
+
+            scene.add(self.textMeshZ);
+          }
+
+          //////////Labels/////////////
+
+          const labelTextMaterial = new THREE.MeshBasicMaterial({
+            color: "#636363",
+          });
+          for (let i = 0; i < self.labelMeshes.length; i++) {
+            self.labelMeshes[i].geometry.dispose();
+            //scene.remove(self.labelMeshes[i]);
+            self.xyGridGroup.remove(self.labelMeshes[i]);
+          }
+          for (let i = 0; i < self.zLabelMeshes.length; i++) {
+            self.labelMeshes[i].geometry.dispose();
+            scene.remove(self.zLabelMeshes[i]);
+          }
+
+          for (let i = 0; i < data.xMajPaintTicks.length; i++) {
+            const element = data.xMajPaintTicks[i];
+            const g = new TextGeometry(`${element.s}`, {
+              font: font,
+              size: fontSize * 0.5,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+
+            const m = new THREE.Mesh(g, labelTextMaterial);
+
+            m.geometry.computeBoundingBox();
+            m.geometry.translate(-m.geometry.boundingBox.max.x / 2, 0, 0);
+            m.position.x = element.p;
+            self.labelMeshes.push(m);
+
+            //scene.add(m);
+            self.xyGridGroup.add(m);
+          }
+
+          for (let i = 0; i < data.yMajPaintTicks.length; i++) {
+            const element = data.yMajPaintTicks[i];
+            const g = new TextGeometry(`${element.s}`, {
+              font: font,
+              size: fontSize * 0.5,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+
+            const m = new THREE.Mesh(g, labelTextMaterial);
+
+            m.geometry.computeBoundingBox();
+            m.geometry.translate(0, -m.geometry.boundingBox.max.y / 2, 0);
+            m.position.y = element.p;
+            self.labelMeshes.push(m);
+
+            //scene.add(m);
+            self.xyGridGroup.add(m);
+          }
+
+          for (let i = 0; i < data.zMajPaintTicks.length; i++) {
+            const element = data.zMajPaintTicks[i];
+            const g = new TextGeometry(`${element.s}`, {
+              font: font,
+              size: fontSize * 0.5,
+              depth: 0.0001,
+              curveSegments: 12,
+            });
+
+            const m = new THREE.Mesh(g, labelTextMaterial);
+
+            m.geometry.computeBoundingBox();
+            m.geometry.translate(0, 0, -m.geometry.boundingBox.max.y / 2);
+            m.position.z = element.p;
+            self.zLabelMeshes.push(m);
+
+            scene.add(m);
+          }
+        }
+      );
     };
 
     function transform(s, Map) {
@@ -410,45 +688,40 @@ class ThreeJs {
           scope.set("x", x);
           scope.set("y", y);
 
-          const z = transformZ(parser.evaluate(scope), -5, 5);
+          const z = transformZ(parser.evaluate(scope), 0, 200);
           vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
         }
       }
 
       geometry.attributes.position.needsUpdate = true;
       geometry.computeVertexNormals();
-      /* for (let i = 0; i < numberOfPoints; i++) {
-        let y = sy1 + i * yStep;
-        for (let j = 0; i < numberOfPoints; i++) {
-          let x = sx1 + i * xStep;
-          scope.set("x", x);
-          scope.set("y", y);
-          const z = transformZ(parser.evaluate(scope), 0, 200);
-          //console.log(z);
-          vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
-        }
-        //indices.push(i);
-      } */
 
       geometry.attributes.position.needsUpdate = true;
       geometry.computeVertexNormals();
+
+      //console.log(typeof plotItem.alpha());
+
+      const _alpha = (1 / 255) * plotItem.alpha();
 
       if (plotItem.lines) {
         plotItem.lines.geometry.dispose();
         plotItem.lines.geometry = geometry;
+        plotItem.lines.material.setValues({ opacity: _alpha });
       } else {
         plotItem.lines = new THREE.Mesh(
           geometry,
           new THREE.MeshBasicMaterial({
-            //color: 0xff0000,
+            color: Utility.RGB2HTML(plotItem.colorMap().color2()),
             // wireframe: true,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.5,
+            opacity: _alpha,
             clippingPlanes: clipPlanes,
           })
         );
       }
+
+      console.log(plotItem.lines.visible);
 
       scene.add(plotItem.lines);
     };
@@ -463,7 +736,7 @@ class ThreeJs {
         plotItem.lines = new THREE.LineSegments(
           geometry,
           new THREE.LineBasicMaterial({
-            color: 0xff0000,
+            color: Utility.RGB2HTML(plotItem.colorMap().color2()),
             clippingPlanes: clipPlanes,
           })
         );
@@ -477,24 +750,22 @@ class ThreeJs {
 
       // let indexPairs = getIndexPairs();
       // geometry.setIndex(indexPairs);
-      const lines = new THREE.LineSegments(
+      this.boundLines = new THREE.LineSegments(
         geometry,
-        new THREE.LineBasicMaterial({
-          color: self.color,
-          //clippingPlanes: clipPlanes,
-          //clipIntersection: true,
-        })
+        new THREE.LineBasicMaterial()
       );
 
       // console.log(self.lines);
 
-      scene.add(lines);
+      scene.add(this.boundLines);
       //scene.rotateX(-Math.PI / 2);
     };
 
     this.generateMajGridLines = function (data) {
       self.gridLinesData = data;
       let geometry = getGeometry(getMajGridLinesPosition(data));
+
+      positionXYgrid(data, geometry);
 
       self.majLines = new THREE.LineSegments(
         geometry,
@@ -503,13 +774,16 @@ class ThreeJs {
           clippingPlanes: clipPlanes,
         })
       );
-      scene.add(self.majLines);
+
+      //scene.add(self.majLines);
+      this.xyGridGroup.add(self.majLines);
     };
 
     this.generateMinGridLines = function (data) {
       self.gridLinesData = data;
 
       let geometry = getGeometry(getMinGridLinesPosition(data));
+      positionXYgrid(data, geometry);
 
       self.minLines = new THREE.LineSegments(
         geometry,
@@ -519,13 +793,15 @@ class ThreeJs {
         })
       );
 
-      scene.add(self.minLines);
+      //scene.add(self.minLines);
+      this.xyGridGroup.add(self.minLines);
     };
 
     scene.rotateX(-Math.PI / 2);
 
     this.updateMajGridLines = function (data) {
       let geometry = getGeometry(getMajGridLinesPosition(data));
+      positionXYgrid(data, geometry);
 
       self.majLines.material.setValues({
         color: data.majColor,
@@ -538,6 +814,7 @@ class ThreeJs {
 
     this.updateMinGridLines = function (data) {
       let geometry = getGeometry(getMinGridLinesPosition(data));
+      positionXYgrid(data, geometry);
 
       self.minLines.material.setValues({
         color: data.minColor,
@@ -579,6 +856,23 @@ class ThreeJs {
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.05;
     orbit.enableZoom = false;
+    function positionXYgrid(data, geometry) {
+      /* if (data.minZ >= 0) {
+        geometry.translate(0, 0, -p_limit);
+      } else if (data.maxZ <= 0) {
+        geometry.translate(0, 0, p_limit);
+      } else {
+        geometry.translate(0, 0, transformZ(0, data.minZ, data.maxZ));
+      } */
+      if (data.minZ >= 0) {
+        self.xyGridGroup.position.z = -p_limit;
+      } else if (data.maxZ <= 0) {
+        self.xyGridGroup.position.z = p_limit;
+      } else {
+        self.xyGridGroup.position.z = transformZ(0, data.minZ, data.maxZ);
+      }
+    }
+
     //orbit.autoRotate = true;
     //orbit.update();
 
@@ -586,6 +880,14 @@ class ThreeJs {
       resizeCb(canvas);
       renderer.setSize(canvas.width, canvas.height);
       orbit.update();
+
+      if (self.textMeshZ) {
+        self.textMeshZ.lookAt(camera.position);
+      }
+
+      for (let i = 0; i < self.zLabelMeshes.length; i++) {
+        self.zLabelMeshes[i].lookAt(camera.position);
+      }
 
       renderer.render(scene, camera);
     }
@@ -601,25 +903,7 @@ class ThreeJs {
     };
 
     this.generateBoundLines();
-
-    //this.generateGridLines();
-    this.generateAxesLines();
-
-    /*  window.addEventListener("resize", function () {
-      if (resizeCb) {
-        resizeCb(canvas);
-      }
-      camera.aspect = aspect;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvas.width, canvas.height);
-    }); */
   }
-  /* setGridLineColor(color) {
-    this.color = color;
-    this.lines.material = new THREE.LineBasicMaterial({
-      color: this.color,
-    });
-  } */
 
   /* setXgridLines(num) {
     if (this.xGridLines === num || num < 2) {
@@ -667,6 +951,8 @@ class ThreeDGrid extends PlotGrid {
 
     this.threeDGrid = false;
 
+    this._reverseContrast = false;
+
     this.grid = null;
 
     this.panner = panner;
@@ -676,12 +962,47 @@ class ThreeDGrid extends PlotGrid {
 
     //this.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
 
-    // this.plot = function () {
-    //   return plot;
-    // };
+    this.reverseContrast = function (on) {
+      if (!this.grid) {
+        return;
+      }
+      this._reverseContrast = on;
+      this.grid._reverseContrast = on;
+      this.plot().autoRefresh();
+    };
     //console.log(plot);
     this.threeDgrid = null;
     this.canvas = null;
+
+    Static.bind("itemAttached", function (e, plotItem, on) {
+      const plot = plotItem.plot();
+      const autoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
+
+      if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
+        if (on && self.threeDGridAttached) {
+          plotItem.originalDraw = plotItem.draw;
+          plotItem.draw = self.draw2;
+        } else if (!on && plotItem.originalDraw) {
+          plotItem.draw = plotItem.originalDraw;
+        }
+      }
+      if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
+        if (on && self.threeDGridAttached) {
+          plotItem.originalDrawSeries = plotItem.drawSeries;
+          plotItem.drawSeries = self.drawSeries;
+        } else if (!on && plotItem.originalDrawSeries) {
+          plotItem.drawSeries = plotItem.originalDrawSeries;
+        }
+      }
+      plot.setAutoReplot(autoReplot);
+      plot.autoRefresh();
+    });
+
+    Static.bind("visibilityChange", function (e, curve, on) {
+      if (!curve.lines) return;
+      curve.lines.visible = on;
+    });
 
     function transform(s, Map) {
       const s1 = Map.s1();
@@ -734,7 +1055,195 @@ class ThreeDGrid extends PlotGrid {
     this.draw2 = function (xMap, yMap) {
       var ctx = this.getContext();
 
+      //console.log(this.isVisible());
+
       self.grid.doDrawMesh(this, xMap, yMap);
+    };
+
+    var m_base = 10;
+    this.base = function () {
+      return m_base;
+    };
+
+    this.contains = function (interval, value) {
+      if (!interval.isValid()) return false;
+
+      if (
+        Utility.m3FuzzyCompare(value, interval.minValue(), interval.width()) < 0
+      )
+        return false;
+
+      if (
+        Utility.m3FuzzyCompare(value, interval.maxValue(), interval.width()) > 0
+      )
+        return false;
+
+      return true;
+    };
+
+    this.strip = function (ticks, interval) {
+      if (!interval.isValid() || ticks.length === 0) return [];
+
+      if (
+        this.contains(interval, ticks[0]) &&
+        this.contains(interval, ticks[ticks.length - 1])
+      ) {
+        return ticks;
+      }
+
+      var strippedTicks = [];
+      for (var i = 0; i < ticks.length; i++) {
+        if (this.contains(interval, ticks[i])) strippedTicks.push(ticks[i]);
+      }
+      return strippedTicks;
+    };
+
+    this.align = function (interval, stepSize) {
+      var x1 = interval.minValue();
+      var x2 = interval.maxValue();
+
+      if (-Number.MAX_VALUE + stepSize <= x1) {
+        var x = ScaleArithmetic.floorEps(x1, stepSize);
+        if (Utility.m3FuzzyCompare(x1, x, stepSize) !== 0) x1 = x;
+      }
+
+      if (Number.MAX_VALUE - stepSize >= x2) {
+        var x = ScaleArithmetic.ceilEps(x2, stepSize);
+        if (Utility.m3FuzzyCompare(x2, x, stepSize) !== 0) x2 = x;
+      }
+
+      return new Interval(x1, x2);
+    };
+
+    this.buildMajorTicks = function (interval, stepSize) {
+      var numTicks = Math.round(interval.width() / stepSize) + 1;
+      if (numTicks > 10000) numTicks = 10000;
+
+      var ticks = [];
+
+      ticks.push(interval.minValue());
+      for (var i = 1; i < numTicks - 1; i++)
+        ticks.push(interval.minValue() + i * stepSize);
+      ticks.push(interval.maxValue());
+
+      //console.log(ticks)
+      return ticks;
+    };
+
+    /**
+     * Calculate minor/medium ticks for major ticks
+     * @param {Array<Number>} majorTicks Major ticks
+     * @param {Number} maxMinorSteps Maximum number of minor steps
+     * @param {Number} stepSize Step size
+     * @param {Array<Number>} minorTicks Array to be filled with the calculated minor ticks
+     * @param {Array<Number>} mediumTicks Array to be filled with the calculated medium ticks
+     */
+    this.buildMinorTicks = function (
+      majorTicks,
+      maxMinorSteps,
+      stepSize,
+      minorTicks,
+      mediumTicks
+    ) {
+      var minStep = Static.mStepSize(stepSize, maxMinorSteps, this.base());
+      if (minStep === 0.0) return;
+
+      // # ticks per interval
+      var numTicks = Math.ceil(Math.abs(stepSize / minStep)) - 1;
+
+      var medIndex = -1;
+      if (numTicks % 2) medIndex = numTicks / 2;
+
+      // calculate minor ticks
+
+      for (var i = 0; i < majorTicks.length; i++) {
+        var val = majorTicks[i];
+        for (var k = 0; k < numTicks; k++) {
+          val += minStep;
+
+          var alignedValue = val;
+          if (Utility.m3FuzzyCompare(val, 0.0, stepSize) === 0)
+            alignedValue = 0.0;
+
+          if (k == medIndex) mediumTicks.push(alignedValue);
+          else minorTicks.push(alignedValue);
+        }
+      }
+    };
+
+    this.buildTicks = function (interval, stepSize, maxMinorSteps, ticks) {
+      var boundingInterval = this.align(interval, stepSize);
+
+      ticks[ScaleDiv.TickType.MajorTick] = this.buildMajorTicks(
+        boundingInterval,
+        stepSize
+      );
+
+      if (maxMinorSteps > 0) {
+        var minorTicks = [];
+        var mediumTicks = [];
+        this.buildMinorTicks(
+          ticks[ScaleDiv.TickType.MajorTick],
+          maxMinorSteps,
+          stepSize,
+          minorTicks,
+          mediumTicks
+        );
+        ticks[ScaleDiv.TickType.MinorTick] = minorTicks;
+        ticks[ScaleDiv.TickType.MediumTick] = mediumTicks;
+      }
+
+      for (var i = 0; i < ScaleDiv.TickType.NTickTypes; i++) {
+        var obj = this.strip(ticks[i], interval);
+        ticks[i] = [];
+        ticks[i] = obj;
+
+        // ticks very close to 0.0 are
+        // explicitely set to 0.0
+
+        for (var j = 0; j < ticks[i].length; j++) {
+          if (Utility.m3FuzzyCompare(ticks[i][j], 0.0, stepSize) === 0)
+            ticks[i][j] = 0.0;
+        }
+      }
+    };
+
+    this.divideScale = function (
+      x1,
+      x2,
+      maxMajorSteps,
+      maxMinorSteps,
+      stepSize
+    ) {
+      if (typeof stepSize === "undefined") stepSize = 0.0;
+      var interval = new Interval(x1, x2).normalized();
+      if (interval.width() <= 0) return new ScaleDiv();
+
+      stepSize = Math.abs(stepSize);
+      if (stepSize === 0.0) {
+        if (maxMajorSteps < 1) maxMajorSteps = 1;
+
+        stepSize = ScaleArithmetic.divideInterval(
+          interval.width(),
+          maxMajorSteps,
+          this.base()
+        );
+      }
+
+      var scaleDiv = new ScaleDiv();
+
+      if (stepSize !== 0.0) {
+        var ticks = [];
+
+        this.buildTicks(interval, stepSize, maxMinorSteps, ticks);
+        scaleDiv = new ScaleDiv(interval, ticks);
+        //console.log(interval.width())
+        //console.log(ticks)
+      }
+
+      if (x1 > x2) scaleDiv.invert();
+
+      return scaleDiv;
     };
 
     this.draw = function (xMap, yMap) {
@@ -745,16 +1254,25 @@ class ThreeDGrid extends PlotGrid {
 
       var ctx = this.getContext();
 
-      /* majColor: "#333333",
-          minColor: "#222222", */
+      const _minorPen = self._reverseContrast ? "#222222" : "#cccccc";
+      const _majorPen = self._reverseContrast ? "#333333" : "#aaaaaa";
 
-      const _minorPen = self.minorPen();
-      const _majorPen = self.majorPen();
+      self.grid.boundLines.material.setValues({ color: _minorPen });
+
+      if (self._reverseContrast) {
+        self.grid.getScene().background = new THREE.Color().setHex(0x000000);
+      } else {
+        self.grid.getScene().background = new THREE.Color().setHex(0xffffff);
+      }
+
+      //const _majorPen = self.majorPen();
       const xMinEnabled = self.xMinEnabled();
       const xEnabled = self.xEnabled();
       const yMinEnabled = self.yMinEnabled();
       const yEnabled = self.yEnabled();
       //const p = this.plot();
+
+      //console.log(_minorPen);
 
       ctx.strokeStyle = _minorPen;
 
@@ -778,13 +1296,30 @@ class ThreeDGrid extends PlotGrid {
         return { p: transform(s, yMap), s: s };
       });
 
+      const zScaleDiv = this.divideScale(
+        -200,
+        400,
+        8, //maxMajorSteps,
+        5 //maxMinorSteps,
+      );
+
+      scaleTicks = zScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
+      const zMajPaintTicks = scaleTicks.map(function (s) {
+        return { p: transformZ(s, -200, 400), s: s };
+      });
+
+      //console.log(zScaleDiv.ticks(ScaleDiv.TickType.MajorTick));
+
       const data = {
         xMinPaintTicks,
         yMinPaintTicks,
         xMajPaintTicks,
         yMajPaintTicks,
+        zMajPaintTicks,
         majColor: _majorPen,
         minColor: _minorPen,
+        minZ: -200,
+        maxZ: 400,
       };
 
       if (xEnabled && xMinEnabled) {
@@ -824,6 +1359,8 @@ class ThreeDGrid extends PlotGrid {
           self.grid.majLines.visible = false;
         }
       }
+
+      self.grid.generateAxesLines(data);
 
       /* if (yEnabled) {
         
@@ -874,12 +1411,13 @@ class ThreeDGrid extends PlotGrid {
       $("#centralDiv").append(this.canvas);
       $(this.canvas).css("zIndex", 5000);
       this.grid = new ThreeJs(this.canvas, adjustSize);
+      this.grid._reverseContrast = this._reverseContrast;
     } else {
       $(this.canvas).show();
     }
     this.grid.startAnimation();
-    this.setMinorPen("#222222");
-    this.setMajorPen("#333333");
+    // this.setMinorPen("#222222");
+    // this.setMajorPen("#333333");
     this.threeDGridVisible(true);
     super.show();
     //plot.replot();

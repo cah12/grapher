@@ -2263,6 +2263,15 @@ class PlotPropertiesPane extends PropertiesPane {
       //checked: true,
     });
 
+    var reverseContrast = this.addProperty({
+      name: "Reverse contrast",
+      id: "reverseContrast",
+      parentId: "gridSettings",
+      type: "checkbox",
+      title: "Reverses the contrast.",
+      //checked: true,
+    });
+
     this.addProperty({
       name: "Minor Lines",
       id: "gridMinorLines",
@@ -4031,14 +4040,17 @@ class PlotPropertiesPane extends PropertiesPane {
       if ($(this)[0].selectedIndex == 0) {
         plot.grid.hide();
         plot.grid = plot.plotGrid;
+        self.hide("reverseContrast");
         plot.plotGrid.show();
       } else if ($(this)[0].selectedIndex == 1) {
         plot.grid.hide();
         plot.grid = plot.polarGrid;
+        self.hide("reverseContrast");
         plot.polarGrid.show();
       } else {
         plot.grid.hide();
         plot.grid = plot.threeDgrid;
+        self.show("reverseContrast");
         plot.threeDgrid.show();
       }
 
@@ -4237,6 +4249,10 @@ class PlotPropertiesPane extends PropertiesPane {
 
     zeroMinAngle.change(function () {
       plot.polarGrid.setZeroMinAngle($(this)[0].checked);
+    });
+
+    reverseContrast.change(function () {
+      plot.threeDgrid.reverseContrast($(this)[0].checked);
     });
 
     Static.bind("polarGridStatus", function (e, on) {
@@ -4511,6 +4527,8 @@ class PlotPropertiesPane extends PropertiesPane {
       self.hide("pointSelected");
 
       self.hide("centerAxesZero");
+      self.hide("zeroMinAngle");
+      self.hide("reverseContrast");
       /* self.hide("lowerLimitY");
       self.hide("upperLimitY");
       self.hide("lowerLimitXY");

@@ -3852,23 +3852,40 @@ class Utility {
    * @param {String} rgb Color (e.g.: "rgb(255, 0, 0)", "#ff0000", or "red")
    * @returns {String} Inverted color
    */
-  static invert(bg) {
+  static invert(bg, bg2, bg3) {
+    function padZero(str, len) {
+      len = len || 2;
+      var zeros = new Array(len).join("0");
+      return (zeros + str).slice(-len);
+    }
+    if (bg2 && bg3) {
+      bg = `rgb(${bg}, ${bg2}, ${bg3})`;
+    } else if (typeof bg == "number") {
+      bg = bg.toString(16);
+      bg = bg.replace("0x", "#");
+    }
     if (typeof bg == "string" && bg.indexOf("#") == -1)
       bg = Utility.RGB2HTML(bg);
-    // rgb = Utility.colorToRGB(rgb);
-    // rgb = [].slice
-    //   .call(arguments)
-    //   .join(",")
-    //   .replace(/rgb\(|\)|rgba\(|\)|\s/gi, "")
-    //   .split(",");
-    // for (var i = 0; i < rgb.length; i++) rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
-    // return "rgb(" + rgb.join(", ") + ")";
 
     bg = parseInt(Number(bg.replace("#", "0x")), 10);
     bg = ~bg;
     bg = bg >>> 0;
     bg = bg & 0x00ffffff;
     bg = "#" + bg.toString(16).padStart(6, "0");
+
+    /* // convert 3-digit hex to 6-digits.
+    if (bg.length === 3) {
+      bg = bg[0] + bg[0] + bg[1] + bg[1] + bg[2] + bg[2];
+    }
+    if (bg.length !== 6) {
+      throw new Error("Invalid HEX color.");
+    }
+    // invert color components
+    var r = (255 - parseInt(bg.slice(0, 2), 16)).toString(16),
+      g = (255 - parseInt(bg.slice(2, 4), 16)).toString(16),
+      b = (255 - parseInt(bg.slice(4, 6), 16)).toString(16);
+    // pad each with zeros and return
+    return "#" + padZero(r) + padZero(g) + padZero(b); */
 
     return bg;
   }
