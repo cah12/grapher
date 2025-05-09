@@ -1299,15 +1299,15 @@ class ThreeDGrid extends PlotGrid {
       });
 
       const zScaleDiv = this.divideScale(
-        0,
-        200,
+        -10,
+        10,
         8, //maxMajorSteps,
         5 //maxMinorSteps,
       );
 
       scaleTicks = zScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
       const zMajPaintTicks = scaleTicks.map(function (s) {
-        return { p: transformZ(s, 0, 200), s: s };
+        return { p: transformZ(s, -10, 10), s: s };
       });
 
       //console.log(zScaleDiv.ticks(ScaleDiv.TickType.MajorTick));
@@ -1320,8 +1320,8 @@ class ThreeDGrid extends PlotGrid {
         zMajPaintTicks,
         majColor: _majorPen,
         minColor: _minorPen,
-        minZ: 0,
-        maxZ: 200,
+        minZ: -10,
+        maxZ: 10,
       };
 
       if (xEnabled && xMinEnabled) {
@@ -1426,6 +1426,19 @@ class ThreeDGrid extends PlotGrid {
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
 
+  makeSamples(curve) {
+    const fn = curve.fn;
+    const plot = this.plot();
+    const lowerX = plot._functionDlg.lowerLimit;
+    const lowerY = plot._functionDlg.lowerLimitY;
+    const upperX = plot._functionDlg.upperLimit;
+    const upperY = plot._functionDlg.upperLimitY;
+
+    const numOfPoints = Math.min(plot._functionDlg.numOfPoints, 80);
+
+    console.log(fn, lowerX, lowerY, upperX, upperY, numOfPoints);
+  }
+
   threeDGridVisible(on) {
     const self = this;
     self.threeDGridAttached = on;
@@ -1444,11 +1457,14 @@ class ThreeDGrid extends PlotGrid {
       for (let i = 0; i < L.length; i++) {
         L[i].originalDrawSeries = L[i].drawSeries;
         L[i].drawSeries = self.drawSeries;
+        L[i].threeDsamples = self.makeSamples(L[i]);
+        //console.log(L[i]);
       }
       L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
       for (let i = 0; i < L.length; i++) {
         L[i].originalDraw = L[i].draw;
         L[i].draw = self.draw2;
+        console.log(L[i]);
       }
       if (self.threeDGrid) {
         self.original_widgetMousePressEvent_panner =
