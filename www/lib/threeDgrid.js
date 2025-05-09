@@ -533,7 +533,8 @@ class ThreeJs {
             self.textMeshY.position.z = -fontSize * 0.4;
             self.textMeshY.rotateY(Math.PI / 2);
             self.textMeshY.rotateZ(Math.PI / 2);
-            scene.add(self.textMeshY);
+            //scene.add(self.textMeshY);
+            self.xyGridGroup.add(self.textMeshY);
 
             const textGeometryX = new TextGeometry("X", {
               font: font,
@@ -547,7 +548,8 @@ class ThreeJs {
             self.textMeshX.position.z = -fontSize * 0.5;
             self.textMeshX.position.x = 1;
             self.textMeshX.rotateX(Math.PI / 2);
-            scene.add(self.textMeshX);
+            //scene.add(self.textMeshX);
+            self.xyGridGroup.add(self.textMeshX);
 
             const textGeometryZ = new TextGeometry("Z", {
               font: font,
@@ -1297,15 +1299,15 @@ class ThreeDGrid extends PlotGrid {
       });
 
       const zScaleDiv = this.divideScale(
-        -200,
-        400,
+        0,
+        200,
         8, //maxMajorSteps,
         5 //maxMinorSteps,
       );
 
       scaleTicks = zScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
       const zMajPaintTicks = scaleTicks.map(function (s) {
-        return { p: transformZ(s, -200, 400), s: s };
+        return { p: transformZ(s, 0, 200), s: s };
       });
 
       //console.log(zScaleDiv.ticks(ScaleDiv.TickType.MajorTick));
@@ -1318,8 +1320,8 @@ class ThreeDGrid extends PlotGrid {
         zMajPaintTicks,
         majColor: _majorPen,
         minColor: _minorPen,
-        minZ: -200,
-        maxZ: 400,
+        minZ: 0,
+        maxZ: 200,
       };
 
       if (xEnabled && xMinEnabled) {
