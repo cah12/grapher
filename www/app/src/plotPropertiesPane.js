@@ -4040,6 +4040,7 @@ class PlotPropertiesPane extends PropertiesPane {
       if ($(this)[0].selectedIndex == 0) {
         plot.grid.hide();
         plot.grid = plot.plotGrid;
+        plot.rv.setVisible(true);
         self.hide("reverseContrast");
         plot.plotGrid.show();
       } else if ($(this)[0].selectedIndex == 1) {
@@ -4047,11 +4048,17 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.grid = plot.polarGrid;
         self.hide("reverseContrast");
         plot.polarGrid.show();
+        plot.rv.setVisible(false);
       } else {
         plot.grid.hide();
         plot.grid = plot.threeDgrid;
         self.show("reverseContrast");
         plot.threeDgrid.show();
+        if (!$("#fnDlg_threeD")[0].checked) {
+          $("#fnDlg_threeD").click();
+          $("#threeDType")[0].selectedIndex = 1;
+          plot.rv.setVisible(false);
+        }
       }
 
       /* //Enabled
@@ -4253,6 +4260,36 @@ class PlotPropertiesPane extends PropertiesPane {
 
     reverseContrast.change(function () {
       plot.threeDgrid.reverseContrast($(this)[0].checked);
+    });
+
+    Static.bind("threeDGridStatus", function (e, on) {
+      if (on) {
+        console.log(456);
+        self.centerAxesBefore = centerAxes[0].checked;
+        self.centerAxesZeroBefore = centerAxesZero[0].checked;
+        if (self.centerAxesBefore) {
+          centerAxes[0].checked = false;
+          centerAxes.trigger("change");
+          self.hide("centerAxesZero");
+        }
+        self.hide("centerAxes");
+
+        self.hide("scalePositionRight");
+        self.hide("scalePositionTop");
+        self.hide("scaleMarginsRightAxis");
+        self.hide("scaleMarginsTopAxis");
+        self.hide("scaleMarginsBottomAxis");
+
+        // self.hide("scalePositionBottomLinear");
+        // self.hide("scalePositionBottomLog");
+        // self.hide("scalePositionBottomBase");
+        // self.hide("scalePositionBottomPrecision");
+        // self.hide("scalePositionBottomAttributeReference");
+        // self.hide("scalePositionBottomAttributeIncludeReference");
+        // self.hide("scalePositionBottomAttributeSymmetric");
+        //self.hide("scalePositionBottomAttributeFloating");
+      } else {
+      }
     });
 
     Static.bind("polarGridStatus", function (e, on) {

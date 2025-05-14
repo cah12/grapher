@@ -218,7 +218,10 @@ Misc.Image = function (w, h /* , a */) {
     //   if (rgba.a < 0) rgba.a = 0;
     //   m_data.data[redAddress + 3] = rgba.a;
     // }
-    m_data.data[redAddress + 3] = rgba.a || 255;
+    if (rgba.a == undefined) {
+      rgba.a = 255;
+    }
+    m_data.data[redAddress + 3] = rgba.a;
   };
 
   this.setColorTable = function (ct) {

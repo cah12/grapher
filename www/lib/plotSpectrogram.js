@@ -320,8 +320,13 @@ class PlotSpectrogram extends PlotRasterItem {
 
           for (x = left; x < right; x += incrementW) {
             tx = xMap.invTransform(x);
-            rgba = d_data.colorMap.rgb(range, d_data.data.value(tx, ty));
-            rgba.a = alpha; //the default alpha value of 255
+            const val = d_data.data.value(tx, ty);
+            if (isNaN(val)) {
+              rgba = { r: 0, g: 0, b: 0, a: 0 };
+            } else {
+              rgba = d_data.colorMap.rgb(range, val);
+              rgba.a = alpha; //the default alpha value of 255
+            }
             for (yy = extraPixelH; yy >= 0; --yy) {
               for (xx = extraPixelW; xx >= 0; --xx) {
                 image.setPixel(

@@ -6,7 +6,7 @@ class MyLegend extends Legend {
     const self = this;
 
     this.updateLegendToolTip = function (_curve) {
-      if (!_curve) {
+      if (!_curve || !_curve.plot()) {
         return;
       }
       let indepVarX = null;

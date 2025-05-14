@@ -927,6 +927,16 @@ class Utility {
     );
   }
 
+  static findDetachedCurve(name) {
+    let detachedCurves = Utility.detachedCurves;
+    for (let i = 0; i < detachedCurves.length; i++) {
+      if (detachedCurves[i].title() == name) {
+        return detachedCurves[i];
+      }
+    }
+    return null;
+  }
+
   /**
    * Generate a unique curve name
    * @param {Plot} plot Plot to which a curve with the generated name will be attached
@@ -937,7 +947,11 @@ class Utility {
     let suffix = 1;
     let preFix = prefix || "curve_";
     let curveName = preFix.concat(suffix);
-    while (plot.findPlotCurve(curveName)) curveName = preFix.concat(++suffix);
+    while (
+      plot.findPlotCurve(curveName) ||
+      Utility.findDetachedCurve(curveName)
+    )
+      curveName = preFix.concat(++suffix);
     return curveName;
   }
 
@@ -6616,6 +6630,23 @@ class Utility {
     }
   }
 
+  static validate3dDomain(info) {
+    const { lowerX, upperX, lowerY, upperY, fn } = info;
+    const parser = math.parse(fn);
+    const numberOfPoints = 200;
+    const xStep = (upperX - lowerX) / (numberOfPoints - 1);
+    const yStep = (upperY - lowerY) / (numberOfPoints - 1);
+
+    let validLowerX = Number.MAX_VALUE;
+    let validUpperX = Number.MIN_VALUE;
+    let validLowerY = Number.MAX_VALUE;
+    let validUpperY = Number.MIN_VALUE;
+
+    for (let i = 0; i < numOfPoints; i++) {
+      const y = lowerY + yStep * i;
+    }
+  }
+
   static displayWarnMessage(mf, errorMessage) {
     if (errorMessage) {
       Utility.toolTip = $(mf).attr("data-original-title");
@@ -6769,3 +6800,5 @@ Utility.progressSpinner2 = $(
 );
 Utility.progressSpinnerInit = false;
 Utility.progressWaitOnCount = 0;
+
+Utility.detachedCurves = [];

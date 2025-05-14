@@ -5,13 +5,15 @@ class ThreeJs {
     const self = this;
     this.lines;
 
-    let p_limit = 0.7;
+    let p_limit = 0.8;
 
     let numOfYlines = 10;
     let numOfXlines = 10;
     self._reverseContrast = false;
     let scene = new THREE.Scene();
 
+    this.minZ = -10;
+    this.maxZ = 10;
     this.getScene = function () {
       return scene;
     };
@@ -518,7 +520,7 @@ class ThreeJs {
           } else {
             const textGeometryY = new TextGeometry("Y", {
               font: font,
-              size: fontSize,
+              size: fontSize * 0.7,
               depth: 0.0001,
               curveSegments: 12,
             });
@@ -538,7 +540,7 @@ class ThreeJs {
 
             const textGeometryX = new TextGeometry("X", {
               font: font,
-              size: fontSize,
+              size: fontSize * 0.7,
               depth: 0.0001,
               curveSegments: 12,
             });
@@ -553,7 +555,7 @@ class ThreeJs {
 
             const textGeometryZ = new TextGeometry("Z", {
               font: font,
-              size: fontSize,
+              size: fontSize * 0.7,
               depth: 0.0001,
               curveSegments: 12,
             });
@@ -648,42 +650,57 @@ class ThreeJs {
       );
     };
 
-    function transform(s, Map) {
+    /* function transform(s, Map) {
       const s1 = Map.s1();
       const s2 = Map.s2();
       const pl = self.getPlimit();
       return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
-    }
+    } */
 
-    function transformZ(s, z_min, z_max) {
+    this.transformZ = function (s, z_min, z_max) {
+      // const s1 = z_min;
+      // const s2 = z_max;
       const s1 = z_min;
       const s2 = z_max;
-      const pl = self.getPlimit();
+      const pl = this.getPlimit();
       return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
-    }
+    };
 
     this.doDrawMesh = function (plotItem, xMap, yMap) {
-      const numberOfPoints = 60;
+      const numberOfPoints = plotItem.numberOfPoints - 1;
+      // const plot = plotItem.plot();
+      // const lowerX = plot._functionDlg.lowerLimit;
+      // const lowerY = plot._functionDlg.lowerLimitY;
+      // const upperX = plot._functionDlg.upperLimit;
+      // const upperY = plot._functionDlg.upperLimitY;
+
       let sx1 = xMap.s1();
       const sx2 = xMap.s2();
       let sy1 = yMap.s1();
       const sy2 = yMap.s2();
-      const xStep = (sx2 - sx1) / (numberOfPoints - 1);
-      const yStep = (sy2 - sy1) / (numberOfPoints - 1);
+
+      // let sx1 = lowerX; //xMap.s1();
+      // const sx2 = upperX; //xMap.s2();
+      // let sy1 = lowerY; //yMap.s1();
+      // const sy2 = upperY; //yMap.s2();
+      const xStep = (sx2 - sx1) / numberOfPoints;
+      const yStep = (sy2 - sy1) / numberOfPoints;
 
       const parser = math.parse(plotItem.fn);
       const scope = new Map();
 
       const pl = self.getPlimit();
       const geometry = new THREE.PlaneGeometry(
-        transform(sx2, xMap) - transform(sx1, xMap),
-        transform(sy2, yMap) - transform(sy1, yMap),
+        p_limit * 2,
+        p_limit * 2, // sx2 - sx1,
+        // transform(sx2, xMap) - transform(sx1, xMap),
+        // transform(sy2, yMap) - transform(sy1, yMap),
         numberOfPoints,
         numberOfPoints
       ); // Adjust size and subdivisions as needed
-      const vertices = geometry.attributes.position.array;
+      let vertices = geometry.attributes.position.array;
 
-      for (let i = 0; i <= numberOfPoints; i++) {
+      /* for (let i = 0; i <= numberOfPoints; i++) {
         for (let j = 0; j <= numberOfPoints; j++) {
           const x = (i / numberOfPoints) * (sx2 - sx1) - sx2; // Scale x to range -5 to 5
           const y = (j / numberOfPoints) * (sy2 - sy1) - sy2; // Scale y to range -5 to 5
@@ -693,10 +710,38 @@ class ThreeJs {
           const z = transformZ(parser.evaluate(scope), 0, 200);
           vertices[(i * (numberOfPoints + 1) + j) * 3 + 2] = z; // Update z-coordinate of vertex
         }
-      }
+      } */
+      const samples = plotItem.threeDsamples;
 
-      geometry.attributes.position.needsUpdate = true;
-      geometry.computeVertexNormals();
+      const minZ = self.minZ;
+      const maxZ = self.maxZ;
+      //console.log(minZ, maxZ);
+
+      for (let i = 0; i <= numberOfPoints; i++) {
+        const y = sy2 - i * yStep;
+        scope.set("y", y);
+        for (let j = 0; j <= numberOfPoints; j++) {
+          const x = sx1 + j * xStep;
+          scope.set("x", x);
+          const val = parser.evaluate(scope);
+          const ind = (i * (numberOfPoints + 1) + j) * 3 + 2;
+          if (isNaN(val)) {
+            vertices[ind] = null;
+            vertices[ind - 1] = null;
+            vertices[ind - 2] = null;
+            continue;
+            //console.log(456);
+          }
+          const z = self.transformZ(val, minZ, maxZ);
+          vertices[ind] = z; // Update z-coordinate of vertex
+        }
+      }
+      vertices = vertices.filter(function (e) {
+        return !null;
+      });
+      geometry.computeBoundingBox();
+      // geometry.attributes.position.needsUpdate = true;
+      // geometry.computeVertexNormals();
 
       geometry.attributes.position.needsUpdate = true;
       geometry.computeVertexNormals();
@@ -723,7 +768,7 @@ class ThreeJs {
         );
       }
 
-      console.log(plotItem.lines.visible);
+      //console.log(plotItem.lines.visible);
 
       scene.add(plotItem.lines);
     };
@@ -745,6 +790,11 @@ class ThreeJs {
       }
 
       scene.add(plotItem.lines);
+      /* if (!plotItem.isVisible()) {
+        plotItem.lines.visible = false;
+      } else {
+        plotItem.lines.visible = true;
+      } */
     };
 
     this.generateBoundLines = function (data) {
@@ -859,19 +909,12 @@ class ThreeJs {
     orbit.dampingFactor = 0.05;
     orbit.enableZoom = false;
     function positionXYgrid(data, geometry) {
-      /* if (data.minZ >= 0) {
-        geometry.translate(0, 0, -p_limit);
-      } else if (data.maxZ <= 0) {
-        geometry.translate(0, 0, p_limit);
-      } else {
-        geometry.translate(0, 0, transformZ(0, data.minZ, data.maxZ));
-      } */
       if (data.minZ >= 0) {
         self.xyGridGroup.position.z = -p_limit;
       } else if (data.maxZ <= 0) {
         self.xyGridGroup.position.z = p_limit;
       } else {
-        self.xyGridGroup.position.z = transformZ(0, data.minZ, data.maxZ);
+        self.xyGridGroup.position.z = self.transformZ(0, data.minZ, data.maxZ);
       }
     }
 
@@ -960,7 +1003,7 @@ class ThreeDGrid extends PlotGrid {
     this.panner = panner;
     this.magnifier = magnifier;
 
-    self.detachedCurves = [];
+    Utility.detachedCurves = [];
 
     //this.setItemAttribute(PlotItem.ItemAttribute.AutoScale, true);
 
@@ -975,35 +1018,109 @@ class ThreeDGrid extends PlotGrid {
     //console.log(plot);
     this.threeDgrid = null;
     this.canvas = null;
+    let detaching = false;
 
     Static.bind("itemAttached", function (e, plotItem, on) {
-      const plot = plotItem.plot();
-      const autoReplot = plot.autoReplot();
-      plot.setAutoReplot(false);
+      if (!self.threeDGrid) return;
 
-      if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
-        if (on && self.threeDGridAttached) {
-          plotItem.originalDraw = plotItem.draw;
-          plotItem.draw = self.draw2;
-        } else if (!on && plotItem.originalDraw) {
-          plotItem.draw = plotItem.originalDraw;
+      let handle = false;
+
+      if (!detaching) {
+        for (let i = 0; i < Utility.detachedCurves.length; i++) {
+          const element = Utility.detachedCurves[i];
+          if (element.title() === plotItem.title()) {
+            handle = true;
+          }
         }
       }
-      if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
-        if (on && self.threeDGridAttached) {
-          plotItem.originalDrawSeries = plotItem.drawSeries;
-          plotItem.drawSeries = self.drawSeries;
-        } else if (!on && plotItem.originalDrawSeries) {
-          plotItem.drawSeries = plotItem.originalDrawSeries;
+
+      if (!handle) {
+        const plot = plotItem.plot();
+        const autoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
+
+        if (
+          plotItem.rtti === PlotItem.RttiValues.Rtti_PlotCurve &&
+          !detaching
+        ) {
+          detaching = true;
+          Utility.detachedCurves.push(plotItem);
+          plotItem.detach();
         }
+
+        if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
+          if (on && self.threeDGridAttached) {
+            // plotItem.originalDraw = L[i].draw;
+            // plotItem.draw = self.draw2;
+            // self.onThreeDGrid();
+          } /* else if (!on && plotItem.originalDraw != plotItem.draw) {
+            plotItem.draw = plotItem.originalDraw;
+          } */
+        }
+        if (plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
+          if (on && self.threeDGridAttached) {
+            if (1) {
+              // plotItem.originalDrawSeries = plotItem.drawSeries;
+              // plotItem.drawSeries = self.drawSeries;
+            }
+            // self.onThreeDGrid();
+          } /* else if (
+            !on &&
+            plotItem.originalDrawSeries != plotItem.drawSeries
+          ) {
+            plotItem.drawSeries = plotItem.originalDrawSeries;
+          } */
+        }
+        if (on /*  && self.threeDGridAttached */) {
+          // plotItem.originalDraw = L[i].draw;
+          // plotItem.draw = self.draw2;
+          self.onThreeDGrid();
+        }
+
+        plot.setAutoReplot(autoReplot);
+        plot.autoRefresh();
+        detaching = false;
       }
-      plot.setAutoReplot(autoReplot);
-      plot.autoRefresh();
     });
 
     Static.bind("visibilityChange", function (e, curve, on) {
       if (!curve.lines) return;
       curve.lines.visible = on;
+      self.onThreeDGrid(true);
+    });
+
+    let upper, lower;
+    let handled = false;
+
+    let _autoReplot = false;
+
+    Static.bind("magnifyingStart", function (e) {
+      if (!self.threeDGrid) return;
+      const plot = self.plot();
+      _autoReplot = plot.autoReplot();
+      if (handled) return;
+
+      plot.setAutoReplot(false);
+      handled = true;
+      const scaleDiv = self.plot().axisScaleDiv(0);
+      upper = scaleDiv.upperBound();
+      lower = scaleDiv.lowerBound();
+    });
+
+    Static.bind("magnifyingEnd", function (e) {
+      if (!self.threeDGrid) return;
+      handled = false;
+      const scaleDiv = self.plot().axisScaleDiv(0);
+      const fupper = scaleDiv.upperBound();
+      const flower = scaleDiv.lowerBound();
+      const fwidth = fupper - flower;
+      const width = upper - lower;
+      const ratio = fwidth / width;
+
+      const zWidth = self.grid.maxZ - self.grid.minZ;
+      const fZwidth = zWidth * ratio;
+      self.grid.minZ = self.grid.minZ - (fZwidth - zWidth) / 2;
+      self.grid.maxZ = self.grid.maxZ + (fZwidth - zWidth) / 2;
     });
 
     function transform(s, Map) {
@@ -1013,12 +1130,14 @@ class ThreeDGrid extends PlotGrid {
       return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
     }
 
-    function transformZ(s, z_min, z_max) {
-      const s1 = z_min;
-      const s2 = z_max;
+    /* function transformZ(s, z_min, z_max) {
+      // const s1 = z_min;
+      // const s2 = z_max;
+      const s1 = z_min * 0.5;
+      const s2 = z_max * 0.5;
       const pl = self.grid.getPlimit();
       return ((s - s1) * 2 * pl) / (s2 - s1) - pl;
-    }
+    } */
 
     this.drawSeries = function (xMap, yMap, from, to) {
       var ctx = this.getContext();
@@ -1034,17 +1153,21 @@ class ThreeDGrid extends PlotGrid {
 
       if (from > to) return;
 
+      const minZ = self.grid.minZ;
+      const maxZ = self.grid.maxZ;
+      //console.log(minZ, maxZ);
+
       const samples = this.data().samples();
       const positions = [];
       for (let i = 1; i < samples.length; i++) {
         const pt0 = samples[i - 1];
         positions.push(transform(pt0.x, xMap));
         positions.push(transform(pt0.y, yMap));
-        positions.push(transformZ(pt0.z, this.minZ, this.maxZ));
+        positions.push(self.grid.transformZ(pt0.z, minZ, maxZ));
         const pt = samples[i];
         positions.push(transform(pt.x, xMap));
         positions.push(transform(pt.y, yMap));
-        positions.push(transformZ(pt.z, this.minZ, this.maxZ));
+        positions.push(self.grid.transformZ(pt.z, minZ, maxZ));
       }
 
       self.grid.doDrawSeries(this, positions);
@@ -1056,8 +1179,6 @@ class ThreeDGrid extends PlotGrid {
 
     this.draw2 = function (xMap, yMap) {
       var ctx = this.getContext();
-
-      //console.log(this.isVisible());
 
       self.grid.doDrawMesh(this, xMap, yMap);
     };
@@ -1267,14 +1388,10 @@ class ThreeDGrid extends PlotGrid {
         self.grid.getScene().background = new THREE.Color().setHex(0xffffff);
       }
 
-      //const _majorPen = self.majorPen();
       const xMinEnabled = self.xMinEnabled();
       const xEnabled = self.xEnabled();
       const yMinEnabled = self.yMinEnabled();
       const yEnabled = self.yEnabled();
-      //const p = this.plot();
-
-      //console.log(_minorPen);
 
       ctx.strokeStyle = _minorPen;
 
@@ -1298,19 +1415,24 @@ class ThreeDGrid extends PlotGrid {
         return { p: transform(s, yMap), s: s };
       });
 
+      if (Utility.isAutoScale(p)) {
+        self.updateZminMax();
+      }
+
       const zScaleDiv = this.divideScale(
-        -10,
-        10,
+        self.grid.minZ,
+        self.grid.maxZ,
         8, //maxMajorSteps,
         5 //maxMinorSteps,
       );
 
       scaleTicks = zScaleDiv.ticks(ScaleDiv.TickType.MajorTick);
       const zMajPaintTicks = scaleTicks.map(function (s) {
-        return { p: transformZ(s, -10, 10), s: s };
+        return {
+          p: self.grid.transformZ(s, self.grid.minZ, self.grid.maxZ),
+          s: s,
+        };
       });
-
-      //console.log(zScaleDiv.ticks(ScaleDiv.TickType.MajorTick));
 
       const data = {
         xMinPaintTicks,
@@ -1320,8 +1442,8 @@ class ThreeDGrid extends PlotGrid {
         zMajPaintTicks,
         majColor: _majorPen,
         minColor: _minorPen,
-        minZ: -10,
-        maxZ: 10,
+        minZ: self.grid.minZ,
+        maxZ: self.grid.maxZ,
       };
 
       if (xEnabled && xMinEnabled) {
@@ -1338,12 +1460,7 @@ class ThreeDGrid extends PlotGrid {
         }
         self.grid.majLines.visible = true;
         self.grid.minLines.visible = true;
-      }
-
-      /* if (yEnabled && yMinEnabled) {
-      } */
-      //ctx.strokeStyle = _majorPen;
-      else if (xEnabled && !xMinEnabled) {
+      } else if (xEnabled && !xMinEnabled) {
         if (!self.grid.majLines) {
           self.grid.generateMajGridLines(data);
         } else {
@@ -1363,10 +1480,6 @@ class ThreeDGrid extends PlotGrid {
       }
 
       self.grid.generateAxesLines(data);
-
-      /* if (yEnabled) {
-        
-      } */
     };
 
     this.toString = function () {
@@ -1375,14 +1488,15 @@ class ThreeDGrid extends PlotGrid {
   }
 
   hide() {
+    self.threeDGrid = false;
     const plot = this.plot();
     if (this.grid) {
       this.grid.stopAnimation();
     }
     $(this.canvas).hide();
-    //$(this.canvas_2d).show();
-    for (let i = 0; i < this.detachedCurves.length; i++) {
-      const element = this.detachedCurves[i];
+    for (let i = 0; i < Utility.detachedCurves.length; i++) {
+      const element = Utility.detachedCurves[i];
+
       element.attach(this.plot());
     }
     this.threeDGridVisible(false);
@@ -1390,7 +1504,6 @@ class ThreeDGrid extends PlotGrid {
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
   show() {
-    // this.clearCanvas();
     const plot = this.plot();
 
     function adjustSize(_canvas) {
@@ -1400,14 +1513,10 @@ class ThreeDGrid extends PlotGrid {
 
     const L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
     for (let i = 0; i < L.length; i++) {
-      if (1) {
-        L[i].detach();
-        this.detachedCurves.push(L[i]);
-      }
+      Utility.detachedCurves.push(L[i]);
+      L[i].detach();
     }
 
-    // this.panner.setEnabled(false);
-    // this.magnifier.setEnabled_1(false);
     if (!this.canvas) {
       this.canvas = document.createElement("canvas");
       $("#centralDiv").append(this.canvas);
@@ -1418,25 +1527,80 @@ class ThreeDGrid extends PlotGrid {
       $(this.canvas).show();
     }
     this.grid.startAnimation();
-    // this.setMinorPen("#222222");
-    // this.setMajorPen("#333333");
     this.threeDGridVisible(true);
     super.show();
-    //plot.replot();
     Static.trigger("threeDGridStatus", this.threeDGrid);
   }
 
+  updateZminMax() {
+    const self = this;
+    const plot = this.plot();
+    let L_spectrocuve = plot.itemList(
+      PlotItem.RttiValues.Rtti_PlotSpectroCurve
+    );
+    let L_spectrogram = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
+
+    L_spectrocuve = L_spectrocuve || [];
+    L_spectrogram = L_spectrogram || [];
+    let L = L_spectrocuve.concat(L_spectrogram);
+    self.grid.minZ = Number.MAX_VALUE;
+    self.grid.maxZ = -Number.MAX_VALUE;
+    for (let i = 0; i < L.length; i++) {
+      const curve = L[i];
+      if (!curve.isVisible()) {
+        continue;
+      }
+      if (curve.minZ < self.grid.minZ) {
+        self.grid.minZ = curve.minZ;
+      }
+      if (curve.maxZ > self.grid.maxZ) {
+        self.grid.maxZ = curve.maxZ;
+      }
+    }
+    self.grid.minZ = -10;
+    self.grid.maxZ = 10;
+  }
+
   makeSamples(curve) {
+    const self = this;
     const fn = curve.fn;
+    let minZ = Number.MAX_VALUE;
+    let maxZ = -Number.MAX_VALUE;
     const plot = this.plot();
     const lowerX = plot._functionDlg.lowerLimit;
     const lowerY = plot._functionDlg.lowerLimitY;
     const upperX = plot._functionDlg.upperLimit;
     const upperY = plot._functionDlg.upperLimitY;
 
-    const numOfPoints = Math.min(plot._functionDlg.numOfPoints, 80);
-
-    console.log(fn, lowerX, lowerY, upperX, upperY, numOfPoints);
+    const numOfPoints = Math.min(plot._functionDlg.numOfPoints, 100);
+    curve.numberOfPoints = numOfPoints;
+    const xStep = (upperX - lowerX) / (numOfPoints - 1);
+    const yStep = (upperY - lowerY) / (numOfPoints - 1);
+    const parser = math.parse(fn);
+    const scope = new Map();
+    const samples = [];
+    for (let i = 0; i < numOfPoints; i++) {
+      for (let j = 0; j < numOfPoints; j++) {
+        const x = lowerX + i * xStep;
+        const y = lowerY + j * yStep;
+        scope.set("x", x);
+        scope.set("y", y);
+        const z = parser.evaluate(scope);
+        if (isNaN(z)) {
+          continue;
+        }
+        samples.push({ x, y, z });
+        if (z < minZ) {
+          minZ = z;
+        }
+        if (z > maxZ) {
+          maxZ = z;
+        }
+      }
+    }
+    curve.minZ = minZ;
+    curve.maxZ = maxZ;
+    return samples;
   }
 
   threeDGridVisible(on) {
@@ -1449,62 +1613,82 @@ class ThreeDGrid extends PlotGrid {
     self.threeDGrid = on;
 
     if (on) {
-      let L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
-      for (let i = 0; i < L.length; i++) {
-        self.detachedCurves.push(L[i]);
+      this.onThreeDGrid();
+    } else {
+      self.threeDGrid = false;
+      if (self.original_widgetMousePressEvent_panner) {
+        self.panner.widgetMousePressEvent =
+          self.original_widgetMousePressEvent_panner;
+        self.original_widgetMousePressEvent_panner = null;
       }
-      L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve);
+
+      let L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve);
       for (let i = 0; i < L.length; i++) {
-        L[i].originalDrawSeries = L[i].drawSeries;
-        L[i].drawSeries = self.drawSeries;
-        L[i].threeDsamples = self.makeSamples(L[i]);
-        //console.log(L[i]);
+        if (L[i].originalDrawSeries) {
+          L[i].drawSeries = L[i].originalDrawSeries;
+          L[i].originalDrawSeries = null;
+        }
       }
       L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
       for (let i = 0; i < L.length; i++) {
-        L[i].originalDraw = L[i].draw;
-        L[i].draw = self.draw2;
-        console.log(L[i]);
+        if (L[i].originalDraw) {
+          L[i].draw = L[i].originalDraw;
+          L[i].originalDraw = null;
+        }
       }
-      if (self.threeDGrid) {
+      for (let i = 0; i < Utility.detachedCurves.length; i++) {
+        const curve = Utility.detachedCurves[i];
+        self.threeDGrid = false;
+        curve.attach(plot);
+      }
+      Utility.detachedCurves.length = 0;
+    }
+    plot.setAutoReplot(autoReplot);
+    plot.autoRefresh();
+  }
+
+  onThreeDGrid(update = false) {
+    const plot = this.plot();
+    const self = this;
+
+    if (!update) {
+      let L = plot.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+      for (let i = 0; i < L.length; i++) {
+        Utility.detachedCurves.push(L[i]);
+        L[i].detach();
+      }
+      L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve);
+      for (let i = 0; i < L.length; i++) {
+        if (!L[i].originalDrawSeries) {
+          L[i].originalDrawSeries = L[i].drawSeries;
+          L[i].drawSeries = self.drawSeries;
+        }
+      }
+
+      L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
+      for (let i = 0; i < L.length; i++) {
+        if (!L[i].originalDraw) {
+          L[i].originalDraw = L[i].draw;
+          L[i].draw = self.draw2;
+        }
+
+        if (!L[i].threeDsamples) {
+          L[i].threeDsamples = self.makeSamples(L[i]);
+        }
+      }
+    }
+
+    if (Utility.isAutoScale(plot)) {
+      self.updateZminMax();
+    }
+    if (self.threeDGrid) {
+      if (!self.original_widgetMousePressEvent_panner) {
         self.original_widgetMousePressEvent_panner =
           self.panner.widgetMousePressEvent;
         self.panner.widgetMousePressEvent = function () {
           return true;
         };
-
-        //self.original_updateAxes = plot.updateAxes;
-        //plot.updateAxes = self.updateAxes;
       }
-    } else {
-      if (self.threeDGrid) {
-        //Static.mToPoints = self.original_mToPoints;
-        //Static.mToPolylineFiltered = self.original_mToPolylineFiltered;
-        self.panner.widgetMousePressEvent =
-          self.original_widgetMousePressEvent_panner;
-
-        //plot.updateAxes = self.original_updateAxes;
-      }
-      let L = plot.itemList(PlotItem.RttiValues.Rtti_SpectroCurve);
-      for (let i = 0; i < L.length; i++) {
-        if (L[i].originalDrawSeries) {
-          L[i].drawSeries = L[i].originalDrawSeries;
-        }
-      }
-      L = plot.itemList(PlotItem.RttiValues.Rtti_Spectrogram);
-      for (let i = 0; i < L.length; i++) {
-        if (L[i].originalDraw) {
-          L[i].draw = L[i].originalDraw;
-        }
-      }
-      for (let i = 0; i < self.detachedCurves.length; i++) {
-        const curve = self.detachedCurves[i];
-        curve.attach(plot);
-      }
-      self.detachedCurves.length = 0;
     }
-    plot.setAutoReplot(autoReplot);
-    plot.autoRefresh();
-    //console.log(456);
   }
 }
