@@ -1673,10 +1673,10 @@ class ThreeDGrid extends PlotGrid {
           L[i].draw = L[i].originalDraw;
           L[i].originalDraw = null;
         }
-        if (L[i].originalRenderTile) {
-          L[i].renderTile = L[i].originalRenderTile;
-          L[i].originalRenderTile = null;
-        }
+        // if (L[i].originalRenderTile) {
+        //   L[i].renderTile = L[i].originalRenderTile;
+        //   L[i].originalRenderTile = null;
+        // }
       }
       for (let i = 0; i < Utility.detachedCurves.length; i++) {
         const curve = Utility.detachedCurves[i];
@@ -1714,10 +1714,10 @@ class ThreeDGrid extends PlotGrid {
           L[i].draw = self.draw2;
         }
 
-        if (!L[i].originalRenderTile) {
-          L[i].originalRenderTile = L[i].renderTile;
-          L[i].renderTile = function () {};
-        }
+        // if (!L[i].originalRenderTile) {
+        //   L[i].originalRenderTile = L[i].renderTile;
+        //   L[i].renderTile = function () {};
+        // }
 
         if (!L[i].threeDsamples) {
           L[i].threeDsamples = self.makeSamples(L[i]);
@@ -1728,14 +1728,21 @@ class ThreeDGrid extends PlotGrid {
     if (Utility.isAutoScale(plot)) {
       self.updateZminMax();
     }
-    if (self.threeDGrid) {
-      if (!self.original_widgetMousePressEvent_panner) {
-        self.original_widgetMousePressEvent_panner =
-          self.panner.widgetMousePressEvent;
-        self.panner.widgetMousePressEvent = function () {
-          return true;
-        };
-      }
+    //if (self.threeDGrid) {
+    if (!self.original_widgetMousePressEvent_panner) {
+      self.original_widgetMousePressEvent_panner =
+        self.panner.widgetMousePressEvent;
+      self.panner.widgetMousePressEvent = function () {
+        return true;
+      };
     }
   }
+
+  setZaxisScale(zMin, zMax) {
+    this.grid.minZ = zMin;
+    this.grid.maxZ = zMax;
+    const plot = this.plot();
+    plot.autoRefresh();
+  }
+  //}
 }

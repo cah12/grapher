@@ -3491,12 +3491,20 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_min.change(function () {
-      if (!math.equal(right_min.val(), right_max.val()))
+      if (!math.equal(right_min.val(), right_max.val())) {
+        if (plot.grid === plot.threeDgrid) {
+          plot.threeDgrid.setZaxisScale(
+            parseFloat(right_min.val()),
+            parseFloat(right_max.val())
+          );
+          return;
+        }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
           parseFloat(right_max.val())
         );
+      }
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
         if (
@@ -3518,12 +3526,20 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_max.change(function () {
-      if (!math.equal(right_min.val(), right_max.val()))
+      if (!math.equal(right_min.val(), right_max.val())) {
+        if (plot.grid === plot.threeDgrid) {
+          plot.threeDgrid.setZaxisScale(
+            parseFloat(right_min.val()),
+            parseFloat(right_max.val())
+          );
+          return;
+        }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
           parseFloat(right_max.val())
         );
+      }
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
         if (
@@ -4274,11 +4290,12 @@ class PlotPropertiesPane extends PropertiesPane {
         }
         self.hide("centerAxes");
 
-        self.hide("scalePositionRight");
+        // self.hide("scalePositionRight");
         self.hide("scalePositionTop");
-        self.hide("scaleMarginsRightAxis");
-        self.hide("scaleMarginsTopAxis");
-        self.hide("scaleMarginsBottomAxis");
+        self.hide("limitsTop");
+        // self.hide("scaleMarginsRightAxis");
+        // self.hide("scaleMarginsTopAxis");
+        // self.hide("scaleMarginsBottomAxis");
 
         // self.hide("scalePositionBottomLinear");
         // self.hide("scalePositionBottomLog");
@@ -4288,7 +4305,61 @@ class PlotPropertiesPane extends PropertiesPane {
         // self.hide("scalePositionBottomAttributeIncludeReference");
         // self.hide("scalePositionBottomAttributeSymmetric");
         //self.hide("scalePositionBottomAttributeFloating");
+
+        self.replaceNodeText("scalePositionLeft", {
+          name: "y-axis",
+          title: "Configure the y-axis scale type",
+        });
+        self.replaceNodeText("scalePositionBottom", {
+          name: "x-axis",
+          title: "Configure the x-axis scale type",
+        });
+        self.replaceNodeText("scalePositionRight", {
+          name: "z-axis",
+          title: "Configure the z-axis scale type",
+        });
+        /////////////
+        self.replaceNodeText("limitsLeft", {
+          name: "y-axis",
+          title: "Set limits for the 3D grid y-axis",
+        });
+        self.replaceNodeText("limitsBottom", {
+          name: "x-axis",
+          title: "Set limits for the 3D grid x-axis",
+        });
+        self.replaceNodeText("limitsRight", {
+          name: "z-axis",
+          title: "Set limits for the 3D grid z-axis",
+        });
       } else {
+        self.show("scalePositionTop");
+        self.show("limitsTop");
+
+        self.replaceNodeText("scalePositionLeft", {
+          name: "Left",
+          title: "Configure the left scale type",
+        });
+        self.replaceNodeText("scalePositionBottom", {
+          name: "Bottom",
+          title: "Configure the bottom scale type",
+        });
+        self.replaceNodeText("scalePositionRight", {
+          name: "Right",
+          title: "Configure the right scale type",
+        });
+        ///////////
+        self.replaceNodeText("limitsLeft", {
+          name: "Left(y)",
+          title: "Set limits for the cartesian grid left(y) axis",
+        });
+        self.replaceNodeText("limitsBottom", {
+          name: "Bottom(x)",
+          title: "Set limits for the cartesian grid bottom(x) axis",
+        });
+        self.replaceNodeText("limitsRight", {
+          name: "Right(y)",
+          title: "Set limits for the cartesian grid right(y) axis",
+        });
       }
     });
 
