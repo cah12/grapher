@@ -1507,7 +1507,7 @@ class ThreeDGrid extends PlotGrid {
         1
       );
       const material = new THREE.MeshBasicMaterial({
-        color: "#e7e7e7",
+        color: self.grid._reverseContrast ? "#333333" : "#e7e7e7",
         //wireframe: true,
         side: THREE.DoubleSide,
         transparent: true,
