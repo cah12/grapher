@@ -18,6 +18,8 @@ class ThreeJs {
       return scene;
     };
 
+    this.planeOpacity = 0.7;
+
     // const al = new THREE.SpotLight(0x0000ff, 1);
     // al.position.set(p_limit, p_limit, 1);
     // scene.add(al);
@@ -755,22 +757,29 @@ class ThreeJs {
         plotItem.lines.geometry = geometry;
         plotItem.lines.material.setValues({ opacity: _alpha });
       } else {
-        plotItem.lines = new THREE.Mesh(
-          geometry,
-          new THREE.MeshBasicMaterial({
-            color: Utility.RGB2HTML(plotItem.colorMap().color2()),
-            // wireframe: true,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: _alpha,
-            clippingPlanes: clipPlanes,
-          })
-        );
+        const material = new THREE.MeshStandardMaterial({
+          color: Utility.RGB2HTML(plotItem.colorMap().color2()),
+          // wireframe: true,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: _alpha,
+          clippingPlanes: clipPlanes,
+        });
+        plotItem.lines = new THREE.Mesh(geometry, material);
       }
+
+      plotItem.lines.position.z *= -1;
 
       //console.log(plotItem.lines.visible);
 
       scene.add(plotItem.lines);
+
+      if (self.plane) {
+        self.plane.material.setValues({
+          transparent: true,
+          opacity: self.planeOpacity,
+        });
+      }
     };
 
     this.doDrawSeries = function (plotItem, positions) {
@@ -810,7 +819,6 @@ class ThreeJs {
       // console.log(self.lines);
 
       scene.add(this.boundLines);
-      //scene.rotateX(-Math.PI / 2);
     };
 
     this.generateMajGridLines = function (data) {
@@ -848,6 +856,10 @@ class ThreeJs {
       //scene.add(self.minLines);
       this.xyGridGroup.add(self.minLines);
     };
+
+    const light = new THREE.HemisphereLight(0xffffff, 0x000000);
+    light.position.set(1, -1, 1);
+    scene.add(light);
 
     scene.rotateX(-Math.PI / 2);
 
@@ -888,13 +900,14 @@ class ThreeJs {
       1,
       -1, // canvas.height / -2,
       0.01,
-      200
+      1000
     );
     //camera.position.z = 1;
     camera.position.set(p_limit, p_limit, 1);
     //camera.lookAt(scene.position);
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
+      alpha: true,
       canvas: canvas,
     });
 
@@ -1480,6 +1493,29 @@ class ThreeDGrid extends PlotGrid {
       }
 
       self.grid.generateAxesLines(data);
+
+      if (self.grid.plane) {
+        self.grid.plane.geometry.dispose();
+        self.grid.xyGridGroup.remove(self.grid.plane);
+        self.grid.plane = null;
+      }
+
+      const geometry = new THREE.PlaneGeometry(
+        2 * self.grid.getPlimit(),
+        2 * self.grid.getPlimit(),
+        1,
+        1
+      );
+      const material = new THREE.MeshBasicMaterial({
+        color: "#e7e7e7",
+        //wireframe: true,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: self.grid.planeOpacity,
+      });
+
+      self.grid.plane = new THREE.Mesh(geometry, material);
+      self.grid.xyGridGroup.add(self.grid.plane);
     };
 
     this.toString = function () {
@@ -1518,9 +1554,11 @@ class ThreeDGrid extends PlotGrid {
     }
 
     if (!this.canvas) {
-      this.canvas = document.createElement("canvas");
-      $("#centralDiv").append(this.canvas);
-      $(this.canvas).css("zIndex", 5000);
+      const c = plot.getCentralWidget().getCanvas();
+      //console.log(c[0]);
+      this.canvas = c[0]; //document.createElement("canvas");
+      //$("#centralDiv").append(this.canvas);
+      //$(this.canvas).css("zIndex", 5000);
       this.grid = new ThreeJs(this.canvas, adjustSize);
       this.grid._reverseContrast = this._reverseContrast;
     } else {
@@ -1635,6 +1673,10 @@ class ThreeDGrid extends PlotGrid {
           L[i].draw = L[i].originalDraw;
           L[i].originalDraw = null;
         }
+        if (L[i].originalRenderTile) {
+          L[i].renderTile = L[i].originalRenderTile;
+          L[i].originalRenderTile = null;
+        }
       }
       for (let i = 0; i < Utility.detachedCurves.length; i++) {
         const curve = Utility.detachedCurves[i];
@@ -1670,6 +1712,11 @@ class ThreeDGrid extends PlotGrid {
         if (!L[i].originalDraw) {
           L[i].originalDraw = L[i].draw;
           L[i].draw = self.draw2;
+        }
+
+        if (!L[i].originalRenderTile) {
+          L[i].originalRenderTile = L[i].renderTile;
+          L[i].renderTile = function () {};
         }
 
         if (!L[i].threeDsamples) {
