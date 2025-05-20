@@ -52,6 +52,32 @@ class ThreeJs {
       positions.push(1);
       positions.push(0);
       positions.push(0);
+      //X -backbone
+      if (self.backBone) {
+        positions.push(-p_limit);
+        positions.push(0.008);
+        positions.push(0);
+        ///////////////
+        positions.push(1);
+        positions.push(0.008);
+        positions.push(0);
+        //X-backbone arrow
+        positions.push(1);
+        positions.push(0.008);
+        positions.push(0);
+        /////////
+        positions.push(0.95);
+        positions.push(0.008);
+        positions.push(0.02);
+
+        positions.push(1);
+        positions.push(0.008);
+        positions.push(0);
+        /////////
+        positions.push(0.95);
+        positions.push(0.008);
+        positions.push(-0.02);
+      }
 
       //X arrow
       positions.push(1);
@@ -75,14 +101,7 @@ class ThreeJs {
 
     function getYaxisLinePosition() {
       const positions = [];
-      /* //Generate Axes
-      positions.push(-p_limit);
-      positions.push(0);
-      positions.push(0);
-      ///////////////
-      positions.push(1);
-      positions.push(0);
-      positions.push(0); */
+      //Generate Axes
 
       positions.push(0);
       positions.push(-p_limit);
@@ -91,14 +110,32 @@ class ThreeJs {
       positions.push(0);
       positions.push(1);
       positions.push(0);
+      //Y -backbone
+      if (self.backBone) {
+        positions.push(0.008);
+        positions.push(-p_limit);
+        positions.push(0);
+        ///////////////
+        positions.push(0.008);
+        positions.push(1);
+        positions.push(0);
+        //Y-backbone arrow
+        positions.push(0.008);
+        positions.push(1);
+        positions.push(0);
+        /////////
+        positions.push(0.02 + 0.008);
+        positions.push(0.95);
+        positions.push(0);
 
-      /* positions.push(0);
-      positions.push(0);
-      positions.push(-p_limit);
-      ///////////////
-      positions.push(0);
-      positions.push(0);
-      positions.push(1);     */
+        positions.push(0.008);
+        positions.push(1);
+        positions.push(0);
+        /////////
+        positions.push(-0.02 + 0.008);
+        positions.push(0.95);
+        positions.push(0);
+      }
 
       //Y arrow
       positions.push(0);
@@ -130,6 +167,32 @@ class ThreeJs {
       positions.push(0);
       positions.push(0);
       positions.push(1);
+      //Z -backbone
+      if (self.backBone) {
+        positions.push(-0.008);
+        positions.push(0);
+        positions.push(-p_limit);
+        ///////////////
+        positions.push(-0.008);
+        positions.push(0);
+        positions.push(1);
+        //Z-backbone arrow
+        positions.push(-0.008);
+        positions.push(0);
+        positions.push(1);
+        /////////
+        positions.push(0.02 - 0.008);
+        positions.push(0);
+        positions.push(0.95);
+
+        positions.push(-0.008);
+        positions.push(0);
+        positions.push(1);
+        /////////
+        positions.push(-0.02 - 0.008);
+        positions.push(0);
+        positions.push(0.95);
+      }
 
       //Z arrow
       positions.push(0);
@@ -472,8 +535,8 @@ class ThreeJs {
         this.yAxisLines.geometry.dispose();
         this.zAxisLines.geometry.dispose();
         scene.remove(this.xyGridGroup);
-        //scene.remove(this.xAxisLines);
-        // scene.remove(this.yAxisLines);
+        this.xyGridGroup.remove(this.xAxisLines);
+        this.xyGridGroup.remove(this.yAxisLines);
         scene.remove(this.zAxisLines);
       }
 
@@ -585,10 +648,12 @@ class ThreeJs {
             //scene.remove(self.labelMeshes[i]);
             self.xyGridGroup.remove(self.labelMeshes[i]);
           }
+          self.labelMeshes = [];
           for (let i = 0; i < self.zLabelMeshes.length; i++) {
-            self.labelMeshes[i].geometry.dispose();
+            self.zLabelMeshes[i].geometry.dispose();
             scene.remove(self.zLabelMeshes[i]);
           }
+          self.zLabelMeshes = [];
 
           for (let i = 0; i < data.xMajPaintTicks.length; i++) {
             const element = data.xMajPaintTicks[i];
@@ -602,7 +667,19 @@ class ThreeJs {
             const m = new THREE.Mesh(g, labelTextMaterial);
 
             m.geometry.computeBoundingBox();
-            m.geometry.translate(-m.geometry.boundingBox.max.x / 2, 0, 0);
+            if (element.s == 0) {
+              m.geometry.translate(
+                m.geometry.boundingBox.max.x / 2,
+                -m.geometry.boundingBox.max.y,
+                0
+              );
+            } else {
+              m.geometry.translate(
+                -m.geometry.boundingBox.max.x / 2,
+                -m.geometry.boundingBox.max.y,
+                0
+              );
+            }
             m.position.x = element.p;
             self.labelMeshes.push(m);
 
@@ -612,6 +689,9 @@ class ThreeJs {
 
           for (let i = 0; i < data.yMajPaintTicks.length; i++) {
             const element = data.yMajPaintTicks[i];
+            if (element.s == 0) {
+              continue;
+            }
             const g = new TextGeometry(`${element.s}`, {
               font: font,
               size: fontSize * 0.5,
@@ -622,7 +702,11 @@ class ThreeJs {
             const m = new THREE.Mesh(g, labelTextMaterial);
 
             m.geometry.computeBoundingBox();
-            m.geometry.translate(0, -m.geometry.boundingBox.max.y / 2, 0);
+            m.geometry.translate(
+              -m.geometry.boundingBox.max.x,
+              -m.geometry.boundingBox.max.y / 2,
+              0
+            );
             m.position.y = element.p;
             self.labelMeshes.push(m);
 
@@ -632,6 +716,9 @@ class ThreeJs {
 
           for (let i = 0; i < data.zMajPaintTicks.length; i++) {
             const element = data.zMajPaintTicks[i];
+            if (element.s == 0) {
+              continue;
+            }
             const g = new TextGeometry(`${element.s}`, {
               font: font,
               size: fontSize * 0.5,
@@ -857,9 +944,13 @@ class ThreeJs {
       this.xyGridGroup.add(self.minLines);
     };
 
-    const light = new THREE.HemisphereLight(0xffffff, 0x000000);
-    light.position.set(1, -1, 1);
+    const light = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
+    light.position.set(0, 0, 1);
     scene.add(light);
+
+    const aLight = new THREE.AmbientLight(0xffffff, 0.2);
+    //aLight.position.set(0, 0, 10);
+    scene.add(aLight);
 
     scene.rotateX(-Math.PI / 2);
 
@@ -1490,6 +1581,15 @@ class ThreeDGrid extends PlotGrid {
         if (self.grid.majLines) {
           self.grid.majLines.visible = false;
         }
+      }
+
+      const axisScaleDraw = p.axisScaleDraw(0);
+      if (
+        axisScaleDraw.hasComponent(AbstractScaleDraw.ScaleComponent.Backbone)
+      ) {
+        self.grid.backBone = true;
+      } else {
+        self.grid.backBone = false;
       }
 
       self.grid.generateAxesLines(data);
