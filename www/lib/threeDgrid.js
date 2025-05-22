@@ -818,6 +818,7 @@ class ThreeJs {
             vertices[ind] = null;
             vertices[ind - 1] = null;
             vertices[ind - 2] = null;
+
             continue;
             //console.log(456);
           }
@@ -825,9 +826,9 @@ class ThreeJs {
           vertices[ind] = z; // Update z-coordinate of vertex
         }
       }
-      vertices = vertices.filter(function (e) {
-        return !null;
-      });
+      // vertices = vertices.filter(function (e) {
+      //   return !null;
+      // });
       geometry.computeBoundingBox();
       // geometry.attributes.position.needsUpdate = true;
       // geometry.computeVertexNormals();

@@ -966,6 +966,11 @@ class PolarGrid extends PlotGrid {
     plot.setAutoReplot(false);
 
     if (on) {
+      const _L = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve);
+      for (let i = 0; i < _L.length; i++) {
+        _L[i].detach();
+        self.detachedCurves.push(_L[i]);
+      }
       const L_ = plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram);
       for (let i = 0; i < L_.length; i++) {
         L_[i].detach();
