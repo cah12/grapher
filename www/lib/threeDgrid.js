@@ -862,12 +862,12 @@ class ThreeJs {
 
       scene.add(plotItem.lines);
 
-      if (self.plane) {
-        self.plane.material.setValues({
-          transparent: true,
-          opacity: self.planeOpacity,
-        });
-      }
+      // if (self.plane) {
+      //   self.plane.material.setValues({
+      //     transparent: true,
+      //     opacity: self.planeOpacity,
+      //   });
+      // }
     };
 
     this.doDrawSeries = function (plotItem, positions) {
@@ -1013,6 +1013,7 @@ class ThreeJs {
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.05;
     orbit.enableZoom = false;
+    orbit.enablePan = false;
     function positionXYgrid(data, geometry) {
       if (data.minZ >= 0) {
         self.xyGridGroup.position.z = -p_limit;
@@ -1197,15 +1198,15 @@ class ThreeDGrid extends PlotGrid {
     let upper, lower;
     let handled = false;
 
-    let _autoReplot = false;
+    //let _autoReplot = false;
 
     Static.bind("magnifyingStart", function (e) {
       if (!self.threeDGrid) return;
       const plot = self.plot();
-      _autoReplot = plot.autoReplot();
+      //_autoReplot = plot.autoReplot();
       if (handled) return;
 
-      plot.setAutoReplot(false);
+      //plot.setAutoReplot(false);
       handled = true;
       const scaleDiv = self.plot().axisScaleDiv(0);
       upper = scaleDiv.upperBound();
@@ -1477,6 +1478,7 @@ class ThreeDGrid extends PlotGrid {
     this.draw = function (xMap, yMap) {
       //console.log("here");
       var p = this.plot();
+
       var xScaleDiv = p.axisScaleDiv(this.xAxis());
       var yScaleDiv = p.axisScaleDiv(this.yAxis());
 
@@ -1829,6 +1831,9 @@ class ThreeDGrid extends PlotGrid {
     if (Utility.isAutoScale(plot)) {
       self.updateZminMax();
     }
+    self.pannerEnabled = self.panner.isEnabled();
+    self.panner.setEnabled(false);
+
     //if (self.threeDGrid) {
     if (!self.original_widgetMousePressEvent_panner) {
       self.original_widgetMousePressEvent_panner =
@@ -1837,6 +1842,7 @@ class ThreeDGrid extends PlotGrid {
         return true;
       };
     }
+    plot.replot();
   }
 
   setZaxisScale(zMin, zMax) {
