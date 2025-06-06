@@ -290,7 +290,7 @@ class PlotSpectrogram extends PlotRasterItem {
      *
      */
     this.renderTile = function (xMap, yMap, tile, image) {
-      console.time();
+      //console.time();
       var range = d_data.data.interval(Static.ZAxis);
       if (!range.isValid()) return;
 
@@ -320,8 +320,13 @@ class PlotSpectrogram extends PlotRasterItem {
 
           for (x = left; x < right; x += incrementW) {
             tx = xMap.invTransform(x);
-            rgba = d_data.colorMap.rgb(range, d_data.data.value(tx, ty));
-            rgba.a = alpha; //the default alpha value of 255
+            const val = d_data.data.value(tx, ty);
+            if (isNaN(val)) {
+              rgba = { r: 0, g: 0, b: 0, a: 0 };
+            } else {
+              rgba = d_data.colorMap.rgb(range, val);
+              rgba.a = alpha; //the default alpha value of 255
+            }
             for (yy = extraPixelH; yy >= 0; --yy) {
               for (xx = extraPixelW; xx >= 0; --xx) {
                 image.setPixel(
@@ -355,7 +360,20 @@ class PlotSpectrogram extends PlotRasterItem {
           }
         }
       }
-      console.timeEnd();
+      //console.timeEnd();
+    };
+
+    /**
+     * Draw the spectrogram
+     * @param {ScaleMap} xMap Maps x-values into pixel coordinates.
+     * @param {ScaleMap} yMap Maps y-values into pixel coordinates.
+     * @see {@link PlotSpectrogram#setDisplayMode setDisplayMode()}
+     * @see {@link PlotSpectrogram#renderImage renderImage()}
+     * @see {@link PlotSpectrogram#renderContourLines renderContourLines()}
+     * @see {@link PlotRasterItem#draw PlotRasterItem.draw()}
+     */
+    this.draw = function (xMap, yMap) {
+      this.doDraw(xMap, yMap);
     };
 
     /**
@@ -408,7 +426,7 @@ class PlotSpectrogram extends PlotRasterItem {
    * @see {@link PlotSpectrogram#renderContourLines renderContourLines()}
    * @see {@link PlotRasterItem#draw PlotRasterItem.draw()}
    */
-  draw(xMap, yMap) {
+  doDraw(xMap, yMap) {
     var autoReplot = this.plot().autoReplot();
     this.plot().setAutoReplot(false);
     var d_data = this.privateData();

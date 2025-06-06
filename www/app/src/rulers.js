@@ -1087,6 +1087,9 @@ class WatchTable {
       var value = watch.value();
 
       if (watch.valueType == "number" || watch.valueType == "text") {
+        if (watch.valueType === "undefined") {
+          watch.valueType = "";
+        }
         var elemId = watchVariable;
         while (elemId.indexOf(" ") != -1) {
           elemId = elemId.replaceAll(" ", "");
@@ -1121,6 +1124,9 @@ class WatchTable {
     function updateRow(row, watch) {
       var watchVariable = watch.name();
       var value = watch.value();
+      if (value === "undefined") {
+        value = "";
+      }
 
       if (watch.valueType == "number" || watch.valueType == "text") {
         $(row[0].children[1].children).val(value);

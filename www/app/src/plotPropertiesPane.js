@@ -2241,7 +2241,7 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "gridType",
       parentId: "gridSettings",
       type: "select",
-      selectorOptions: ["Cartesian", "Polar"],
+      selectorOptions: ["Cartesian", "Polar", "3 D"],
       //disabled: true,
     });
 
@@ -2252,6 +2252,24 @@ class PlotPropertiesPane extends PropertiesPane {
       type: "checkbox",
       title: "Set the minimum radius to zero.",
       checked: true,
+    });
+
+    var zeroMinAngle = this.addProperty({
+      name: "Zero minimum angle",
+      id: "zeroMinAngle",
+      parentId: "gridSettings",
+      type: "checkbox",
+      title: "Set the minimum angle to zero.",
+      //checked: true,
+    });
+
+    var reverseContrast = this.addProperty({
+      name: "Reverse contrast",
+      id: "reverseContrast",
+      parentId: "gridSettings",
+      type: "checkbox",
+      title: "Reverses the contrast.",
+      //checked: true,
     });
 
     this.addProperty({
@@ -3473,12 +3491,20 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_min.change(function () {
-      if (!math.equal(right_min.val(), right_max.val()))
+      if (!math.equal(right_min.val(), right_max.val())) {
+        if (plot.grid === plot.threeDgrid) {
+          plot.threeDgrid.setZaxisScale(
+            parseFloat(right_min.val()),
+            parseFloat(right_max.val())
+          );
+          return;
+        }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
           parseFloat(right_max.val())
         );
+      }
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
         if (
@@ -3500,12 +3526,20 @@ class PlotPropertiesPane extends PropertiesPane {
       }
     });
     right_max.change(function () {
-      if (!math.equal(right_min.val(), right_max.val()))
+      if (!math.equal(right_min.val(), right_max.val())) {
+        if (plot.grid === plot.threeDgrid) {
+          plot.threeDgrid.setZaxisScale(
+            parseFloat(right_min.val()),
+            parseFloat(right_max.val())
+          );
+          return;
+        }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
           parseFloat(right_max.val())
         );
+      }
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
         if (
@@ -3990,15 +4024,15 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.setAxisMaxMajor(Axis.AxisId.xBottom, $(this).val());
     });
     minor_line_color.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       grid.setMinorPen(minor_line_color[0].value);
     });
     major_line_color.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       grid.setMajorPen(major_line_color[0].value);
     });
     major_gridLines.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       Utility.majorGridLines(grid, $(this)[0].checked);
       minor_gridLines.attr("disabled", !$(this)[0].checked);
     });
@@ -4007,7 +4041,7 @@ class PlotPropertiesPane extends PropertiesPane {
       minor_gridLines.attr("disabled", !on);
     });
     minor_gridLines.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       Utility.minorGridLines(grid, $(this)[0].checked);
     }); //gridAxisHorizontal
     Static.bind("minorGridLines", function (e, grid, on) {
@@ -4020,12 +4054,44 @@ class PlotPropertiesPane extends PropertiesPane {
       const autoReplot = plot.autoReplot();
       plot.setAutoReplot(false);
       if ($(this)[0].selectedIndex == 0) {
-        plot.polarGrid.hide();
+        plot.grid.hide();
+        plot.grid = plot.plotGrid;
+        plot.rv.setVisible(true);
+        self.hide("reverseContrast");
         plot.plotGrid.show();
-      } else {
-        plot.plotGrid.hide();
+      } else if ($(this)[0].selectedIndex == 1) {
+        plot.grid.hide();
+        plot.grid = plot.polarGrid;
+        self.hide("reverseContrast");
         plot.polarGrid.show();
+        plot.rv.setVisible(false);
+      } else {
+        plot.grid.hide();
+        plot.grid = plot.threeDgrid;
+        self.show("reverseContrast");
+        plot.threeDgrid.show();
+        if (!$("#fnDlg_threeD")[0].checked) {
+          $("#fnDlg_threeD").click();
+          $("#threeDType")[0].selectedIndex = 1;
+          plot.rv.setVisible(false);
+        }
       }
+
+      /* //Enabled
+      if (plot.grid.xEnabled() && !major_gridLines[0].checked) {
+        major_gridLines.click();
+      }
+      if (plot.grid.xMinEnabled() && !minor_gridLines[0].checked) {
+        minor_gridLines.click();
+      }
+
+      //Not Enabled
+      if (!plot.grid.xEnabled() && major_gridLines[0].checked) {
+        major_gridLines.click();
+      }
+      if (!plot.grid.xMinEnabled() && minor_gridLines[0].checked) {
+        minor_gridLines.click();
+      } */
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
     });
@@ -4034,7 +4100,7 @@ class PlotPropertiesPane extends PropertiesPane {
     Static.bind("currentCurveChanged", function (e, _curve) {
       curve = _curve;
       if (curve) {
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxes[0].checked) {
           grid.setAxes(curve.xAxis(), curve.yAxis());
         } else {
@@ -4055,7 +4121,7 @@ class PlotPropertiesPane extends PropertiesPane {
     Static.bind(
       "curveAxisChangedViaPropertiesPane axisChanged",
       function (e, axis, curve) {
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxes[0].checked) {
           grid.setAxes(curve.xAxis(), curve.yAxis());
         } else {
@@ -4102,7 +4168,7 @@ class PlotPropertiesPane extends PropertiesPane {
     }
 
     gridAxisVertical.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if ($(this)[0].selectedIndex == 0) {
         grid.setAxes(grid.xAxis(), Axis.AxisId.yLeft);
       } else {
@@ -4112,7 +4178,7 @@ class PlotPropertiesPane extends PropertiesPane {
     });
 
     gridAxisHorizontal.change(function () {
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if ($(this)[0].selectedIndex == 0) {
         grid.setAxes(Axis.AxisId.xBottom, grid.yAxis());
       } else {
@@ -4126,7 +4192,7 @@ class PlotPropertiesPane extends PropertiesPane {
         gridAxisControlsDisabled(true);
       } else {
         gridAxisControlsDisabled(false);
-        var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+        var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
         if (gridAxisHorizontal[0].selectedIndex == 0) {
           grid.setAxes(Axis.AxisId.xBottom, grid.yAxis());
         } else {
@@ -4147,7 +4213,7 @@ class PlotPropertiesPane extends PropertiesPane {
       //gridAxisHorizontal[0].selectedIndex = 0;
       var vertical = "";
       //gridAxisVertical[0].selectedIndex = 0;
-      var grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      var grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if (gridAxes[0].checked && curve) {
         if (curve.yAxis() == Axis.AxisId.yRight) {
           vertical = "Right";
@@ -4204,6 +4270,99 @@ class PlotPropertiesPane extends PropertiesPane {
       plot.polarGrid.setZeroMinRadius($(this)[0].checked);
     });
 
+    zeroMinAngle.change(function () {
+      plot.polarGrid.setZeroMinAngle($(this)[0].checked);
+    });
+
+    reverseContrast.change(function () {
+      plot.threeDgrid.reverseContrast($(this)[0].checked);
+    });
+
+    Static.bind("threeDGridStatus", function (e, on) {
+      if (on) {
+        console.log(456);
+        self.centerAxesBefore = centerAxes[0].checked;
+        self.centerAxesZeroBefore = centerAxesZero[0].checked;
+        if (self.centerAxesBefore) {
+          centerAxes[0].checked = false;
+          centerAxes.trigger("change");
+          self.hide("centerAxesZero");
+        }
+        self.hide("centerAxes");
+
+        // self.hide("scalePositionRight");
+        self.hide("scalePositionTop");
+        self.hide("limitsTop");
+        // self.hide("scaleMarginsRightAxis");
+        // self.hide("scaleMarginsTopAxis");
+        // self.hide("scaleMarginsBottomAxis");
+
+        // self.hide("scalePositionBottomLinear");
+        // self.hide("scalePositionBottomLog");
+        // self.hide("scalePositionBottomBase");
+        // self.hide("scalePositionBottomPrecision");
+        // self.hide("scalePositionBottomAttributeReference");
+        // self.hide("scalePositionBottomAttributeIncludeReference");
+        // self.hide("scalePositionBottomAttributeSymmetric");
+        //self.hide("scalePositionBottomAttributeFloating");
+
+        self.replaceNodeText("scalePositionLeft", {
+          name: "y-axis",
+          title: "Configure the y-axis scale type",
+        });
+        self.replaceNodeText("scalePositionBottom", {
+          name: "x-axis",
+          title: "Configure the x-axis scale type",
+        });
+        self.replaceNodeText("scalePositionRight", {
+          name: "z-axis",
+          title: "Configure the z-axis scale type",
+        });
+        /////////////
+        self.replaceNodeText("limitsLeft", {
+          name: "y-axis",
+          title: "Set limits for the 3D grid y-axis",
+        });
+        self.replaceNodeText("limitsBottom", {
+          name: "x-axis",
+          title: "Set limits for the 3D grid x-axis",
+        });
+        self.replaceNodeText("limitsRight", {
+          name: "z-axis",
+          title: "Set limits for the 3D grid z-axis",
+        });
+      } else {
+        self.show("scalePositionTop");
+        self.show("limitsTop");
+
+        self.replaceNodeText("scalePositionLeft", {
+          name: "Left",
+          title: "Configure the left scale type",
+        });
+        self.replaceNodeText("scalePositionBottom", {
+          name: "Bottom",
+          title: "Configure the bottom scale type",
+        });
+        self.replaceNodeText("scalePositionRight", {
+          name: "Right",
+          title: "Configure the right scale type",
+        });
+        ///////////
+        self.replaceNodeText("limitsLeft", {
+          name: "Left(y)",
+          title: "Set limits for the cartesian grid left(y) axis",
+        });
+        self.replaceNodeText("limitsBottom", {
+          name: "Bottom(x)",
+          title: "Set limits for the cartesian grid bottom(x) axis",
+        });
+        self.replaceNodeText("limitsRight", {
+          name: "Right(y)",
+          title: "Set limits for the cartesian grid right(y) axis",
+        });
+      }
+    });
+
     Static.bind("polarGridStatus", function (e, on) {
       let _theta = "\u0398";
       if (on) {
@@ -4231,6 +4390,7 @@ class PlotPropertiesPane extends PropertiesPane {
         });
 
         self.show("zeroMinRadius");
+        self.show("zeroMinAngle");
         ////////////////////////////////////////////////////////////
         self.hide("scalePositionBottomLinear");
         self.hide("scalePositionBottomLog");
@@ -4260,6 +4420,24 @@ class PlotPropertiesPane extends PropertiesPane {
           name: `Angle(${_theta})`,
           title: `Set limits for the polar grid angle(${_theta}).`,
         });
+
+        self.hide("magnifierRightAxis");
+        self.hide("magnifierTopAxis");
+
+        self.replaceNodeText("magnifierLeftAxis", {
+          name: `Polar radius enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.replaceNodeText("magnifierBottomAxis", {
+          name: `Polar angle enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        if (magnifierBottomAxis[0].checked) {
+          magnifierBottomAxis.click();
+          self.magnifierBottomAxisEnabledChanged = true;
+        }
       } else {
         self.replaceNodeText("scalePosition", {
           name: "Type, precision & attributes",
@@ -4279,6 +4457,7 @@ class PlotPropertiesPane extends PropertiesPane {
           //self.show("centerAxesZero");
         }
         self.hide("zeroMinRadius");
+        self.hide("zeroMinAngle");
         self.show("scalePositionBottom");
         self.show("scalePositionRight");
         self.show("scalePositionTop");
@@ -4302,6 +4481,27 @@ class PlotPropertiesPane extends PropertiesPane {
           title: "Set limits for the cartesian grid bottom(x) axis",
           name: "Bottom(x)",
         });
+
+        self.replaceNodeText("magnifierLeftAxis", {
+          name: `Left axis enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.replaceNodeText("magnifierBottomAxis", {
+          name: `Bottom axis enabled`,
+          //title: `Set limits for the polar grid angle(${_theta}).`,
+        });
+
+        self.show("magnifierRightAxis");
+        self.show("magnifierTopAxis");
+
+        if (
+          self.magnifierBottomAxisEnabledChanged &&
+          !magnifierBottomAxis[0].checked
+        ) {
+          magnifierBottomAxis.click();
+          self.magnifierBottomAxisEnabledChanged = false;
+        }
 
         ////////////////////////////////////////////////////////////
         self.show("scalePositionBottomLinear");
@@ -4416,7 +4616,7 @@ class PlotPropertiesPane extends PropertiesPane {
       plotTitleTitleSelector.val(plot.title());
       initLimitsInput();
       var grid;
-      grid = plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
+      grid = plot.grid; //plot.itemList(PlotItem.RttiValues.Rtti_PlotGrid)[0];
       if (!grid) {
         grid = plot.itemList(PlotItem.RttiValues.Rtti_PolarGrid)[0];
       }
@@ -4435,6 +4635,8 @@ class PlotPropertiesPane extends PropertiesPane {
       self.hide("pointSelected");
 
       self.hide("centerAxesZero");
+      self.hide("zeroMinAngle");
+      self.hide("reverseContrast");
       /* self.hide("lowerLimitY");
       self.hide("upperLimitY");
       self.hide("lowerLimitXY");

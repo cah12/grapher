@@ -927,6 +927,16 @@ class Utility {
     );
   }
 
+  static findDetachedCurve(name) {
+    let detachedCurves = Utility.detachedCurves;
+    for (let i = 0; i < detachedCurves.length; i++) {
+      if (detachedCurves[i].title() == name) {
+        return detachedCurves[i];
+      }
+    }
+    return null;
+  }
+
   /**
    * Generate a unique curve name
    * @param {Plot} plot Plot to which a curve with the generated name will be attached
@@ -937,7 +947,11 @@ class Utility {
     let suffix = 1;
     let preFix = prefix || "curve_";
     let curveName = preFix.concat(suffix);
-    while (plot.findPlotCurve(curveName)) curveName = preFix.concat(++suffix);
+    while (
+      plot.findPlotCurve(curveName) ||
+      Utility.findDetachedCurve(curveName)
+    )
+      curveName = preFix.concat(++suffix);
     return curveName;
   }
 
@@ -3852,23 +3866,40 @@ class Utility {
    * @param {String} rgb Color (e.g.: "rgb(255, 0, 0)", "#ff0000", or "red")
    * @returns {String} Inverted color
    */
-  static invert(bg) {
+  static invert(bg, bg2, bg3) {
+    function padZero(str, len) {
+      len = len || 2;
+      var zeros = new Array(len).join("0");
+      return (zeros + str).slice(-len);
+    }
+    if (bg2 && bg3) {
+      bg = `rgb(${bg}, ${bg2}, ${bg3})`;
+    } else if (typeof bg == "number") {
+      bg = bg.toString(16);
+      bg = bg.replace("0x", "#");
+    }
     if (typeof bg == "string" && bg.indexOf("#") == -1)
       bg = Utility.RGB2HTML(bg);
-    // rgb = Utility.colorToRGB(rgb);
-    // rgb = [].slice
-    //   .call(arguments)
-    //   .join(",")
-    //   .replace(/rgb\(|\)|rgba\(|\)|\s/gi, "")
-    //   .split(",");
-    // for (var i = 0; i < rgb.length; i++) rgb[i] = (i === 3 ? 1 : 255) - rgb[i];
-    // return "rgb(" + rgb.join(", ") + ")";
 
     bg = parseInt(Number(bg.replace("#", "0x")), 10);
     bg = ~bg;
     bg = bg >>> 0;
     bg = bg & 0x00ffffff;
     bg = "#" + bg.toString(16).padStart(6, "0");
+
+    /* // convert 3-digit hex to 6-digits.
+    if (bg.length === 3) {
+      bg = bg[0] + bg[0] + bg[1] + bg[1] + bg[2] + bg[2];
+    }
+    if (bg.length !== 6) {
+      throw new Error("Invalid HEX color.");
+    }
+    // invert color components
+    var r = (255 - parseInt(bg.slice(0, 2), 16)).toString(16),
+      g = (255 - parseInt(bg.slice(2, 4), 16)).toString(16),
+      b = (255 - parseInt(bg.slice(4, 6), 16)).toString(16);
+    // pad each with zeros and return
+    return "#" + padZero(r) + padZero(g) + padZero(b); */
 
     return bg;
   }
@@ -6025,16 +6056,16 @@ class Utility {
         latex.indexOf("y") !== -1 &&
         latex.indexOf("r") !== -1
       ) {
-        //const mf = $("#fnDlg_function")[0];
-        //const _theta = "\u0398";
         Utility.alert(
           `The equation contains both "r" and "y". The Grapher treated "r" as an unknown. Generally, for explicit dependent variable, you should use "y" with cartesian graphs and "r" with polar graphs.`,
           null,
           "y_with_cartesian_graphs_and_r_with_polar_graphs"
         );
-      } else {
-        result = result.replaceAll("theta", "T").replaceAll("r", "y");
+      } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
+        result = result.replaceAll("r", "y");
       }
+
+      result = result.replaceAll("theta", "T");
 
       result = result.replaceAll("primePlaceHolder", "'");
       result = result.replaceAll("doublePrimePlaceHolder", "''");
@@ -6599,6 +6630,23 @@ class Utility {
     }
   }
 
+  static validate3dDomain(info) {
+    const { lowerX, upperX, lowerY, upperY, fn } = info;
+    const parser = math.parse(fn);
+    const numberOfPoints = 200;
+    const xStep = (upperX - lowerX) / (numberOfPoints - 1);
+    const yStep = (upperY - lowerY) / (numberOfPoints - 1);
+
+    let validLowerX = Number.MAX_VALUE;
+    let validUpperX = Number.MIN_VALUE;
+    let validLowerY = Number.MAX_VALUE;
+    let validUpperY = Number.MIN_VALUE;
+
+    for (let i = 0; i < numOfPoints; i++) {
+      const y = lowerY + yStep * i;
+    }
+  }
+
   static displayWarnMessage(mf, errorMessage) {
     if (errorMessage) {
       Utility.toolTip = $(mf).attr("data-original-title");
@@ -6752,3 +6800,5 @@ Utility.progressSpinner2 = $(
 );
 Utility.progressSpinnerInit = false;
 Utility.progressWaitOnCount = 0;
+
+Utility.detachedCurves = [];

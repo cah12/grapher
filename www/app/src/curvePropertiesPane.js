@@ -945,9 +945,9 @@ class CurvePropertiesPane extends PropertiesPane {
       if (!curve || curve.title() !== curveSelectProp.val()) {
         return;
       }
-
-      fillCurveCheckBox[0].checked =
-        curve.brush().color != "noBrush" ? true : false;
+      if (curve.rtti === PlotItem.RttiValues.Rtti_Plotcurve)
+        fillCurveCheckBox[0].checked =
+          curve.brush().color != "noBrush" ? true : false;
 
       aspectRatioOneToOneFn();
       if (curve.axesSwapped) {
