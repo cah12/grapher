@@ -492,7 +492,6 @@ Static.grapherHelp = "";
 Static.min_discontinuity_samples = 400;
 Static.magnifying = false;
 Static.math_mode = "deg";
-
 Static.inverseFunction = false;
 
 ////////////https://simplegrapher.onrender.com///////////////
