@@ -42,6 +42,16 @@ class ThreeJs {
       return geometry;
     }
 
+    function positionXYgrid(data, geometry) {
+      if (data.minZ >= 0) {
+        self.xyGridGroup.position.z = -p_limit;
+      } else if (data.maxZ <= 0) {
+        self.xyGridGroup.position.z = p_limit;
+      } else {
+        self.xyGridGroup.position.z = self.transformZ(0, data.minZ, data.maxZ);
+      }
+    }
+
     function getXaxisLinePosition() {
       const positions = [];
       //Generate Axes
@@ -1014,7 +1024,7 @@ class ThreeJs {
     orbit.dampingFactor = 0.05;
     orbit.enableZoom = false;
     orbit.enablePan = false;
-    function positionXYgrid(data, geometry) {
+    /* function positionXYgrid(data, geometry) {
       if (data.minZ >= 0) {
         self.xyGridGroup.position.z = -p_limit;
       } else if (data.maxZ <= 0) {
@@ -1022,7 +1032,7 @@ class ThreeJs {
       } else {
         self.xyGridGroup.position.z = self.transformZ(0, data.minZ, data.maxZ);
       }
-    }
+    } */
 
     //orbit.autoRotate = true;
     //orbit.update();
