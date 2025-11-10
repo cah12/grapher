@@ -29,8 +29,8 @@ class PlotPropertiesPane extends PropertiesPane {
     function makePointTableRow() {
       let row = $(
         '<tr>\
-        <td style="border: 1px solid"><math-field class="math-field-limits" tabindex="1" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
-        <td style="border: 1px solid"><math-field class="math-field-limits" tabindex="2" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
       </tr>'
       );
 
@@ -128,6 +128,10 @@ class PlotPropertiesPane extends PropertiesPane {
 
     $("#pointTableTable").append(makePointTableRow());
 
+    Static.setDefaultMathfieldProperties($("math-field")[0]);
+
+    /* $("math-field")[0].mathVirtualKeyboardPolicy = "manual";
+
     $("math-field")[0].addEventListener(
       "keydown",
       (ev) => {
@@ -137,7 +141,7 @@ class PlotPropertiesPane extends PropertiesPane {
         } else if (ev.key === "Escape") ev.preventDefault();
       },
       { capture: true }
-    );
+    ); */
 
     function validInput(str) {
       let result = false;
@@ -404,6 +408,11 @@ class PlotPropertiesPane extends PropertiesPane {
       newTableCurve.setStyle(Curve.CurveStyle.Dots);
 
       newTableCurve.attach(plot);
+
+      //Give focus to the first input
+      const lastRow = $("#pointTableTable").find("TR").last();
+      const inp = lastRow.find("math-field").first()[0];
+      inp.focus();
     });
 
     function clearPointTable() {

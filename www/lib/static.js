@@ -551,3 +551,19 @@ Static.solveFor = function (exp, v, indepVar = "x") {
     return solve_for(exp, v);
   }
 };
+
+//set properties for any mathfield element created. You can override these settings later for individual mathfields.
+Static.setDefaultMathfieldProperties = function (mf) {
+  $("math-field")[0].mathVirtualKeyboardPolicy = "manual";
+
+  $("math-field")[0].addEventListener(
+    "keydown",
+    (ev) => {
+      if (ev.key === "\\") {
+        ev.preventDefault();
+        $("#fnDlg_function")[0].executeCommand(["insert", "\\backslash"]);
+      } else if (ev.key === "Escape") ev.preventDefault();
+    },
+    { capture: true }
+  );
+};
