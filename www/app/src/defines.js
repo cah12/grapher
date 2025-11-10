@@ -52,8 +52,10 @@ class DefinesDlg extends ModalDlg {
       .off("focusin")
       .on("focusin", () => {
         if (self.showKeyboard) {
+          self.originalContainer = mathVirtualKeyboard.container;
           mathVirtualKeyboard.container = self.getDlgModal()[0];
           mathVirtualKeyboard.show();
+          self.originalTop = $(".modal-dialog").css("top");
           $(".modal-dialog").css("top", "63%");
           this.getDlgModal()[0].scrollBy(0, 1000);
           this.getDlgModal().css("overflow", "hidden");
@@ -64,9 +66,9 @@ class DefinesDlg extends ModalDlg {
       .off("focusout")
       .on("focusout", () => {
         if (self.showKeyboard) {
-          mathVirtualKeyboard.container = $("body")[0];
+          mathVirtualKeyboard.container = self.originalContainer;
           mathVirtualKeyboard.hide();
-          $(".modal-dialog").css("top", "0%");
+          $(".modal-dialog").css("top", self.originalTop);
         }
       });
 
