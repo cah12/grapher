@@ -46,7 +46,8 @@ class DefinesDlg extends ModalDlg {
 
     const mf = self.selector("definesValue")[0];
 
-    $(mf)
+    //Remove virtual keyboard option for now
+    /* $(mf)
       .off("focusin")
       .on("focusin", () => {
         if (self.showKeyboard) {
@@ -66,15 +67,25 @@ class DefinesDlg extends ModalDlg {
           mathVirtualKeyboard.hide();
           $(".modal-dialog").css("top", "0%");
         }
-      });
+      }); */
 
     Utility.extendGetValue(mf);
+
+    //Remove virtual keyboard option for now
+    /* this.addRow([
+      `<div class="col-md-6"><input tabindex="-1" id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
+                          </input>\
+                          </div>`,
+      '<div class="col-md-6"><input tabindex="-1" id="showVirtualKeyboard" type="checkbox" checked> <label for="showVirtualKeyboard">Show virtual keyboard</label> \
+                          </input>\
+                          </div>',
+    ]); */
 
     this.addRow([
       `<div class="col-md-6"><input tabindex="-1" id="simplify" type="checkbox" checked> <label for="simplify">Simplify expanded equation</label> \
                           </input>\
                           </div>`,
-      '<div class="col-md-6"><input tabindex="-1" id="showVirtualKeyboard" type="checkbox" checked> <label for="showVirtualKeyboard">Show virtual keyboard</label> \
+      '<div class="col-md-6"> \
                           </input>\
                           </div>',
     ]);

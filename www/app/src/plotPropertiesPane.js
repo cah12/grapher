@@ -29,8 +29,8 @@ class PlotPropertiesPane extends PropertiesPane {
     function makePointTableRow() {
       let row = $(
         '<tr>\
-        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
-        <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" tabindex="1" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
+        <td style="border: 1px solid"><math-field class="math-field-limits" tabindex="2" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
       </tr>'
       );
 
@@ -38,11 +38,11 @@ class PlotPropertiesPane extends PropertiesPane {
       Utility.extendGetValue(row_inputs[0]);
       Utility.extendGetValue(row_inputs[1]);
 
-      row.off("change").on("change", function () {
+      row.off("change").on("change", async function () {
         //const row = $(this).parent().parent();
         const inputs = $(this).find("math-field");
 
-        tableSamples = getPointsFromTable();
+        tableSamples = await getPointsFromTable();
         newTableCurve.setSamples(tableSamples);
         plot.autoRefresh();
         //console.log(tableSamples);
@@ -67,6 +67,7 @@ class PlotPropertiesPane extends PropertiesPane {
           }
         }
       });
+
       row.off("input").on("input", function () {
         //console.log($("#pointTableTable")[0].rows);
         const rows = $("#pointTableTable")[0].rows;
@@ -77,9 +78,6 @@ class PlotPropertiesPane extends PropertiesPane {
           inputs[0].value.length == 0 &&
           inputs[1].value.length == 0
         ) {
-          //console.log(478, $(this).index());
-          //tableSamples = getPointsFromTable();
-          //console.log(tableSamples);
           $(this).off("change");
           $(this).off("input");
           $("#pointTableTable")[0].deleteRow($(this).index());
@@ -426,10 +424,10 @@ class PlotPropertiesPane extends PropertiesPane {
       inputs[1].value = "";
     }
 
-    $("#pointTableClose").click(function () {
+    $("#pointTableClose").click(async function () {
       $("#fnDlg_title").val(Utility.generateCurveName(plot));
 
-      if (getPointsFromTable().length == 0) {
+      if ((await getPointsFromTable().length) == 0) {
         newTableCurve.detach();
         newTableCurve = null;
       }
