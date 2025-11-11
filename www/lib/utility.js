@@ -6027,7 +6027,8 @@ class Utility {
 
       result = result.replaceAll("''", "doublePrimePlaceHolder");
       result = result.replaceAll("'", "primePlaceHolder");
-      mf.value = result;
+
+      //mf.value = result;
 
       result = mf.getValueTemp(format);
       mf.latexValue = latex;
