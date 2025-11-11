@@ -4368,6 +4368,14 @@ class Utility {
         continue;
       }
 
+      if (
+        Utility.isDigit(str[i - 1]) &&
+        (Utility.isDigit(str[i + 1]) || str[i + 1] == "-" || str[i + 1] == "+")
+      ) {
+        result += str[i];
+        continue;
+      }
+
       if (Utility.isDigit(str[i - 1]) && Utility.isAlpha(str[i + 1])) {
         if (str[i + 2]) {
           if (!Utility.isAlpha(str[i + 2])) {
