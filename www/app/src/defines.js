@@ -790,6 +790,8 @@ class Defines {
         // const f = res.substring(0, res.indexOf("("));
         // console.log(f);
         let f = "";
+
+        let key = "";
         let numOfPrimes = 0;
         for (let i = ind; i >= 0; i--) {
           if (str[i] == "'") {
@@ -802,11 +804,16 @@ class Defines {
         for (let i = 0; i < numOfPrimes; i++) {
           f += "'";
         }
-        f += "(";
+        //f += "(";
+
         const keys = this.defineNames();
         for (let i = 0; i < keys.length; i++) {
-          if (keys[i].indexOf(f) !== -1) return keys[i];
+          if (keys[i].indexOf(f[0]) !== -1) {
+            key = keys[i];
+            break;
+          }
         }
+        res = key.replace(f[0], f);
       }
       return res;
     };

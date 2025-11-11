@@ -68,7 +68,7 @@ class PlotPropertiesPane extends PropertiesPane {
         }
       });
 
-      row.off("input").on("input", function () {
+      /* row.off("input").on("input", function () {
         //console.log($("#pointTableTable")[0].rows);
         const rows = $("#pointTableTable")[0].rows;
         const inputs = $(this).find("math-field");
@@ -82,6 +82,13 @@ class PlotPropertiesPane extends PropertiesPane {
           $(this).off("input");
           $("#pointTableTable")[0].deleteRow($(this).index());
         }
+      }); */
+
+      //Needed so that when a mathfield gains focus it can receive input
+      row.off("mousedown").on("mousedown", function (e) {
+        e.preventDefault();
+        // console.log(e.target);
+        e.target.focus();
       });
 
       return row;
