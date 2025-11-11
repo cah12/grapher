@@ -251,7 +251,12 @@ class PlotPropertiesPane extends PropertiesPane {
       let indexInSamples = 0;
       for (let i = 1; i < rows.length; i++) {
         const inputs = $(rows[i]).find("math-field");
-        if (inputs[0].value.length && inputs[1].value.length) {
+        if (
+          inputs[0].value &&
+          inputs[0].value.length &&
+          inputs[1].value &&
+          inputs[1].value.length
+        ) {
           inputs[0].value = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(
               samples[indexInSamples].x,
@@ -360,13 +365,13 @@ class PlotPropertiesPane extends PropertiesPane {
         mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
       });
 
-    $("#fnDlg_function")
+    /* $("#fnDlg_function")
       .off("keyup")
       .on("keyup", function (e) {
-        const w = parseFloat(t.parent().parent().css("width"));
+        const w = parseFloat(t.parent().parent().css("width"));//310
         //console.log($("#fnDlg_function")[0].caretPoint);
         if ($("#fnDlg_function")[0].caretPoint) {
-          const c = $("#fnDlg_function")[0].caretPoint.x;
+          const c = $("#fnDlg_function")[0].caretPoint.x;//10
 
           if (c > w) {
             t.parent().parent()[0].scrollLeft = c - w + 80;
@@ -376,7 +381,26 @@ class PlotPropertiesPane extends PropertiesPane {
             $("#executeButton").click();
           }
         }
+      }); */
+
+    $("#fnDlg_function")
+      .off("keyup")
+      .on("keyup", function (e) {
+        if (e.key === "Enter" || e.keyCode === 13) {
+          mathVirtualKeyboard.hide();
+          $("#executeButton").click();
+          e.target.focus();
+        }
       });
+
+    //Needed so that when a mathfield gains focus it can receive input
+    // $("#fnDlg_function")
+    //   .off("mousedown")
+    //   .on("mousedown", function (e) {
+    //     e.preventDefault();
+    //     // console.log(e.target);
+    //     e.target.focus();
+    //   });
 
     Static.bind("itemAttached", function (e, curve, on) {
       //const L = plot.itemList();
