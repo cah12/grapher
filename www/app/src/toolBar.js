@@ -192,18 +192,32 @@ class ToolBar {
 
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
 
-        $("body")
+        document.body.addEventListener("keydown", function (event) {
+          console.log("Keydown event on body:", event.key);
+          const keyCode = event.keyCode ? event.keyCode : event.which;
+          if (
+            keyCode &&
+            event.altKey &&
+            String.fromCharCode(keyCode) == obj.ampersandNizeChar
+          ) {
+            //event.preventDefault();
+            $("#" + obj.innerHtmlId).click();
+          }
+        });
+
+        /* $("body")
           .off("keydown")
           .on("keydown", function (event) {
             const keyCode = event.keyCode ? event.keyCode : event.which;
             if (
+              keyCode &&
               event.altKey &&
               String.fromCharCode(keyCode) == obj.ampersandNizeChar
             ) {
               //event.preventDefault();
               $("#" + obj.innerHtmlId).click();
             }
-          });
+          }); */
       }
 
       obj.innerHtmlId = obj.innerHtmlId || option + "elem_" + buttonList.length;
@@ -316,7 +330,19 @@ class ToolBar {
 
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
 
-        $("body")
+        document.body.addEventListener("keydown", function (event) {
+          //console.log("Keydown event on body:", event.key);
+          const keyCode = event.keyCode ? event.keyCode : event.which;
+          if (
+            event.altKey &&
+            String.fromCharCode(keyCode) == obj.ampersandNizeChar
+          ) {
+            //event.preventDefault();
+            r.click();
+          }
+        });
+
+        /* $("body")
           .off("keydown")
           .on("keydown", function (event) {
             const keyCode = event.keyCode ? event.keyCode : event.which;
@@ -327,7 +353,7 @@ class ToolBar {
               //event.preventDefault();
               r.click();
             }
-          });
+          }); */
       }
       obj.value = obj.value || option;
       obj.innerHtmlId = obj.innerHtmlId || option + "elem_" + buttonList.length;
@@ -501,7 +527,18 @@ About Us
 
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
 
-        $("body")
+        document.body.addEventListener("keydown", function (event) {
+          const keyCode = event.keyCode ? event.keyCode : event.which;
+          if (
+            event.altKey &&
+            String.fromCharCode(keyCode) == obj.ampersandNizeChar
+          ) {
+            //event.preventDefault();
+            $("#" + obj.innerHtmlId).click();
+          }
+        });
+
+        /* $("body")
           .off("keydown")
           .on("keydown", function (event) {
             const keyCode = event.keyCode ? event.keyCode : event.which;
@@ -512,7 +549,7 @@ About Us
               //event.preventDefault();
               $("#" + obj.innerHtmlId).click();
             }
-          });
+          }); */
       } //////
       obj.innerHtmlId =
         obj.innerHtmlId || obj.text + "elem_" + buttonList.length;
@@ -635,8 +672,18 @@ About Us
         obj.text = obj.text.replace("&", "");
 
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
+        document.body.addEventListener("keydown", function (event) {
+          const keyCode = event.keyCode ? event.keyCode : event.which;
+          if (
+            event.altKey &&
+            String.fromCharCode(keyCode) == obj.ampersandNizeChar
+          ) {
+            //event.preventDefault();
+            $("#" + obj.innerHtmlId).click();
+          }
+        });
 
-        $("body")
+        /* $("body")
           .off("keydown")
           .on("keydown", function (event) {
             const keyCode = event.keyCode ? event.keyCode : event.which;
@@ -647,7 +694,7 @@ About Us
               //event.preventDefault();
               $("#" + obj.innerHtmlId).click();
             }
-          });
+          }); */
       }
       obj.innerHtmlId =
         obj.innerHtmlId || obj.text + "elem_" + buttonList.length;
@@ -821,7 +868,17 @@ About Us
 
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
 
-        $("body")
+        document.body.addEventListener("keydown", function (e) {
+          const keyCode = e.keyCode ? e.keyCode : e.which;
+          if (
+            e.altKey &&
+            String.fromCharCode(keyCode) == obj.ampersandNizeChar
+          ) {
+            l[0].dispatchEvent(new MouseEvent("click"));
+          }
+        });
+
+        /*$("body")
           .off("keydown")
           .on("keydown", function (e) {
             const keyCode = e.keyCode ? e.keyCode : e.which;
@@ -831,7 +888,7 @@ About Us
             ) {
               l[0].dispatchEvent(new MouseEvent("click"));
             }
-          });
+          });*/
       }
 
       l.text(obj.text);
