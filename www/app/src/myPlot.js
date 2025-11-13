@@ -567,8 +567,11 @@ class MyPlot extends Plot {
           let _fn = Utility.purgeAndMarkKeywords(m_fn);
           for (var i = 0; i < coeffs.length; ++i) {
             while (_fn.indexOf(coeffs[i]) != -1) {
-              _fn = _fn.replace(coeffs[i], 1 + 1e-15); //log(x,a) don't work with a==1;
-              //_fn = _fn.replace(coeffs[i], 1);
+              if (m_fn.indexOf("log") != -1 || m_fn.indexOf("ln") != -1) {
+                _fn = _fn.replace(coeffs[i], 1 + 1e-15); //log(x,a) don't work with a==1;
+              } else {
+                _fn = _fn.replace(coeffs[i], 1);
+              }
             }
           }
           m_fn = Utility.replaceKeywordMarkers(_fn);

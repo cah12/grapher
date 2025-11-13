@@ -287,6 +287,13 @@ class PlotPropertiesPane extends PropertiesPane {
     const mf = $("#fnDlg_function")[0];
     this.mf = mf;
 
+    /* mf.addEventListener("keydown", function (ev) {
+      const keyCode = ev.keyCode ? ev.keyCode : ev.which;
+      if (ev.altKey && String.fromCharCode(keyCode) == "p") {
+        ev.preventDefault();
+      }
+    }); */
+
     // mf.mathVirtualKeyboardPolicy = "manual";
     // mf.addEventListener("focusin", () => mathVirtualKeyboard.show());
     // mf.addEventListener("focusout", () => mathVirtualKeyboard.hide());
@@ -310,10 +317,12 @@ class PlotPropertiesPane extends PropertiesPane {
     let executeButtonClicked = false;
 
     mf.addEventListener("beforeinput", (e) => {
-      if (e.data == "insertLineBreak" && mf.caretPoint) {
-        //$("#executeButton").trigger("mousedown"); //show wait cursor
-        //$("body").trigger("click");
-        //Utility.progressWait();
+      //if (e.data == "insertLineBreak" && mf.caretPoint) {
+      //$("#executeButton").trigger("mousedown"); //show wait cursor
+      //$("body").trigger("click");
+      //Utility.progressWait();
+      if (e.data == "\\pi") {
+        e.preventDefault();
       }
     });
 

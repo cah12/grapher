@@ -160,7 +160,9 @@ class MyLegend extends Legend {
           .replaceAll("log_{undefined}", "ln")
           .replaceAll("*", "\\cdot")
           //.replaceAll("T", "\u0398")
+          .replaceAll("Turning", "@")
           .replaceAll("T", "\\theta")
+          .replaceAll("@", "Turning")
           .replaceAll("+-", "-")
           .replaceAll("-+", "-");
       }

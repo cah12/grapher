@@ -193,7 +193,7 @@ class ToolBar {
         obj.tooltip = obj.tooltip + "\tAlt " + obj.ampersandNizeChar;
 
         document.body.addEventListener("keydown", function (event) {
-          console.log("Keydown event on body:", event.key);
+          //console.log("Keydown event on body:", event.key);
           const keyCode = event.keyCode ? event.keyCode : event.which;
           if (
             keyCode &&
