@@ -625,7 +625,13 @@ class InfoPropertiesPane extends Pane {
           });
  */
 
-          let s = makeAnimationSaples(curCurve);
+          let s = makeAnimationSamples(curCurve);
+
+          const first = s[0];
+          const last = s[s.length - 1];
+          if (first.x === last.x && first.y === last.y) {
+            s.pop();
+          }
 
           ///////////////////////////////////
           if (!s) {
@@ -717,16 +723,22 @@ class InfoPropertiesPane extends Pane {
       plot.autoRefresh();
     }
 
-    function makeAnimationSaples(curCurve) {
-      //console.time("makeAnimationSaples");
+    function makeAnimationSamples(curCurve, numberOfCurves = 1) {
+      //console.time("makeAnimationSamples");
       let xValues, expr;
       const step = (curCurve.upperX - curCurve.lowerX) / curCurve.numOfSamples;
       try {
         expr = math.compile(curCurve.expandedFn);
         // evaluate the expression repeatedly for different values of x
-        xValues = math
+        //math.range(start, end, step [, includeEnd])
+        /* xValues = math
           .range(curCurve.lowerX - step, curCurve.upperX + step, step)
+          .toArray(); */
+        xValues = math
+          .range(curCurve.lowerX, curCurve.upperX, step, true)
           .toArray();
+        xValues[0] = curCurve.lowerX;
+        xValues[xValues.length - 1] = curCurve.upperX;
       } catch (error) {
         console.log(error);
       }
@@ -759,6 +771,10 @@ class InfoPropertiesPane extends Pane {
         }
         return p;
       });
+
+      if (numberOfCurves == 1) {
+        return s;
+      }
 
       const plot = curCurve.plot();
       //console.log(plot);
@@ -808,7 +824,7 @@ class InfoPropertiesPane extends Pane {
         Utility.adjustForDecimalPlaces(y, ydec)
       );
 
-      //console.timeEnd("makeAnimationSaples");
+      //console.timeEnd("makeAnimationSamples");
       return s;
     }
 
@@ -869,7 +885,7 @@ class InfoPropertiesPane extends Pane {
                // console.timeEnd(); */
 
                 //console.time();
-                let s = makeAnimationSaples(curCurve);
+                let s = makeAnimationSamples(curCurve, array.length);
 
                 //console.log("length", s.length);
 
