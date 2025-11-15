@@ -455,7 +455,7 @@ class Defines {
 
     this.validateDefineName = function (_name) {
       let c = _name[0].toLowerCase().charCodeAt(0);
-      if (!(c > 96 && c < 122)) {
+      if (!(c >= 97 && c <= 122)) {
         return { errorType: Defines.DefineError.start, name: _name };
       }
 

@@ -4287,7 +4287,7 @@ class Utility {
    */
   static isAlpha(ch) {
     ch = ch.toLowerCase().charCodeAt(0);
-    return ch > 96 && ch < 122;
+    return ch >= 97 && ch <= 122;
   }
 
   static isDigit(c) {
