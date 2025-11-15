@@ -6194,7 +6194,7 @@ class Utility {
       result = result.replaceAll(/\^'/gi, "'");
       //result = result.replaceAll("\\^'", "'");
 
-      result = Utility.insertProductSign(result);
+      // result = Utility.insertProductSign(result);
 
       return result;
     };
