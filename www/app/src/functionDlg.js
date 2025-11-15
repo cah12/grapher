@@ -756,6 +756,10 @@ class MFunctionDlg {
         }
       }
 
+      this.getVariable = function () {
+        return $("#fnDlg_variable").val();
+      };
+
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
         Static.g_solution_arr = null;
         Static.inverseFunction = false;
@@ -1027,14 +1031,14 @@ class MFunctionDlg {
 
           if (fnDlgFunctionVal.indexOf("=") === -1) {
             let m_str = fnDlgFunctionVal;
-            let str = Utility.getFunctionDeclaration(m_str);
+            let str = Utility.getFunctionDeclaration(m_str, self.variable);
             let error = [];
             while (str) {
               if (!plot.defines.getDefine(str)) {
                 error.push(str);
               }
               m_str = m_str.replaceAll(str, "");
-              str = Utility.getFunctionDeclaration(m_str);
+              str = Utility.getFunctionDeclaration(m_str, self.variable);
             }
             if (error.length) {
               let s = error.toString();
@@ -1855,7 +1859,10 @@ class MFunctionDlg {
               ////////////////////////////////////////////////////////
               let m_lhs = arr[0];
               let m_rhs = arr[1];
-              let m_rhs_fnDec = Utility.getFunctionDeclaration(m_rhs);
+              let m_rhs_fnDec = Utility.getFunctionDeclaration(
+                m_rhs,
+                self.variable
+              );
               if (m_rhs_fnDec) {
                 if (!plot.defines.getDefine(m_rhs_fnDec)) {
                   if (
@@ -1890,10 +1897,16 @@ class MFunctionDlg {
                   }
                 }
               }
-              m_rhs_fnDec = Utility.getFullDerivativeDeclaration(m_rhs);
+              m_rhs_fnDec = Utility.getFullDerivativeDeclaration(
+                m_rhs,
+                self.variable
+              );
               if (m_rhs_fnDec) {
                 try {
-                  const _dec = Utility.getFunctionDeclaration(m_rhs);
+                  const _dec = Utility.getFunctionDeclaration(
+                    m_rhs,
+                    self.variable
+                  );
                   if (_dec) {
                     m_rhs = m_rhs.replaceAll(_dec, "U");
                   }
@@ -1922,7 +1935,10 @@ class MFunctionDlg {
               }
 
               if (!forceDefined) {
-                let m_lhs_fnDec = Utility.getFunctionDeclaration(m_lhs);
+                let m_lhs_fnDec = Utility.getFunctionDeclaration(
+                  m_lhs,
+                  self.variable
+                );
                 if (m_lhs_fnDec) {
                   if (!plot.defines.getDefine(m_lhs_fnDec)) {
                     try {
@@ -1981,7 +1997,10 @@ class MFunctionDlg {
                 m_lhs_fnDec = Utility.getFullDerivativeDeclaration(m_lhs);
                 if (m_lhs_fnDec) {
                   try {
-                    const _dec = Utility.getFunctionDeclaration(m_rhs);
+                    const _dec = Utility.getFunctionDeclaration(
+                      m_rhs,
+                      self.variable
+                    );
                     if (_dec) {
                       m_lhs = m_lhs.replaceAll(_dec, "U");
                     }
@@ -2077,9 +2096,9 @@ class MFunctionDlg {
               }
 
               if (arr.length == 2) {
-                let dec = Utility.getFunctionDeclaration(arr[0]);
+                let dec = Utility.getFunctionDeclaration(arr[0], self.variable);
                 if (!dec) {
-                  dec = Utility.getFunctionDeclaration(arr[1]);
+                  dec = Utility.getFunctionDeclaration(arr[1], self.variable);
                 }
                 if (dec) {
                   fnDlgFunctionVal = `${arr[0]}=${arr[1]}`;

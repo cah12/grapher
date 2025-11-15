@@ -178,7 +178,8 @@ class PlotPropertiesPane extends PropertiesPane {
           }
           if (x.length) {
             const _x = await plot.defines.expandDefines(
-              inputs[0].getValue("ascii-math")
+              inputs[0].getValue("ascii-math"),
+              plot._functionDlg.getVariable()
             );
             x = Utility.logBaseAdjust(_x);
             try {
@@ -196,7 +197,8 @@ class PlotPropertiesPane extends PropertiesPane {
           if (y.length) {
             //Utility.logBaseAdjust(fnDlgFunctionVal)
             const _y = await plot.defines.expandDefines(
-              inputs[1].getValue("ascii-math")
+              inputs[1].getValue("ascii-math"),
+              plot._functionDlg.getVariable()
             );
             y = Utility.logBaseAdjust(_y);
             try {
