@@ -226,14 +226,7 @@ class MyCurve extends Curve {
           self.left = left;
           self.right = right;
           self.discontinuosCurvePending = true;
-          // left -= w;
-          // right += w;
-          // self.discontinuity = await Utility.discontinuity(
-          //   self.fn,
-          //   left,
-          //   right,
-          //   self.variable
-          // );
+
           if (Utility.isPeriodic(self.fn)) {
             self.discontinuity = Utility.handlePeriodic(
               self.discontinuity,
@@ -461,12 +454,7 @@ class MyCurve extends Curve {
             //console.log(456);
             self.left = left;
             self.right = right;
-            // self.discontinuity = await Utility.discontinuity(
-            //   self.fn,
-            //   left,
-            //   right,
-            //   self.variable
-            // );
+
             if (Utility.isPeriodic(self.fn)) {
               self.discontinuity = Utility.handlePeriodic(
                 self.discontinuity,
