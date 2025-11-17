@@ -340,7 +340,7 @@ class MyCurve extends Curve {
     for (let n = 0; n < self.discontinuity.length; n++) {
       for (let i = 0; i < samples.length; i++) {
         if (!self.axesSwapped) {
-          if (samples[i].x > self.discontinuity[n]) {
+          if (i != 0 && samples[i].x > self.discontinuity[n]) {
             indexBeforeDiscontinuity.push(i - 1);
             break;
           }
