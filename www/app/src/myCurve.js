@@ -279,6 +279,12 @@ class MyCurve extends Curve {
     } else {
       samples = samples || self.data().samples();
       const indexBeforeDiscontinuity = self.indices(samples);
+      if (
+        indexBeforeDiscontinuity.length == 1 &&
+        indexBeforeDiscontinuity[0] === -1
+      ) {
+        return super.drawCurve(painter, style, xMap, yMap, from, to);
+      }
 
       if (!self.setAxis) {
         self.setAxis = true;
