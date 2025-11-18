@@ -336,12 +336,8 @@ class MyCurve extends Curve {
 
   indices(samples) {
     const self = this;
-    let n = 0;
-    if (samples[i].x == self.discontinuity[n]) {
-      n++;
-    }
     const indexBeforeDiscontinuity = [];
-    for (n; n < self.discontinuity.length; n++) {
+    for (let n = 0; n < self.discontinuity.length; n++) {
       for (let i = 0; i < samples.length; i++) {
         if (!self.axesSwapped) {
           if (samples[i].x > self.discontinuity[n]) {

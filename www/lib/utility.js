@@ -2195,7 +2195,7 @@ class Utility {
           }
         }
       }
-      if (lowerX < 0 && upperX > 0) {
+      if (!limits_x && lowerX == samples[0].x && lowerX < 0 && upperX > 0) {
         samples.push(new Misc.Point(0, parser.eval({ x: 0 })));
       }
 
@@ -2338,8 +2338,9 @@ class Utility {
 
       //on the left boundary
       if (
+        discont[0] > lowerX &&
         Utility.adjustForDecimalPlaces(discont[0], 4) ===
-        Utility.adjustForDecimalPlaces(lowerX, 4)
+          Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
         try {
           samples[0].y = math.sign(samples[0].y) * lmt;
@@ -2350,8 +2351,9 @@ class Utility {
       }
       //on the right boundary
       if (
+        discont[discont.length - 1] < upperX &&
         Utility.adjustForDecimalPlaces(discont[discont.length - 1], 4) ===
-        Utility.adjustForDecimalPlaces(upperX, 4)
+          Utility.adjustForDecimalPlaces(upperX, 4)
       ) {
         try {
           samples[samples.length - 1].y =
@@ -3255,6 +3257,7 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        //return [0];
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
