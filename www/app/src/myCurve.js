@@ -346,12 +346,12 @@ class MyCurve extends Curve {
     for (let n = 0; n < self.discontinuity.length; n++) {
       for (let i = 0; i < samples.length; i++) {
         if (!self.axesSwapped) {
-          if (samples[i].x > self.discontinuity[n]) {
+          if (samples[i].x > self.discontinuity[n][0]) {
             indexBeforeDiscontinuity.push(i - 1);
             break;
           }
         } else {
-          if (samples[i].y > self.discontinuity[n]) {
+          if (samples[i].y > self.discontinuity[n][0]) {
             indexBeforeDiscontinuity.push(i - 1);
             break;
           }

@@ -2338,8 +2338,8 @@ class Utility {
 
       //on the left boundary
       if (
-        discont[0] > lowerX &&
-        Utility.adjustForDecimalPlaces(discont[0], 4) ===
+        discont[0][0] > lowerX &&
+        Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
           Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
         try {
@@ -2347,12 +2347,12 @@ class Utility {
         } catch (error) {
           console.log(error);
         }
-        discont[0] = "#";
+        discont[0][0] = "#";
       }
       //on the right boundary
       if (
-        discont[discont.length - 1] < upperX &&
-        Utility.adjustForDecimalPlaces(discont[discont.length - 1], 4) ===
+        discont[discont.length - 1][0] < upperX &&
+        Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
           Utility.adjustForDecimalPlaces(upperX, 4)
       ) {
         try {
@@ -2361,7 +2361,7 @@ class Utility {
         } catch (error) {
           console.log(error);
         }
-        discont[discont.length - 1] = "#";
+        discont[discont.length - 1][0] = "#";
       }
 
       let n = 0;
@@ -2369,7 +2369,10 @@ class Utility {
       const delta = (samples[1].x - samples[0].x) * 1e-5;
       // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
-        const d = discont[i];
+        if (discont[i][1] !== "infinite") {
+          continue;
+        }
+        const d = discont[i][0];
         if (d == "#") {
           continue;
         }
@@ -3257,7 +3260,9 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
-        //return [1];
+        //return [[-2.0, "infinite"]]; //1/(x-2)
+        //return [[0.0, "removable"]]; //sin(x)/x
+        //return [[0.0, "jump"]]; //|x|/x
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
