@@ -1842,6 +1842,19 @@ class MyPlot extends Plot {
       }
 
       if (operationType == "Discontinuity point") {
+        function makeDiscontinuityAlertString(discont) {
+          let s = "";
+          for (let i = 0; i < discont.length; i++) {
+            let d = discont[i];
+            if (d.length === 3) {
+              s += `*** Abscissa:${d[0]} Type:${d[1]} Limit:${d[2]}\n`;
+            } else {
+              s += `*** Abscissa:${d[0]} Type:${d[1]}\n`;
+            }
+          }
+          return s;
+        }
+
         let precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
         //const precision = Math.min(precisionX, precisionY);
         let decimalPlacesX = curves[0]
@@ -1859,13 +1872,13 @@ class MyPlot extends Plot {
         let n = discontinuity.length;
         let isAre = "is",
           discont = "discontinuity";
-        let values = "value";
+        let values = "Value";
         if (discontinuity && n > 1) {
-          (isAre = "are"), (discont = "discontinuities"), (values = "values");
+          (isAre = "are"), (discont = "discontinuities"), (values = "Values");
         }
         let str = `There ${isAre} ${n} ${discont}.`;
         if (n) {
-          str += ` Abscissa ${values}:\n` + discontinuity.toString();
+          str += ` ${values}:\n` + makeDiscontinuityAlertString(discontinuity);
         }
         alert(str);
       }
