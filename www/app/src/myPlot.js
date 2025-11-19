@@ -1849,13 +1849,11 @@ class MyPlot extends Plot {
           .axisDecimalPlaces(curves[0].xAxis());
 
         const discontinuity = curves[0].discontinuity.map(function (e) {
-          return [
-            Utility.toPrecision(
-              Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
-              precisionX
-            ),
-            e[1],
-          ];
+          e[0] = Utility.toPrecision(
+            Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
+            precisionX
+          );
+          return e;
         });
 
         let n = discontinuity.length;
