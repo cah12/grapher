@@ -2334,7 +2334,8 @@ class Utility {
       const lmt_l = samples[0].x;
       const lmt_u = samples[samples.length - 1].x;
       const step = (samples[1].x - samples[0].x) * 1e-20;
-      const lmt = 1e35;
+      //const lmt = 1e35;
+      const lmt = Static.LargeNumber;
 
       //on the left boundary
       if (
@@ -3267,6 +3268,15 @@ class Utility {
         //return [[0.0, "removable", 1.0]]; //sin(x)/x
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
+        // return [
+        //   [-9.42477796076938, "infinite"],
+        //   [-6.283185307179586, "infinite"],
+        //   [-3.141592653589793, "infinite"],
+        //   [0.0, "infinite"],
+        //   [3.141592653589793, "infinite"],
+        //   [6.283185307179586, "infinite"],
+        //   [9.42477796076938, "infinite"],
+        // ]; //1/sin(x)
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {

@@ -92,6 +92,8 @@ Array.prototype.containsPoint = function (point) {
   return false;
 };
 
+Static.LargeNumber = 1e200;
+
 Static.NoPen = "noPen";
 Static.NoBrush = "noBrush";
 Static._eps = 1.0e-300;

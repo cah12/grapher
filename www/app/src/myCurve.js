@@ -305,6 +305,7 @@ class MyCurve extends Curve {
     } else {
       samples = samples || self.data().samples();
       const indexBeforeDiscontinuity = self.indices(samples);
+      //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       // if (
       //   indexBeforeDiscontinuity.length == 1 &&
       //   indexBeforeDiscontinuity[0] === -1
@@ -370,7 +371,7 @@ class MyCurve extends Curve {
     // plot.autoRefresh();
   }
 
-  indices(samples) {
+  /* indices(samples) {
     const self = this;
     const indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
@@ -383,6 +384,28 @@ class MyCurve extends Curve {
         } else {
           if (samples[i].y > self.discontinuity[n][0]) {
             indexBeforeDiscontinuity.push(i - 1);
+            break;
+          }
+        }
+      }
+    } */
+
+  indices(samples) {
+    const self = this;
+    let i = 0;
+    const indexBeforeDiscontinuity = [];
+    for (let n = 0; n < self.discontinuity.length; n++) {
+      for (i; i < samples.length; i++) {
+        if (!self.axesSwapped) {
+          if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+            indexBeforeDiscontinuity.push(i);
+            i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+            break;
+          }
+        } else {
+          if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+            indexBeforeDiscontinuity.push(i);
+            i = i + 2; //skip next two points to avoid multiple discontinuities at same location
             break;
           }
         }
