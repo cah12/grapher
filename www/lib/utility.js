@@ -3266,6 +3266,7 @@ class Utility {
         // ]; //1/(x+2)
         //return [[0.0, "removable", 1.0]]; //sin(x)/x
         //return [[0.0, "jump"]]; //|x|/x
+        //return [[1.0, "infinite"]]; //log(x-1)
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {

@@ -271,6 +271,32 @@ class MyCurve extends Curve {
     }
   }
 
+  isDrawDiscontinuosCurve(indexBeforeDiscontinuity) {
+    const self = this;
+    let hasInfiniteOrJump = false;
+    for (let i = 0; i < self.discontinuity.length; i++) {
+      if (self.discontinuity[i].length >= 2) {
+        if (
+          self.discontinuity[i][1] == "infinite" ||
+          self.discontinuity[i][1] == "jump"
+        ) {
+          hasInfiniteOrJump = true;
+          break;
+        }
+      }
+    }
+    if (!hasInfiniteOrJump) return false;
+
+    if (
+      indexBeforeDiscontinuity.length == 1 &&
+      indexBeforeDiscontinuity[0] === -1
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   async doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
@@ -279,10 +305,14 @@ class MyCurve extends Curve {
     } else {
       samples = samples || self.data().samples();
       const indexBeforeDiscontinuity = self.indices(samples);
-      if (
-        indexBeforeDiscontinuity.length == 1 &&
-        indexBeforeDiscontinuity[0] === -1
-      ) {
+      // if (
+      //   indexBeforeDiscontinuity.length == 1 &&
+      //   indexBeforeDiscontinuity[0] === -1
+      // ) {
+      //   return super.drawCurve(painter, style, xMap, yMap, from, to);
+      // }
+
+      if (!self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
       }
 

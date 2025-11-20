@@ -1847,9 +1847,9 @@ class MyPlot extends Plot {
           for (let i = 0; i < discont.length; i++) {
             let d = discont[i];
             if (d.length === 3) {
-              s += `*** Abscissa:${d[0]} Type:${d[1]} Limit:${d[2]}\n`;
+              s += `*** Abscissa: ${d[0]}, Type: ${d[1]} and Limit: ${d[2]}\n`;
             } else {
-              s += `*** Abscissa:${d[0]} Type:${d[1]}\n`;
+              s += `*** Abscissa: ${d[0]} and Type: ${d[1]}\n`;
             }
           }
           return s;
