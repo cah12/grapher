@@ -274,6 +274,11 @@ class MyCurve extends Curve {
   isDrawDiscontinuosCurve(indexBeforeDiscontinuity) {
     const self = this;
     let hasInfiniteOrJump = false;
+    // if (self.discontinuity.length == 1) {
+    //   if (self.discontinuity[0][1] == "jump") {
+    //     return true;
+    //   }
+    // }
     for (let i = 0; i < self.discontinuity.length; i++) {
       if (self.discontinuity[i].length >= 2) {
         if (
@@ -388,25 +393,43 @@ class MyCurve extends Curve {
           }
         }
       }
-    } */
+    }
+  } */
 
   indices(samples) {
     const self = this;
     let i = 0;
     const indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
-      for (i; i < samples.length; i++) {
-        if (!self.axesSwapped) {
-          if (Math.abs(samples[i].y) >= Static.LargeNumber) {
-            indexBeforeDiscontinuity.push(i);
-            i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-            break;
+      if (self.discontinuity[n][1] != "infinite") {
+        for (let i = 0; i < samples.length; i++) {
+          if (!self.axesSwapped) {
+            if (samples[i].x > self.discontinuity[n][0]) {
+              indexBeforeDiscontinuity.push(i - 1);
+              break;
+            }
+          } else {
+            if (samples[i].y > self.discontinuity[n][0]) {
+              indexBeforeDiscontinuity.push(i - 1);
+              break;
+            }
           }
-        } else {
-          if (Math.abs(samples[i].x) >= Static.LargeNumber) {
-            indexBeforeDiscontinuity.push(i);
-            i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-            break;
+        }
+      }
+      if (self.discontinuity[n][1] === "infinite") {
+        for (i; i < samples.length; i++) {
+          if (!self.axesSwapped) {
+            if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+              indexBeforeDiscontinuity.push(i);
+              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+              break;
+            }
+          } else {
+            if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+              indexBeforeDiscontinuity.push(i);
+              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+              break;
+            }
           }
         }
       }
