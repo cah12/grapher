@@ -3260,7 +3260,7 @@ class Utility {
     try {
       let result = [];
       if (Static.imagePath === "images/") {
-        //return await this.discontinuity1(exp, lower, upper, indepVar);
+        return await this.discontinuity1(exp, lower, upper, indepVar);
         // return [
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
@@ -3268,15 +3268,15 @@ class Utility {
         //return [[0.0, "removable", 1.0]]; //sin(x)/x
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
-        return [
-          [-9.42477796076938, "infinite"],
-          [-6.283185307179586, "infinite"],
-          [-3.141592653589793, "infinite"],
-          [0.0, "infinite"],
-          [3.141592653589793, "infinite"],
-          [6.283185307179586, "infinite"],
-          [9.42477796076938, "infinite"],
-        ]; //1/sin(x)
+        // return [
+        //   [-9.42477796076938, "infinite"],
+        //   [-6.283185307179586, "infinite"],
+        //   [-3.141592653589793, "infinite"],
+        //   [0.0, "infinite"],
+        //   [3.141592653589793, "infinite"],
+        //   [6.283185307179586, "infinite"],
+        //   [9.42477796076938, "infinite"],
+        // ]; //1/sin(x)
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
@@ -3309,8 +3309,8 @@ class Utility {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }
-    let d = discontinuitiesArr[1] - discontinuitiesArr[0];
-    let a1 = discontinuitiesArr[0];
+    let d = discontinuitiesArr[1][0] - discontinuitiesArr[0][0];
+    let a1 = discontinuitiesArr[0][0];
 
     if (d != 0) {
       //a periodic function
@@ -3335,8 +3335,8 @@ class Utility {
       discontinuitiesArr.length = 0;
 
       while (n < 5000) {
-        discontinuitiesArr.push(a1 + n * d);
-        if (discontinuitiesArr[n] > upper) {
+        discontinuitiesArr.push([a1 + n * d, "infinite"]);
+        if (discontinuitiesArr[n][0] > upper) {
           break;
         }
         n++;
