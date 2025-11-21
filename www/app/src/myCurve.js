@@ -309,6 +309,13 @@ class MyCurve extends Curve {
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
       samples = samples || self.data().samples();
+      if (
+        samples.length &&
+        self.discontinuity.length == 1 &&
+        samples[0].x >= self.discontinuity[0][0]
+      ) {
+        return super.drawCurve(painter, style, xMap, yMap, from, to);
+      }
       const indexBeforeDiscontinuity = self.indices(samples);
       //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       // if (
