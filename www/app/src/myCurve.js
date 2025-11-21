@@ -308,7 +308,9 @@ class MyCurve extends Curve {
     if (!self.discontinuity.length && !self.discontinuosCurvePending) {
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
+      //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       samples = samples || self.data().samples();
+      //console.log(samples[11]);
       if (
         samples.length &&
         self.discontinuity.length == 1 &&

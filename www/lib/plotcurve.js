@@ -1065,6 +1065,7 @@ class Curve extends PlotSeriesItem {
     //console.log(486, polyline);
 
     if (doFit) {
+      //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       //console.log(44)
       polyline = this.curveFitter().fitCurve(polyline);
     }

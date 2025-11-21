@@ -321,7 +321,7 @@ class ScaleMap {
       return d_p1 + (s - d_ts1) * d_cnv;
     }; */
 
-    this.transform1 = function (s) {
+    /* this.transform1 = function (s) {
       if (d_transform) {
         //alert(s)
         s = d_transform.transform(s);
@@ -329,6 +329,20 @@ class ScaleMap {
       }
 
       return d_p1 + (s - d_ts1) * d_cnv;
+    }; */
+
+    this.transform1 = function (s) {
+      if (d_transform) {
+        //alert(s)
+        s = d_transform.transform(s);
+        //alert(s)
+      }
+      let val = d_p1 + (s - d_ts1) * d_cnv;
+      if (Math.abs(val) >= Static.LargeNumber) {
+        if (math.sign(s) == -1) return d_p1;
+        return 0;
+      }
+      return val;
     };
 
     //Deprecated
