@@ -271,6 +271,21 @@ class MyCurve extends Curve {
     }
   }
 
+  isScaleAdjustNeeded(indexBeforeDiscontinuity) {
+    const self = this;
+    let adjust = false;
+    for (let i = 0; i < self.discontinuity.length; i++) {
+      if (
+        self.discontinuity[i][1] == "infinite" ||
+        self.discontinuity[i][1] == "jump"
+      ) {
+        adjust = true;
+        break;
+      }
+    }
+    return adjust;
+  }
+
   isDrawDiscontinuosCurve(indexBeforeDiscontinuity) {
     const self = this;
     let hasInfiniteOrJump = false;
@@ -338,7 +353,9 @@ class MyCurve extends Curve {
         if (!self.unboundedRange) {
           Utility.setAutoScale(plot, true);
         }
-        plot.setAxisScale(self.yAxis(), -6, 6);
+        if (self.isScaleAdjustNeeded(indexBeforeDiscontinuity)) {
+          plot.setAxisScale(self.yAxis(), -6, 6);
+        }
       }
       self.drawDiscontinuosCurve(
         painter,
@@ -624,7 +641,9 @@ class MyCurve extends Curve {
       if (!self.setAxis) {
         self.setAxis = true;
         if (!self.unboundedRange) Utility.setAutoScale(plot, true);
-        plot.setAxisScale(self.yAxis(), -6, 6);
+        if (self.isScaleAdjustNeeded(indexBeforeDiscontinuity)) {
+          plot.setAxisScale(self.yAxis(), -6, 6);
+        }
       }
     } else {
       super.drawCurve(painter, style, xMap, yMap, from, to);
