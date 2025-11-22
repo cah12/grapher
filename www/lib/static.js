@@ -492,7 +492,8 @@ math.pow = customPow;
 Static.imagePath = "images/";
 Static.grapherHelp = "";
 //////////////////////////////////////
-Static.min_discontinuity_samples = 400;
+// Static.min_discontinuity_samples = 400;
+Static.min_discontinuity_samples = 700;
 Static.magnifying = false;
 Static.math_mode = "deg";
 Static.inverseFunction = false;

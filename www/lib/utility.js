@@ -2370,7 +2370,10 @@ class Utility {
       const delta = (samples[1].x - samples[0].x) * 1e-5;
       // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
-        if (discont[i][1] !== "infinite") {
+        // if (discont[i][1] !== "infinite") {
+        //   continue;
+        // }
+        if (discont[i][1] == "jump") {
           continue;
         }
         const d = discont[i][0];
@@ -2385,13 +2388,19 @@ class Utility {
             yVal = parser.eval(_scope);
             try {
               if (n > 0) {
-                samples[n - 1].y = math.sign(yVal) * lmt;
-                //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+                if (discont[i][1] == "infinite") {
+                  samples[n - 1].y = math.sign(yVal) * lmt;
+                  //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
 
-                _scope.set("x", d + delta);
-                yVal = parser.eval(_scope);
-                samples[n].y = math.sign(yVal) * lmt;
-                //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+                  _scope.set("x", d + delta);
+                  yVal = parser.eval(_scope);
+                  samples[n].y = math.sign(yVal) * lmt;
+                  //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+                }
+                if (discont[i][1] == "removable") {
+                  samples[n - 1].y = discont[i][2];
+                  samples[n].y = discont[i][2];
+                }
               }
             } catch (error) {
               console.log(n);
@@ -3261,6 +3270,11 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return [
+        //   [-1.414, "removable", 0.0],
+        //   [1.414, "removable", 0.0],
+        // ]; //sqrt(x^2-2)
+        //return [[0.0, "infinite"]];
         // return [
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
@@ -6095,7 +6109,7 @@ class Utility {
       } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
         result = result.replaceAll("r", "y");
       }
-
+      result = result.replaceAll("^(-1)", "#");
       result = result.replaceAll("theta", "T");
 
       result = result.replaceAll("primePlaceHolder", "'");
@@ -6317,6 +6331,7 @@ class Utility {
       result = Utility.insertProductSign(result);
       result = result.replaceAll("*(", "(");
       result = result.replaceAll(",)", "),");
+      result = result.replaceAll("(#", "^(-1)(");
 
       return result;
     }

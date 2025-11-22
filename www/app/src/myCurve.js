@@ -283,7 +283,8 @@ class MyCurve extends Curve {
       if (self.discontinuity[i].length >= 2) {
         if (
           self.discontinuity[i][1] == "infinite" ||
-          self.discontinuity[i][1] == "jump"
+          self.discontinuity[i][1] == "jump" ||
+          self.discontinuity[i][1] == "removable"
         ) {
           hasInfiniteOrJump = true;
           break;
@@ -314,7 +315,8 @@ class MyCurve extends Curve {
       if (
         samples.length &&
         self.discontinuity.length == 1 &&
-        samples[0].x >= self.discontinuity[0][0]
+        samples[0].x >= self.discontinuity[0][0] &&
+        !self.unboundedRange
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
       }
