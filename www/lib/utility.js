@@ -3269,11 +3269,11 @@ class Utility {
     try {
       let result = [];
       if (Static.imagePath === "images/") {
-        return await this.discontinuity1(exp, lower, upper, indepVar);
-        // return [
-        //   [-1.414, "removable", 0.0],
-        //   [1.414, "removable", 0.0],
-        // ]; //sqrt(x^2-2)
+        //return await this.discontinuity1(exp, lower, upper, indepVar);
+        return [
+          [-1.414, "removable", 2.10734242e-8],
+          [1.414, "removable", 2.10734242e-8],
+        ]; //sqrt(x^2-2)
         //return [[0.0, "infinite"]];
         // return [
         //   [-2.0, "infinite"],

@@ -1859,16 +1859,27 @@ class MyPlot extends Plot {
         }
 
         let precisionX = curves[0].plot().axisPrecision(curves[0].xAxis());
+        let precisionY = curves[0].plot().axisPrecision(curves[0].yAxis());
         //const precision = Math.min(precisionX, precisionY);
         let decimalPlacesX = curves[0]
           .plot()
           .axisDecimalPlaces(curves[0].xAxis());
+
+        let decimalPlacesY = curves[0]
+          .plot()
+          .axisDecimalPlaces(curves[0].yAxis());
 
         const discontinuity = curves[0].discontinuity.map(function (e) {
           e[0] = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
             precisionX
           );
+          if (e.length === 3) {
+            e[2] = Utility.toPrecision(
+              Utility.adjustForDecimalPlaces(e[2], Math.min(decimalPlacesY, 9)),
+              precisionY
+            );
+          }
           return e;
         });
 
