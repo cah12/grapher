@@ -327,10 +327,14 @@ class MyCurve extends Curve {
       //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       samples = samples || self.data().samples();
       //console.log(samples[11]);
+      let val_x = samples[0].x;
+      if (self.axesSwapped) {
+        val_x = samples[0].y;
+      }
       if (
         samples.length &&
         self.discontinuity.length == 1 &&
-        samples[0].x >= self.discontinuity[0][0] &&
+        val_x >= self.discontinuity[0][0] &&
         !self.unboundedRange
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);

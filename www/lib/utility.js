@@ -3274,7 +3274,7 @@ class Utility {
         //   [-1.414, "removable", 2.10734242e-8],
         //   [1.414, "removable", 2.10734242e-8],
         // ]; //sqrt(x^2-2)
-        //return [[0.0, "infinite"]];
+        //return [[0.0, "infinite"]]; //1/x
         // return [
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
