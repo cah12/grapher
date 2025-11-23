@@ -4245,6 +4245,9 @@ class MyPlot extends Plot {
             // }
 
             if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
+              if (item.unboundedRange) {
+                continue;
+              }
               let samples = item.data().samples();
               this.axesSwapped = true;
               if (enableWatch) {
@@ -4321,6 +4324,7 @@ class MyPlot extends Plot {
         return false;
       }
       this.axesSwapped = false;
+
       return true;
     };
 

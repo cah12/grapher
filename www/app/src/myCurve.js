@@ -348,7 +348,10 @@ class MyCurve extends Curve {
       //   return super.drawCurve(painter, style, xMap, yMap, from, to);
       // }
 
-      if (!self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)) {
+      if (
+        !self.unboundedRange &&
+        !self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)
+      ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
       }
 
@@ -358,7 +361,11 @@ class MyCurve extends Curve {
           Utility.setAutoScale(plot, true);
         }
         if (self.isScaleAdjustNeeded(indexBeforeDiscontinuity)) {
-          plot.setAxisScale(self.yAxis(), -6, 6);
+          if (!Static.AxisInYX) {
+            plot.setAxisScale(self.yAxis(), -6, 6);
+          } else {
+            plot.setAxisScale(self.xAxis(), -6, 6);
+          }
         }
       }
       self.drawDiscontinuosCurve(
@@ -435,7 +442,7 @@ class MyCurve extends Curve {
     for (let n = 0; n < self.discontinuity.length; n++) {
       if (self.discontinuity[n][1] != "infinite") {
         for (let i = 0; i < samples.length; i++) {
-          if (!self.axesSwapped) {
+          if (!Static.AxisInYX) {
             if (samples[i].x > self.discontinuity[n][0]) {
               indexBeforeDiscontinuity.push(i - 1);
               break;
@@ -450,7 +457,7 @@ class MyCurve extends Curve {
       }
       if (self.discontinuity[n][1] === "infinite") {
         for (i; i < samples.length; i++) {
-          if (!self.axesSwapped) {
+          if (!Static.AxisInYX) {
             if (Math.abs(samples[i].y) >= Static.LargeNumber) {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location

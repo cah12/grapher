@@ -902,5 +902,8 @@ require([
 
 /*
 TODO
+Swapping axis with unbounded curve bugs
+
+
 unbounded curve toggling auto silently. at leas in polarGrid
 */

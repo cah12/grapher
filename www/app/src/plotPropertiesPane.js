@@ -2406,6 +2406,7 @@ class PlotPropertiesPane extends PropertiesPane {
         //Do not swap axes
         //Static.swapAxes = 1;
         //console.log("Do not swap axes", Static.swapAxes);
+        Static.AxisInYX = false;
         if (!plot.unSwapAxes()) {
           //Static.swapAxes = 1;
           $(this)[0].selectedIndex = Static.swapAxes;
@@ -2416,6 +2417,7 @@ class PlotPropertiesPane extends PropertiesPane {
         //Swap axes
         //Static.swapAxes = 2;
         //console.log("Swap axes", Static.swapAxes);
+        Static.AxisInYX = true;
         if (!plot.swapAxes()) {
           //Static.swapAxes = 0;
           $(this)[0].selectedIndex = Static.swapAxes;

@@ -339,8 +339,13 @@ class ScaleMap {
       }
       let val = d_p1 + (s - d_ts1) * d_cnv;
       if (Math.abs(val) >= Static.LargeNumber) {
-        if (math.sign(s) == -1) return d_p1;
-        return 0;
+        if (!Static.AxisInYX) {
+          if (math.sign(s) == -1) return d_p1;
+          return d_p2;
+        } else {
+          if (math.sign(s) == 1) return d_p2;
+          return d_p1;
+        }
       }
       return val;
     };
