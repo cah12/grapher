@@ -1218,6 +1218,12 @@ class MyPlot extends Plot {
             minYVal = math.abs(curve.minYValue());
             maxXVal = math.abs(curve.maxXValue());
             maxYVal = math.abs(curve.maxYValue());
+            if (Static.AxisInYX) {
+              minXVal = math.abs(curve.minYValue());
+              minYVal = math.abs(curve.minXValue());
+              maxXVal = math.abs(curve.maxYValue());
+              maxYVal = math.abs(curve.maxXValue());
+            }
           } catch (error) {
             console.log(error);
           }

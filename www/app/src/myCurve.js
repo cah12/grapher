@@ -211,7 +211,11 @@ class MyCurve extends Curve {
         }
 
         const plot = self.plot();
-        const scaleDiv = plot.axisScaleDiv(self.xAxis());
+
+        let scaleDiv = plot.axisScaleDiv(self.xAxis());
+        if (Static.AxisInYX) {
+          scaleDiv = plot.axisScaleDiv(self.yAxis());
+        }
         let left = scaleDiv.lowerBound(),
           right = scaleDiv.upperBound();
         const w = right - left;
@@ -253,6 +257,19 @@ class MyCurve extends Curve {
         };
 
         data.discontinuitySamples = Utility.makeSamples(obj);
+
+        if (Static.AxisInYX) {
+          //Swap x and y in discontinuity samples
+          const samples = data.discontinuitySamples;
+          for (let i = 0; i < samples.length; i++) {
+            const pt = samples[i];
+            const temp = pt.x;
+            pt.x = pt.y;
+            pt.y = temp;
+            samples[i] = pt;
+          }
+          data.discontinuitySamples = samples;
+        }
 
         self.doDraw(
           painter,

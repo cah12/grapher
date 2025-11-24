@@ -2401,6 +2401,12 @@ class PlotPropertiesPane extends PropertiesPane {
       if (index == 0) {
         //Implicit
         Static.swapAxes = 0;
+        const prev = Static.AxisInYX;
+        Static.AxisInYX = false;
+        if (prev) {
+          plot.unSwapAxes();
+        }
+
         //console.log("Implicit", Static.swapAxes);
       } else if (index == 1) {
         //Do not swap axes

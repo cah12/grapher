@@ -2147,6 +2147,9 @@ class Utility {
         samples.push(new Misc.Point(xVal, yVal));
       }
     }
+    if (!samples.length) {
+      return samples;
+    }
     if (Utility.errorResponseChanged) {
       Utility.errorResponseChanged = false;
       Utility.errorResponse = Utility.warnIgnore;
