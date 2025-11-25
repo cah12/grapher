@@ -3358,9 +3358,9 @@ class Utility {
         }
         n++;
       }
-      discontinuitiesArr.push(a1 + (n + 1) * d);
-      discontinuitiesArr.push(a1 + (n + 2) * d);
-      discontinuitiesArr.push(a1 + (n + 3) * d);
+      discontinuitiesArr.push([a1 + (n + 1) * d, "infinite"]);
+      discontinuitiesArr.push([a1 + (n + 2) * d, "infinite"]);
+      discontinuitiesArr.push([a1 + (n + 3) * d, "infinite"]);
     }
     return discontinuitiesArr;
   }

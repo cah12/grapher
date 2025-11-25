@@ -342,29 +342,31 @@ class MyCurve extends Curve {
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
       //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
-      samples = samples || self.data().samples();
-      //console.log(samples[11]);
-      let val_x = samples[0].x;
-      if (self.axesSwapped) {
-        val_x = samples[0].y;
+      let indexBeforeDiscontinuity;
+      if (samples && samples.length) {
+        samples = samples || self.data().samples();
+        //console.log(samples[11]);
+        let val_x = samples[0].x;
+        if (self.axesSwapped) {
+          val_x = samples[0].y;
+        }
+        if (
+          samples.length &&
+          self.discontinuity.length == 1 &&
+          val_x >= self.discontinuity[0][0] &&
+          !self.unboundedRange
+        ) {
+          return super.drawCurve(painter, style, xMap, yMap, from, to);
+        }
+        indexBeforeDiscontinuity = self.indices(samples);
+        //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
+        // if (
+        //   indexBeforeDiscontinuity.length == 1 &&
+        //   indexBeforeDiscontinuity[0] === -1
+        // ) {
+        //   return super.drawCurve(painter, style, xMap, yMap, from, to);
+        // }
       }
-      if (
-        samples.length &&
-        self.discontinuity.length == 1 &&
-        val_x >= self.discontinuity[0][0] &&
-        !self.unboundedRange
-      ) {
-        return super.drawCurve(painter, style, xMap, yMap, from, to);
-      }
-      const indexBeforeDiscontinuity = self.indices(samples);
-      //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
-      // if (
-      //   indexBeforeDiscontinuity.length == 1 &&
-      //   indexBeforeDiscontinuity[0] === -1
-      // ) {
-      //   return super.drawCurve(painter, style, xMap, yMap, from, to);
-      // }
-
       if (
         !self.unboundedRange &&
         !self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)
