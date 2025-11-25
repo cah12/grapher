@@ -216,9 +216,14 @@ class MyCurve extends Curve {
         if (Static.AxisInYX) {
           scaleDiv = plot.axisScaleDiv(self.yAxis());
         }
-        let left = scaleDiv.lowerBound(),
+        let left = scaleDiv.lowerBound();
+        let right = scaleDiv.upperBound();
+        //Why???????
+        if (!isFinite(left) || !isFinite(right)) {
+          scaleDiv = plot.axisScaleDiv(self.xAxis());
+          left = scaleDiv.lowerBound();
           right = scaleDiv.upperBound();
-        const w = right - left;
+        }
         // left -= w;
         // right += w;
         if (
@@ -343,30 +348,30 @@ class MyCurve extends Curve {
     } else {
       //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       let indexBeforeDiscontinuity;
-      if (samples && samples.length) {
-        samples = samples || self.data().samples();
-        //console.log(samples[11]);
-        let val_x = samples[0].x;
-        if (self.axesSwapped) {
-          val_x = samples[0].y;
-        }
-        if (
-          samples.length &&
-          self.discontinuity.length == 1 &&
-          val_x >= self.discontinuity[0][0] &&
-          !self.unboundedRange
-        ) {
-          return super.drawCurve(painter, style, xMap, yMap, from, to);
-        }
-        indexBeforeDiscontinuity = self.indices(samples);
-        //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
-        // if (
-        //   indexBeforeDiscontinuity.length == 1 &&
-        //   indexBeforeDiscontinuity[0] === -1
-        // ) {
-        //   return super.drawCurve(painter, style, xMap, yMap, from, to);
-        // }
+      //if (samples && samples.length) {
+      samples = samples || self.data().samples();
+      //console.log(samples[11]);
+      let val_x = samples[0].x;
+      if (self.axesSwapped) {
+        val_x = samples[0].y;
       }
+      if (
+        samples.length &&
+        self.discontinuity.length == 1 &&
+        val_x >= self.discontinuity[0][0] &&
+        !self.unboundedRange
+      ) {
+        return super.drawCurve(painter, style, xMap, yMap, from, to);
+      }
+      indexBeforeDiscontinuity = self.indices(samples);
+      //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
+      // if (
+      //   indexBeforeDiscontinuity.length == 1 &&
+      //   indexBeforeDiscontinuity[0] === -1
+      // ) {
+      //   return super.drawCurve(painter, style, xMap, yMap, from, to);
+      // }
+      //}
       if (
         !self.unboundedRange &&
         !self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)
@@ -408,28 +413,30 @@ class MyCurve extends Curve {
     to,
     indexBeforeDiscontinuity
   ) {
-    this.discontinuosCurvePending = false;
-    const plot = this.plot();
-    let m_from = from,
-      m_to;
-    for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
-      if (indexBeforeDiscontinuity[i] < 0) continue;
-      m_to = indexBeforeDiscontinuity[i];
-      if (m_from < m_to) {
-        super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+    if (indexBeforeDiscontinuity && indexBeforeDiscontinuity.length) {
+      this.discontinuosCurvePending = false;
+      const plot = this.plot();
+      let m_from = from,
+        m_to;
+      for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
+        if (indexBeforeDiscontinuity[i] < 0) continue;
+        m_to = indexBeforeDiscontinuity[i];
+        if (m_from < m_to) {
+          super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+        }
+        m_from = m_to + 1;
       }
-      m_from = m_to + 1;
-    }
 
-    if (
-      indexBeforeDiscontinuity.length == 1 &&
-      indexBeforeDiscontinuity[0] == -1
-    ) {
-      super.drawCurve(painter, style, xMap, yMap, m_from, to);
-    }
+      if (
+        indexBeforeDiscontinuity.length == 1 &&
+        indexBeforeDiscontinuity[0] == -1
+      ) {
+        super.drawCurve(painter, style, xMap, yMap, m_from, to);
+      }
 
-    if ((m_to === undefined || m_to < to) && m_from < to) {
-      super.drawCurve(painter, style, xMap, yMap, m_from, to);
+      if ((m_to === undefined || m_to < to) && m_from < to) {
+        super.drawCurve(painter, style, xMap, yMap, m_from, to);
+      }
     }
     // plot.autoRefresh();
   }

@@ -1398,9 +1398,18 @@ class Utility {
     const autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
 
+    // let prev = false;
+    // if (Static.AxisInYX) {
+    //   prev = Static.AxisInYX;
+    //   plot.unSwapAxes();
+    // }
+
     plot.setAxesAutoScale(auto);
     plot.setAutoReplot(autoReplot);
     plot.autoRefresh();
+    // if (prev) {
+    //   plot.swapAxes();
+    // }
     Static.trigger("rescaled", auto);
   }
 
