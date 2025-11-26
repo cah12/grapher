@@ -1398,18 +1398,18 @@ class Utility {
     const autoReplot = plot.autoReplot();
     plot.setAutoReplot(false);
 
-    // let prev = false;
-    // if (Static.AxisInYX) {
-    //   prev = Static.AxisInYX;
-    //   plot.unSwapAxes();
-    // }
+    let prev = false;
+    if (Static.AxisInYX) {
+      prev = Static.AxisInYX;
+      plot.unSwapAxes();
+    }
 
     plot.setAxesAutoScale(auto);
     plot.setAutoReplot(autoReplot);
     plot.autoRefresh();
-    // if (prev) {
-    //   plot.swapAxes();
-    // }
+    if (prev) {
+      plot.swapAxes();
+    }
     Static.trigger("rescaled", auto);
   }
 
@@ -1419,7 +1419,7 @@ class Utility {
    * @param {Plot} plot The plot
    * @returns {Boolean} True, if autoscale is set
    */
-  static isAutoScale(plot) {
+  /* static isAutoScale(plot) {
     if (
       !plot.axisAutoScale(0) ||
       !plot.axisAutoScale(1) ||
@@ -1429,6 +1429,10 @@ class Utility {
       return false;
     }
     return true;
+  } */
+
+  static isAutoScale(plot) {
+    return plot.axisAutoScale(0);
   }
 
   /**

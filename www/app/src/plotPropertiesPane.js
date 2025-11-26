@@ -833,7 +833,7 @@ class PlotPropertiesPane extends PropertiesPane {
       parentId: "drawingSettings",
       type: "select",
       //disabled: true,
-      selectorOptions: ["Implicit", "Don't/Undo swap axes", "Swap axes"],
+      selectorOptions: [/* "Implicit", */ "Don't/Undo swap axes", "Swap axes"],
     });
     //axesOrientation.attr("disabled", false);
 
@@ -2396,39 +2396,20 @@ class PlotPropertiesPane extends PropertiesPane {
 
     /**************************************General Settings Properties Callbacks*****************************/
     axesOrientation.change(function () {
-      //"Implicit", "Do not swap axes", "Swap axes"
       var index = $(this)[0].selectedIndex;
       if (index == 0) {
-        //Implicit
-        Static.swapAxes = 0;
-        const prev = Static.AxisInYX;
-        Static.AxisInYX = false;
-        if (prev) {
-          plot.unSwapAxes();
-        }
-
-        //console.log("Implicit", Static.swapAxes);
-      } else if (index == 1) {
-        //Do not swap axes
-        //Static.swapAxes = 1;
-        //console.log("Do not swap axes", Static.swapAxes);
-        Static.AxisInYX = false;
         if (!plot.unSwapAxes()) {
-          //Static.swapAxes = 1;
-          $(this)[0].selectedIndex = Static.swapAxes;
+          $(this)[0].selectedIndex = 1;
         } else {
-          Static.swapAxes = 1;
+          Static.AxisInYX = false;
+          plot.autoRefresh();
         }
-      } else if (index == 2) {
-        //Swap axes
-        //Static.swapAxes = 2;
-        //console.log("Swap axes", Static.swapAxes);
-        Static.AxisInYX = true;
+      } else if (index == 1) {
         if (!plot.swapAxes()) {
-          //Static.swapAxes = 0;
-          $(this)[0].selectedIndex = Static.swapAxes;
+          $(this)[0].selectedIndex = 0;
         } else {
-          Static.swapAxes = 2;
+          Static.AxisInYX = true;
+          plot.autoRefresh();
         }
       }
       // if ((index === 1 || index === 2) && plot.rv._curve) {

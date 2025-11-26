@@ -11,7 +11,8 @@ class Transformation {
         const numOfPoints = curve.dataSize();
         let lowerX = curve.lowerX;
         let upperX = curve.upperX;
-        const doSwap = curve.axesSwapped;
+        // const doSwap = curve.axesSwapped;
+        const doSwap = Static.AxisInYX;
 
         const doAutoReplot = plot.autoReplot();
 

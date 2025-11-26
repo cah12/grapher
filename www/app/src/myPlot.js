@@ -49,7 +49,7 @@ class MyPlot extends Plot {
     this.relationFn = null;
     this.inverseOperation = false;
     //fileSystemUIinit();
-    this.axesSwapped = false;
+    //this.axesSwapped = false;
     var self = this;
     var m_curveShapeEnabledByPlotSettings = true;
 
@@ -142,7 +142,7 @@ class MyPlot extends Plot {
         return null;
       }
 
-      if (self.axesSwapped) {
+      if (Static.AxisInYX) {
         samples = samples.map(function (pt) {
           let x = pt.x;
           pt.x = pt.y;
@@ -4212,124 +4212,105 @@ class MyPlot extends Plot {
 
     //f(x) is horizontal and x is vertical
     this.swapAxes = function (enableWatch = false) {
-      if (!this.axesSwapped) {
-        const self = this;
-        const plot = self;
-        let swapable = true;
+      //if (!Static.AxisInYX) {
+      const self = this;
+      const plot = self;
+      true;
 
-        const L = self.itemList();
+      const L = self.itemList();
 
+      let swapable = this.isAxisSwappable();
+
+      if (swapable) {
+        let autoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
         for (let i = 0; i < L.length; i++) {
           const item = L[i];
-          const x_axis = item.xAxis();
-          const y_axis = item.yAxis();
-          if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
-            swapable = false;
-            let s = "swap";
-            if (enableWatch) {
-              s = "unswap";
-            }
-            Utility.alert(
-              `Axes ${s} failed because one or more plot item(s) is(are) associated with an axis other than the bottom or left axis.`,
-              null,
-              "swapAxisFailed"
-            );
-            break;
-          }
-        }
+          // const x_axis = item.xAxis();
+          // const y_axis = item.yAxis();
+          // const item_title = item.title();
+          // if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
+          //   continue;
+          // }
 
-        if (swapable) {
-          let autoReplot = plot.autoReplot();
-          plot.setAutoReplot(false);
-          for (let i = 0; i < L.length; i++) {
-            const item = L[i];
-            // const x_axis = item.xAxis();
-            // const y_axis = item.yAxis();
-            // const item_title = item.title();
-            // if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
-            //   continue;
+          if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
+            if (item.unboundedRange) {
+              continue;
+            }
+
+            //this.axesSwapped = true;
+            if (enableWatch) {
+              item.axesSwapped = false;
+            } else {
+              item.axesSwapped = true;
+            }
+            //if (!item.unboundedRange) {
+            let samples = item.data().samples();
+            samples = samples.map(function (pt) {
+              let x = pt.x;
+              pt.x = pt.y;
+              pt.y = x;
+              return pt;
+            });
+            item.setSamples(samples);
+            //}
+
+            // if (item.discontinuity && item.discontinuity.length) {
+            //   item.discontinuity = item.discontinuity.reverse();
             // }
-
-            if (item.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
-              if (item.unboundedRange) {
-                continue;
-              }
-              let samples = item.data().samples();
-              this.axesSwapped = true;
-              if (enableWatch) {
-                item.axesSwapped = false;
-              } else {
-                item.axesSwapped = true;
-              }
-
-              samples = samples.map(function (pt) {
-                let x = pt.x;
-                pt.x = pt.y;
-                pt.y = x;
-                return pt;
-              });
-              item.setSamples(samples);
-              // if (item.discontinuity && item.discontinuity.length) {
-              //   item.discontinuity = item.discontinuity.reverse();
-              // }
-            }
-            if (
-              item.rtti === PlotItem.RttiValues.Rtti_PlotMarker &&
-              item.title() != "ClosestPointMarker123@###"
-            ) {
-              this.axesSwapped = true;
-              item.setValue(item.yValue(), item.xValue());
-            }
           }
-
-          if (this.axesSwapped) {
-            const x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
-            let x_min = x_scaleDiv.lowerBound(),
-              x_max = x_scaleDiv.upperBound();
-
-            const y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
-            let y_min = y_scaleDiv.lowerBound(),
-              y_max = y_scaleDiv.upperBound();
-
-            if (!enableWatch) {
-              for (let i = 5; i < 8; i++) {
-                plot.rv.watch(i).setEnable(false);
-                plot.tbar.hideDropdownItem("Watch", i);
-              }
-            }
-
-            if (enableWatch) {
-              for (let i = 5; i < 8; i++) {
-                plot.tbar.showDropdownItem("Watch", i);
-                if (plot.tbar.isDropdownItemChecked("Watch", i)) {
-                  plot.rv.watch(i).setEnable(true);
-                }
-              }
-            }
-
-            plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
-            plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
-            Static.trigger("invalidateWatch");
-            plot.rv.updateWatchesAndTable();
-            plot.setAutoReplot(autoReplot);
-            plot.rv.refresh();
+          if (
+            item.rtti === PlotItem.RttiValues.Rtti_PlotMarker &&
+            item.title() != "ClosestPointMarker123@###"
+          ) {
+            //this.axesSwapped = true;
+            item.setValue(item.yValue(), item.xValue());
           }
         }
 
-        return this.axesSwapped;
+        if (!enableWatch) {
+          for (let i = 5; i < 8; i++) {
+            plot.rv.watch(i).setEnable(false);
+            plot.tbar.hideDropdownItem("Watch", i);
+          }
+        }
+
+        if (enableWatch) {
+          for (let i = 5; i < 8; i++) {
+            plot.tbar.showDropdownItem("Watch", i);
+            if (plot.tbar.isDropdownItemChecked("Watch", i)) {
+              plot.rv.watch(i).setEnable(true);
+            }
+          }
+        }
+
+        //if (!Utility.isAutoScale(plot)) {
+        this.updateScalesOnSwap();
+        //}
+
+        Static.trigger("invalidateWatch");
+        plot.rv.updateWatchesAndTable();
+        plot.setAutoReplot(autoReplot);
+        plot.autoRefresh();
+        plot.rv.refresh();
+        //}
       }
+
+      // return this.axesSwapped;
+      return swapable;
+      //}
     };
 
     //x is horizontal and f(x) is vertical
     this.unSwapAxes = function () {
-      if (!this.axesSwapped) return;
-      this.axesSwapped = false;
+      //if (!Static.AxisInYX) return;
+      //this.axesSwapped = false;
       //this.swapAxes(true);
       if (!this.swapAxes(true)) {
-        this.axesSwapped = true;
+        //this.axesSwapped = true;
         return false;
       }
-      this.axesSwapped = false;
+      //this.axesSwapped = false;
 
       return true;
     };
@@ -4337,6 +4318,72 @@ class MyPlot extends Plot {
     ////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////
+  }
+
+  isAxisSwappable(unswap) {
+    let swapable = true;
+    const L = this.itemList();
+    for (let i = 0; i < L.length; i++) {
+      const item = L[i];
+      const x_axis = item.xAxis();
+      const y_axis = item.yAxis();
+      let s = "swap";
+      if (unswap) {
+        s = "unswap";
+      }
+      if (x_axis != Axis.AxisId.xBottom || y_axis != Axis.AxisId.yLeft) {
+        swapable = false;
+
+        Utility.alert(
+          `Axes ${s} failed because one or more plot item(s) is(are) associated with an axis other than the bottom or left axis.`,
+          null,
+          "swapAxisFailed"
+        );
+      }
+      if (item.unboundedRange) {
+        swapable = false;
+        Utility.alert(
+          `Axes ${s} failed because one or more plot items have an unbounded range.`,
+          null,
+          "unboundedRange"
+        );
+      }
+    }
+    return swapable;
+  }
+
+  updateScalesOnSwap() {
+    const plot = this;
+    //const isAutoScale = Utility.isAutoScale(plot);
+    if (Utility.isAutoScale(plot)) {
+      return;
+    }
+
+    let x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+    let y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+    //console.log(x_scaleDiv);
+    // if (!Static.AxisInYX) {
+    //   y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+    //   x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+    // }
+
+    let x_min = x_scaleDiv.lowerBound();
+    let x_max = x_scaleDiv.upperBound();
+    let y_min = y_scaleDiv.lowerBound();
+    let y_max = y_scaleDiv.upperBound();
+
+    // y_scaleDiv.setLowerBound(x_min);
+    // y_scaleDiv.setUpperBound(x_max);
+
+    // x_scaleDiv.setLowerBound(y_min);
+    // x_scaleDiv.setUpperBound(y_max);
+
+    plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
+    plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
+
+    // if (isAutoScale) {
+    //   Utility.setAutoScale(plot, true);
+    // }
   }
 }
 MyPlot.init();

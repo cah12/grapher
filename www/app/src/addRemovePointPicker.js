@@ -91,13 +91,14 @@ class AddRemovePointPicker extends PlotPicker {
         Utility.setLegendAttribute(curve, attribute, curve.getLegendIconSize()); //attribute = "line" or "symbol" or "lineAndSymbol"
         curve.attach(plot);
       }
-      const doSwap = curve.axesSwapped;
-      if (doSwap) {
-        const temp = p.x;
-        p.x = pt.y;
-        p.y = temp;
-        //curve.unSwapAxes();
-      }
+      //const doSwap = curve.axesSwapped;
+      //const doSwap = Static.AxisInYX;
+      // if (doSwap) {
+      //   const temp = p.x;
+      //   p.x = p.y;
+      //   p.y = temp;
+      //   //curve.unSwapAxes();
+      // }
       let samples = curve.data().samples();
       if (!samples.containsPoint(p)) {
         samples.push(p);

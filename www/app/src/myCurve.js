@@ -48,154 +48,8 @@ class MyCurve extends Curve {
 
     this.math_mode = Static.math_mode;
 
-    //self.plot().getLayout().getCentralWidget().setMouseTracking(false);
-
-    /* Static.bind("itemAttached", function (e, item, on) {
-      //console.log(486, item == self, on);
-      if (item == self && on) {
-        if (Static.swapAxes == 0) {
-          //Implicit
-          if (self.xIsDependentVariable) {
-            self.swapAxes();
-            Static.trigger("axesSwapped", item);
-          }
-        }
-        if (Static.swapAxes == 1) {
-          //Do not swap
-        }
-        if (Static.swapAxes == 2) {
-          //Swap
-          self.swapAxes();
-          Static.trigger("axesSwapped", item);
-        }
-      }
-    }); */
-
     //this.discontinuity = [0]; //-2, 2]; //0, Math.PI, 2 * Math.PI, 3 * Math.PI, 4 * Math.PI];
   }
-
-  /* //f(x) is horizontal and x is vertical
-  swapAxes() {
-    if (!this.axesSwapped) {
-      const self = this;
-      const plot = self.plot();
-
-      const x_scaleDiv = plot.axisScaleDiv(self.xAxis());
-      let x_min = x_scaleDiv.lowerBound(),
-        x_max = x_scaleDiv.upperBound();
-
-      const y_scaleDiv = plot.axisScaleDiv(self.yAxis());
-      let y_min = y_scaleDiv.lowerBound(),
-        y_max = y_scaleDiv.upperBound();
-
-      // console.log(x_min, x_max);
-      // console.log(y_min, y_max);
-      //console.log(this.discontinuity);
-
-      let autoReplot = plot.autoReplot();
-      plot.setAutoReplot(false);
-      let samples = self.data().samples();
-      this.axesSwapped = true;
-      samples = samples.map(function (pt) {
-        let x = pt.x;
-        pt.x = pt.y;
-        pt.y = x;
-        return pt;
-      });
-      if (self.turningPoints && self.turningPoints.length) {
-        const points = self.turningPoints;
-        for (let i = 0; i < points.length; i++) {
-          const pt = points[i];
-          const temp = pt.x;
-          pt.x = pt.y;
-          pt.y = temp;
-          points[i] = pt;
-        }
-      }
-      if (self.inflectionPoints && self.inflectionPoints.length) {
-        const points = self.inflectionPoints;
-        for (let i = 0; i < points.length; i++) {
-          const pt = points[i];
-          const temp = pt.x;
-          pt.x = pt.y;
-          pt.y = temp;
-          points[i] = pt;
-        }
-      }
-
-      for (let i = 5; i < 8; i++) {
-        plot.rv.watch(i).setEnable(false);
-        plot.tbar.hideDropdownItem("Watch", i);
-      }
-      self.setSamples(samples);
-      plot.setAxisScale(self.xAxis(), y_min, y_max);
-      plot.setAxisScale(self.yAxis(), x_min, x_max);
-      Static.trigger("invalidateWatch");
-      plot.rv.updateWatchesAndTable();
-      plot.setAutoReplot(autoReplot);
-      plot.rv.refresh();
-    }
-  }
-
-  //x is horizontal and f(x) is vertical
-  unSwapAxes() {
-    if (!this.axesSwapped) return;
-
-    const self = this;
-    const plot = this.plot();
-    const x_scaleDiv = plot.axisScaleDiv(self.xAxis());
-    let x_min = x_scaleDiv.lowerBound(),
-      x_max = x_scaleDiv.upperBound();
-
-    const y_scaleDiv = plot.axisScaleDiv(self.yAxis());
-    let y_min = y_scaleDiv.lowerBound(),
-      y_max = y_scaleDiv.upperBound();
-
-    let autoReplot = plot.autoReplot();
-    plot.setAutoReplot(false);
-
-    this.axesSwapped = false;
-
-    let samples = self.data().samples();
-    samples = samples.map(function (pt) {
-      let x = pt.x;
-      pt.x = pt.y;
-      pt.y = x;
-      return pt;
-    });
-    if (self.turningPoints && self.turningPoints.length) {
-      const points = self.turningPoints;
-      for (let i = 0; i < points.length; i++) {
-        const pt = points[i];
-        const temp = pt.x;
-        pt.x = pt.y;
-        pt.y = temp;
-        points[i] = pt;
-      }
-    }
-    if (self.inflectionPoints && self.inflectionPoints.length) {
-      const points = self.inflectionPoints;
-      for (let i = 0; i < points.length; i++) {
-        const pt = points[i];
-        const temp = pt.x;
-        pt.x = pt.y;
-        pt.y = temp;
-        points[i] = pt;
-      }
-    }
-    for (let i = 5; i < 8; i++) {
-      plot.tbar.showDropdownItem("Watch", i);
-      if (plot.tbar.isDropdownItemChecked("Watch", i)) {
-        plot.rv.watch(i).setEnable(true);
-      }
-    }
-    self.setSamples(samples);
-    plot.setAxisScale(self.xAxis(), y_min, y_max);
-    plot.setAxisScale(self.yAxis(), x_min, x_max);
-    plot.rv.updateWatchesAndTable();
-    plot.setAutoReplot(autoReplot);
-    plot.rv.refresh();
-  } */
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
     try {
@@ -219,17 +73,17 @@ class MyCurve extends Curve {
         let left = scaleDiv.lowerBound();
         let right = scaleDiv.upperBound();
         //Why???????
-        if (!isFinite(left) || !isFinite(right)) {
-          scaleDiv = plot.axisScaleDiv(self.xAxis());
-          left = scaleDiv.lowerBound();
-          right = scaleDiv.upperBound();
-        }
+        // if (!isFinite(left) || !isFinite(right)) {
+        //   scaleDiv = plot.axisScaleDiv(self.xAxis());
+        //   left = scaleDiv.lowerBound();
+        //   right = scaleDiv.upperBound();
+        // }
         // left -= w;
         // right += w;
         if (
           self.left != left &&
-          self.right != right /* &&
-          self.discontinuity.length */ &&
+          self.right != right &&
+          self.discontinuity.length &&
           !self.discontinuosCurvePending
         ) {
           self.left = left;
@@ -250,6 +104,7 @@ class MyCurve extends Curve {
           sz = Math.max(Static.min_discontinuity_samples, data.size());
         }
         //const sz = Math.max(Static.min_discontinuity_samples, data.size());
+        //console.log(data);
         data.setSize(sz);
 
         const obj = {
@@ -265,7 +120,7 @@ class MyCurve extends Curve {
 
         if (Static.AxisInYX) {
           //Swap x and y in discontinuity samples
-          const samples = data.discontinuitySamples;
+          const samples = data.discontinuitySamples.slice();
           for (let i = 0; i < samples.length; i++) {
             const pt = samples[i];
             const temp = pt.x;
@@ -285,6 +140,7 @@ class MyCurve extends Curve {
           to,
           data.discontinuitySamples
         );
+
         //data.discontinuitySamples = null;
         plot.autoRefresh();
       }
@@ -344,6 +200,9 @@ class MyCurve extends Curve {
     const self = this;
     const plot = self.plot();
     if (!self.discontinuity.length && !self.discontinuosCurvePending) {
+      // if (!Utility.isAutoScale(plot)) {
+      //plot.updateScalesOnSwap();
+      // }
       return super.drawCurve(painter, style, xMap, yMap, from, to);
     } else {
       //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
@@ -352,7 +211,7 @@ class MyCurve extends Curve {
       samples = samples || self.data().samples();
       //console.log(samples[11]);
       let val_x = samples[0].x;
-      if (self.axesSwapped) {
+      if (Static.AxisInYX) {
         val_x = samples[0].y;
       }
       if (
@@ -438,28 +297,9 @@ class MyCurve extends Curve {
         super.drawCurve(painter, style, xMap, yMap, m_from, to);
       }
     }
+
     // plot.autoRefresh();
   }
-
-  /* indices(samples) {
-    const self = this;
-    const indexBeforeDiscontinuity = [];
-    for (let n = 0; n < self.discontinuity.length; n++) {
-      for (let i = 0; i < samples.length; i++) {
-        if (!self.axesSwapped) {
-          if (samples[i].x > self.discontinuity[n][0]) {
-            indexBeforeDiscontinuity.push(i - 1);
-            break;
-          }
-        } else {
-          if (samples[i].y > self.discontinuity[n][0]) {
-            indexBeforeDiscontinuity.push(i - 1);
-            break;
-          }
-        }
-      }
-    }
-  } */
 
   indices(samples) {
     const self = this;
@@ -535,7 +375,7 @@ class MyCurve extends Curve {
 
         for (let n = 0; n < self.discontinuity.length; n++) {
           for (let i = 0; i < samples.length; i++) {
-            if (!self.axesSwapped) {
+            if (!Static.AxisInYX) {
               if (samples[i].x > self.discontinuity[n]) {
                 indexBeforeDiscontinuity.push(i - 1);
                 break;

@@ -950,7 +950,8 @@ class CurvePropertiesPane extends PropertiesPane {
           curve.brush().color != "noBrush" ? true : false;
 
       aspectRatioOneToOneFn();
-      if (curve.axesSwapped) {
+      //if (curve.axesSwapped) {
+      if (Static.AxisInYX) {
         swapAxes[0].checked = true;
       } else {
         swapAxes[0].checked = false;
