@@ -4341,12 +4341,12 @@ class MyPlot extends Plot {
         );
       }
       if (item.unboundedRange) {
-        swapable = false;
+        /* swapable = false;
         Utility.alert(
           `Axes ${s} failed because one or more plot items have an unbounded range.`,
           null,
           "unboundedRange"
-        );
+        ); */
       }
     }
     return swapable;
@@ -4355,9 +4355,9 @@ class MyPlot extends Plot {
   updateScalesOnSwap() {
     const plot = this;
     //const isAutoScale = Utility.isAutoScale(plot);
-    if (Utility.isAutoScale(plot)) {
-      return;
-    }
+    // if (Utility.isAutoScale(plot)) {
+    //   return;
+    // }
 
     let x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
     let y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
@@ -4380,6 +4380,7 @@ class MyPlot extends Plot {
 
     plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
     plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
+    //plot.autoRefresh();
 
     // if (isAutoScale) {
     //   Utility.setAutoScale(plot, true);

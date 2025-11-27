@@ -2398,17 +2398,19 @@ class PlotPropertiesPane extends PropertiesPane {
     axesOrientation.change(function () {
       var index = $(this)[0].selectedIndex;
       if (index == 0) {
+        Static.AxisInYX = false;
         if (!plot.unSwapAxes()) {
           $(this)[0].selectedIndex = 1;
+          Static.AxisInYX = true;
         } else {
-          Static.AxisInYX = false;
           plot.autoRefresh();
         }
       } else if (index == 1) {
+        Static.AxisInYX = true;
         if (!plot.swapAxes()) {
+          Static.AxisInYX = false;
           $(this)[0].selectedIndex = 0;
         } else {
-          Static.AxisInYX = true;
           plot.autoRefresh();
         }
       }

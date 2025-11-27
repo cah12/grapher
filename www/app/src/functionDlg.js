@@ -761,14 +761,14 @@ class MFunctionDlg {
       };
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
-        if ($("#fnDlg_unboundedRange")[0].checked && Static.AxisInYX) {
+        /* if ($("#fnDlg_unboundedRange")[0].checked && Static.AxisInYX) {
           Utility.alert(
             `Plot items with unbounded range are no permitted with Swap Axes.`,
             null,
             "unboundedRange_unpermitted"
           );
           return;
-        }
+        } */
 
         Static.g_solution_arr = null;
         Static.inverseFunction = false;

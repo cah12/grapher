@@ -143,6 +143,13 @@ class SyntheticPointData extends SeriesData {
     var xValue = this.x(index);
     var yValue = this.y(xValue);
     //console.log(this.y)
+    if (Static.AxisInYX) {
+      xValue = this.y(index);
+      yValue = this.x(xValue);
+    } else {
+      xValue = this.x(index);
+      yValue = this.y(xValue);
+    }
 
     return new Misc.Point(xValue, yValue);
   }
