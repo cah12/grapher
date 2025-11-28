@@ -2804,11 +2804,15 @@ class MFunctionDlg {
               let y_max = yScaleDiv.upperBound();
               plot.unSwapAxes();
               _newCurve = await cb();
-              plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
-              plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
+              if (_newCurve.discontinuity && !_newCurve.discontinuity.length) {
+                plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
+                plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
+              }
               plot.swapAxes();
-              if (isAutoScale) {
-                Utility.setAutoScale(plot, true);
+              if (_newCurve.discontinuity && !_newCurve.discontinuity.length) {
+                if (isAutoScale) {
+                  Utility.setAutoScale(plot, true);
+                }
               }
             } else {
               _newCurve = await cb();
