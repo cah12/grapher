@@ -2793,7 +2793,26 @@ class MFunctionDlg {
           //console.time("timer");
           let _newCurve = null;
           try {
-            _newCurve = await cb();
+            //unswap, add curve and re-swap
+            if (Static.AxisInYX) {
+              const isAutoScale = Utility.isAutoScale(plot);
+              let yScaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+              let xScaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+              let x_min = xScaleDiv.lowerBound();
+              let x_max = xScaleDiv.upperBound();
+              let y_min = yScaleDiv.lowerBound();
+              let y_max = yScaleDiv.upperBound();
+              plot.unSwapAxes();
+              _newCurve = await cb();
+              plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
+              plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
+              plot.swapAxes();
+              if (isAutoScale) {
+                Utility.setAutoScale(plot, true);
+              }
+            } else {
+              _newCurve = await cb();
+            }
             Utility.progressWait2(false);
           } catch (error) {
             console.log(error);

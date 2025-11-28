@@ -4287,7 +4287,7 @@ class MyPlot extends Plot {
         //if (!Utility.isAutoScale(plot)) {
         this.updateScalesOnSwap();
         //}
-
+        Static.AxisInYX = true;
         Static.trigger("invalidateWatch");
         plot.rv.updateWatchesAndTable();
         plot.setAutoReplot(autoReplot);
@@ -4310,7 +4310,7 @@ class MyPlot extends Plot {
         //this.axesSwapped = true;
         return false;
       }
-      //this.axesSwapped = false;
+      Static.AxisInYX = false;
 
       return true;
     };
@@ -4354,37 +4354,14 @@ class MyPlot extends Plot {
 
   updateScalesOnSwap() {
     const plot = this;
-    //const isAutoScale = Utility.isAutoScale(plot);
-    // if (Utility.isAutoScale(plot)) {
-    //   return;
-    // }
-
     let x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
     let y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
-    //console.log(x_scaleDiv);
-    // if (!Static.AxisInYX) {
-    //   y_scaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
-    //   x_scaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
-    // }
-
     let x_min = x_scaleDiv.lowerBound();
     let x_max = x_scaleDiv.upperBound();
     let y_min = y_scaleDiv.lowerBound();
     let y_max = y_scaleDiv.upperBound();
-
-    // y_scaleDiv.setLowerBound(x_min);
-    // y_scaleDiv.setUpperBound(x_max);
-
-    // x_scaleDiv.setLowerBound(y_min);
-    // x_scaleDiv.setUpperBound(y_max);
-
     plot.setAxisScale(Axis.AxisId.xBottom, y_min, y_max);
     plot.setAxisScale(Axis.AxisId.yLeft, x_min, x_max);
-    //plot.autoRefresh();
-
-    // if (isAutoScale) {
-    //   Utility.setAutoScale(plot, true);
-    // }
   }
 }
 MyPlot.init();
