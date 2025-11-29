@@ -2396,6 +2396,8 @@ class PlotPropertiesPane extends PropertiesPane {
 
     /**************************************General Settings Properties Callbacks*****************************/
     axesOrientation.change(function () {
+      const autoReplot = plot.autoReplot();
+      plot.setAutoReplot(false);
       var index = $(this)[0].selectedIndex;
       if (index == 0) {
         Static.AxisInYX = false;
@@ -2403,7 +2405,7 @@ class PlotPropertiesPane extends PropertiesPane {
           $(this)[0].selectedIndex = 1;
           Static.AxisInYX = true;
         } else {
-          plot.autoRefresh();
+          //plot.autoRefresh();
         }
       } else if (index == 1) {
         Static.AxisInYX = true;
@@ -2411,17 +2413,11 @@ class PlotPropertiesPane extends PropertiesPane {
           Static.AxisInYX = false;
           $(this)[0].selectedIndex = 0;
         } else {
-          plot.autoRefresh();
+          //plot.autoRefresh();
         }
       }
-      // if ((index === 1 || index === 2) && plot.rv._curve) {
-      //   if (index === 1) {
-      //     plot.rv._curve.unSwapAxes();
-      //   }
-      //   if (index === 2) {
-      //     plot.rv._curve.swapAxes();
-      //   }
-      // }
+      plot.setAutoReplot(autoReplot);
+      plot.autoRefresh();
     });
 
     ///////////////////////////////////////////////

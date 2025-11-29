@@ -4303,15 +4303,10 @@ class MyPlot extends Plot {
 
     //x is horizontal and f(x) is vertical
     this.unSwapAxes = function () {
-      //if (!Static.AxisInYX) return;
-      //this.axesSwapped = false;
-      //this.swapAxes(true);
       if (!this.swapAxes(true)) {
-        //this.axesSwapped = true;
         return false;
       }
       Static.AxisInYX = false;
-
       return true;
     };
 

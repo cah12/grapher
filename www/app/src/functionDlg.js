@@ -2802,11 +2802,17 @@ class MFunctionDlg {
               let x_max = xScaleDiv.upperBound();
               let y_min = yScaleDiv.lowerBound();
               let y_max = yScaleDiv.upperBound();
+
               plot.unSwapAxes();
               _newCurve = await cb();
+
               if (_newCurve.discontinuity && !_newCurve.discontinuity.length) {
+                const autoReplot = plot.autoReplot();
+                plot.setAutoReplot(false);
                 plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
                 plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
+                plot.setAutoReplot(autoReplot);
+                plot.autoRefresh();
               }
               plot.swapAxes();
               if (_newCurve.discontinuity && !_newCurve.discontinuity.length) {
