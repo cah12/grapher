@@ -2794,7 +2794,7 @@ class MFunctionDlg {
           let _newCurve = null;
           try {
             //unswap, add curve and re-swap
-            if (Static.AxisInYX) {
+            /* if (Static.AxisInYX) {
               const isAutoScale = Utility.isAutoScale(plot);
               let yScaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
               let xScaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
@@ -2805,6 +2805,7 @@ class MFunctionDlg {
 
               plot.unSwapAxes();
               _newCurve = await cb();
+              //console.log(_newCurve);
 
               if (_newCurve.discontinuity && !_newCurve.discontinuity.length) {
                 const autoReplot = plot.autoReplot();
@@ -2819,6 +2820,37 @@ class MFunctionDlg {
                 if (isAutoScale) {
                   Utility.setAutoScale(plot, true);
                 }
+              }
+            } else {
+              _newCurve = await cb();
+            } */
+            if (Static.AxisInYX) {
+              const autoReplot = plot.autoReplot();
+
+              const isAutoScale = Utility.isAutoScale(plot);
+
+              if (!isAutoScale) {
+                const autoReplot = plot.autoReplot();
+                plot.setAutoReplot(false);
+                let xScaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
+                let yScaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
+                let x_min = xScaleDiv.lowerBound();
+                let x_max = xScaleDiv.upperBound();
+                let y_min = yScaleDiv.lowerBound();
+                let y_max = yScaleDiv.upperBound();
+                _newCurve = await cb();
+                plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
+                plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
+                plot.setAutoReplot(autoReplot);
+                plot.autoRefresh();
+              } else {
+                const autoReplot = plot.autoReplot();
+                plot.setAutoReplot(false);
+                Utility.setAutoScale(plot, false);
+                _newCurve = await cb();
+                plot.setAutoReplot(autoReplot);
+                plot.autoRefresh();
+                Utility.setAutoScale(plot, isAutoScale);
               }
             } else {
               _newCurve = await cb();
