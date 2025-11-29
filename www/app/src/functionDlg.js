@@ -2839,13 +2839,8 @@ class MFunctionDlg {
                 let y_min = yScaleDiv.lowerBound();
                 let y_max = yScaleDiv.upperBound();
                 _newCurve = await cb();
-                if (
-                  _newCurve.discontinuity &&
-                  !_newCurve.discontinuity.length
-                ) {
-                  plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
-                  plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
-                }
+                plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
+                plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
                 plot.setAutoReplot(autoReplot);
                 plot.autoRefresh();
               } else {
@@ -2855,7 +2850,12 @@ class MFunctionDlg {
                 _newCurve = await cb();
                 plot.setAutoReplot(autoReplot);
                 plot.autoRefresh();
-                Utility.setAutoScale(plot, isAutoScale);
+                if (
+                  _newCurve.discontinuity &&
+                  !_newCurve.discontinuity.length
+                ) {
+                  Utility.setAutoScale(plot, isAutoScale);
+                }
               }
             } else {
               _newCurve = await cb();
