@@ -209,7 +209,9 @@ class MyCurve extends Curve {
       let indexBeforeDiscontinuity;
       //if (samples && samples.length) {
       samples = samples || self.data().samples();
-      //console.log(samples[11]);
+
+      to = samples.length - 1;
+
       let val_x = samples[0].x;
       if (Static.AxisInYX) {
         val_x = samples[0].y;
@@ -304,7 +306,7 @@ class MyCurve extends Curve {
   indices(samples) {
     const self = this;
     let i = 0;
-    const indexBeforeDiscontinuity = [];
+    let indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
       if (self.discontinuity[n][1] != "infinite") {
         for (let i = 0; i < samples.length; i++) {
@@ -343,6 +345,11 @@ class MyCurve extends Curve {
     if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
       indexBeforeDiscontinuity.push(samples.length - 1);
     }
+    indexBeforeDiscontinuity = indexBeforeDiscontinuity.filter(
+      (item, index) => {
+        return indexBeforeDiscontinuity.indexOf(item) === index;
+      }
+    );
     return indexBeforeDiscontinuity;
   }
 

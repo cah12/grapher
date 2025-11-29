@@ -2860,6 +2860,7 @@ class MFunctionDlg {
             } else {
               _newCurve = await cb();
             }
+            plot.autoRefresh();
             Utility.progressWait2(false);
           } catch (error) {
             console.log(error);
