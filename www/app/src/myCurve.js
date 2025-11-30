@@ -149,7 +149,7 @@ class MyCurve extends Curve {
     }
   }
 
-  isScaleAdjustNeeded(indexBeforeDiscontinuity) {
+  /* isScaleAdjustNeeded() {
     const self = this;
     let adjust = false;
     for (let i = 0; i < self.discontinuity.length; i++) {
@@ -162,7 +162,7 @@ class MyCurve extends Curve {
       }
     }
     return adjust;
-  }
+  } */
 
   isDrawDiscontinuosCurve(indexBeforeDiscontinuity) {
     const self = this;
@@ -245,7 +245,7 @@ class MyCurve extends Curve {
         if (!self.unboundedRange) {
           Utility.setAutoScale(plot, true);
         }
-        if (self.isScaleAdjustNeeded(indexBeforeDiscontinuity)) {
+        if (Utility.isScaleAdjustNeeded(self)) {
           if (!Static.AxisInYX) {
             plot.setAxisScale(self.yAxis(), -6, 6);
           } else {
@@ -525,7 +525,7 @@ class MyCurve extends Curve {
       if (!self.setAxis) {
         self.setAxis = true;
         if (!self.unboundedRange) Utility.setAutoScale(plot, true);
-        if (self.isScaleAdjustNeeded(indexBeforeDiscontinuity)) {
+        if (Utility.isScaleAdjustNeeded(self)) {
           plot.setAxisScale(self.yAxis(), -6, 6);
         }
       }

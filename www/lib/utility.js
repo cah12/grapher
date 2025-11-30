@@ -3272,6 +3272,20 @@ class Utility {
     return exp;
   }
 
+  static isScaleAdjustNeeded(curve) {
+    let adjust = false;
+    for (let i = 0; i < curve.discontinuity.length; i++) {
+      if (
+        curve.discontinuity[i][1] == "infinite" ||
+        curve.discontinuity[i][1] == "jump"
+      ) {
+        adjust = true;
+        break;
+      }
+    }
+    return adjust;
+  }
+
   static async discontinuity(exp, lower, upper, indepVar) {
     //Utility.progressWait();
     try {

@@ -2851,8 +2851,9 @@ class MFunctionDlg {
                 plot.setAutoReplot(autoReplot);
                 plot.autoRefresh();
                 if (
-                  _newCurve.discontinuity &&
-                  !_newCurve.discontinuity.length
+                  // _newCurve.discontinuity &&
+                  // !_newCurve.discontinuity.length
+                  !Utility.isScaleAdjustNeeded(_newCurve)
                 ) {
                   Utility.setAutoScale(plot, isAutoScale);
                 }
