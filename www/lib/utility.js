@@ -6260,9 +6260,18 @@ class Utility {
 
   static parametizeKeywordArg(str) {
     function doParametize(str) {
+      const myArr = str.match(/\(.\)/gm) || [];
+
+      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+
+      for (let i = 0; i < myArr.length; i++) {
+        str = str.replaceAll(myArr[i], myArr2[i]);
+      }
+
       let delimiter = 0;
       let result = "";
       let bracketAdded = false;
+
       let purgeStr = Utility.purgeAndMarkKeywords(str, true);
       if (str === purgeStr) {
         return str;
