@@ -2403,9 +2403,10 @@ class Utility {
                   _scope.set("x", d + delta);
                   yVal = parser.eval(_scope);
                   samples[n].y = math.sign(yVal) * lmt;
+                  n++;
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
-                }
-                if (discont[i][1] == "removable") {
+                  break;
+                } else if (discont[i][1] == "removable") {
                   samples[n - 1].y = discont[i][2];
                   samples[n].y = discont[i][2];
                 }
@@ -3302,6 +3303,10 @@ class Utility {
         //   [2, "infinite"],
         // ]; //1/(x+2)
         //return [[0.0, "removable", 1.0]]; //sin(x)/x
+        // return [
+        //   [0.0, "infinite"],
+        //   [2.0, "removable", 0.0],
+        // ]; //sqrt((x-2)/x)
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
         // return [
