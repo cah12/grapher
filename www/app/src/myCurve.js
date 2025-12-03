@@ -285,6 +285,9 @@ class MyCurve extends Curve {
         if (m_from < m_to) {
           super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
         }
+        if (m_from == m_to) {
+          break;
+        }
         m_from = m_to + 1;
       }
 

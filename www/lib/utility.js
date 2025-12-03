@@ -2407,8 +2407,17 @@ class Utility {
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                   break;
                 } else if (discont[i][1] == "removable") {
-                  samples[n - 1].y = discont[i][2];
-                  samples[n].y = discont[i][2];
+                  if (discont.length > 1 && i > 0) {
+                    if (discont[i - 1][1] == "infinite") {
+                      samples[n - 1].x = discont[i][0];
+                      samples[n - 1].y = discont[i][2];
+                    }
+                  } else {
+                    samples[n - 1].y = discont[i][2];
+                    samples[n].y = discont[i][2];
+                  }
+                  n++;
+                  break;
                 }
               }
             } catch (error) {
