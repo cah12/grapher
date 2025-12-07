@@ -2397,12 +2397,17 @@ class Utility {
             try {
               if (n > 0) {
                 if (discont[i][1] == "infinite") {
-                  samples[n - 1].y = math.sign(yVal) * lmt;
+                  const _sign1 = math.sign(yVal);
+                  samples[n - 1].y = _sign1 * lmt;
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
 
                   _scope.set("x", d + delta);
                   yVal = parser.eval(_scope);
+                  // if (yVal.im) {
+                  //   samples[n].y =;
+                  // } else {
                   samples[n].y = math.sign(yVal) * lmt;
+                  //}
                   n++;
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                   break;
@@ -2430,6 +2435,9 @@ class Utility {
         }
       }
     }
+    samples = samples.filter((item, index) => {
+      return _.isFinite(samples[index].y);
+    });
     samples = samples.sort(function (a, b) {
       return a.x - b.x;
     });
@@ -3318,6 +3326,15 @@ class Utility {
         // ]; //sqrt((x-2)/x)
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
+        // return [
+        //   [-9.42477796076938, "infinite"],
+        //   [-6.283185307179586, "infinite"],
+        //   [-3.141592653589793, "infinite"],
+        //   [0.0, "infinite"],
+        //   [3.141592653589793, "infinite"],
+        //   [6.283185307179586, "infinite"],
+        //   [9.42477796076938, "infinite"],
+        // ]; //1/sin(x)
         // return [
         //   [-9.42477796076938, "infinite"],
         //   [-6.283185307179586, "infinite"],
