@@ -286,7 +286,8 @@ class MyCurve extends Curve {
           super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
         }
         if (m_from == m_to) {
-          break;
+          // break;
+          continue;
         }
         m_from = m_to + 1;
       }
@@ -316,6 +317,7 @@ class MyCurve extends Curve {
           if (!Static.AxisInYX) {
             if (samples[i].x > self.discontinuity[n][0]) {
               indexBeforeDiscontinuity.push(i - 1);
+              samples[i - 1].y = self.discontinuity[n][2];
               break;
             }
           } else {

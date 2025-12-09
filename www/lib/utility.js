@@ -3334,16 +3334,23 @@ class Utility {
         //   [3.141592653589793, "infinite"],
         //   [6.283185307179586, "infinite"],
         //   [9.42477796076938, "infinite"],
-        // ]; //1/sin(x)
+        // ]; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
         // return [
-        //   [-9.42477796076938, "infinite"],
-        //   [-6.283185307179586, "infinite"],
-        //   [-3.141592653589793, "infinite"],
-        //   [0.0, "infinite"],
-        //   [3.141592653589793, "infinite"],
-        //   [6.283185307179586, "infinite"],
-        //   [9.42477796076938, "infinite"],
-        // ]; //1/sin(x)
+        //   [-3 * Math.PI, "infinite"],
+        //   [(-17 * Math.PI) / 6, "removable", 0],
+        //   [(-13 * Math.PI) / 6, "removable", 0],
+        //   [-2 * Math.PI, "infinite"],
+        //   [-Math.PI, "infinite"],
+        //   [(-5 * Math.PI) / 6, "removable", 0],
+        //   [-Math.PI / 6, "removable", 0],
+        //   [0, "infinite"],
+        //   [Math.PI, "infinite"],
+        //   [(7 * Math.PI) / 6, "removable", 0],
+        //   [(11 * Math.PI) / 6, "removable", 0],
+        //   [2 * Math.PI, "infinite"],
+        //   [3 * Math.PI, "infinite"],
+        //   [(19 * Math.PI) / 6, "removable", 0],
+        // ]; //sqrt(2+1/sin(x))
       } else {
         // exp = Utility.insertProductSign(exp, indepVar);
         try {
