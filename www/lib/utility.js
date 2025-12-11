@@ -3319,7 +3319,7 @@ class Utility {
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
         // ]; //1/(x+2)
-        //return [[0.0, "removable", 1.0]]; //sin(x)/x
+        //return [[0.0, "removable", 1.0]]; //(sin(x))/x
         // return [
         //   [0.0, "infinite"],
         //   [2.0, "removable", 0.0],
