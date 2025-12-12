@@ -3309,7 +3309,7 @@ class Utility {
     try {
       let result = [];
       if (Static.imagePath === "images/") {
-        //return await this.discontinuity1(exp, lower, upper, indepVar);
+        return await this.discontinuity1(exp, lower, upper, indepVar);
         // return [
         //   [-1.414, "removable", 2.10734242e-8],
         //   [1.414, "removable", 2.10734242e-8],
@@ -3319,22 +3319,23 @@ class Utility {
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
         // ]; //1/(x+2)
-        //return [[0.0, "removable", 1.0]]; //(sin(x))/x
+        //return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
+        //return [[0.0, "removable", 0.01745240643728351]]; //(sin(x))/x in degrees
         // return [
         //   [0.0, "infinite"],
         //   [2.0, "removable", 0.0],
         // ]; //sqrt((x-2)/x)
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
-        return [
-          [-9.42477796076938, "infinite"],
-          [-6.283185307179586, "infinite"],
-          [-3.141592653589793, "infinite"],
-          [0.0, "infinite"],
-          [3.141592653589793, "infinite"],
-          [6.283185307179586, "infinite"],
-          [9.42477796076938, "infinite"],
-        ]; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
+        // return [
+        //   [-9.42477796076938, "infinite"],
+        //   [-6.283185307179586, "infinite"],
+        //   [-3.141592653589793, "infinite"],
+        //   [0.0, "infinite"],
+        //   [3.141592653589793, "infinite"],
+        //   [6.283185307179586, "infinite"],
+        //   [9.42477796076938, "infinite"],
+        // ]; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
         // return [
         //   [-3 * Math.PI, "infinite"],
         //   [(-17 * Math.PI) / 6, "removable", 0],

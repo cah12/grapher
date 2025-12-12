@@ -355,7 +355,7 @@ class MyCurve extends Curve {
         return indexBeforeDiscontinuity.indexOf(item) === index;
       }
     );
-    return indexBeforeDiscontinuity;
+    return indexBeforeDiscontinuity.sort((a, b) => a - b);
   }
 
   async drawCurve1(painter, style, xMap, yMap, from, to) {
