@@ -290,14 +290,14 @@ class MFunctionDlg {
         Static.math_mode = $(this).val();
         Static.trigger("mathModeChanged", Static.math_mode);
         Replacement.config.angles = $(this).val();
-        if (Static.imagePath != "images/") {
+        /* if (Static.imagePath != "images/") {
           try {
             let res = await mode(Replacement.config.angles);
             //console.log(res);
           } catch (error) {
             console.log(error);
           }
-        }
+        } */
         $("#fnDlg_ok").trigger("focus");
         plot.autoRefresh();
       });
@@ -503,8 +503,16 @@ class MFunctionDlg {
 
       $("#functionModal")
         .off("hidden.bs.modal")
-        .on("hidden.bs.modal", function () {
+        .on("hidden.bs.modal", async function () {
           $("#executeButton").trigger("focus");
+          if (Static.imagePath != "images/") {
+            try {
+              let res = await mode(Replacement.config.angles);
+              //console.log(res);
+            } catch (error) {
+              console.log(error);
+            }
+          }
         });
 
       $("#fnDlg_numberOfPoints,#fnDlg_color1,#fnDlg_color2")
@@ -3017,14 +3025,14 @@ class MFunctionDlg {
     };
 
     this.functionDlg = async function (curveName = null) {
-      if (Static.imagePath != "images/") {
+      /* if (Static.imagePath != "images/") {
         try {
           let res = await mode(Replacement.config.angles);
           // console.log(res);
         } catch (error) {
           console.log(error);
         }
-      }
+      } */
       //$("body").append(m_dlg1);
       $("#functionModal").modal({
         backdrop: "static",
