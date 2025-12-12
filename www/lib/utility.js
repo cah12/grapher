@@ -2398,7 +2398,10 @@ class Utility {
               if (n > 0) {
                 if (discont[i][1] == "infinite") {
                   const _sign1 = math.sign(yVal);
-                  samples[n - 1].y = _sign1 * lmt;
+                  if (samples[n - 1].x != lowerX) {
+                    samples[n - 1].y = _sign1 * lmt;
+                  }
+
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
 
                   _scope.set("x", d + delta);
@@ -3319,22 +3322,42 @@ class Utility {
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
         // ]; //1/(x+2)
-        // if (Static.mode === "rad") {
+        // if (Static.math_mode === "rad") {
         //   return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
         // }
-        // if (Static.mode === "grad") {
+        // if (Static.math_mode === "grad") {
         //   return [[0.0, "removable", 0.9876883405951377]]; //(sin(x))/x in grads
         // }
-        // if (Static.mode === "deg") {
+        // if (Static.math_mode === "deg") {
         //   return [[0.0, "removable", 0.01745240643728351]]; //(sin(x))/x in degrees
         // }
-
         // return [
         //   [0.0, "infinite"],
         //   [2.0, "removable", 0.0],
         // ]; //sqrt((x-2)/x)
         //return [[0.0, "jump"]]; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
+        // if (Static.math_mode != "deg") {
+        //   return [
+        //     [-3 * Math.PI, "infinite"],
+        //     [-2 * Math.PI, "infinite"],
+        //     [-Math.PI, "infinite"],
+        //     [0.0, "infinite"],
+        //     [Math.PI, "infinite"],
+        //     [2 * Math.PI, "infinite"],
+        //     [3 * Math.PI, "infinite"],
+        //   ];
+        // } else {
+        //   return [
+        //     [-540, "infinite"],
+        //     [-360, "infinite"],
+        //     [-180, "infinite"],
+        //     [0.0, "infinite"],
+        //     [180, "infinite"],
+        //     [360, "infinite"],
+        //     [540, "infinite"],
+        //   ];
+        // }
         // return [
         //   [-9.42477796076938, "infinite"],
         //   [-6.283185307179586, "infinite"],
