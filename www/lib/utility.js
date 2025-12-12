@@ -3319,8 +3319,16 @@ class Utility {
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
         // ]; //1/(x+2)
-        //return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
-        //return [[0.0, "removable", 0.01745240643728351]]; //(sin(x))/x in degrees
+        // if (Static.mode === "rad") {
+        //   return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
+        // }
+        // if (Static.mode === "grad") {
+        //   return [[0.0, "removable", 0.9876883405951377]]; //(sin(x))/x in grads
+        // }
+        // if (Static.mode === "deg") {
+        //   return [[0.0, "removable", 0.01745240643728351]]; //(sin(x))/x in degrees
+        // }
+
         // return [
         //   [0.0, "infinite"],
         //   [2.0, "removable", 0.0],
@@ -6680,18 +6688,25 @@ class Utility {
           console.log(error);
         }
 
-        if (Static.useDecimal) {
-          try {
-            m_fn = Static.simplify(m_fn, {}, { exactFractions: false });
-          } catch (error) {
-            console.log(error);
+        if (!_curve.constant) {
+          if (Static.useDecimal) {
+            try {
+              m_fn = Static.simplify(m_fn, {}, { exactFractions: false });
+            } catch (error) {
+              console.log(error);
+            }
+          } else {
+            try {
+              m_fn = Static.simplify(m_fn, {}, { exactFractions: true });
+            } catch (error) {
+              console.log(error);
+            }
+          }
+          if (m_fn.type === "ConstantNode") {
+            _curve.constant = m_fn;
           }
         } else {
-          try {
-            m_fn = Static.simplify(m_fn, {}, { exactFractions: true });
-          } catch (error) {
-            console.log(error);
-          }
+          m_fn = _curve.constant;
         }
         try {
           m_fn = m_fn.toTex({ parenthesis: "auto", implicit: "hide" });
