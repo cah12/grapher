@@ -2345,14 +2345,31 @@ class Utility {
       //const lmt = 1e35;
       const lmt = Static.LargeNumber;
 
+      //Ensure discontinuities are in range
+      for (let i = 0; i < discont.length; i++) {
+        if (
+          Utility.adjustForDecimalPlaces(discont[i][0], 4) <
+            Utility.adjustForDecimalPlaces(lmt_l, 4) ||
+          Utility.adjustForDecimalPlaces(discont[i][0], 4) >
+            Utility.adjustForDecimalPlaces(lmt_u, 4)
+        ) {
+          discont.splice(i, 1);
+          i--;
+        }
+      }
+      obj.discontinuity = discont;
+
       //on the left boundary
       if (
-        discont[0][0] > lowerX &&
+        Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
+          Utility.adjustForDecimalPlaces(lowerX, 4) &&
         Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
           Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
         try {
-          samples[0].y = math.sign(samples[0].y) * lmt;
+          if (discont[0][1] === "infinite") {
+            samples[0].y = math.sign(samples[0].y) * lmt;
+          }
         } catch (error) {
           console.log(error);
         }
@@ -2360,13 +2377,15 @@ class Utility {
       }
       //on the right boundary
       if (
-        discont[discont.length - 1][0] < upperX &&
+        discont[discont.length - 1][0] <= upperX &&
         Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
           Utility.adjustForDecimalPlaces(upperX, 4)
       ) {
         try {
-          samples[samples.length - 1].y =
-            math.sign(samples[samples.length - 1].y) * lmt;
+          if (discont[0][1] === "infinite") {
+            samples[samples.length - 1].y =
+              math.sign(samples[samples.length - 1].y) * lmt;
+          }
         } catch (error) {
           console.log(error);
         }
@@ -3313,6 +3332,10 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return [
+        //   [0.0, "removable", 0],
+        //   [1.0, "infinite"],
+        // ]; //sqrt(x/sqrt(x-1))
         // return [
         //   [-1.414, "removable", 2.10734242e-8],
         //   [1.414, "removable", 2.10734242e-8],

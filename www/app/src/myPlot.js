@@ -854,6 +854,7 @@ class MyPlot extends Plot {
         );
 
         const samples = Utility.makeSamples(makeSamplesData);
+        discont = makeSamplesData.discontinuity;
 
         if (
           !samples ||

@@ -315,13 +315,13 @@ class MyCurve extends Curve {
       if (self.discontinuity[n][1] != "infinite") {
         for (let i = 0; i < samples.length; i++) {
           if (!Static.AxisInYX) {
-            if (samples[i].x > self.discontinuity[n][0]) {
+            if (samples[i].x > self.discontinuity[n][0] && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
               samples[i - 1].y = self.discontinuity[n][2];
               break;
             }
           } else {
-            if (samples[i].y > self.discontinuity[n][0]) {
+            if (samples[i].y > self.discontinuity[n][0] && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
               break;
             }
