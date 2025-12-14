@@ -2394,7 +2394,7 @@ class Utility {
 
       let n = 0;
       const _scope = new Map();
-      const delta = (samples[1].x - samples[0].x) * 1e-15;
+      const delta = (samples[1].x - samples[0].x) * 1e-5;
       // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
         // if (discont[i][1] !== "infinite") {
@@ -2464,31 +2464,31 @@ class Utility {
       return a.x - b.x;
     });
 
-    for (let i = 1; i < samples.length; i++) {
-      if (
-        samples[i - 1].y === Static.LargeNumber &&
-        samples[i].y === Static.LargeNumber
-      ) {
-        samples[i].y = "#";
-        i++;
-        while (i < samples.length && samples[i].y != Static.LargeNumber) {
-          samples[i].y = "#";
-          i++;
-        }
-        samples[i].y = "#";
-      } else if (
-        samples[i - 1].y === -Static.LargeNumber &&
-        samples[i].y === -Static.LargeNumber
-      ) {
-        samples[i].y = "#";
-        i++;
-        while (i < samples.length && samples[i].y != -Static.LargeNumber) {
-          samples[i].y = "#";
-          i++;
-        }
-        samples[i].y = "#";
-      }
-    }
+    // for (let i = 1; i < samples.length; i++) {
+    //   if (
+    //     samples[i - 1].y === Static.LargeNumber &&
+    //     samples[i].y === Static.LargeNumber
+    //   ) {
+    //     samples[i].y = "#";
+    //     i++;
+    //     while (i < samples.length && samples[i].y != Static.LargeNumber) {
+    //       samples[i].y = "#";
+    //       i++;
+    //     }
+    //     samples[i].y = "#";
+    //   } else if (
+    //     samples[i - 1].y === -Static.LargeNumber &&
+    //     samples[i].y === -Static.LargeNumber
+    //   ) {
+    //     samples[i].y = "#";
+    //     i++;
+    //     while (i < samples.length && samples[i].y != -Static.LargeNumber) {
+    //       samples[i].y = "#";
+    //       i++;
+    //     }
+    //     samples[i].y = "#";
+    //   }
+    // }
     //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
     samples = samples.filter((item, index) => {
       return samples[index].y != "#";
