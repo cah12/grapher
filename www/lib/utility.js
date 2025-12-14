@@ -2357,7 +2357,7 @@ class Utility {
           i--;
         }
       }
-      obj.discontinuity = discont;
+      obj.discontinuity = structuredClone(discont);
 
       //on the left boundary
       if (

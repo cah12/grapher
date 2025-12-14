@@ -219,7 +219,9 @@ class MyCurve extends Curve {
       if (
         samples.length &&
         self.discontinuity.length == 1 &&
-        val_x >= self.discontinuity[0][0] &&
+        self.discontinuity[0][1] != "infinite" &&
+        Utility.adjustForDecimalPlaces(val_x, 6) >=
+          Utility.adjustForDecimalPlaces(self.discontinuity[0][0], 6) &&
         !self.unboundedRange
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
