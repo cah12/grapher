@@ -2394,7 +2394,7 @@ class Utility {
 
       let n = 0;
       const _scope = new Map();
-      const delta = (samples[1].x - samples[0].x) * 1e-5;
+      const delta = (samples[1].x - samples[0].x) * 1e-15;
       // console.log(delta);
       for (let i = 0; i < discont.length; i++) {
         // if (discont[i][1] !== "infinite") {
@@ -2463,7 +2463,36 @@ class Utility {
     samples = samples.sort(function (a, b) {
       return a.x - b.x;
     });
+
+    for (let i = 1; i < samples.length; i++) {
+      if (
+        samples[i - 1].y === Static.LargeNumber &&
+        samples[i].y === Static.LargeNumber
+      ) {
+        samples[i].y = "#";
+        i++;
+        while (i < samples.length && samples[i].y != Static.LargeNumber) {
+          samples[i].y = "#";
+          i++;
+        }
+        samples[i].y = "#";
+      } else if (
+        samples[i - 1].y === -Static.LargeNumber &&
+        samples[i].y === -Static.LargeNumber
+      ) {
+        samples[i].y = "#";
+        i++;
+        while (i < samples.length && samples[i].y != -Static.LargeNumber) {
+          samples[i].y = "#";
+          i++;
+        }
+        samples[i].y = "#";
+      }
+    }
     //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
+    samples = samples.filter((item, index) => {
+      return samples[index].y != "#";
+    });
     return samples;
   }
 
@@ -3332,6 +3361,10 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return [
+        //   [-2.0, "infinite"],
+        //   [2.0, "infinite"],
+        // ]; //((sin(x)^2)/(x^2-4)^0.5)^2
         // return [
         //   [0.0, "removable", 0],
         //   [1.0, "infinite"],
