@@ -6386,13 +6386,14 @@ class Utility {
 
   static parametizeKeywordArg(str) {
     function doParametize(str) {
-      const myArr = str.match(/\(.\)/gm) || [];
+      /* Comment this out for now. This allows for proper handling of exponents on keywords */
+      // const myArr = str.match(/\(.\)/gm) || [];
 
-      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+      // const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
 
-      for (let i = 0; i < myArr.length; i++) {
-        str = str.replaceAll(myArr[i], myArr2[i]);
-      }
+      // for (let i = 0; i < myArr.length; i++) {
+      //   str = str.replaceAll(myArr[i], myArr2[i]);
+      // }
 
       let delimiter = 0;
       let result = "";
