@@ -216,14 +216,14 @@ class MyCurve extends Curve {
       if (Static.AxisInYX) {
         val_x = samples[0].y;
       }
-      if (
+      /* if (
         samples.length &&
         self.discontinuity.length == 1 &&
         self.discontinuity[0][1] == "removable" &&
         !self.unboundedRange
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
-      }
+      } */
       if (
         samples.length &&
         self.discontinuity.length == 1 &&
