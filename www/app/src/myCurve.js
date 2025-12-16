@@ -219,6 +219,14 @@ class MyCurve extends Curve {
       if (
         samples.length &&
         self.discontinuity.length == 1 &&
+        self.discontinuity[0][1] == "removable" &&
+        !self.unboundedRange
+      ) {
+        return super.drawCurve(painter, style, xMap, yMap, from, to);
+      }
+      if (
+        samples.length &&
+        self.discontinuity.length == 1 &&
         self.discontinuity[0][1] != "infinite" &&
         Utility.adjustForDecimalPlaces(val_x, 6) >=
           Utility.adjustForDecimalPlaces(self.discontinuity[0][0], 6) &&
