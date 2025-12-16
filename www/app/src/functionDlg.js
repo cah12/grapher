@@ -794,7 +794,7 @@ class MFunctionDlg {
         self.unboundedRange = null;
         self.numOfPoints = 200;
 
-        self.fn_unsimplified = fnDlgFunctionVal;
+        //self.fn_unsimplified = fnDlgFunctionVal;
 
         if (fnDlgFunctionVal === "T") {
           const mf = $("#fnDlg_function")[0];

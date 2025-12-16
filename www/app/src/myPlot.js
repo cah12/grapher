@@ -588,7 +588,7 @@ class MyPlot extends Plot {
     ) {
       let newCurve = null;
 
-      const fn_unsimplified = self._functionDlg.fn_unsimplified;
+      //const fn_unsimplified = self._functionDlg.fn_unsimplified;
 
       if (functionDlgData) {
         setFunctionDlgData(functionDlgData);
@@ -760,7 +760,7 @@ class MyPlot extends Plot {
 
       let makeSamplesData = {
         fx: fn,
-        fn_unsimplified,
+        //fn_unsimplified,
         parametricFnX,
         parametricFnY,
         parametric_variable: self._functionDlg.parametric_variable,
@@ -782,7 +782,8 @@ class MyPlot extends Plot {
       try {
         discont =
           (await Utility.discontinuity(
-            fn_unsimplified,
+            //fn_unsimplified,
+            makeSamplesData.fx,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.variable

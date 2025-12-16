@@ -3377,7 +3377,7 @@ class Utility {
         // return [
         //   [-2.0, "infinite"],
         //   [2, "infinite"],
-        // ]; //1/(x+2)
+        // ]; //1/(x^2-4)
         // if (Static.math_mode === "rad") {
         //   return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
         // }
