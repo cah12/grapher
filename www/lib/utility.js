@@ -6244,6 +6244,9 @@ class Utility {
       // }
 
       //allow for inputs like 4*theta and r=4*theta
+
+      latex = latex.replaceAll("\\frac", "#~#");
+      latex = latex.replaceAll("\\right", "#~~#");
       if (
         latex.indexOf("=") !== -1 &&
         latex.indexOf("y") !== -1 &&
@@ -6257,6 +6260,8 @@ class Utility {
       } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
         result = result.replaceAll("r", "y");
       }
+      latex = latex.replaceAll("#~#", "\\frac");
+      latex = latex.replaceAll("#~~#", "\\right");
       result = result.replaceAll("^(-1)", "#");
       result = result.replaceAll("theta", "T");
 
@@ -6386,14 +6391,14 @@ class Utility {
 
   static parametizeKeywordArg(str) {
     function doParametize(str) {
-      /* Comment this out for now. This allows for proper handling of exponents on keywords */
-      // const myArr = str.match(/\(.\)/gm) || [];
+      /*Un-Comment this out for now. This allows for proper handling of exponents on keywords */
+      const myArr = str.match(/\(.\)/gm) || [];
 
-      // const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
 
-      // for (let i = 0; i < myArr.length; i++) {
-      //   str = str.replaceAll(myArr[i], myArr2[i]);
-      // }
+      for (let i = 0; i < myArr.length; i++) {
+        str = str.replaceAll(myArr[i], myArr2[i]);
+      }
 
       let delimiter = 0;
       let result = "";
