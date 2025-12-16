@@ -3361,6 +3361,7 @@ class Utility {
       let result = [];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        //return [[0.0, "removable", 0]]; //y=sin(4/x);
         // return [
         //   [-2.0, "infinite"],
         //   [2.0, "infinite"],
