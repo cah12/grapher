@@ -116,6 +116,8 @@ class MyCurve extends Curve {
           discontinuity: self.discontinuity,
         };
 
+        // try {
+        //if (data.toString() != "[SyntheticPointData]") {
         data.discontinuitySamples = Utility.makeSamples(obj);
 
         if (Static.AxisInYX) {

@@ -2338,7 +2338,7 @@ class Utility {
     if (limits_x) {
     }
     if (obj.discontinuity.length) {
-      const discont = obj.discontinuity.slice();
+      const discont = structuredClone(obj.discontinuity);
       const lmt_l = samples[0].x;
       const lmt_u = samples[samples.length - 1].x;
       const step = (samples[1].x - samples[0].x) * 1e-20;
@@ -2361,13 +2361,15 @@ class Utility {
 
       //on the left boundary
       if (
+        discont &&
+        discont.length &&
         Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
           Utility.adjustForDecimalPlaces(lowerX, 4) &&
         Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
           Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
         try {
-          if (discont[0][1] === "infinite") {
+          if (discont && discont.length && discont[0][1] === "infinite") {
             samples[0].y = math.sign(samples[0].y) * lmt;
           }
         } catch (error) {
@@ -2377,6 +2379,8 @@ class Utility {
       }
       //on the right boundary
       if (
+        discont &&
+        discont.length &&
         discont[discont.length - 1][0] <= upperX &&
         Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
           Utility.adjustForDecimalPlaces(upperX, 4)
@@ -2400,7 +2404,7 @@ class Utility {
         // if (discont[i][1] !== "infinite") {
         //   continue;
         // }
-        if (discont[i][1] == "jump") {
+        if (discont && discont.length && discont[i][1] == "jump") {
           continue;
         }
         const d = discont[i][0];
@@ -2435,10 +2439,10 @@ class Utility {
                   break;
                 } else if (discont[i][1] == "removable") {
                   if (discont.length > 1 && i > 0) {
-                    if (discont[i - 1][1] == "infinite") {
-                      samples[n - 1].x = discont[i][0];
-                      samples[n - 1].y = discont[i][2];
-                    }
+                    // if (discont[i - 1][1] == "infinite") {
+                    samples[n - 1].x = discont[i][0];
+                    samples[n - 1].y = discont[i][2];
+                    // }
                   } else {
                     samples[n - 1].y = discont[i][2];
                     samples[n].y = discont[i][2];
@@ -2457,9 +2461,22 @@ class Utility {
         }
       }
     }
+
+    if (obj && obj.turning_points && obj.turning_points.length) {
+      const _tp = obj.turning_points;
+      const discont = obj.discontinuity;
+      const tp = _tp.filter(function (item) {
+        return discont.indexOf(item) === -1;
+      });
+      for (let i = 0; i < tp.length; i++) {
+        samples.push(new Misc.Point(tp[i][0], tp[i][1]));
+      }
+    }
+
     samples = samples.filter((item, index) => {
       return _.isFinite(samples[index].y);
     });
+
     samples = samples.sort(function (a, b) {
       return a.x - b.x;
     });
@@ -3355,13 +3372,27 @@ class Utility {
     return adjust;
   }
 
+  static async turning_points(exp, lower, upper, indepVar) {
+    try {
+      if (Static.imagePath === "images/") {
+        return [];
+      } else {
+        return await turningPoints(exp, lower, upper, indepVar);
+      }
+    } catch (error) {}
+  }
+
   static async discontinuity(exp, lower, upper, indepVar) {
     //Utility.progressWait();
     try {
-      let result = [];
+      let result = {
+        discontinuity: [],
+        turningPoints: [],
+      }; //[];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
-        //return [[0.0, "removable", 0]]; //y=sin(4/x);
+        //return [[0.0, "removable", 1]]; //(sin(x))/x in radians
+        //return [[0.0, "removable", 0]]; //y=sin(4/x)
         // return [
         //   [-2.0, "infinite"],
         //   [2.0, "infinite"],
@@ -3380,13 +3411,13 @@ class Utility {
         //   [2, "infinite"],
         // ]; //1/(x^2-4)
         // if (Static.math_mode === "rad") {
-        //   return [[0.0, "removable", 0.8414709848078965]]; //(sin(x))/x in radians
+        //   return [[0.0, "removable", 0.8414709848078965]]; //sin(x/x) in radians
         // }
         // if (Static.math_mode === "grad") {
-        //   return [[0.0, "removable", 0.9876883405951377]]; //(sin(x))/x in grads
+        //   return [[0.0, "removable", 0.9876883405951377]]; //sin(x/x) in grads
         // }
         // if (Static.math_mode === "deg") {
-        //   return [[0.0, "removable", 0.01745240643728351]]; //(sin(x))/x in degrees
+        //   return [[0.0, "removable", 0.01745240643728351]]; //sin(x/x) in degrees
         // }
         // return [
         //   [0.0, "infinite"],
@@ -3415,15 +3446,18 @@ class Utility {
         //     [540, "infinite"],
         //   ];
         // }
-        // return [
-        //   [-9.42477796076938, "infinite"],
-        //   [-6.283185307179586, "infinite"],
-        //   [-3.141592653589793, "infinite"],
-        //   [0.0, "infinite"],
-        //   [3.141592653589793, "infinite"],
-        //   [6.283185307179586, "infinite"],
-        //   [9.42477796076938, "infinite"],
-        // ]; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
+        // return {
+        //   discontinuities: [
+        //     [-9.42477796076938, "infinite"],
+        //     [-6.283185307179586, "infinite"],
+        //     [-3.141592653589793, "infinite"],
+        //     [0.0, "infinite"],
+        //     [3.141592653589793, "infinite"],
+        //     [6.283185307179586, "infinite"],
+        //     [9.42477796076938, "infinite"],
+        //   ],
+        //   turningPoints: [],
+        // }; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
         // return [
         //   [-3 * Math.PI, "infinite"],
         //   [(-17 * Math.PI) / 6, "removable", 0],
@@ -3451,7 +3485,8 @@ class Utility {
           const _result = await discontinuity(exp, lower, upper, indepVar);
           if (_result) {
             Utility.progressWait(false);
-            return _result.discontinuities;
+            // return _result.discontinuities;
+            return _result;
           }
         } catch (error) {
           console.log(error);

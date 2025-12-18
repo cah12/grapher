@@ -255,7 +255,7 @@ class MCurveFitDlg extends ModalDlg {
       "attributes2"
     );
 
-    this.cb = function () {
+    this.cb = async function () {
       if (m_retain) {
         var title = m_name;
         if (m_plot.findPlotCurve(title)) {
@@ -422,7 +422,10 @@ class MCurveFitDlg extends ModalDlg {
           upperX: rc.right(),
           numOfSamples: numOfSamples,
         };
+
         var s = Utility.makeSamples(makeSamplesData);
+        if (!s) return;
+
         if (!s) return;
         curve.turningPoints = makeSamplesData.turningPoints;
         curve.residuals = regr.residuals;

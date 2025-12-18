@@ -608,6 +608,8 @@ class MyPlot extends Plot {
       ) {
         //console.log("do 3d")
         if (self._functionDlg.threeDType === "spectrocurve") {
+          var s = null;
+
           var s = Utility.makeSamples({
             fx: fn,
             threeD: true,
@@ -777,17 +779,18 @@ class MyPlot extends Plot {
         },
       };
 
+      let discontTurningPoints = null;
       let discont = [];
       ///////////////////////
       try {
-        discont =
-          (await Utility.discontinuity(
-            //fn_unsimplified,
-            makeSamplesData.fx,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX,
-            self._functionDlg.variable
-          )) || [];
+        discontTurningPoints = await Utility.discontinuity(
+          //fn_unsimplified,
+          makeSamplesData.fx,
+          makeSamplesData.lowerX,
+          makeSamplesData.upperX,
+          self._functionDlg.variable
+        );
+        discont = discontTurningPoints.discontinuities;
       } catch (error) {
         discont = [];
       }
@@ -846,6 +849,7 @@ class MyPlot extends Plot {
           }
         }
         makeSamplesData.discontinuity = discont;
+        makeSamplesData.turning_points = discontTurningPoints.turningPoints;
         makeSamplesData.xDecimalPlaces = self.axisDecimalPlaces(
           Axis.AxisId.xBottom
         );
