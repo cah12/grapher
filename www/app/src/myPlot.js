@@ -819,6 +819,7 @@ class MyPlot extends Plot {
       if (self._functionDlg.unboundedRange) {
         newCurve = addUnboundedCurve(title, fn, numOfPoints);
         newCurve.discontinuity = discont;
+        newCurve.period = discontTurningPoints.period;
         //newCurve.setAxis = false;
         newCurve.latex = self._functionDlg.latex;
         newCurve.attach(self);
@@ -1000,6 +1001,7 @@ class MyPlot extends Plot {
 
         newCurve.turningPoints = makeSamplesData.turningPoints;
         newCurve.inflectionPoints = makeSamplesData.inflectionPoints;
+        //newCurve.period = discontTurningPoints.period;
         newCurve.latex = self._functionDlg.latex;
         if (!newCurve) {
           return;

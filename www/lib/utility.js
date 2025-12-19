@@ -3457,6 +3457,7 @@ class Utility {
         //     [9.42477796076938, "infinite"],
         //   ],
         //   turningPoints: [],
+        //   period: 6.283185307179586,
         // }; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
         // return [
         //   [-3 * Math.PI, "infinite"],
@@ -3503,7 +3504,7 @@ class Utility {
     return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
   }
 
-  static handlePeriodic(discontinuitiesArr, lower, upper) {
+  static handlePeriodic(period, discontinuitiesArr, lower, upper) {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }

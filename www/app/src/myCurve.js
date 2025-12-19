@@ -90,8 +90,11 @@ class MyCurve extends Curve {
           self.right = right;
           self.discontinuosCurvePending = true;
 
-          if (Utility.isPeriodic(self.fn)) {
+          if (
+            /* Utility.isPeriodic(self.fn) */ typeof self.period == "number"
+          ) {
             self.discontinuity = Utility.handlePeriodic(
+              self.period,
               self.discontinuity,
               self.left,
               self.right
