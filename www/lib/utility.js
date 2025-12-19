@@ -3508,6 +3508,14 @@ class Utility {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }
+    //Filter out "removable" discontinuities
+    let filteredDiscontinuitiesArr = [];
+    for (let i = 0; i < discontinuitiesArr.length; i++) {
+      if (discontinuitiesArr[i][1] != "removable") {
+        filteredDiscontinuitiesArr.push(discontinuitiesArr[i]);
+      }
+    }
+    discontinuitiesArr = filteredDiscontinuitiesArr;
     let d = discontinuitiesArr[1][0] - discontinuitiesArr[0][0];
     let a1 = discontinuitiesArr[0][0];
 
