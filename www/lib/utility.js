@@ -2415,7 +2415,7 @@ class Utility {
         for (; n < samples.length; n++) {
           const x = samples[n].x;
           if (x > d) {
-            _scope.set("x", d - delta);
+            _scope.set(indepVar, d - delta);
             yVal = parser.eval(_scope);
             try {
               if (n > 0) {
@@ -2427,7 +2427,7 @@ class Utility {
 
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
 
-                  _scope.set("x", d + delta);
+                  _scope.set(indepVar, d + delta);
                   yVal = parser.eval(_scope);
                   // if (yVal.im) {
                   //   samples[n].y =;
@@ -2466,7 +2466,7 @@ class Utility {
       const _tp = obj.turning_points;
       const discont = obj.discontinuity;
       const tp = _tp.filter(function (item) {
-        return discont.indexOf(item) === -1;
+        return discont.indexOf(item[0]) === -1;
       });
       for (let i = 0; i < tp.length; i++) {
         samples.push(new Misc.Point(tp[i][0], tp[i][1]));
