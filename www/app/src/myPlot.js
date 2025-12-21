@@ -1883,7 +1883,9 @@ class MyPlot extends Plot {
           .plot()
           .axisDecimalPlaces(curves[0].yAxis());
 
-        const discontinuity = curves[0].discontinuity.map(function (e) {
+        const _discont = structuredClone(curves[0].discontinuity);
+
+        const discontinuity = _discont.map(function (e) {
           e[0] = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
             precisionX

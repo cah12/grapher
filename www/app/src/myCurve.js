@@ -239,7 +239,7 @@ class MyCurve extends Curve {
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
       }
-      indexBeforeDiscontinuity = self.indices(samples);
+      indexBeforeDiscontinuity = self.indices(samples); //[20, 21, 133, 134, 246, 247, 360] for sqrt(sin(x))
       //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
       // if (
       //   indexBeforeDiscontinuity.length == 1 &&

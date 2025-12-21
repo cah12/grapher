@@ -3459,6 +3459,19 @@ class Utility {
         //   turningPoints: [],
         //   period: 6.283185307179586,
         // }; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
+        // return {
+        //   discontinuities: [
+        //     [-9.42477796076938, "removable", 0],
+        //     [-6.283185307179586, "removable", 0],
+        //     [-3.141592653589793, "removable", 0],
+        //     [0.0, "removable", 0],
+        //     [3.141592653589793, "removable", 0],
+        //     [6.283185307179586, "removable", 0],
+        //     [9.42477796076938, "removable", 0],
+        //   ],
+        //   turningPoints: [],
+        //   period: 6.283185307179586,
+        // }; //sqrt(sin(x))
         // return [
         //   [-3 * Math.PI, "infinite"],
         //   [(-17 * Math.PI) / 6, "removable", 0],
