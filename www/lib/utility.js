@@ -2341,30 +2341,36 @@ class Utility {
     //   epsilon2 = 1e-100;
     // }
 
-    for (let i = 1; i < samples.length; i++) {
-      const curStep = samples[i].x - samples[i - 1].x;
-      if (curStep > 1.5 * step) {
-        let arr = Utility.findLimits(fx, samples[i - 1].x, epsilon2);
-        if (arr) {
-          samples[i - 1].x = arr[0];
-          samples[i - 1].y = arr[2];
-          obj.discontinuity.push(arr);
-        }
-        if (i < samples.length - 1) {
-          arr = Utility.findLimits(fx, samples[i].x, epsilon2);
-          if (arr) {
-            samples[i].x = arr[0];
-            samples[i].y = arr[2];
-            obj.discontinuity.push(arr);
-          }
-          i++;
-        }
-      }
-    }
+    // for (let i = 1; i < samples.length; i++) {
+    //   const curStep = samples[i].x - samples[i - 1].x;
 
-    obj.discontinuity.sort(function (a, b) {
-      return a[0] - b[0];
-    });
+    //   if (curStep > 1.5 * step) {
+    //     const testX = samples[i - 1].x + curStep / 2;
+    //     const testY = parser.eval({ x: testX });
+    //     if (!math.isNumeric(testY)) {
+    //       break;
+    //     }
+    //     let arr = Utility.findLimits(fx, samples[i - 1].x, epsilon2);
+    //     if (arr) {
+    //       samples[i - 1].x = arr[0];
+    //       samples[i - 1].y = arr[2];
+    //       obj.discontinuity.push(arr);
+    //     }
+    //     if (arr && i < samples.length - 1) {
+    //       arr = Utility.findLimits(fx, samples[i].x, epsilon2);
+    //       if (arr) {
+    //         samples[i].x = arr[0];
+    //         samples[i].y = arr[2];
+    //         obj.discontinuity.push(arr);
+    //       }
+    //       i++;
+    //     }
+    //   }
+    // }
+
+    // obj.discontinuity.sort(function (a, b) {
+    //   return a[0] - b[0];
+    // });
 
     if (limits_x) {
     }
