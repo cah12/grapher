@@ -3641,10 +3641,25 @@ class Utility {
     return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
   }
 
+  // static handlePeriodic(period, discontinuities, newLowerLimit, newUpperLimit) {
+  //   const oldDiscontinuities = structuredClone(discontinuities);
+  //   if (newLowerLimit < discontinuities[0][0]) {
+  //     let n = 0;
+  //     while (newLowerLimit < discontinuities[n][0]) {
+  //       n += 1;
+  //     }
+
+  //   }
+
+  //   return oldDiscontinuities;
+  // }
+
   static handlePeriodic(period, discontinuitiesArr, lower, upper) {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }
+    console.log(485);
+    const oldDiscontinuities = structuredClone(discontinuitiesArr);
     //Filter out "removable" discontinuities
     let filteredDiscontinuitiesArr = [];
     for (let i = 0; i < discontinuitiesArr.length; i++) {
@@ -3691,6 +3706,13 @@ class Utility {
       discontinuitiesArr.push([a1 + (n + 1) * d, "infinite"]);
       discontinuitiesArr.push([a1 + (n + 2) * d, "infinite"]);
       discontinuitiesArr.push([a1 + (n + 3) * d, "infinite"]);
+    }
+
+    const m = oldDiscontinuities.length;
+    const lastElement = oldDiscontinuities.pop();
+    oldDiscontinuities.unshift(lastElement);
+    for (let i = 0; i < discontinuitiesArr.length; i++) {
+      discontinuitiesArr[i][1] = oldDiscontinuities[i % m][1];
     }
     return discontinuitiesArr;
   }
