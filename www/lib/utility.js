@@ -3654,7 +3654,61 @@ class Utility {
   //   return oldDiscontinuities;
   // }
 
-  static handlePeriodic(period, discontinuitiesArr, lower, upper) {
+  static handlePeriodic(period, discontArr, newLower, newUpper) {
+    if (!Array.isArray(discontArr) || discontArr.length === 0) return [];
+    if (!(period > 0)) throw new Error("period must be > 0");
+    const eps = 1e-12;
+    const out = [];
+
+    for (const entry of discontArr) {
+      const base = entry[0];
+      const payload = entry.slice(1); // keep type and any extra fields
+      // start n so that base + n*period >= newLower (floor may put one step before)
+      let n = Math.floor((newLower - base) / period);
+      // advance until we're at/after newLower (handles rounding)
+      while (base + n * period < newLower - eps) n++;
+      // push until beyond newUpper
+      for (; base + n * period <= newUpper + eps; n++) {
+        const pos = base + n * period;
+        out.push([pos, ...payload]);
+      }
+    }
+
+    // sort and remove near-duplicates
+    out.sort((a, b) => a[0] - b[0]);
+    const res = [];
+    for (const e of out) {
+      if (!res.length || Math.abs(res[res.length - 1][0] - e[0]) > eps)
+        res.push(e);
+    }
+    return res;
+  }
+
+  static handlePeriodic2(period, discontinuitiesArr, lower, upper) {
+    if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
+      return discontinuitiesArr;
+    }
+
+    let discontinuitiesPerPeriod = 0;
+    let start = discontinuitiesArr[0][0];
+    for (let i = 1; i < discontinuitiesArr.length; i++) {
+      const space = discontinuitiesArr[i][0] - start;
+      if (space > period) {
+        break;
+      }
+      discontinuitiesPerPeriod += 1;
+    }
+
+    const discont = [];
+    for (let index = 0; index < discontinuitiesPerPeriod; index++) {
+      discontinuitiesArr[index][0] -= 5 * period;
+      discont.push(discontinuitiesArr[index]);
+    }
+
+    return discontinuitiesArr;
+  }
+
+  /* static handlePeriodic(period, discontinuitiesArr, lower, upper) {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }
@@ -3707,15 +3761,8 @@ class Utility {
       discontinuitiesArr.push([a1 + (n + 2) * d, "infinite"]);
       discontinuitiesArr.push([a1 + (n + 3) * d, "infinite"]);
     }
-
-    const m = oldDiscontinuities.length;
-    const lastElement = oldDiscontinuities.pop();
-    oldDiscontinuities.unshift(lastElement);
-    for (let i = 0; i < discontinuitiesArr.length; i++) {
-      discontinuitiesArr[i][1] = oldDiscontinuities[i % m][1];
-    }
     return discontinuitiesArr;
-  }
+  } */
 
   static async discontinuity1(exp, lower, upper, indepVar) {
     ///////////////////////Variables//////////////////////
