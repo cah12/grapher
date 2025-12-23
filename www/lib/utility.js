@@ -2335,6 +2335,37 @@ class Utility {
     }
 
     samples = Utility.removeNonNumericPoints(samples);
+
+    let epsilon2 = 1e-4;
+    // if (Static.math_mode != "deg") {
+    //   epsilon2 = 1e-100;
+    // }
+
+    for (let i = 1; i < samples.length; i++) {
+      const curStep = samples[i].x - samples[i - 1].x;
+      if (curStep > 1.5 * step) {
+        let arr = Utility.findLimits(fx, samples[i - 1].x, epsilon2);
+        if (arr) {
+          samples[i - 1].x = arr[0];
+          samples[i - 1].y = arr[2];
+          obj.discontinuity.push(arr);
+        }
+        if (i < samples.length - 1) {
+          arr = Utility.findLimits(fx, samples[i].x, epsilon2);
+          if (arr) {
+            samples[i].x = arr[0];
+            samples[i].y = arr[2];
+            obj.discontinuity.push(arr);
+          }
+          i++;
+        }
+      }
+    }
+
+    obj.discontinuity.sort(function (a, b) {
+      return a[0] - b[0];
+    });
+
     if (limits_x) {
     }
     if (obj.discontinuity.length) {
@@ -2369,7 +2400,11 @@ class Utility {
           Utility.adjustForDecimalPlaces(lowerX, 4)
       ) {
         try {
-          if (discont && discont.length && discont[0][1] === "infinite") {
+          if (
+            discont &&
+            discont.length &&
+            (discont[0][1] === "infinite" || discont[0][1] === "essential")
+          ) {
             samples[0].y = math.sign(samples[0].y) * lmt;
           }
         } catch (error) {
@@ -2386,7 +2421,7 @@ class Utility {
           Utility.adjustForDecimalPlaces(upperX, 4)
       ) {
         try {
-          if (discont[0][1] === "infinite") {
+          if (discont[0][1] === "infinite" || discont[0][1] === "essential") {
             samples[samples.length - 1].y =
               math.sign(samples[samples.length - 1].y) * lmt;
           }
@@ -2419,7 +2454,10 @@ class Utility {
             yVal = parser.eval(_scope);
             try {
               if (n > 0) {
-                if (discont[i][1] == "infinite") {
+                if (
+                  discont[i][1] == "infinite" ||
+                  discont[i][1] == "essential"
+                ) {
                   const _sign1 = math.sign(yVal);
                   if (samples[n - 1].x != lowerX) {
                     samples[n - 1].y = _sign1 * lmt;
@@ -2437,7 +2475,10 @@ class Utility {
                   n++;
                   //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                   break;
-                } else if (discont[i][1] == "removable") {
+                } else if (
+                  discont[i][1] == "removable" ||
+                  discont[i][1] == "unknown2"
+                ) {
                   if (discont.length > 1 && i > 0) {
                     // if (discont[i - 1][1] == "infinite") {
                     samples[n - 1].x = discont[i][0];
@@ -3363,6 +3404,7 @@ class Utility {
     for (let i = 0; i < curve.discontinuity.length; i++) {
       if (
         curve.discontinuity[i][1] == "infinite" ||
+        curve.discontinuity[i][1] == "essential" ||
         curve.discontinuity[i][1] == "jump"
       ) {
         adjust = true;
@@ -3380,6 +3422,82 @@ class Utility {
         return await turningPoints(exp, lower, upper, indepVar);
       }
     } catch (error) {}
+  }
+
+  /* static findLimits(expression, x0, epsilon) {
+    const parser = math.parse(expression);
+    let x = x0;
+    let fx = parser.evaluate({ x: x });
+
+    let n = 0;
+    const epsilon2 = epsilon * 1e-4; // 1000;
+    while (Math.abs(fx) > epsilon && n < 1e15) {
+      x = x + n * epsilon2;
+      fx = parser.evaluate({ x: x }); // f.evaluate(x1);
+      if (!math.isNumeric(fx)) {
+        break;
+      }
+      n++;
+    }
+
+    console.log(n);
+
+    return [
+      Utility.adjustForDecimalPlaces(x, 1),
+      x,
+      "unknown2",
+      Utility.adjustForDecimalPlaces(
+        parser.evaluate({ x: x - n * epsilon2 }),
+        1
+      ),
+    ];
+  } */
+
+  static findLimits(expression, x0, epsilon) {
+    const parser = math.parse(expression);
+    let x = x0;
+    let fx = parser.evaluate({ x: x });
+    let x1;
+
+    const deriv = math.derivative(expression, "x");
+
+    let n = 0;
+    while (Math.abs(fx) > epsilon) {
+      n++;
+      x1 =
+        x -
+        fx /
+          deriv.evaluate({
+            x: x,
+          });
+      fx = parser.evaluate({ x: x1 }); // f.evaluate(x1);
+      x = x1;
+    }
+
+    console.log(n);
+
+    x = Utility.adjustForDecimalPlaces(x, 4);
+    let fx1 = Utility.adjustForDecimalPlaces(
+      math.evaluate(expression, { x: x - epsilon * epsilon })
+    );
+    if (!math.isNumeric(fx1)) {
+      fx1 = Utility.adjustForDecimalPlaces(
+        math.evaluate(expression, { x: x + epsilon * epsilon })
+      );
+    }
+
+    if (!math.isNumeric(fx1) && fx1.re != undefined) {
+      return [x, "unknown2", fx1.re];
+    }
+
+    return [x, "unknown2", fx1];
+  }
+
+  // Sort discontinuity points
+  static sortDiscontinuityPoints(points) {
+    return points.sort(function (a, b) {
+      return a[0] - b[0];
+    });
   }
 
   static async discontinuity(exp, lower, upper, indepVar) {
@@ -3461,13 +3579,13 @@ class Utility {
         // }; //1/sin(x) or sqrt(1/sin(x)) or sqrt(x^2+1/sin(x))
         // return {
         //   discontinuities: [
-        //     [-9.42477796076938, "removable", 0],
+        //     /* [-9.42477796076938, "removable", 0],
         //     [-6.283185307179586, "removable", 0],
         //     [-3.141592653589793, "removable", 0],
         //     [0.0, "removable", 0],
         //     [3.141592653589793, "removable", 0],
         //     [6.283185307179586, "removable", 0],
-        //     [9.42477796076938, "removable", 0],
+        //     [9.42477796076938, "removable", 0], */
         //   ],
         //   turningPoints: [],
         //   period: 6.283185307179586,
@@ -3524,7 +3642,10 @@ class Utility {
     //Filter out "removable" discontinuities
     let filteredDiscontinuitiesArr = [];
     for (let i = 0; i < discontinuitiesArr.length; i++) {
-      if (discontinuitiesArr[i][1] != "removable") {
+      if (
+        discontinuitiesArr[i][1] != "removable" &&
+        discontinuitiesArr[i][1] != "unknown2"
+      ) {
         filteredDiscontinuitiesArr.push(discontinuitiesArr[i]);
       }
     }

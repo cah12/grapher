@@ -181,6 +181,8 @@ class MyCurve extends Curve {
       if (self.discontinuity[i].length >= 2) {
         if (
           self.discontinuity[i][1] == "infinite" ||
+          self.discontinuity[i][1] == "essential" ||
+          self.discontinuity[i][1] == "unknown2" ||
           self.discontinuity[i][1] == "jump" ||
           self.discontinuity[i][1] == "removable"
         ) {
@@ -233,6 +235,7 @@ class MyCurve extends Curve {
         samples.length &&
         self.discontinuity.length == 1 &&
         self.discontinuity[0][1] != "infinite" &&
+        self.discontinuity[0][1] != "essential" &&
         Utility.adjustForDecimalPlaces(val_x, 6) >=
           Utility.adjustForDecimalPlaces(self.discontinuity[0][0], 6) &&
         !self.unboundedRange
@@ -327,7 +330,10 @@ class MyCurve extends Curve {
     let i = 0;
     let indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
-      if (self.discontinuity[n][1] != "infinite") {
+      if (
+        self.discontinuity[n][1] != "infinite" &&
+        self.discontinuity[n][1] != "essential"
+      ) {
         for (let i = 0; i < samples.length; i++) {
           if (!Static.AxisInYX) {
             if (samples[i].x > self.discontinuity[n][0] && i > 0) {
@@ -343,7 +349,10 @@ class MyCurve extends Curve {
           }
         }
       }
-      if (self.discontinuity[n][1] === "infinite") {
+      if (
+        self.discontinuity[n][1] === "infinite" ||
+        self.discontinuity[n][1] === "essential"
+      ) {
         for (i; i < samples.length; i++) {
           if (!Static.AxisInYX) {
             if (Math.abs(samples[i].y) >= Static.LargeNumber) {

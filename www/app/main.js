@@ -898,6 +898,8 @@ require([
 
   // const ppGrid = new PolarGrid("Polar Grid");
   // console.log(ppGrid, ppGrid.rtti);
+
+  // console.log(Utility.findLimits("sqrt(sin(x))", -184, 1e-4));
 });
 
 /*

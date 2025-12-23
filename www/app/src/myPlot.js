@@ -1883,7 +1883,8 @@ class MyPlot extends Plot {
           .plot()
           .axisDecimalPlaces(curves[0].yAxis());
 
-        const _discont = structuredClone(curves[0].discontinuity);
+        let _discont = structuredClone(curves[0].discontinuity);
+        _discont = _discont.filter((e) => e[1] !== "unknown2");
 
         const discontinuity = _discont.map(function (e) {
           e[0] = Utility.toPrecision(
