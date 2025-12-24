@@ -3596,6 +3596,19 @@ class Utility {
         //   turningPoints: [],
         //   period: 6.283185307179586,
         // }; //sqrt(sin(x))
+        // return {
+        //   discontinuities: [
+        //     [(-Math.PI * 19) / 6, "unknown2", 0],
+        //     [(-Math.PI * 11) / 6, "unknown2", 0],
+        //     [(-Math.PI * 7) / 6, "unknown2", 0],
+        //     [0.0, "jump"],
+        //     [(Math.PI * 7) / 6, "unknown2", 0],
+        //     [(Math.PI * 11) / 6, "unknown2", 0],
+        //     [(Math.PI * 19) / 6, "unknown2", 0],
+        //   ],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //sqrt(abs(x)/x+2sin(x))
         // return [
         //   [-3 * Math.PI, "infinite"],
         //   [(-17 * Math.PI) / 6, "removable", 0],
@@ -3654,6 +3667,122 @@ class Utility {
   //   return oldDiscontinuities;
   // }
 
+  // ...existing code...
+  /**
+   * Expand a sampled discontinuity list to cover a new range by detecting the fundamental period.
+   *
+   * discontArr: Array of entries like [pos, type, ...extra]
+   * newLower, newUpper: floats defining target range
+   *
+   * If a reliable period is detected the function generates repeats of the base pattern
+   * to cover [newLower, newUpper]. If the period cannot be inferred the function falls
+   * back to returning only the input entries that already lie inside [newLower, newUpper].
+   */
+  static handlePeriodic_2(discontArr, newLower, newUpper) {
+    const eps = 1e-12;
+    if (!Array.isArray(discontArr) || discontArr.length === 0) return [];
+
+    // Normalize and sort by position
+    const items = discontArr
+      .map((e) => (Array.isArray(e) ? e.slice() : [e]))
+      .filter((e) => isFinite(Number(e[0])))
+      .sort((a, b) => a[0] - b[0]);
+
+    const positions = items.map((i) => Number(i[0]));
+    const n = positions.length;
+
+    // Helper: median
+    const median = (arr) => {
+      const a = arr.slice().sort((x, y) => x - y);
+      const m = Math.floor(a.length / 2);
+      return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+    };
+
+    // Try to infer fundamental period by testing k-step differences.
+    // We search smallest k (1..floor(n/2)) such that positions[i+k]-positions[i] are consistent.
+    const relTol = 1e-6; // relative tolerance for float noise
+    let kFound = null;
+    let period = null;
+
+    for (let k = 1; k <= Math.floor(n / 2); k++) {
+      const diffs = [];
+      for (let i = 0; i + k < n; i++)
+        diffs.push(positions[i + k] - positions[i]);
+      if (diffs.length === 0) continue;
+      const med = median(diffs);
+      if (!(med > 0)) continue;
+      const maxAbs = Math.max(...diffs.map((d) => Math.abs(d - med)));
+      if (maxAbs / Math.max(Math.abs(med), eps) <= relTol) {
+        kFound = k;
+        period = med;
+        break;
+      }
+    }
+
+    // If no k-based period found, try simple consecutive-diff consistency
+    if (kFound === null && n >= 2) {
+      const diffs = [];
+      for (let i = 1; i < n; i++) diffs.push(positions[i] - positions[i - 1]);
+      const med = median(diffs);
+      if (med > 0) {
+        const maxAbs = Math.max(...diffs.map((d) => Math.abs(d - med)));
+        if (maxAbs / Math.max(Math.abs(med), eps) <= relTol) {
+          kFound = 1;
+          period = med;
+        }
+      }
+    }
+
+    // If no period could be inferred -> fallback: filter existing entries inside range
+    if (!period || !(period > 0)) {
+      return items.filter((it) => {
+        const p = Number(it[0]);
+        return p + eps >= newLower && p - eps <= newUpper;
+      });
+    }
+
+    // We have a period and kFound: base pattern indices are 0 .. kFound-1
+    const patternCount = kFound;
+    const patternBases = items.slice(0, patternCount);
+
+    const out = [];
+    // generate repeats for each base pattern entry
+    for (let baseIdx = 0; baseIdx < patternBases.length; baseIdx++) {
+      const baseEntry = patternBases[baseIdx];
+      const basePos = Number(baseEntry[0]);
+
+      // compute starting multiplier nStart so basePos + nStart*period >= newLower - eps
+      let nStart = Math.floor((newLower - basePos) / period) - 1;
+      // advance until in range
+      while (basePos + nStart * period < newLower - eps) nStart++;
+      // iterate until beyond newUpper
+      for (let m = nStart; ; m++) {
+        const pos = basePos + m * period;
+        if (pos > newUpper + eps) break;
+        // clone payload and substitute new position
+        const entry = baseEntry.slice();
+        entry[0] = pos;
+        out.push(entry);
+      }
+    }
+
+    // sort and remove near-duplicates
+    out.sort((a, b) => a[0] - b[0]);
+    const res = [];
+    for (const e of out) {
+      if (
+        !res.length ||
+        Math.abs(res[res.length - 1][0] - e[0]) >
+          Math.max(Math.abs(period) * 1e-6, 1e-12)
+      ) {
+        res.push(e);
+      }
+    }
+
+    return res;
+  }
+  // ...existing code...
+
   static handlePeriodic(period, discontArr, newLower, newUpper) {
     if (!Array.isArray(discontArr) || discontArr.length === 0) return [];
     if (!(period > 0)) throw new Error("period must be > 0");
@@ -3684,7 +3813,7 @@ class Utility {
     return res;
   }
 
-  static handlePeriodic2(period, discontinuitiesArr, lower, upper) {
+  /* static handlePeriodic2(period, discontinuitiesArr, lower, upper) {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
       return discontinuitiesArr;
     }
@@ -3706,7 +3835,7 @@ class Utility {
     }
 
     return discontinuitiesArr;
-  }
+  } */
 
   /* static handlePeriodic(period, discontinuitiesArr, lower, upper) {
     if (!Array.isArray(discontinuitiesArr) || discontinuitiesArr.length < 2) {
