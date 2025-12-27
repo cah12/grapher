@@ -344,10 +344,15 @@ class MyCurve extends Curve {
               ) {
                 samples[i - 1].y = self.discontinuity[n][2];
               }
-              if (self.discontinuity[n][1] == "jump") {
+              if (
+                self.discontinuity[n][1] == "jump" &&
+                samples[i].x - samples[i - 1].x > 2 * 1e-100
+              ) {
                 const x = (samples[i - 1].x + samples[i].x) / 2;
                 samples[i - 1].x = x - 1e-100;
                 samples[i].x = x + 1e-100;
+                samples[i - 1].y = math.evaluate(self.fn, { x: x - 1e-100 });
+                samples[i].y = math.evaluate(self.fn, { x: x + 1e-100 });
               }
               break;
             }
