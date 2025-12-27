@@ -3515,6 +3515,18 @@ class Utility {
       }; //[];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [
+        //     [(-Math.PI * 2) / 1, "unknown2", 0],
+        //     [(-Math.PI * 3) / 2, "unknown2", 0],
+        //     [0.0, "jump"],
+        //     [(Math.PI * 1) / 2, "unknown2", 0],
+        //     [(Math.PI * 2) / 1, "unknown2", 0],
+        //     [(Math.PI * 5) / 2, "unknown2", 0],
+        //   ],
+        //   turningPoints: [],
+        //   period: 6.283185307179586,
+        // }; //sqrt(sin(x)sqrt(cos(x)))
         //return [[0.0, "removable", 1]]; //(sin(x))/x in radians
         //return [[0.0, "removable", 0]]; //y=sin(4/x)
         // return [

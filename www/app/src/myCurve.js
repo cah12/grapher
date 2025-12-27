@@ -338,7 +338,12 @@ class MyCurve extends Curve {
           if (!Static.AxisInYX) {
             if (samples[i].x > self.discontinuity[n][0] && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
-              //samples[i - 1].y = self.discontinuity[n][2];
+              if (
+                self.discontinuity[n][2] != undefined &&
+                isFinite(self.discontinuity[n][2])
+              ) {
+                samples[i - 1].y = self.discontinuity[n][2];
+              }
               break;
             }
           } else {
@@ -373,6 +378,13 @@ class MyCurve extends Curve {
 
     if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
       indexBeforeDiscontinuity.push(samples.length - 1);
+      if (
+        self.discontinuity[self.discontinuity.length - 1][2] != undefined &&
+        isFinite(self.discontinuity[self.discontinuity.length - 1][2])
+      ) {
+        samples[samples.length - 1].y =
+          self.discontinuity[self.discontinuity.length - 1][2];
+      }
     }
     indexBeforeDiscontinuity = indexBeforeDiscontinuity.filter(
       (item, index) => {
