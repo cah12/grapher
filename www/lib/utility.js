@@ -3519,7 +3519,7 @@ class Utility {
         //   discontinuities: [
         //     [(-Math.PI * 2) / 1, "unknown2", 0],
         //     [(-Math.PI * 3) / 2, "unknown2", 0],
-        //     [0.0, "jump"],
+        //     [0.0, "unknown2", 0],
         //     [(Math.PI * 1) / 2, "unknown2", 0],
         //     [(Math.PI * 2) / 1, "unknown2", 0],
         //     [(Math.PI * 5) / 2, "unknown2", 0],
@@ -3559,7 +3559,11 @@ class Utility {
         //   [0.0, "infinite"],
         //   [2.0, "removable", 0.0],
         // ]; //sqrt((x-2)/x)
-        //return [[0.0, "jump"]]; //|x|/x
+        // return {
+        //   discontinuities: [[0.0, "jump"]],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //|x|/x
         //return [[1.0, "infinite"]]; //log(x-1)
         // if (Static.math_mode != "deg") {
         //   return [

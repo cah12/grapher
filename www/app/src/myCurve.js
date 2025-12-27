@@ -344,6 +344,11 @@ class MyCurve extends Curve {
               ) {
                 samples[i - 1].y = self.discontinuity[n][2];
               }
+              if (self.discontinuity[n][1] == "jump") {
+                const x = (samples[i - 1].x + samples[i].x) / 2;
+                samples[i - 1].x = x - 1e-100;
+                samples[i].x = x + 1e-100;
+              }
               break;
             }
           } else {
