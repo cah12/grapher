@@ -3516,6 +3516,12 @@ class Utility {
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
         // return {
+        //   discontinuities: [[0, "removable", 0]],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //sin(1/x)
+
+        // return {
         //   discontinuities: [
         //     [(-Math.PI * 2) / 1, "unknown2", 0],
         //     [(-Math.PI * 3) / 2, "unknown2", 0],
