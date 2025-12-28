@@ -791,10 +791,25 @@ class MyPlot extends Plot {
           self._functionDlg.variable
         );
         discont = discontTurningPoints.discontinuities;
-        if (
+        /* if (
           typeof discontTurningPoints.period !== "number" &&
           Utility.isPeriodic(makeSamplesData.fx) &&
           self._functionDlg.unboundedRange
+        ) {
+          Utility.alert(
+            "The period of the curve is unknown. The Grapher treated this curve as bounded.",
+            null,
+            "unboundedRange123"
+          );
+          self._functionDlg.unboundedRange = false;
+        } */
+        if (
+          self._functionDlg.unboundedRange &&
+          typeof discontTurningPoints.period !== "number" &&
+          Utility.isPeriodic(makeSamplesData.fx) &&
+          !Utility.hasOnlyJumpDiscontinuities(
+            discontTurningPoints.discontinuities
+          )
         ) {
           Utility.alert(
             "The period of the curve is unknown. The Grapher treated this curve as bounded.",

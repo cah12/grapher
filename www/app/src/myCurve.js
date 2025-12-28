@@ -99,6 +99,11 @@ class MyCurve extends Curve {
               self.left,
               self.right
             );
+          } else if (
+            !self.period &&
+            !Utility.hasInfiniteDiscontinuity(self.discontinuity)
+          ) {
+            // console.log(45);
           }
         }
 
@@ -242,15 +247,7 @@ class MyCurve extends Curve {
       ) {
         return super.drawCurve(painter, style, xMap, yMap, from, to);
       }
-      indexBeforeDiscontinuity = self.indices(samples); //[20, 21, 133, 134, 246, 247, 360] for sqrt(sin(x))
-      //const indexBeforeDiscontinuity = [11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
-      // if (
-      //   indexBeforeDiscontinuity.length == 1 &&
-      //   indexBeforeDiscontinuity[0] === -1
-      // ) {
-      //   return super.drawCurve(painter, style, xMap, yMap, from, to);
-      // }
-      //}
+      indexBeforeDiscontinuity = self.indices(samples);
       if (
         !self.unboundedRange &&
         !self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)
@@ -328,6 +325,7 @@ class MyCurve extends Curve {
   indices(samples) {
     const self = this;
     let i = 0;
+    const smallNumber = 1e-100;
     let indexBeforeDiscontinuity = [];
     for (let n = 0; n < self.discontinuity.length; n++) {
       if (
@@ -343,16 +341,23 @@ class MyCurve extends Curve {
                 isFinite(self.discontinuity[n][2])
               ) {
                 samples[i - 1].y = self.discontinuity[n][2];
-              }
-              if (
-                self.discontinuity[n][1] == "jump" &&
-                samples[i].x - samples[i - 1].x > 2 * 1e-100
-              ) {
+              } else if (self.discontinuity[n][1] == "jump") {
                 const x = (samples[i - 1].x + samples[i].x) / 2;
-                samples[i - 1].x = x - 1e-100;
-                samples[i].x = x + 1e-100;
-                samples[i - 1].y = math.evaluate(self.fn, { x: x - 1e-100 });
-                samples[i].y = math.evaluate(self.fn, { x: x + 1e-100 });
+                const adjust =
+                  Math.abs(self.discontinuity[n][0] - x) < 1e-4 ? true : false;
+                if (
+                  self.discontinuity[n][0] - samples[i - 1].x > smallNumber &&
+                  adjust
+                ) {
+                  samples[i - 1].x = self.discontinuity[n][0] - smallNumber;
+                  samples[i].x = self.discontinuity[n][0] + smallNumber;
+                  samples[i - 1].y = math.evaluate(self.fn, {
+                    x: self.discontinuity[n][0] - smallNumber,
+                  });
+                  samples[i].y = math.evaluate(self.fn, {
+                    x: self.discontinuity[n][0] + smallNumber,
+                  });
+                }
               }
               break;
             }

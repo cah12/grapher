@@ -3563,7 +3563,7 @@ class Utility {
         //   discontinuities: [[0.0, "jump"]],
         //   turningPoints: [],
         //   period: null,
-        // }; //|x|/x
+        // }; //|x|/x or |x|/(10x)+2sin(x)
         //return [[1.0, "infinite"]]; //log(x-1)
         // if (Static.math_mode != "deg") {
         //   return [
@@ -3667,7 +3667,12 @@ class Utility {
   }
 
   static isPeriodic(exp) {
-    return exp.indexOf("sin") != -1 || exp.indexOf("cos") != -1;
+    for (let index = 0; index < Static.trigKeywords.length; index++) {
+      if (exp.indexOf(Static.trigKeywords[index]) != -1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // static handlePeriodic(period, discontinuities, newLowerLimit, newUpperLimit) {
@@ -3797,7 +3802,20 @@ class Utility {
 
     return res;
   }
-  // ...existing code...
+
+  static hasOnlyJumpDiscontinuities(discontinuity) {
+    for (let i = 0; i < discontinuity.length; i++) {
+      if (discontinuity[i][1] !== "jump") return false;
+    }
+    return true;
+  }
+
+  static hasInfiniteDiscontinuity(discontinuity) {
+    for (let i = 0; i < discontinuity.length; i++) {
+      if (discontinuity[i][1] === "infinite") return true;
+    }
+    return false;
+  }
 
   static handlePeriodic(period, discontArr, newLower, newUpper) {
     if (!Array.isArray(discontArr) || discontArr.length === 0) return [];
