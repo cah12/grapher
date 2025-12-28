@@ -59,7 +59,10 @@ class Watch {
       if (typeof this._value === "undefined") {
         return "0";
       }
-      const value = parseFloat(this._value);
+      let value = this._value;
+      if (this.valueType == "number") {
+        value = parseFloat(this._value);
+      }
       if (!Number.isNaN(value)) {
         return value;
       }
