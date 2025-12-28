@@ -3805,6 +3805,7 @@ class Utility {
 
   static hasOnlyJumpDiscontinuities(discontinuity) {
     for (let i = 0; i < discontinuity.length; i++) {
+      if (discontinuity[i][1] == "removable") continue;
       if (discontinuity[i][1] !== "jump") return false;
     }
     return true;
