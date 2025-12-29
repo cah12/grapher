@@ -1963,7 +1963,7 @@ class Utility {
 
     obj.discontinuity = obj.discontinuity || [];
 
-    if (obj.discontinuity.length) {
+    if (obj.discontinuity.length && Static.number_of_points_auto) {
       //numOfSamples = Math.round((numOfSamples *= 2));
       numOfSamples = Math.max(numOfSamples, Static.min_discontinuity_samples);
     }
@@ -3514,12 +3514,12 @@ class Utility {
         turningPoints: [],
       }; //[];
       if (Static.imagePath === "images/") {
-        //return await this.discontinuity1(exp, lower, upper, indepVar);
-        return {
-          discontinuities: [],
-          turningPoints: [],
-          period: null,
-        }; //x^2
+        return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //x^2 or sin x
 
         // return {
         //   discontinuities: [[0, "removable", 0]],

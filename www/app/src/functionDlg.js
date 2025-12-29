@@ -216,10 +216,12 @@ class MFunctionDlg {
                 <div class="row">\
                 <div id="unboundedContainer">\
                 <div class="col-sm-3">Unbounded range:</div>\
-                <div class="col-sm-3"><input id="fnDlg_unboundedRange" type="checkbox"/></div>\
+                <div class="col-sm-1"><input id="fnDlg_unboundedRange" type="checkbox"/></div>\
+                <div class="col-sm-3">No. of points(auto):</div>\
+                <div class="col-sm-1"><input id="fnDlg_autoNumOfPoints" type="checkbox" checked/></div>\
                 </div>\
-                <div class="col-sm-3">Number of points:</div>\
-                <div class="col-sm-3"><input id="fnDlg_numberOfPoints" style="width:100%" type="number" min="2" value="200"/></div>\
+                <div class="col-sm-2">Points:</div>\
+                <div class="col-sm-2"><input id="fnDlg_numberOfPoints" style="width:100%" type="number" min="2" value="200" disabled/></div>\
                 </div>\
                 <br>\
                 <div id="cont_variable" class="row">\
@@ -539,6 +541,17 @@ class MFunctionDlg {
       $("#interpolationContainer").hide();
 
       self.threeD = false;
+
+      $("#fnDlg_autoNumOfPoints").change(function () {
+        if ($(this)[0].checked) {
+          $("#fnDlg_numberOfPoints").prop("disabled", true);
+          Static.number_of_points_auto = true;
+        } else {
+          $("#fnDlg_numberOfPoints").prop("disabled", false);
+          Static.number_of_points_auto = false;
+        }
+        $("#fnDlg_ok").trigger("focus");
+      });
 
       $("#fnDlg_unboundedRange").change(function () {
         if ($(this)[0].checked) {

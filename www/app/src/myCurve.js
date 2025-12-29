@@ -108,7 +108,11 @@ class MyCurve extends Curve {
         }
 
         let sz = self.data().size();
-        if (self.discontinuity && self.discontinuity.length) {
+        if (
+          Static.number_of_points_auto &&
+          self.discontinuity &&
+          self.discontinuity.length
+        ) {
           sz = Math.max(Static.min_discontinuity_samples, data.size());
         }
         //const sz = Math.max(Static.min_discontinuity_samples, data.size());
