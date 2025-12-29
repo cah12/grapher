@@ -1963,7 +1963,12 @@ class Utility {
 
     obj.discontinuity = obj.discontinuity || [];
 
-    if (obj.discontinuity.length && Static.number_of_points_auto) {
+    if (
+      obj.discontinuity.length &&
+      Static.number_of_points_auto &&
+      fx &&
+      Utility.isPeriodic(fx)
+    ) {
       //numOfSamples = Math.round((numOfSamples *= 2));
       numOfSamples = Math.max(numOfSamples, Static.min_discontinuity_samples);
     }

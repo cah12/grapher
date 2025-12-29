@@ -111,7 +111,9 @@ class MyCurve extends Curve {
         if (
           Static.number_of_points_auto &&
           self.discontinuity &&
-          self.discontinuity.length
+          self.discontinuity.length &&
+          self.fn &&
+          Utility.isPeriodic(self.fn)
         ) {
           sz = Math.max(Static.min_discontinuity_samples, data.size());
         }
