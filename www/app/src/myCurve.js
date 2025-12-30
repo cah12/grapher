@@ -112,10 +112,14 @@ class MyCurve extends Curve {
           Static.number_of_points_auto &&
           self.discontinuity &&
           self.discontinuity.length &&
-          self.fn &&
-          Utility.isPeriodic(self.fn)
+          self.fn /* &&
+          Utility.isPeriodic(self.fn) */
         ) {
-          sz = Math.max(Static.min_discontinuity_samples, data.size());
+          let s = Static.min_discontinuity_samples;
+          if (Utility.isPeriodic(self.fn)) {
+            s = s * 20;
+          }
+          sz = Math.max(s, data.size());
         }
         //const sz = Math.max(Static.min_discontinuity_samples, data.size());
         //console.log(data);

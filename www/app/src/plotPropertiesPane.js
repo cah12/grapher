@@ -376,7 +376,8 @@ class PlotPropertiesPane extends PropertiesPane {
         mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
         if (e.key === "Enter" || e.keyCode === 13) {
           mathVirtualKeyboard.hide();
-          $("#executeButton").click();
+          //$("#executeButton").click();
+          plot._functionDlg.doEnter(m_value, true);
           e.target.focus();
         }
       });

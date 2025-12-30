@@ -217,11 +217,9 @@ class MFunctionDlg {
                 <div id="unboundedContainer">\
                 <div class="col-sm-3">Unbounded range:</div>\
                 <div class="col-sm-1"><input id="fnDlg_unboundedRange" type="checkbox"/></div>\
-                <div class="col-sm-3">No. of points(auto):</div>\
-                <div class="col-sm-1"><input id="fnDlg_autoNumOfPoints" type="checkbox" checked/></div>\
+                <div style="margin-right: 0px;" class="col-sm-5">Select the number of points <input id="fnDlg_autoNumOfPoints" type="checkbox" checked/></div>\
                 </div>\
-                <div class="col-sm-2">Points:</div>\
-                <div class="col-sm-2"><input id="fnDlg_numberOfPoints" style="width:100%" type="number" min="2" value="200" disabled/></div>\
+                <div class="col-sm-3"><input id="fnDlg_numberOfPoints" style="width:100%" type="number" min="2" value="200" disabled/></div>\
                 </div>\
                 <br>\
                 <div id="cont_variable" class="row">\

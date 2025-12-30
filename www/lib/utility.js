@@ -1966,11 +1966,15 @@ class Utility {
     if (
       obj.discontinuity.length &&
       Static.number_of_points_auto &&
-      fx &&
-      Utility.isPeriodic(fx)
+      fx /*  &&
+      Utility.isPeriodic(fx) */
     ) {
+      let s = Static.min_discontinuity_samples;
+      if (Utility.isPeriodic(fx)) {
+        s = s * 20;
+      }
       //numOfSamples = Math.round((numOfSamples *= 2));
-      numOfSamples = Math.max(numOfSamples, Static.min_discontinuity_samples);
+      numOfSamples = Math.max(numOfSamples, s);
     }
 
     //let parser = new EvaluateExp(fx);

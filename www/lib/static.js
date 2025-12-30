@@ -493,7 +493,7 @@ Static.imagePath = "images/";
 Static.grapherHelp = "";
 //////////////////////////////////////
 // Static.min_discontinuity_samples = 400;
-Static.min_discontinuity_samples = 20000;
+Static.min_discontinuity_samples = 1000;
 Static.number_of_points_auto = true;
 Static.magnifying = false;
 Static.math_mode = "deg";
