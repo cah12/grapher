@@ -2000,16 +2000,7 @@ class Utility {
 
     fx = Utility.insertProductSign_total(fx, indepVar);
 
-    const rules = [
-      { l: "sin(n)^2 + cos(n)^2", r: "1" },
-      { l: "1 - sin(n)^2", r: "cos(n)^2" },
-      { l: "1 - cos(n)^2", r: "sin(n)^2" },
-      ////////////////////
-      { l: "sin(n) * csc(n)", r: "1" },
-      { l: "cos(n) * sec(n)", r: "1" },
-      { l: "tan(n) * cot(n)", r: "1" },
-    ];
-    const simplified = math.simplify(fx, rules).toString();
+    const simplified = math.simplify(fx, Static.simplify_rules).toString();
     let parser = new EvaluateExp(simplified);
 
     if (obj.threeD) {
@@ -3705,8 +3696,9 @@ class Utility {
   }
 
   static isPeriodic(exp) {
+    const _exp = math.simplify(exp, Static.simplify_rules);
     for (let index = 0; index < Static.trigKeywords.length; index++) {
-      if (exp.indexOf(Static.trigKeywords[index]) != -1) {
+      if (_exp.indexOf(Static.trigKeywords[index]) != -1) {
         return true;
       }
     }
