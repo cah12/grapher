@@ -3696,7 +3696,7 @@ class Utility {
   }
 
   static isPeriodic(exp) {
-    const _exp = math.simplify(exp, Static.simplify_rules);
+    const _exp = math.simplify(exp, Static.simplify_rules).toString();
     for (let index = 0; index < Static.trigKeywords.length; index++) {
       if (_exp.indexOf(Static.trigKeywords[index]) != -1) {
         return true;
