@@ -1999,7 +1999,18 @@ class Utility {
     }
 
     fx = Utility.insertProductSign_total(fx, indepVar);
-    let parser = new EvaluateExp(fx);
+
+    const rules = [
+      { l: "sin(n)^2 + cos(n)^2", r: "1" },
+      { l: "1 - sin(n)^2", r: "cos(n)^2" },
+      { l: "1 - cos(n)^2", r: "sin(n)^2" },
+      ////////////////////
+      { l: "sin(n) * csc(n)", r: "1" },
+      { l: "cos(n) * sec(n)", r: "1" },
+      { l: "tan(n) * cot(n)", r: "1" },
+    ];
+    const simplified = math.simplify(fx, rules).toString();
+    let parser = new EvaluateExp(simplified);
 
     if (obj.threeD) {
       lowerY = obj.lowerY;
@@ -2946,6 +2957,12 @@ class Utility {
     if (samples.length < 2) {
       return result;
     }
+    // try {
+    //   const v = math.simplify(fn, { exactFractions: true }).toString();
+    //   console.log(v);
+    // } catch (error) {
+    //   console.log(error);
+    // }
     //console.time("CurveInflection");
 
     let slopes = getSlopes(samples);
@@ -3523,12 +3540,12 @@ class Utility {
         turningPoints: [],
       }; //[];
       if (Static.imagePath === "images/") {
-        return await this.discontinuity1(exp, lower, upper, indepVar);
-        // return {
-        //   discontinuities: [],
-        //   turningPoints: [],
-        //   period: null,
-        // }; //x^2 or sin x
+        // return await this.discontinuity1(exp, lower, upper, indepVar);
+        return {
+          discontinuities: [],
+          turningPoints: [],
+          period: null,
+        }; //x^2 or sin x
 
         // return {
         //   discontinuities: [[0, "removable", 0]],
@@ -6830,14 +6847,14 @@ class Utility {
 
   static parametizeKeywordArg(str) {
     function doParametize(str) {
-      /*Un-Comment this out for now. This allows for proper handling of exponents on keywords */
-      const myArr = str.match(/\(.\)/gm) || [];
+      /*Comment this out for now. This allows for proper handling of exponents on keywords */
+      // const myArr = str.match(/\(.\)/gm) || [];
 
-      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+      // const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
 
-      for (let i = 0; i < myArr.length; i++) {
-        str = str.replaceAll(myArr[i], myArr2[i]);
-      }
+      // for (let i = 0; i < myArr.length; i++) {
+      //   str = str.replaceAll(myArr[i], myArr2[i]);
+      // }
 
       let delimiter = 0;
       let result = "";
