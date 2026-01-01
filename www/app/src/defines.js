@@ -542,7 +542,7 @@ class Defines {
 
               if (solution === "failedInverse") {
                 Utility.alert(
-                  `Grapher tried but failed to get an inverse function of <b>"${m_defn.value}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. The inverse <b>relation</b> is plotted.`,
+                  `Grapher tried but failed to get an inverse function of <b>"${m_defn.value}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>the polynomial is too complex for SymPy (the Grapher's solver).</b>. The inverse <b>relation</b> is plotted.`,
                   null,
                   "failedInverse"
                 );

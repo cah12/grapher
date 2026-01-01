@@ -1941,10 +1941,15 @@ class Utility {
 
     if (obj.fx === "failedInverse") {
       this.alert(
-        "Grapher tried but failed to get the inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
+        `Grapher tried but failed to get an inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>the polynomial is too complex for SymPy (the Grapher's solver).</b>. The inverse <b>relation</b> is plotted.`,
         null,
         "failedInverse"
       );
+      // this.alert(
+      //   "Grapher tried but failed to get the inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
+      //   null,
+      //   "failedInverse"
+      // );
       return [];
     }
 

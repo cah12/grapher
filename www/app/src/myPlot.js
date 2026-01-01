@@ -974,10 +974,15 @@ class MyPlot extends Plot {
               const c = new MyCurve(Utility.generateCurveName(self, "Inv_"));
               c.setSamples(samples);
               c.attach(self);
-              Utility.displayWarnMessage(
-                mf,
-                `Grapher tried but failed to find an inverse function for "${fn}". An inverse relation, "${c.title()}", is provided.`
+              Utility.alert(
+                `Grapher tried but failed to get an inverse function of <b>"${fn}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>the polynomial is too complex for SymPy (the Grapher's solver).</b>. The inverse <b>relation</b> is plotted.`,
+                null,
+                "failedInverse"
               );
+              // Utility.displayWarnMessage(
+              //   mf,
+              //   `Grapher tried but failed to find an inverse function for "${fn}". An inverse relation, "${c.title()}", is provided.`
+              // );
               self.inverseOperation = false;
             } else {
               const arr = fn.split("=");
