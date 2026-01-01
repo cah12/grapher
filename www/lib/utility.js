@@ -3531,12 +3531,12 @@ class Utility {
         turningPoints: [],
       }; //[];
       if (Static.imagePath === "images/") {
-        // return await this.discontinuity1(exp, lower, upper, indepVar);
-        return {
-          discontinuities: [],
-          turningPoints: [],
-          period: null,
-        }; //x^2 or sin x
+        return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //x^2 or sin x
 
         // return {
         //   discontinuities: [[0, "removable", 0]],
@@ -6710,7 +6710,7 @@ class Utility {
       }
       latex = latex.replaceAll("#~#", "\\frac");
       latex = latex.replaceAll("#~~#", "\\right");
-      result = result.replaceAll("^(-1)", "#");
+      result = result.replaceAll("^(-1)", "#"); //why?
       result = result.replaceAll("theta", "T");
 
       result = result.replaceAll("primePlaceHolder", "'");
@@ -6739,6 +6739,7 @@ class Utility {
       //console.log(result);
       //result = exponentOnKeyword(result); //handle this before //parametizeKeywordArg()
       result = Utility.parametizeKeywordArg(result);
+      result = result.replaceAll("#", "^(-1)"); //why?
 
       result = exponentOnKeyword(result);
 
@@ -6839,23 +6840,27 @@ class Utility {
 
   static parametizeKeywordArg(str) {
     function doParametize(str) {
+      let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+      if (str === purgeStr) {
+        return str;
+      }
       /*Comment this out for now. This allows for proper handling of exponents on keywords */
-      // const myArr = str.match(/\(.\)/gm) || [];
+      const myArr = purgeStr.match(/%\(.\)/gm) || [];
 
-      // const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
 
-      // for (let i = 0; i < myArr.length; i++) {
-      //   str = str.replaceAll(myArr[i], myArr2[i]);
-      // }
+      for (let i = 0; i < myArr.length; i++) {
+        purgeStr = purgeStr.replaceAll(myArr[i], myArr2[i]);
+      }
 
       let delimiter = 0;
       let result = "";
       let bracketAdded = false;
 
-      let purgeStr = Utility.purgeAndMarkKeywords(str, true);
-      if (str === purgeStr) {
-        return str;
-      }
+      // let purgeStr = Utility.purgeAndMarkKeywords(str, true);
+      // if (str === purgeStr) {
+      //   return str;
+      // }
       for (let i = 0; i < purgeStr.length; i++) {
         let c = purgeStr[i];
         if (c === "'") {
