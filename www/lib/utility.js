@@ -6767,6 +6767,7 @@ class Utility {
 
       latex = latex.replaceAll("\\frac", "#~#");
       latex = latex.replaceAll("\\right", "#~~#");
+      latex = latex.replaceAll("sqrt", "#~~~#");
       if (
         latex.indexOf("=") !== -1 &&
         latex.indexOf("y") !== -1 &&
@@ -6780,6 +6781,7 @@ class Utility {
       } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
         result = result.replaceAll("r", "y");
       }
+      latex = latex.replaceAll("#~~~#", "sqrt");
       latex = latex.replaceAll("#~#", "\\frac");
       latex = latex.replaceAll("#~~#", "\\right");
       result = result.replaceAll("^(-1)", "#"); //why?
