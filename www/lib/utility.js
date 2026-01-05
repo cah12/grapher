@@ -3481,6 +3481,65 @@ class Utility {
     ];
   } */
 
+  /**
+   * Numerically solve an equation f(x) = 0 using Newton-Raphson method.
+   * @param {string} expr The expression to solve, e.g., 'x^2 - 2'
+   * @param {string} [variable='x'] The variable name
+   * @param {number} [initialGuess=0] Initial guess for the root
+   * @param {number} [tolerance=1e-10] Tolerance for convergence
+   * @param {number} [maxIterations=100] Maximum number of iterations
+   * @returns {number} The root of the equation
+   * @throws {Error} If derivative is too small or max iterations reached
+   */
+  static nsolve(
+    expr,
+    variable = "x",
+    initialGuess = 0,
+    tolerance = 1e-10,
+    maxIterations = 100
+  ) {
+    let x = initialGuess;
+    for (let i = 0; i < maxIterations; i++) {
+      let scope = { [variable]: x };
+      let f = math.evaluate(expr, scope);
+      let dfExpr = math.derivative(expr, variable);
+      let df = dfExpr.evaluate(scope);
+      if (Math.abs(df) < 1e-12) {
+        throw new Error("Derivative too small at x = " + x);
+      }
+      let dx = f / df;
+      x -= dx;
+      if (Math.abs(dx) < tolerance) {
+        return x;
+      }
+    }
+    throw new Error("Max iterations reached without convergence");
+  }
+
+  /**
+   * Substitute values into an expression, similar to SymPy's subs.
+   * @param {string} expr The expression to substitute into, e.g., 'x^2 + 3*x + y'
+   * @param {Object} scope An object with variable substitutions, e.g., {x: 2, y: 5}
+   * @returns {number|string} The result of the substitution
+   */
+  static subs(expr, scope) {
+    try {
+      return math.evaluate(expr, scope);
+    } catch (error) {
+      const ks = Object.keys(scope);
+      const vs = Object.values(scope);
+      let _expr;
+      for (let i = 0; i < ks.length; i++) {
+        _expr = expr.replace(ks[i], vs[i]);
+      }
+      try {
+        return math.parse(_expr).toString();
+      } catch (error) {
+        return expr;
+      }
+    }
+  }
+
   static findLimits(expression, x0, epsilon) {
     const parser = math.parse(expression);
     let x = x0;
@@ -3537,6 +3596,14 @@ class Utility {
       }; //[];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [
+        //     [-3.22, "removable"],
+        //     [3.22, "removable"],
+        //   ],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //x^2-y^3+9y=0
         // return {
         //   discontinuities: [],
         //   turningPoints: [],
