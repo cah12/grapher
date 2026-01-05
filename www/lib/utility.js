@@ -2005,7 +2005,9 @@ class Utility {
 
     fx = Utility.insertProductSign_total(fx, indepVar);
 
-    const simplified = math.simplify(fx, Static.simplify_rules).toString();
+    const simplified = math
+      .simplify(fx, {}, { rules: Static.simplify_rules })
+      .toString();
     let parser = new EvaluateExp(simplified);
 
     if (obj.threeD) {
@@ -3768,7 +3770,9 @@ class Utility {
   }
 
   static isPeriodic(exp) {
-    const _exp = math.simplify(exp, Static.simplify_rules).toString();
+    const _exp = math
+      .simplify(exp, {}, { rules: Static.simplify_rules })
+      .toString();
     for (let index = 0; index < Static.trigKeywords.length; index++) {
       if (_exp.indexOf(Static.trigKeywords[index]) != -1) {
         return true;

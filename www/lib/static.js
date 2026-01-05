@@ -360,6 +360,33 @@ Static.solveEquation = 3;
 
 Static.g_solution_arr = null;
 
+Static.custom_rules = [
+  // { l: "sin(n)^2 + cos(n)^2", r: "1" },
+  // { l: "1 - sin(n)^2", r: "cos(n)^2" },
+  // { l: "1 - cos(n)^2", r: "sin(n)^2" },
+  ////////////////////
+  { l: "sin(n) * csc(n)", r: "1" },
+  { l: "cos(n) * sec(n)", r: "1" },
+  { l: "tan(n) * cot(n)", r: "1" },
+  ///////////////////
+  { l: "sin(asin(n))", r: "n" },
+  { l: "cos(acos(n))", r: "n" },
+  { l: "tan(atan(n))", r: "n" },
+  { l: "csc(acsc(n))", r: "n" },
+  { l: "sec(asec(n))", r: "n" },
+  { l: "cot(acot(n))", r: "n" },
+];
+
+// Combine the default rules with the custom rules
+// Static.simplify_rules = [...math.simplify.rules, ...Static.custom_rules];
+// math.simplify.rules = allRules;
+
+Static.simplify_rules = math.simplify.rules;
+
+for (let i = 0; i < Static.custom_rules.length; i++) {
+  Static.simplify_rules.push(Static.custom_rules[i]);
+}
+
 ////////////////////////////////////////////////
 
 const originalParse = math.parse;
@@ -500,23 +527,6 @@ Static.math_mode = "deg";
 Static.inverseFunction = false;
 
 Static.AxisInYX = false;
-
-Static.simplify_rules = [
-  { l: "sin(n)^2 + cos(n)^2", r: "1" },
-  { l: "1 - sin(n)^2", r: "cos(n)^2" },
-  { l: "1 - cos(n)^2", r: "sin(n)^2" },
-  ////////////////////
-  { l: "sin(n) * csc(n)", r: "1" },
-  { l: "cos(n) * sec(n)", r: "1" },
-  { l: "tan(n) * cot(n)", r: "1" },
-  ///////////////////
-  { l: "sin(asin(n))", r: "n" },
-  { l: "cos(acos(n))", r: "n" },
-  { l: "tan(atan(n))", r: "n" },
-  { l: "csc(acsc(n))", r: "n" },
-  { l: "sec(asec(n))", r: "n" },
-  { l: "cot(acot(n))", r: "n" },
-];
 
 ////////////https://simplegrapher.onrender.com///////////////
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
