@@ -509,6 +509,13 @@ Static.simplify_rules = [
   { l: "sin(n) * csc(n)", r: "1" },
   { l: "cos(n) * sec(n)", r: "1" },
   { l: "tan(n) * cot(n)", r: "1" },
+  ///////////////////
+  { l: "sin(asin(n))", r: "n" },
+  { l: "cos(acos(n))", r: "n" },
+  { l: "tan(atan(n))", r: "n" },
+  { l: "csc(acsc(n))", r: "n" },
+  { l: "sec(asec(n))", r: "n" },
+  { l: "cot(acot(n))", r: "n" },
 ];
 
 ////////////https://simplegrapher.onrender.com///////////////
