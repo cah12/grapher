@@ -6923,13 +6923,13 @@ class Utility {
         return str;
       }
       /*Comment this out for now. This allows for proper handling of exponents on keywords */
-      const myArr = purgeStr.match(/%\(.\)/gm) || [];
+      // const myArr = purgeStr.match(/%\(.\)/gm) || [];
 
-      const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
+      // const myArr2 = myArr.map((s) => s.replace(/\(/g, "").replace(/\)/g, ""));
 
-      for (let i = 0; i < myArr.length; i++) {
-        purgeStr = purgeStr.replaceAll(myArr[i], myArr2[i]);
-      }
+      // for (let i = 0; i < myArr.length; i++) {
+      //   purgeStr = purgeStr.replaceAll(myArr[i], myArr2[i]);
+      // }
 
       let delimiter = 0;
       let result = "";

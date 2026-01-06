@@ -362,8 +362,10 @@ Static.g_solution_arr = null;
 
 Static.custom_rules = [
   // { l: "sin(n)^2 + cos(n)^2", r: "1" },
-  // { l: "1 - sin(n)^2", r: "cos(n)^2" },
-  // { l: "1 - cos(n)^2", r: "sin(n)^2" },
+  { l: "1 - sin(n)^2", r: "cos(n)^2" },
+  { l: "1 - cos(n)^2", r: "sin(n)^2" },
+  ///////////////////////
+  { l: "1 + tan(n)^2", r: "sec(n)^2" },
   ////////////////////
   { l: "sin(n) * csc(n)", r: "1" },
   { l: "cos(n) * sec(n)", r: "1" },
