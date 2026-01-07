@@ -3339,12 +3339,8 @@ class Utility {
       const substr = exp.substring(indexOfExponent + 1);
       const num = parseFloat(substr);
       if (!isNaN(num)) {
-        //return num.toString();
-        // let s = num.toString();
-        // if (s.length > 1) {
-        //   s = s[0] + "*" + s.substring(1);
-        // }
-        return { operand: num.toString(), unmodifiedOperand };
+        const s = num.toString();
+        return { operand: s[0], unmodifiedOperand };
       }
     }
 
@@ -6944,13 +6940,22 @@ class Utility {
         if (c === "'") {
           result += c;
           continue;
-        }
+        } //%0%^2
+        // if (result.length > 4) {
+        //   if (result[i - 5] === "%" && result[i - 2] === "^" && c != "(") {
+        //     result += "(";
+        //     result += c;
+        //     bracketAdded = true;
+        //     continue;
+        //   }
+        // }
         result += c;
         if (c === "%") {
           delimiter++;
         }
 
         if (delimiter == 2 && c === "^") {
+          //if (delimiter == 2) {
           delimiter = 0;
           bracketAdded = false;
           continue;
@@ -6995,6 +7000,7 @@ class Utility {
           bracketAdded = true;
         }
         if (
+          //delimiter != 1 &&
           bracketAdded &&
           (purgeStr[i + 1] === "+" ||
             purgeStr[i + 1] === "-" ||
@@ -7015,7 +7021,12 @@ class Utility {
       if (bracketAdded) {
         bracketAdded = false;
         result += ")";
-      }
+      } //%0%^22x
+      // if (result.indexOf("^") != -1 && result.indexOf("(") === -1) {
+      //   result = result.insert(5, "(");
+      //   result += ")";
+      // }
+
       result = Utility.replaceKeywordMarkers(result);
 
       result = result.replaceAll("()", "");
