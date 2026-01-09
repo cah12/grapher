@@ -1767,6 +1767,15 @@ class Utility {
       parametricFnY = Utility.replaceKeywordMarkers(parametricFnY);
     }
 
+    if (parametricFnX.indexOf("t") == -1 && parametricFnY.indexOf("t") == -1) {
+      return [
+        new Misc.Point(
+          math.evaluate(parametricFnX),
+          math.evaluate(parametricFnY)
+        ),
+      ];
+    }
+
     let parserFnX = new EvaluateExp(parametricFnX);
     if (parserFnX.error) {
       Utility.alert(parserFnX.errorMessage);
@@ -1853,7 +1862,8 @@ class Utility {
         }
       }
 
-      if (samples.length == 0) {
+      samples.push(new Misc.Point(xVal, yVal));
+      /* if (samples.length == 0) {
         samples.push(new Misc.Point(xVal, yVal));
       } else {
         if (
@@ -1861,7 +1871,7 @@ class Utility {
           samples[samples.length - 1].y !== yVal
         )
           samples.push(new Misc.Point(xVal, yVal));
-      }
+      } */
     }
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
@@ -1885,6 +1895,177 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
+    function handleDiscontinuityTurningPoints(samples) {
+      if (obj.discontinuity.length) {
+        samples = samples.sort((a, b) => a.x - b.x);
+        const discont = structuredClone(obj.discontinuity);
+        const lmt_l = samples[0].x;
+        const lmt_u = samples[samples.length - 1].x;
+        const step = (samples[1].x - samples[0].x) * 1e-20;
+        //const lmt = 1e35;
+        const lmt = Static.LargeNumber;
+
+        //Ensure discontinuities are in range
+        for (let i = 0; i < discont.length; i++) {
+          if (
+            Utility.adjustForDecimalPlaces(discont[i][0], 4) <
+              Utility.adjustForDecimalPlaces(lmt_l, 4) ||
+            Utility.adjustForDecimalPlaces(discont[i][0], 4) >
+              Utility.adjustForDecimalPlaces(lmt_u, 4)
+          ) {
+            discont.splice(i, 1);
+            i--;
+          }
+        }
+        obj.discontinuity = structuredClone(discont);
+
+        //on the left boundary
+        if (
+          discont &&
+          discont.length &&
+          Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
+            Utility.adjustForDecimalPlaces(lowerX, 4) &&
+          Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
+            Utility.adjustForDecimalPlaces(lowerX, 4)
+        ) {
+          try {
+            if (
+              discont &&
+              discont.length &&
+              (discont[0][1] === "infinite" || discont[0][1] === "essential")
+            ) {
+              samples[0].y = math.sign(samples[0].y) * lmt;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          discont[0][0] = "#";
+        }
+        //on the right boundary
+        if (
+          discont &&
+          discont.length &&
+          discont[discont.length - 1][0] <= upperX &&
+          Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
+            Utility.adjustForDecimalPlaces(upperX, 4)
+        ) {
+          try {
+            if (discont[0][1] === "infinite" || discont[0][1] === "essential") {
+              samples[samples.length - 1].y =
+                math.sign(samples[samples.length - 1].y) * lmt;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          discont[discont.length - 1][0] = "#";
+        }
+
+        let _parser;
+        let _indepVar;
+        if (obj.parametricFnX && obj.parametricFnY) {
+          _parser = new EvaluateExp(obj.parametricFnY);
+          _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
+        } else {
+          _parser = new EvaluateExp(obj.fx);
+          _indepVar = obj.variable; // || Utility.findIndepVar(obj.fx);
+        }
+
+        let n = 0;
+        const _scope = new Map();
+        const delta = (samples[1].x - samples[0].x) * 1e-5;
+        // console.log(delta);
+        for (let i = 0; i < discont.length; i++) {
+          // if (discont[i][1] !== "infinite") {
+          //   continue;
+          // }
+          if (discont && discont.length && discont[i][1] == "jump") {
+            continue;
+          }
+          const d = discont[i][0];
+          if (d == "#") {
+            continue;
+          }
+
+          for (; n < samples.length; n++) {
+            const x = samples[n].x;
+            if (x > d) {
+              _scope.set(_indepVar, d - delta);
+              yVal = _parser.eval(_scope);
+              try {
+                if (n > 0) {
+                  if (
+                    discont[i][1] == "infinite" ||
+                    discont[i][1] == "essential"
+                  ) {
+                    const _sign1 = math.sign(yVal);
+                    if (samples[n - 1].x != lowerX) {
+                      samples[n - 1].y = _sign1 * lmt;
+                    }
+
+                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+
+                    _scope.set(_indepVar, d + delta);
+                    yVal = _parser.eval(_scope);
+                    // if (yVal.im) {
+                    //   samples[n].y =;
+                    // } else {
+                    samples[n].y = math.sign(yVal) * lmt;
+                    //}
+                    n++;
+                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+                    break;
+                  } else if (
+                    discont[i][1] == "removable" ||
+                    discont[i][1] == "unknown2"
+                  ) {
+                    if (discont.length > 1 && i > 0) {
+                      // if (discont[i - 1][1] == "infinite") {
+                      samples[n - 1].x = discont[i][0];
+                      samples[n - 1].y = discont[i][2];
+                      // }
+                    } else {
+                      samples[n - 1].y = discont[i][2];
+                      samples[n].y = discont[i][2];
+                    }
+                    n++;
+                    break;
+                  }
+                }
+              } catch (error) {
+                console.log(n);
+                console.log(error);
+              }
+
+              break;
+            }
+          }
+        }
+      }
+
+      if (obj && obj.turning_points && obj.turning_points.length) {
+        const _tp = obj.turning_points;
+        const discont = obj.discontinuity;
+        const tp = _tp.filter(function (item) {
+          return discont.indexOf(item[0]) === -1;
+        });
+        for (let i = 0; i < tp.length; i++) {
+          samples.push(new Misc.Point(tp[i][0], tp[i][1]));
+        }
+      }
+
+      samples = samples.filter((item, index) => {
+        return _.isFinite(samples[index].y);
+      });
+
+      samples = samples.sort(function (a, b) {
+        return a.x - b.x;
+      });
+
+      samples = samples.filter((item, index) => {
+        return samples[index].y != "#";
+      });
+    }
+    //////////////
     function handleError(xVal) {
       if (Utility.errorResponse == Utility.warn) {
         Utility.alert(
@@ -1931,7 +2112,9 @@ class Utility {
 
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
-      return Utility.makeParametricSamples(obj);
+      const samples = Utility.makeParametricSamples(obj);
+      handleDiscontinuityTurningPoints(samples);
+      return samples;
     }
 
     if (limits_x) {
@@ -2392,7 +2575,8 @@ class Utility {
 
     if (limits_x) {
     }
-    if (obj.discontinuity.length) {
+    handleDiscontinuityTurningPoints(samples);
+    /* if (obj.discontinuity.length) {
       const discont = structuredClone(obj.discontinuity);
       const lmt_l = samples[0].x;
       const lmt_u = samples[samples.length - 1].x;
@@ -2546,35 +2730,9 @@ class Utility {
       return a.x - b.x;
     });
 
-    // for (let i = 1; i < samples.length; i++) {
-    //   if (
-    //     samples[i - 1].y === Static.LargeNumber &&
-    //     samples[i].y === Static.LargeNumber
-    //   ) {
-    //     samples[i].y = "#";
-    //     i++;
-    //     while (i < samples.length && samples[i].y != Static.LargeNumber) {
-    //       samples[i].y = "#";
-    //       i++;
-    //     }
-    //     samples[i].y = "#";
-    //   } else if (
-    //     samples[i - 1].y === -Static.LargeNumber &&
-    //     samples[i].y === -Static.LargeNumber
-    //   ) {
-    //     samples[i].y = "#";
-    //     i++;
-    //     while (i < samples.length && samples[i].y != -Static.LargeNumber) {
-    //       samples[i].y = "#";
-    //       i++;
-    //     }
-    //     samples[i].y = "#";
-    //   }
-    // }
-    //[11, 74, 136, 199, 262, 324, 387]; //for 1/sin(x)
     samples = samples.filter((item, index) => {
       return samples[index].y != "#";
-    });
+    }); */
     return samples;
   }
 
@@ -3594,6 +3752,11 @@ class Utility {
       }; //[];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [[0.0, "jump"]],
+        //   turningPoints: [],
+        //   period: null,
+        // }; //1/x
         // return {
         //   discontinuities: [
         //     [-3.22, "removable"],
@@ -7278,6 +7441,8 @@ class Utility {
     // let precisionY = _curve.plot().axisPrecision(_curve.yAxis());
     // let precisionX = _curve.plot().axisPrecision(_curve.xAxis());
     // let decimalPlacesY = _curve.plot().axisDecimalPlaces(_curve.yAxis());
+
+    // _curve.constant = null;
     let decimalPlacesX = _curve.plot().axisDecimalPlaces(_curve.xAxis());
 
     fnStr = fnStr.replaceAll(" ", "");
@@ -7295,6 +7460,7 @@ class Utility {
 
     for (let i = 0; i < parametricArr.length; i++) {
       let fnStr = parametricArr[i];
+      _curve.constant = null;
 
       //Replace the whitespace delimiters stripped out by simplify()
       fnStr = fnStr.replaceAll("mod", " mod ");

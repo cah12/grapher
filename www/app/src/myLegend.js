@@ -87,6 +87,7 @@ class MyLegend extends Legend {
       if (fnStr) {
         const arr = fnStr.split(":");
         fnStr = arr[1];
+        fnStr = fnStr.trim();
 
         if (arr.length < 2) {
           return;
