@@ -3607,13 +3607,11 @@ class Utility {
         //   turningPoints: [],
         //   period: null,
         // }; //x^2 or sin x
-
         // return {
         //   discontinuities: [[0, "removable", 0]],
         //   turningPoints: [],
         //   period: null,
         // }; //sin(1/x)
-
         // return {
         //   discontinuities: [
         //     [(-Math.PI * 2) / 1, "unknown2", 0],

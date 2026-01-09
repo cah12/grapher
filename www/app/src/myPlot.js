@@ -790,6 +790,17 @@ class MyPlot extends Plot {
           makeSamplesData.upperX,
           self._functionDlg.variable
         );
+        if (
+          !discontTurningPoints ||
+          (Array.isArray(discontTurningPoints) &&
+            discontTurningPoints.length == 0)
+        ) {
+          discontTurningPoints = {
+            discontinuities: [],
+            turningPoints: [],
+            period: null,
+          };
+        }
         discont = discontTurningPoints.discontinuities;
         /* if (
           typeof discontTurningPoints.period !== "number" &&
