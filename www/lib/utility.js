@@ -3753,7 +3753,7 @@ class Utility {
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
         // return {
-        //   discontinuities: [[0.0, "jump"]],
+        //   discontinuities: [[2.0, "essential"]],
         //   turningPoints: [],
         //   period: null,
         // }; //1/x

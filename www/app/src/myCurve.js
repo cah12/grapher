@@ -52,8 +52,33 @@ class MyCurve extends Curve {
   }
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
+    const self = this;
+
+    /* function findDiscontinuity() {
+      const result = [];
+      const samples = self.data().samples();
+      if (samples.length < 2) return result;
+      const step = Math.abs(samples[1].x - samples[0].x); //samples[1].x - samples[0].x;
+      for (let i = 1; i < samples.length; i++) {
+        if (samples[i].x - samples[i - 1].x > 2 * step) {
+          result.push(i - 1);
+        }
+        console.log(456);
+      }
+      return result;
+    } */
+
     try {
-      const self = this;
+      // const self = this;
+
+      /* if (
+        self.parametricFnX &&
+        self.parametricFnY &&
+        !self.parametricDiscontinuityIndex
+      ) {
+        //Parametric
+        self.parametricDiscontinuityIndex = findDiscontinuity(self);
+      } */
 
       if (!self.unboundedRange) {
         return self.doDraw(painter, style, xMap, yMap, from, to);
@@ -187,6 +212,12 @@ class MyCurve extends Curve {
   isDrawDiscontinuosCurve(indexBeforeDiscontinuity) {
     const self = this;
     let hasInfiniteOrJump = false;
+    // if (
+    //   self.parametricDiscontinuityIndex &&
+    //   self.parametricDiscontinuityIndex.length
+    // ) {
+    //   return true;
+    // }
     // if (self.discontinuity.length == 1) {
     //   if (self.discontinuity[0][1] == "jump") {
     //     return true;
@@ -221,7 +252,11 @@ class MyCurve extends Curve {
   async doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
-    if (!self.discontinuity.length && !self.discontinuosCurvePending) {
+    if (
+      // !self.parametricDiscontinuityIndex.length &&
+      !self.discontinuity.length &&
+      !self.discontinuosCurvePending
+    ) {
       // if (!Utility.isAutoScale(plot)) {
       //plot.updateScalesOnSwap();
       // }
@@ -416,6 +451,15 @@ class MyCurve extends Curve {
         return indexBeforeDiscontinuity.indexOf(item) === index;
       }
     );
+
+    /* if (
+      self.parametricDiscontinuityIndex &&
+      self.parametricDiscontinuityIndex.length
+    ) {
+      indexBeforeDiscontinuity = indexBeforeDiscontinuity.concat(
+        self.parametricDiscontinuityIndex
+      );
+    } */
     return indexBeforeDiscontinuity.sort((a, b) => a - b);
   }
 

@@ -789,50 +789,57 @@ class MyPlot extends Plot {
           turningPoints: [],
           period: null,
         }; */
-          const d1 = await Utility.discontinuity(
-            //fn_unsimplified,
-            makeSamplesData.parametricFnX,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX,
-            self._functionDlg.parametric_variable
-          );
-          const d2 = await Utility.discontinuity(
+          // const d1 = await Utility.discontinuity(
+          //   //fn_unsimplified,
+          //   makeSamplesData.parametricFnX,
+          //   makeSamplesData.lowerX,
+          //   makeSamplesData.upperX,
+          //   self._functionDlg.parametric_variable
+          // );
+          // const d2 = await Utility.discontinuity(
+          //   //fn_unsimplified,
+          //   makeSamplesData.parametricFnY,
+          //   makeSamplesData.lowerX,
+          //   makeSamplesData.upperX,
+          //   self._functionDlg.parametric_variable
+          // );
+          // let d = d1.discontinuities.concat(d2.discontinuities);
+          // d = d.sort(function (a, b) {
+          //   return a[0] - b[0];
+          // });
+
+          // d = d.filter((item, index) => {
+          //   if (index > 0) {
+          //     return (
+          //       d[index - 1][0] !== d[index][0] ||
+          //       d[index - 1][1] !== d[index][1]
+          //     );
+          //   }
+          //   return true;
+          // });
+
+          // let t = d1.turningPoints.concat(d2.turningPoints);
+          // t = t.sort(function (a, b) {
+          //   return a - b;
+          // });
+          // t = t.filter((item, index) => {
+          //   if (index > 0) {
+          //     return t[index - 1] !== t[index];
+          //   }
+          //   return true;
+          // });
+          // discontTurningPoints = {
+          //   discontinuities: d,
+          //   turningPoints: t,
+          //   period: d1.period,
+          // };
+          discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
             makeSamplesData.parametricFnY,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable
           );
-          let d = d1.discontinuities.concat(d2.discontinuities);
-          d = d.sort(function (a, b) {
-            return a[0] - b[0];
-          });
-
-          d = d.filter((item, index) => {
-            if (index > 0) {
-              return (
-                d[index - 1][0] !== d[index][0] ||
-                d[index - 1][1] !== d[index][1]
-              );
-            }
-            return true;
-          });
-
-          let t = d1.turningPoints.concat(d2.turningPoints);
-          t = t.sort(function (a, b) {
-            return a - b;
-          });
-          t = t.filter((item, index) => {
-            if (index > 0) {
-              return t[index - 1] !== t[index];
-            }
-            return true;
-          });
-          discontTurningPoints = {
-            discontinuities: d,
-            turningPoints: t,
-            period: d1.period,
-          };
         } else {
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
