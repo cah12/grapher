@@ -237,6 +237,20 @@ class MyCurve extends Curve {
         }
       }
     }
+    for (let i = 0; i < self.discontinuityY.length; i++) {
+      if (self.discontinuityY[i].length >= 2) {
+        if (
+          self.discontinuityY[i][1] == "infinite" ||
+          self.discontinuityY[i][1] == "essential" ||
+          self.discontinuityY[i][1] == "unknown2" ||
+          self.discontinuityY[i][1] == "jump" ||
+          self.discontinuityY[i][1] == "removable"
+        ) {
+          hasInfiniteOrJump = true;
+          break;
+        }
+      }
+    }
     if (!hasInfiniteOrJump) return false;
 
     if (
@@ -253,7 +267,7 @@ class MyCurve extends Curve {
     const self = this;
     const plot = self.plot();
     if (
-      // !self.parametricDiscontinuityIndex.length &&
+      !(self.discontinuityY && self.discontinuityY.length) &&
       !self.discontinuity.length &&
       !self.discontinuosCurvePending
     ) {
@@ -308,8 +322,10 @@ class MyCurve extends Curve {
         if (Utility.isScaleAdjustNeeded(self)) {
           if (!Static.AxisInYX) {
             plot.setAxisScale(self.yAxis(), -6, 6);
+            plot.setAxisScale(self.xAxis(), -10, 10);
           } else {
             plot.setAxisScale(self.xAxis(), -6, 6);
+            plot.setAxisScale(self.yAxis(), -10, 10);
           }
         }
       }
@@ -436,6 +452,70 @@ class MyCurve extends Curve {
       }
     }
 
+    for (let n = 0; n < self.discontinuityY.length; n++) {
+      if (
+        self.discontinuityY[n][1] != "infinite" &&
+        self.discontinuityY[n][1] != "essential"
+      ) {
+        for (let i = 0; i < samples.length; i++) {
+          if (!Static.AxisInYX) {
+            if (samples[i].x > self.discontinuityY[n][0] && i > 0) {
+              indexBeforeDiscontinuity.push(i - 1);
+              if (
+                self.discontinuityY[n][2] != undefined &&
+                isFinite(self.discontinuityY[n][2])
+              ) {
+                samples[i - 1].y = self.discontinuityY[n][2];
+              } else if (self.discontinuityY[n][1] == "jump") {
+                const x = (samples[i - 1].x + samples[i].x) / 2;
+                const adjust =
+                  Math.abs(self.discontinuityY[n][0] - x) < 1e-4 ? true : false;
+                if (
+                  self.discontinuityY[n][0] - samples[i - 1].x > smallNumber &&
+                  adjust
+                ) {
+                  samples[i - 1].x = self.discontinuityY[n][0] - smallNumber;
+                  samples[i].x = self.discontinuityY[n][0] + smallNumber;
+                  samples[i - 1].y = math.evaluate(self.fn, {
+                    x: self.discontinuityY[n][0] - smallNumber,
+                  });
+                  samples[i].y = math.evaluate(self.fn, {
+                    x: self.discontinuityY[n][0] + smallNumber,
+                  });
+                }
+              }
+              break;
+            }
+          } else {
+            if (samples[i].y > self.discontinuityY[n][0] && i > 0) {
+              indexBeforeDiscontinuity.push(i - 1);
+              break;
+            }
+          }
+        }
+      }
+      if (
+        self.discontinuityY[n][1] === "infinite" ||
+        self.discontinuityY[n][1] === "essential"
+      ) {
+        for (i; i < samples.length; i++) {
+          if (!Static.AxisInYX) {
+            if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+              indexBeforeDiscontinuity.push(i);
+              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+              break;
+            }
+          } else {
+            if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+              indexBeforeDiscontinuity.push(i);
+              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+              break;
+            }
+          }
+        }
+      }
+    }
+
     if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
       indexBeforeDiscontinuity.push(samples.length - 1);
       if (
@@ -444,6 +524,17 @@ class MyCurve extends Curve {
       ) {
         samples[samples.length - 1].y =
           self.discontinuity[self.discontinuity.length - 1][2];
+      }
+    }
+
+    if (indexBeforeDiscontinuity.length < self.discontinuityY.length) {
+      indexBeforeDiscontinuity.push(samples.length - 1);
+      if (
+        self.discontinuityY[self.discontinuityY.length - 1][2] != undefined &&
+        isFinite(self.discontinuityY[self.discontinuityY.length - 1][2])
+      ) {
+        samples[samples.length - 1].x =
+          self.discontinuityY[self.discontinuityY.length - 1][2];
       }
     }
     indexBeforeDiscontinuity = indexBeforeDiscontinuity.filter(
@@ -637,6 +728,7 @@ class MyCurve extends Curve {
         if (!self.unboundedRange) Utility.setAutoScale(plot, true);
         if (Utility.isScaleAdjustNeeded(self)) {
           plot.setAxisScale(self.yAxis(), -6, 6);
+          plot.setAxisScale(self.xAxis(), -10, 10);
         }
       }
     } else {

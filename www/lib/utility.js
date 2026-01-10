@@ -1895,10 +1895,18 @@ class Utility {
    * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
    */
   static makeSamples(obj, limits_x = null) {
-    function handleDiscontinuityTurningPoints(samples) {
-      if (obj.discontinuity.length) {
-        samples = samples.sort((a, b) => a.x - b.x);
-        const discont = structuredClone(obj.discontinuity);
+    function handleDiscontinuityTurningPoints(samples, discontY = false) {
+      if (
+        obj.discontinuity.length ||
+        (obj.discontinuityY && obj.discontinuityY.length)
+      ) {
+        // samples = samples.sort((a, b) => a.x - b.x);
+        let discont;
+        if (!discontY) {
+          discont = structuredClone(obj.discontinuity);
+        } else {
+          discont = structuredClone(obj.discontinuityY);
+        }
         const lmt_l = samples[0].x;
         const lmt_u = samples[samples.length - 1].x;
         const step = (samples[1].x - samples[0].x) * 1e-20;
@@ -1917,7 +1925,11 @@ class Utility {
             i--;
           }
         }
-        obj.discontinuity = structuredClone(discont);
+        if (!discontY) {
+          obj.discontinuity = structuredClone(discont);
+        } else {
+          obj.discontinuityY = structuredClone(discont);
+        }
 
         //on the left boundary
         if (
@@ -1963,7 +1975,12 @@ class Utility {
         let _parser;
         let _indepVar;
         if (obj.parametricFnX && obj.parametricFnY) {
-          _parser = new EvaluateExp(obj.parametricFnY);
+          if (!discontY) {
+            _parser = new EvaluateExp(obj.parametricFnY);
+          } else {
+            _parser = new EvaluateExp(obj.parametricFnX);
+          }
+
           _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
         } else {
           _parser = new EvaluateExp(obj.fx);
@@ -1998,7 +2015,9 @@ class Utility {
                     discont[i][1] == "essential"
                   ) {
                     const _sign1 = math.sign(yVal);
-                    if (samples[n - 1].x != lowerX) {
+                    if (math.abs(samples[n].x) === Static.LargeNumber) {
+                      samples[n].y = _sign1 * lmt;
+                    } else if (samples[n - 1].x != lowerX) {
                       samples[n - 1].y = _sign1 * lmt;
                     }
 
@@ -2009,7 +2028,15 @@ class Utility {
                     // if (yVal.im) {
                     //   samples[n].y =;
                     // } else {
-                    samples[n].y = math.sign(yVal) * lmt;
+                    if (
+                      math.abs(samples[n].x) === Static.LargeNumber &&
+                      n > 0 &&
+                      n < samples.length - 2
+                    ) {
+                      samples[n + 1].y = math.sign(yVal) * lmt;
+                    } else {
+                      samples[n].y = math.sign(yVal) * lmt;
+                    }
                     //}
                     n++;
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
@@ -2112,8 +2139,71 @@ class Utility {
 
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
-      const samples = Utility.makeParametricSamples(obj);
-      handleDiscontinuityTurningPoints(samples);
+      let samples = Utility.makeParametricSamples(obj);
+      if (obj.discontinuity.length) {
+        handleDiscontinuityTurningPoints(samples, false);
+      }
+      if (obj.discontinuityY.length) {
+        samples = samples.map((pt) => {
+          const x = pt.x;
+          pt.x = pt.y;
+          pt.y = x;
+          return pt;
+        });
+        // samples = samples.sort((a, b) => a.x - b.x);
+        handleDiscontinuityTurningPoints(samples, true);
+        samples = samples.map((pt) => {
+          const x = pt.x;
+          pt.x = pt.y;
+          pt.y = x;
+          return pt;
+        });
+        // samples = samples.sort((a, b) => a.x - b.x);
+      }
+
+      samples = samples.filter((item, index, samples) => {
+        /* if (
+          index < samples.length - 1 &&
+          math.abs(samples[index].x) === Static.LargeNumber &&
+          math.abs(samples[index + 1].x) === Static.LargeNumber
+        ) {
+          return false;
+        } */
+        /* if (
+          index > 0 &&
+          math.abs(samples[index].y) === Static.LargeNumber &&
+          math.abs(samples[index - 1].y) === Static.LargeNumber
+        ) {
+          return false;
+        } */
+
+        if (
+          math.abs(samples[index].x) === Static.LargeNumber &&
+          math.abs(samples[index].y) === Static.LargeNumber
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+
+      if (obj.discontinuity.length && obj.discontinuityY.length) {
+        for (let i = 0; i < obj.discontinuity.length; i++) {
+          for (let j = 0; j < obj.discontinuityY.length; j++) {
+            if (
+              obj.discontinuity[i][0] === obj.discontinuityY[j][0] &&
+              (obj.discontinuity[i][1] === "infinite" ||
+                obj.discontinuityY[j][1] === "essential")
+            ) {
+              obj.discontinuity[i][1] = "unknown2";
+              obj.discontinuityY[j][1] = "unknown2";
+            }
+          }
+        }
+      }
+
+      //samples = samples.sort((a, b) => a.x - b.x);
+      //console.log(456);
       return samples;
     }
 
@@ -3595,6 +3685,16 @@ class Utility {
         break;
       }
     }
+    for (let i = 0; i < curve.discontinuityY.length; i++) {
+      if (
+        curve.discontinuityY[i][1] == "infinite" ||
+        curve.discontinuityY[i][1] == "essential" ||
+        curve.discontinuityY[i][1] == "jump"
+      ) {
+        adjust = true;
+        break;
+      }
+    }
     return adjust;
   }
 
@@ -3753,7 +3853,7 @@ class Utility {
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
         // return {
-        //   discontinuities: [[2.0, "essential"]],
+        //   discontinuities: [[0.0, "essential"]],
         //   turningPoints: [],
         //   period: null,
         // }; //1/x
@@ -3770,7 +3870,7 @@ class Utility {
         //   turningPoints: [],
         //   period: null,
         // }; //x^2 or sin x
-        // return {
+        //return {
         //   discontinuities: [[0, "removable", 0]],
         //   turningPoints: [],
         //   period: null,
