@@ -800,14 +800,14 @@ class MyPlot extends Plot {
           );
           makeSamplesData.discontinuityY = d.discontinuities;
 
-          discontTurningPoints = [];
-          /* discontTurningPoints = await Utility.discontinuity(
+          // discontTurningPoints = [];
+          discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
             makeSamplesData.parametricFnY,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable
-          ); */
+          );
         } else {
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
