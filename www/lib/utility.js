@@ -1753,6 +1753,8 @@ class Utility {
     var parametric_variable = obj.parametric_variable;
     var indepVar = obj.variable; // || Utility.findIndepVar(fx);
 
+    let _pos = 0;
+
     if (typeof numOfSamples === "undefined") numOfSamples = 100;
 
     if (parametric_variable !== "t") {
@@ -1768,12 +1770,12 @@ class Utility {
     }
 
     if (parametricFnX.indexOf("t") == -1 && parametricFnY.indexOf("t") == -1) {
-      return [
-        new Misc.Point(
-          math.evaluate(parametricFnX),
-          math.evaluate(parametricFnY)
-        ),
-      ];
+      const pt = new Misc.Point(
+        math.evaluate(parametricFnX),
+        math.evaluate(parametricFnY)
+      );
+      pt.pos = _pos;
+      return [pt];
     }
 
     let parserFnX = new EvaluateExp(parametricFnX);
@@ -1862,7 +1864,10 @@ class Utility {
         }
       }
 
-      samples.push(new Misc.Point(xVal, yVal));
+      const pt = new Misc.Point(xVal, yVal, _pos);
+      //pt.pos = _pos;
+      _pos++;
+      samples.push(pt);
       /* if (samples.length == 0) {
         samples.push(new Misc.Point(xVal, yVal));
       } else {
@@ -1907,8 +1912,13 @@ class Utility {
         } else {
           discont = structuredClone(obj.discontinuityY);
         }
-        const lmt_l = samples[0].x;
-        const lmt_u = samples[samples.length - 1].x;
+
+        samples = samples.sort((a, b) => a.x - b.x);
+
+        // const lmt_l = samples[0].x;
+        // const lmt_u = samples[samples.length - 1].x;
+        const lmt_l = obj.lowerX;
+        const lmt_u = obj.upperX;
         const step = (samples[1].x - samples[0].x) * 1e-20;
         //const lmt = 1e35;
         const lmt = Static.LargeNumber;
@@ -1976,9 +1986,12 @@ class Utility {
         let _indepVar;
         if (obj.parametricFnX && obj.parametricFnY) {
           if (!discontY) {
-            _parser = new EvaluateExp(obj.parametricFnY);
+            //_parser = new EvaluateExp(obj.parametricFnY);
+
+            _parser = new EvaluateExp(obj.discontinuityFn);
           } else {
-            _parser = new EvaluateExp(obj.parametricFnX);
+            //_parser = new EvaluateExp(obj.parametricFnX);
+            _parser = new EvaluateExp(obj.discontinuityFn_y);
           }
 
           _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
@@ -1989,7 +2002,9 @@ class Utility {
 
         let n = 0;
         const _scope = new Map();
-        const delta = (samples[1].x - samples[0].x) * 1e-5;
+        const step_ = samples[1].x - samples[0].x;
+        //const delta = step_ * 1e-5;
+        let delta = (samples[1].x - samples[0].x) * 1e-5;
         // console.log(delta);
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
@@ -2003,8 +2018,20 @@ class Utility {
             continue;
           }
 
+          const scp = new Map();
           for (; n < samples.length; n++) {
-            const x = samples[n].x;
+            if (n > 0) {
+              delta = (samples[n].x - samples[n - 1].x) * 1e-5;
+            }
+            let x = samples[n].x;
+            /* scp.set(_indepVar, x);
+            if (obj.parametricFnX && obj.parametricFnY) {
+              if (!discontY) {
+                x = math.evaluate(obj.parametricFnX, scp);
+              } else {
+                x = math.evaluate(obj.parametricFnY, scp);
+              }
+            } */
             if (x > d) {
               _scope.set(_indepVar, d - delta);
               yVal = _parser.eval(_scope);
@@ -2025,6 +2052,7 @@ class Utility {
 
                     _scope.set(_indepVar, d + delta);
                     yVal = _parser.eval(_scope);
+
                     // if (yVal.im) {
                     //   samples[n].y =;
                     // } else {
@@ -2036,6 +2064,11 @@ class Utility {
                       samples[n + 1].y = math.sign(yVal) * lmt;
                     } else {
                       samples[n].y = math.sign(yVal) * lmt;
+                    }
+                    if (
+                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
+                    ) {
+                      samples[n].y *= -1;
                     }
                     //}
                     n++;
@@ -2091,6 +2124,31 @@ class Utility {
       samples = samples.filter((item, index) => {
         return samples[index].y != "#";
       });
+
+      samples = samples.sort(function (a, b) {
+        return a.pos - b.pos;
+      });
+
+      if (samples.length > 1) {
+        for (let i = 1; i < samples.length; i++) {
+          if (
+            samples[i].x === -1 * Static.LargeNumber &&
+            samples[i - 1].x === Static.LargeNumber
+          ) {
+            const temp = samples[i];
+            samples[i] = samples[i - 1];
+            samples[i - 1] = temp;
+          }
+          if (
+            samples[i].y === -1 * Static.LargeNumber &&
+            samples[i - 1].y === Static.LargeNumber
+          ) {
+            const temp = samples[i];
+            samples[i] = samples[i - 1];
+            samples[i - 1] = temp;
+          }
+        }
+      }
     }
     //////////////
     function handleError(xVal) {
@@ -2136,6 +2194,10 @@ class Utility {
         return -1; //Just continue to loop
       }
     }
+
+    // if (obj.parametricFnX && obj.parametricFnY) {
+    //   Utility.makeParametricSamples(obj);
+    // }
 
     //console.time("object");
     if (obj.parametricFnX && obj.parametricFnY) {
@@ -2435,6 +2497,7 @@ class Utility {
       }
       if (parser.error) {
         //Utility.alert(parser.errorMessage);
+        //continue;
         return null;
       }
       if (obj.threeD) {
@@ -3845,6 +3908,7 @@ class Utility {
 
   static async discontinuity(exp, lower, upper, indepVar) {
     //Utility.progressWait();
+    // this.first = true;
     try {
       let result = {
         discontinuity: [],
@@ -3853,10 +3917,27 @@ class Utility {
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
         // return {
-        //   discontinuities: [[0.0, "essential"]],
+        //   discontinuities: [[2, "essential"]],
         //   turningPoints: [],
         //   period: null,
         // }; //1/x
+        // if (!this.first) {
+        //   this.first = true;
+        //   return {
+        //     //right
+        //     discontinuities: [[-0.5, "essential"]],
+        //     turningPoints: [],
+        //     period: null,
+        //   }; //1/x
+        // } else {
+        //   //left
+        //   this.first = false;
+        //   return {
+        //     discontinuities: [[-0.5, "essential"]],
+        //     turningPoints: [],
+        //     period: null,
+        //   };
+        // }
         // return {
         //   discontinuities: [
         //     [-3.22, "removable"],
@@ -5226,6 +5307,7 @@ class Utility {
   }
 
   static getIncludedKeywords(str) {
+    if (!str) return [];
     let result = [];
     const kws = Static.keywords;
     result = kws.filter(function (kw) {
@@ -7824,3 +7906,5 @@ Utility.progressSpinnerInit = false;
 Utility.progressWaitOnCount = 0;
 
 Utility.detachedCurves = [];
+
+Utility.first = true;

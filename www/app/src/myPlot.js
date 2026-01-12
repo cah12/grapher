@@ -791,19 +791,54 @@ class MyPlot extends Plot {
         }; */
           //makeSamplesData.discontinuityY = [];
 
+          let exp = `${makeSamplesData.parametricFnY}-x`;
+          exp = Utility.insertProductSign_total(
+            exp,
+            makeSamplesData.parametric_variable
+          );
+          let sol = Static.solveFor(exp, "t");
+          let str = null;
+          if (sol.length > 0) {
+            //self._functionDlg.parametric_variable
+            str = makeSamplesData.parametricFnX.replaceAll(
+              makeSamplesData.parametric_variable,
+              `(${sol[0]})`
+            );
+            str = str.replaceAll("x", makeSamplesData.parametric_variable);
+            makeSamplesData.discontinuityFn_y = str;
+          }
+
           const d = await Utility.discontinuity(
             //fn_unsimplified,
-            makeSamplesData.parametricFnX,
+            //makeSamplesData.parametricFnX,
+            str,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable
           );
           makeSamplesData.discontinuityY = d.discontinuities;
 
-          // discontTurningPoints = [];
+          //discontTurningPoints = [];
+          exp = `${makeSamplesData.parametricFnX}-x`;
+          exp = Utility.insertProductSign_total(
+            exp,
+            makeSamplesData.parametric_variable
+          );
+          sol = Static.solveFor(exp, "t");
+          str = null;
+          if (sol.length > 0) {
+            //self._functionDlg.parametric_variable
+            str = makeSamplesData.parametricFnY.replaceAll(
+              makeSamplesData.parametric_variable,
+              `(${sol[0]})`
+            );
+            str = str.replaceAll("x", makeSamplesData.parametric_variable);
+            makeSamplesData.discontinuityFn = str;
+          }
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
-            makeSamplesData.parametricFnY,
+            //makeSamplesData.parametricFnY,
+            str,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable

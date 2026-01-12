@@ -560,20 +560,26 @@ Misc.Size.prototype.toString = function () {
  * new Misc.Point(10, 20); //Creates a point with x coordinate == 10 and y coordinate == 20.
  * new Misc.Point(existingPoint); //Creates a point with x coordinate == existingPoint.x and y coordinate == existingPoint.y.
  */
-Misc.Point = function (x, y) {
+Misc.Point = function (x, y, _pos = -1) {
   if (x instanceof Misc.Point) {
     this.x = x.x;
     this.y = x.y;
+    this.pos = x.pos;
     return;
   }
   this.x = 0.0;
   this.y = 0.0;
+  this.pos = -1;
 
   if (typeof y !== "undefined") {
     this.y = y;
   }
   if (typeof x !== "undefined") {
     this.x = x;
+  }
+
+  if (typeof _pos !== "undefined") {
+    this.pos = _pos;
   }
 };
 
