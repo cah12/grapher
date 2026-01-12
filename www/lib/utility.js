@@ -2200,7 +2200,7 @@ class Utility {
     }
 
     if (obj.parametricFnX && obj.parametricFnY) {
-      Utility.makeParametricSamples(obj);
+      return Utility.makeParametricSamples(obj);
     }
 
     //console.time("object");
