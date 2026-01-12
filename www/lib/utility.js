@@ -1913,7 +1913,9 @@ class Utility {
           discont = structuredClone(obj.discontinuityY);
         }
 
-        samples = samples.sort((a, b) => a.x - b.x);
+        if (obj.parametricFnX && obj.parametricFnY) {
+          samples = samples.sort((a, b) => a.x - b.x);
+        }
 
         // const lmt_l = samples[0].x;
         // const lmt_u = samples[samples.length - 1].x;
@@ -2020,9 +2022,9 @@ class Utility {
 
           const scp = new Map();
           for (; n < samples.length; n++) {
-            if (n > 0) {
-              delta = (samples[n].x - samples[n - 1].x) * 1e-5;
-            }
+            // if (n > 0) {
+            //   delta = (samples[n].x - samples[n - 1].x) * 1e-5;
+            // }
             let x = samples[n].x;
             /* scp.set(_indepVar, x);
             if (obj.parametricFnX && obj.parametricFnY) {
@@ -2125,30 +2127,32 @@ class Utility {
         return samples[index].y != "#";
       });
 
-      samples = samples.sort(function (a, b) {
-        return a.pos - b.pos;
-      });
-
-      if (samples.length > 1) {
-        for (let i = 1; i < samples.length; i++) {
-          if (
-            samples[i].x === -1 * Static.LargeNumber &&
-            samples[i - 1].x === Static.LargeNumber
-          ) {
-            const temp = samples[i];
-            samples[i] = samples[i - 1];
-            samples[i - 1] = temp;
-          }
-          if (
-            samples[i].y === -1 * Static.LargeNumber &&
-            samples[i - 1].y === Static.LargeNumber
-          ) {
-            const temp = samples[i];
-            samples[i] = samples[i - 1];
-            samples[i - 1] = temp;
-          }
-        }
+      if (obj.parametricFnX && obj.parametricFnY) {
+        samples = samples.sort(function (a, b) {
+          return a.pos - b.pos;
+        });
       }
+
+      // if (samples.length > 1) {
+      //   for (let i = 1; i < samples.length; i++) {
+      //     if (
+      //       samples[i].x === -1 * Static.LargeNumber &&
+      //       samples[i - 1].x === Static.LargeNumber
+      //     ) {
+      //       const temp = samples[i];
+      //       samples[i] = samples[i - 1];
+      //       samples[i - 1] = temp;
+      //     }
+      //     if (
+      //       samples[i].y === -1 * Static.LargeNumber &&
+      //       samples[i - 1].y === Static.LargeNumber
+      //     ) {
+      //       const temp = samples[i];
+      //       samples[i] = samples[i - 1];
+      //       samples[i - 1] = temp;
+      //     }
+      //   }
+      // }
     }
     //////////////
     function handleError(xVal) {
@@ -2195,79 +2199,79 @@ class Utility {
       }
     }
 
-    // if (obj.parametricFnX && obj.parametricFnY) {
-    //   Utility.makeParametricSamples(obj);
-    // }
+    if (obj.parametricFnX && obj.parametricFnY) {
+      Utility.makeParametricSamples(obj);
+    }
 
     //console.time("object");
-    if (obj.parametricFnX && obj.parametricFnY) {
-      let samples = Utility.makeParametricSamples(obj);
-      if (obj.discontinuity.length) {
-        handleDiscontinuityTurningPoints(samples, false);
-      }
-      if (obj.discontinuityY.length) {
-        samples = samples.map((pt) => {
-          const x = pt.x;
-          pt.x = pt.y;
-          pt.y = x;
-          return pt;
-        });
-        // samples = samples.sort((a, b) => a.x - b.x);
-        handleDiscontinuityTurningPoints(samples, true);
-        samples = samples.map((pt) => {
-          const x = pt.x;
-          pt.x = pt.y;
-          pt.y = x;
-          return pt;
-        });
-        // samples = samples.sort((a, b) => a.x - b.x);
-      }
+    // if (obj.parametricFnX && obj.parametricFnY) {
+    //   let samples = Utility.makeParametricSamples(obj);
+    //   if (obj.discontinuity.length) {
+    //     handleDiscontinuityTurningPoints(samples, false);
+    //   }
+    //   if (obj.discontinuityY.length) {
+    //     samples = samples.map((pt) => {
+    //       const x = pt.x;
+    //       pt.x = pt.y;
+    //       pt.y = x;
+    //       return pt;
+    //     });
+    //     // samples = samples.sort((a, b) => a.x - b.x);
+    //     handleDiscontinuityTurningPoints(samples, true);
+    //     samples = samples.map((pt) => {
+    //       const x = pt.x;
+    //       pt.x = pt.y;
+    //       pt.y = x;
+    //       return pt;
+    //     });
+    //     // samples = samples.sort((a, b) => a.x - b.x);
+    //   }
 
-      samples = samples.filter((item, index, samples) => {
-        /* if (
-          index < samples.length - 1 &&
-          math.abs(samples[index].x) === Static.LargeNumber &&
-          math.abs(samples[index + 1].x) === Static.LargeNumber
-        ) {
-          return false;
-        } */
-        /* if (
-          index > 0 &&
-          math.abs(samples[index].y) === Static.LargeNumber &&
-          math.abs(samples[index - 1].y) === Static.LargeNumber
-        ) {
-          return false;
-        } */
+    //   samples = samples.filter((item, index, samples) => {
+    //     /* if (
+    //       index < samples.length - 1 &&
+    //       math.abs(samples[index].x) === Static.LargeNumber &&
+    //       math.abs(samples[index + 1].x) === Static.LargeNumber
+    //     ) {
+    //       return false;
+    //     } */
+    //     /* if (
+    //       index > 0 &&
+    //       math.abs(samples[index].y) === Static.LargeNumber &&
+    //       math.abs(samples[index - 1].y) === Static.LargeNumber
+    //     ) {
+    //       return false;
+    //     } */
 
-        if (
-          math.abs(samples[index].x) === Static.LargeNumber &&
-          math.abs(samples[index].y) === Static.LargeNumber
-        ) {
-          return false;
-        }
+    //     if (
+    //       math.abs(samples[index].x) === Static.LargeNumber &&
+    //       math.abs(samples[index].y) === Static.LargeNumber
+    //     ) {
+    //       return false;
+    //     }
 
-        return true;
-      });
+    //     return true;
+    //   });
 
-      if (obj.discontinuity.length && obj.discontinuityY.length) {
-        for (let i = 0; i < obj.discontinuity.length; i++) {
-          for (let j = 0; j < obj.discontinuityY.length; j++) {
-            if (
-              obj.discontinuity[i][0] === obj.discontinuityY[j][0] &&
-              (obj.discontinuity[i][1] === "infinite" ||
-                obj.discontinuityY[j][1] === "essential")
-            ) {
-              obj.discontinuity[i][1] = "unknown2";
-              obj.discontinuityY[j][1] = "unknown2";
-            }
-          }
-        }
-      }
+    //   if (obj.discontinuity.length && obj.discontinuityY.length) {
+    //     for (let i = 0; i < obj.discontinuity.length; i++) {
+    //       for (let j = 0; j < obj.discontinuityY.length; j++) {
+    //         if (
+    //           obj.discontinuity[i][0] === obj.discontinuityY[j][0] &&
+    //           (obj.discontinuity[i][1] === "infinite" ||
+    //             obj.discontinuityY[j][1] === "essential")
+    //         ) {
+    //           obj.discontinuity[i][1] = "unknown2";
+    //           obj.discontinuityY[j][1] = "unknown2";
+    //         }
+    //       }
+    //     }
+    //   }
 
-      //samples = samples.sort((a, b) => a.x - b.x);
-      //console.log(456);
-      return samples;
-    }
+    //   //samples = samples.sort((a, b) => a.x - b.x);
+    //   //console.log(456);
+    //   return samples;
+    // }
 
     if (limits_x) {
       obj.lowerX = limits_x.lowerX;
@@ -2728,8 +2732,8 @@ class Utility {
 
     if (limits_x) {
     }
-    handleDiscontinuityTurningPoints(samples);
-    /* if (obj.discontinuity.length) {
+    //handleDiscontinuityTurningPoints(samples);
+    if (obj.discontinuity.length) {
       const discont = structuredClone(obj.discontinuity);
       const lmt_l = samples[0].x;
       const lmt_u = samples[samples.length - 1].x;
@@ -2885,7 +2889,7 @@ class Utility {
 
     samples = samples.filter((item, index) => {
       return samples[index].y != "#";
-    }); */
+    });
     return samples;
   }
 
@@ -3748,16 +3752,16 @@ class Utility {
         break;
       }
     }
-    for (let i = 0; i < curve.discontinuityY.length; i++) {
-      if (
-        curve.discontinuityY[i][1] == "infinite" ||
-        curve.discontinuityY[i][1] == "essential" ||
-        curve.discontinuityY[i][1] == "jump"
-      ) {
-        adjust = true;
-        break;
-      }
-    }
+    // for (let i = 0; i < curve.discontinuityY.length; i++) {
+    //   if (
+    //     curve.discontinuityY[i][1] == "infinite" ||
+    //     curve.discontinuityY[i][1] == "essential" ||
+    //     curve.discontinuityY[i][1] == "jump"
+    //   ) {
+    //     adjust = true;
+    //     break;
+    //   }
+    // }
     return adjust;
   }
 
