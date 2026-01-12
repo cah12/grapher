@@ -53,6 +53,7 @@ class MyCurve extends Curve {
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
+    self.discontinuityY = self.discontinuityY || [];
 
     /* function findDiscontinuity() {
       const result = [];
