@@ -1744,6 +1744,262 @@ class Utility {
   }
 
   static makeParametricSamples(obj) {
+    function handleDiscontinuityTurningPoints(samples, discontY = false) {
+      if (
+        obj.discontinuity.length ||
+        (obj.discontinuityY && obj.discontinuityY.length)
+      ) {
+        // samples = samples.sort((a, b) => a.x - b.x);
+        let discont;
+        if (!discontY) {
+          discont = structuredClone(obj.discontinuity);
+        } else {
+          discont = structuredClone(obj.discontinuityY);
+        }
+
+        if (obj.parametricFnX && obj.parametricFnY) {
+          samples = samples.sort((a, b) => a.x - b.x);
+        }
+
+        // const lmt_l = samples[0].x;
+        // const lmt_u = samples[samples.length - 1].x;
+        const lmt_l = obj.lowerX;
+        const lmt_u = obj.upperX;
+        const step = (samples[1].x - samples[0].x) * 1e-20;
+        //const lmt = 1e35;
+        const lmt = Static.LargeNumber;
+
+        //Ensure discontinuities are in range
+        for (let i = 0; i < discont.length; i++) {
+          if (
+            Utility.adjustForDecimalPlaces(discont[i][0], 4) <
+              Utility.adjustForDecimalPlaces(lmt_l, 4) ||
+            Utility.adjustForDecimalPlaces(discont[i][0], 4) >
+              Utility.adjustForDecimalPlaces(lmt_u, 4)
+          ) {
+            discont.splice(i, 1);
+            i--;
+          }
+        }
+        if (!discontY) {
+          obj.discontinuity = structuredClone(discont);
+        } else {
+          obj.discontinuityY = structuredClone(discont);
+        }
+
+        //on the left boundary
+        if (
+          discont &&
+          discont.length &&
+          Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
+            Utility.adjustForDecimalPlaces(lowerX, 4) &&
+          Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
+            Utility.adjustForDecimalPlaces(lowerX, 4)
+        ) {
+          try {
+            if (
+              discont &&
+              discont.length &&
+              (discont[0][1] === "infinite" || discont[0][1] === "essential")
+            ) {
+              samples[0].y = math.sign(samples[0].y) * lmt;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          discont[0][0] = "#";
+        }
+        //on the right boundary
+        if (
+          discont &&
+          discont.length &&
+          discont[discont.length - 1][0] <= upperX &&
+          Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
+            Utility.adjustForDecimalPlaces(upperX, 4)
+        ) {
+          try {
+            if (discont[0][1] === "infinite" || discont[0][1] === "essential") {
+              samples[samples.length - 1].y =
+                math.sign(samples[samples.length - 1].y) * lmt;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+          discont[discont.length - 1][0] = "#";
+        }
+
+        let _parser;
+        let _indepVar;
+        if (obj.parametricFnX && obj.parametricFnY) {
+          if (!discontY) {
+            _parser = new EvaluateExp(obj.parametricFnY);
+
+            //_parser = new EvaluateExp(obj.discontinuityFn);
+          } else {
+            _parser = new EvaluateExp(obj.parametricFnX);
+            //_parser = new EvaluateExp(obj.discontinuityFn_y);
+          }
+
+          _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
+        } else {
+          _parser = new EvaluateExp(obj.fx);
+          _indepVar = obj.variable; // || Utility.findIndepVar(obj.fx);
+        }
+
+        let n = 0;
+        const _scope = new Map();
+        const step_ = samples[1].x - samples[0].x;
+        //const delta = step_ * 1e-5;
+        let delta = (samples[1].x - samples[0].x) * 1e-5;
+        // console.log(delta);
+        for (let i = 0; i < discont.length; i++) {
+          // if (discont[i][1] !== "infinite") {
+          //   continue;
+          // }
+          if (discont && discont.length && discont[i][1] == "jump") {
+            continue;
+          }
+          const d = discont[i][0];
+          if (d == "#") {
+            continue;
+          }
+
+          let yVal;
+          const scp = new Map();
+          for (; n < samples.length; n++) {
+            // if (n > 0) {
+            //   delta = (samples[n].x - samples[n - 1].x) * 1e-5;
+            // }
+            let x = samples[n].x;
+            /* scp.set(_indepVar, x);
+            if (obj.parametricFnX && obj.parametricFnY) {
+              if (!discontY) {
+                x = math.evaluate(obj.parametricFnX, scp);
+              } else {
+                x = math.evaluate(obj.parametricFnY, scp);
+              }
+            } */
+            if (x > d) {
+              _scope.set(_indepVar, d - delta);
+              yVal = _parser.eval(_scope);
+              try {
+                if (n > 0) {
+                  if (
+                    discont[i][1] == "infinite" ||
+                    discont[i][1] == "essential"
+                  ) {
+                    const _sign1 = math.sign(yVal);
+                    if (math.abs(samples[n].x) === Static.LargeNumber) {
+                      samples[n].y = _sign1 * lmt;
+                    } else if (samples[n - 1].x != lowerX) {
+                      samples[n - 1].y = _sign1 * lmt;
+                    }
+
+                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+
+                    _scope.set(_indepVar, d + delta);
+                    yVal = _parser.eval(_scope);
+
+                    // if (yVal.im) {
+                    //   samples[n].y =;
+                    // } else {
+                    if (
+                      math.abs(samples[n].x) === Static.LargeNumber &&
+                      n > 0 &&
+                      n < samples.length - 2
+                    ) {
+                      samples[n + 1].y = math.sign(yVal) * lmt;
+                    } else {
+                      samples[n].y = math.sign(yVal) * lmt;
+                    }
+                    if (
+                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
+                    ) {
+                      samples[n].y *= -1;
+                    }
+                    //}
+                    n++;
+                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+                    break;
+                  } else if (
+                    discont[i][1] == "removable" ||
+                    discont[i][1] == "unknown2"
+                  ) {
+                    if (discont.length > 1 && i > 0) {
+                      // if (discont[i - 1][1] == "infinite") {
+                      samples[n - 1].x = discont[i][0];
+                      samples[n - 1].y = discont[i][2];
+                      // }
+                    } else {
+                      samples[n - 1].y = discont[i][2];
+                      samples[n].y = discont[i][2];
+                    }
+                    n++;
+                    break;
+                  }
+                }
+              } catch (error) {
+                console.log(n);
+                console.log(error);
+              }
+
+              break;
+            }
+          }
+        }
+      }
+
+      if (obj && obj.turning_points && obj.turning_points.length) {
+        const _tp = obj.turning_points;
+        const discont = obj.discontinuity;
+        const tp = _tp.filter(function (item) {
+          return discont.indexOf(item[0]) === -1;
+        });
+        for (let i = 0; i < tp.length; i++) {
+          samples.push(new Misc.Point(tp[i][0], tp[i][1]));
+        }
+      }
+
+      samples = samples.filter((item, index) => {
+        return _.isFinite(samples[index].y);
+      });
+
+      samples = samples.sort(function (a, b) {
+        return a.x - b.x;
+      });
+
+      samples = samples.filter((item, index) => {
+        return samples[index].y != "#";
+      });
+
+      if (obj.parametricFnX && obj.parametricFnY) {
+        samples = samples.sort(function (a, b) {
+          return a.pos - b.pos;
+        });
+      }
+
+      // if (samples.length > 1) {
+      //   for (let i = 1; i < samples.length; i++) {
+      //     if (
+      //       samples[i].x === -1 * Static.LargeNumber &&
+      //       samples[i - 1].x === Static.LargeNumber
+      //     ) {
+      //       const temp = samples[i];
+      //       samples[i] = samples[i - 1];
+      //       samples[i - 1] = temp;
+      //     }
+      //     if (
+      //       samples[i].y === -1 * Static.LargeNumber &&
+      //       samples[i - 1].y === Static.LargeNumber
+      //     ) {
+      //       const temp = samples[i];
+      //       samples[i] = samples[i - 1];
+      //       samples[i - 1] = temp;
+      //     }
+      //   }
+      // }
+    }
+
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;
     var lowerX = obj.lowerX;
@@ -1881,6 +2137,27 @@ class Utility {
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
     // });
+    handleDiscontinuityTurningPoints(samples, false);
+    if (obj.discontinuityY && obj.discontinuityY.length) {
+      //handle y discontinuities
+      samples = samples.map((item, index) => {
+        const temp = item.x;
+        item.x = item.y;
+        item.y = temp;
+        return item;
+      });
+      handleDiscontinuityTurningPoints(samples, true);
+      samples = samples.map((item, index) => {
+        const temp = item.x;
+        item.x = item.y;
+        item.y = temp;
+        return item;
+      });
+
+      obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
+      obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
+    }
+
     return samples;
   }
 
@@ -3929,7 +4206,7 @@ class Utility {
         //   this.first = true;
         //   return {
         //     //right
-        //     discontinuities: [[-0.5, "essential"]],
+        //     discontinuities: [[0, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   }; //1/x
@@ -3937,7 +4214,7 @@ class Utility {
         //   //left
         //   this.first = false;
         //   return {
-        //     discontinuities: [[-0.5, "essential"]],
+        //     discontinuities: [[0, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   };

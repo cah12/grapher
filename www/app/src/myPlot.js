@@ -796,7 +796,7 @@ class MyPlot extends Plot {
             exp,
             makeSamplesData.parametric_variable
           );
-          let sol = Static.solveFor(exp, "t");
+          let sol = await Static.solveFor(exp, "t");
           let str = null;
           if (sol.length > 0) {
             //self._functionDlg.parametric_variable
@@ -810,21 +810,32 @@ class MyPlot extends Plot {
 
           const d = await Utility.discontinuity(
             //fn_unsimplified,
-            //makeSamplesData.parametricFnX,
-            str,
+            makeSamplesData.parametricFnX,
+            //str,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable
           );
           makeSamplesData.discontinuityY = d.discontinuities;
+          if (d.discontinuities && d.discontinuities.length) {
+            const scope = new Map();
+            for (let i = 0; i < d.discontinuities.length; i++) {
+              scope.set(
+                makeSamplesData.parametric_variable,
+                d.discontinuities[i][0]
+              );
+              const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
+              d.discontinuities[i][0] = disc;
+            }
+          }
 
-          //discontTurningPoints = [];
+          /* //discontTurningPoints = [];
           exp = `${makeSamplesData.parametricFnX}-x`;
           exp = Utility.insertProductSign_total(
             exp,
             makeSamplesData.parametric_variable
           );
-          sol = Static.solveFor(exp, "t");
+          sol = await Static.solveFor(exp, "t");
           str = null;
           if (sol.length > 0) {
             //self._functionDlg.parametric_variable
@@ -834,15 +845,33 @@ class MyPlot extends Plot {
             );
             str = str.replaceAll("x", makeSamplesData.parametric_variable);
             makeSamplesData.discontinuityFn = str;
-          }
+          } */
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
-            //makeSamplesData.parametricFnY,
-            str,
+            makeSamplesData.parametricFnY,
+            //str,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
             self._functionDlg.parametric_variable
           );
+          if (
+            discontTurningPoints &&
+            discontTurningPoints.discontinuities.length
+          ) {
+            const scope = new Map();
+            for (
+              let i = 0;
+              i < discontTurningPoints.discontinuities.length;
+              i++
+            ) {
+              scope.set(
+                makeSamplesData.parametric_variable,
+                discontTurningPoints.discontinuities[i][0]
+              );
+              const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
+              discontTurningPoints.discontinuities[i][0] = disc;
+            }
+          }
         } else {
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,

@@ -323,9 +323,13 @@ class MyCurve extends Curve {
         if (Utility.isScaleAdjustNeeded(self)) {
           if (!Static.AxisInYX) {
             plot.setAxisScale(self.yAxis(), -6, 6);
-            //plot.setAxisScale(self.xAxis(), -10, 10);
+            if (self.discontinuityY && self.discontinuityY.length) {
+              plot.setAxisScale(self.xAxis(), -10, 10);
+            }
           } else {
-            //plot.setAxisScale(self.xAxis(), -6, 6);
+            if (self.discontinuityY && self.discontinuityY.length) {
+              plot.setAxisScale(self.xAxis(), -6, 6);
+            }
             plot.setAxisScale(self.yAxis(), -10, 10);
           }
         }
@@ -441,6 +445,13 @@ class MyCurve extends Curve {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
               break;
+            }
+            if (self.discontinuityY && self.discontinuityY.length) {
+              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+                indexBeforeDiscontinuity.push(i);
+                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+                break;
+              }
             }
           } else {
             if (Math.abs(samples[i].x) >= Static.LargeNumber) {
@@ -729,7 +740,9 @@ class MyCurve extends Curve {
         if (!self.unboundedRange) Utility.setAutoScale(plot, true);
         if (Utility.isScaleAdjustNeeded(self)) {
           plot.setAxisScale(self.yAxis(), -6, 6);
-          //plot.setAxisScale(self.xAxis(), -10, 10);
+          if (self.discontinuityY && self.discontinuityY.length) {
+            plot.setAxisScale(self.xAxis(), -10, 10);
+          }
         }
       }
     } else {
