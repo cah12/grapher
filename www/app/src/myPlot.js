@@ -791,6 +791,7 @@ class MyPlot extends Plot {
         }; */
           //makeSamplesData.discontinuityY = [];
 
+          makeSamplesData.discontinuityFn_y = makeSamplesData.parametricFnX;
           let exp = `${makeSamplesData.parametricFnY}-x`;
           exp = Utility.insertProductSign_total(
             exp,
@@ -825,11 +826,19 @@ class MyPlot extends Plot {
                 d.discontinuities[i][0]
               );
               const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
-              d.discontinuities[i][0] = disc;
+              if (!Number.isFinite(disc)) {
+                const val = d.discontinuities[i][0];
+                d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
+                d.discontinuities.push([val, "unknown2"]);
+                i++;
+              } else {
+                d.discontinuities[i][0] = disc;
+              }
             }
           }
 
-          /* //discontTurningPoints = [];
+          //discontTurningPoints = [];
+          makeSamplesData.discontinuityFn = makeSamplesData.parametricFnY;
           exp = `${makeSamplesData.parametricFnX}-x`;
           exp = Utility.insertProductSign_total(
             exp,
@@ -845,7 +854,7 @@ class MyPlot extends Plot {
             );
             str = str.replaceAll("x", makeSamplesData.parametric_variable);
             makeSamplesData.discontinuityFn = str;
-          } */
+          }
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
             makeSamplesData.parametricFnY,
@@ -869,7 +878,15 @@ class MyPlot extends Plot {
                 discontTurningPoints.discontinuities[i][0]
               );
               const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
-              discontTurningPoints.discontinuities[i][0] = disc;
+              if (!Number.isFinite(disc)) {
+                const val = discontTurningPoints.discontinuities[i][0];
+                discontTurningPoints.discontinuities[i][0] =
+                  Static.LargeNumber * math.sign(disc);
+                discontTurningPoints.discontinuities.push([val, "unknown2"]);
+                i++;
+              } else {
+                discontTurningPoints.discontinuities[i][0] = disc;
+              }
             }
           }
         } else {

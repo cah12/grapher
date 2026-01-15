@@ -1770,7 +1770,7 @@ class Utility {
         const lmt = Static.LargeNumber;
 
         //Ensure discontinuities are in range
-        for (let i = 0; i < discont.length; i++) {
+        /* for (let i = 0; i < discont.length; i++) {
           if (
             Utility.adjustForDecimalPlaces(discont[i][0], 4) <
               Utility.adjustForDecimalPlaces(lmt_l, 4) ||
@@ -1780,7 +1780,7 @@ class Utility {
             discont.splice(i, 1);
             i--;
           }
-        }
+        } */
         if (!discontY) {
           obj.discontinuity = structuredClone(discont);
         } else {
@@ -1832,12 +1832,12 @@ class Utility {
         let _indepVar;
         if (obj.parametricFnX && obj.parametricFnY) {
           if (!discontY) {
-            _parser = new EvaluateExp(obj.parametricFnY);
+            //_parser = new EvaluateExp(obj.parametricFnY);
 
-            //_parser = new EvaluateExp(obj.discontinuityFn);
+            _parser = new EvaluateExp(obj.discontinuityFn);
           } else {
-            _parser = new EvaluateExp(obj.parametricFnX);
-            //_parser = new EvaluateExp(obj.discontinuityFn_y);
+            //_parser = new EvaluateExp(obj.parametricFnX);
+            _parser = new EvaluateExp(obj.discontinuityFn_y);
           }
 
           _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
@@ -1848,10 +1848,27 @@ class Utility {
 
         let n = 0;
         const _scope = new Map();
-        const step_ = samples[1].x - samples[0].x;
+        /* const step_ = samples[1].x - samples[0].x;
         //const delta = step_ * 1e-5;
-        let delta = (samples[1].x - samples[0].x) * 1e-5;
+        let delta = (samples[1].x - samples[0].x) * 1e-5; */
         // console.log(delta);
+        let delta;
+        let _fn;
+        if (!discontY) {
+          _fn = obj.parametricFnX;
+        } else {
+          _fn = obj.parametricFnY;
+        }
+        if (isFinite(_fn)) {
+          delta = (obj.upperX - obj.lowerX) * 1e-5;
+        } else {
+          _scope.set(_indepVar, obj.lowerX);
+          const _lowerX = math.evaluate(_fn, _scope);
+          _scope.set(_indepVar, obj.upperX);
+          const _upperX = math.evaluate(_fn, _scope);
+          delta = (_upperX - _lowerX) * 1e-5;
+        }
+
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
           //   continue;
@@ -1879,8 +1896,20 @@ class Utility {
                 x = math.evaluate(obj.parametricFnY, scp);
               }
             } */
+            if (x == d) {
+              /* const ind = Math.floor(obj.numOfSamples / 2);
+              for (let i = 1; i < samples.length; i++) {
+                if (samples[i].pos == ind) {
+                  samples[ind].x = lmt;
+                  samples[ind - 1].x = -1 * lmt;
+                  break;
+                }
+              } */
+              break;
+            }
             if (x > d) {
-              _scope.set(_indepVar, d - delta);
+              _scope.set(_indepVar, d - delta); //
+              //_scope.set(_indepVar, samples[n - 1].x); //
               yVal = _parser.eval(_scope);
               try {
                 if (n > 0) {
@@ -1912,11 +1941,11 @@ class Utility {
                     } else {
                       samples[n].y = math.sign(yVal) * lmt;
                     }
-                    if (
-                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
-                    ) {
-                      samples[n].y *= -1;
-                    }
+                    // if (
+                    //   math.sign(samples[n].y) === math.sign(samples[n - 1].y)
+                    // ) {
+                    //   samples[n].y *= -1;
+                    // }
                     //}
                     n++;
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
@@ -2154,8 +2183,8 @@ class Utility {
         return item;
       });
 
-      obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
-      obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
+      // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
+      // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
     }
 
     return samples;
@@ -4029,16 +4058,16 @@ class Utility {
         break;
       }
     }
-    // for (let i = 0; i < curve.discontinuityY.length; i++) {
-    //   if (
-    //     curve.discontinuityY[i][1] == "infinite" ||
-    //     curve.discontinuityY[i][1] == "essential" ||
-    //     curve.discontinuityY[i][1] == "jump"
-    //   ) {
-    //     adjust = true;
-    //     break;
-    //   }
-    // }
+    for (let i = 0; i < curve.discontinuityY.length; i++) {
+      if (
+        curve.discontinuityY[i][1] == "infinite" ||
+        curve.discontinuityY[i][1] == "essential" ||
+        curve.discontinuityY[i][1] == "jump"
+      ) {
+        adjust = true;
+        break;
+      }
+    }
     return adjust;
   }
 
@@ -4206,7 +4235,9 @@ class Utility {
         //   this.first = true;
         //   return {
         //     //right
-        //     discontinuities: [[0, "essential"]],
+        //     discontinuities: [
+        //       /* [0, "essential"] */
+        //     ],
         //     turningPoints: [],
         //     period: null,
         //   }; //1/x
