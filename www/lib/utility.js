@@ -4245,7 +4245,7 @@ class Utility {
         //   //left
         //   this.first = false;
         //   return {
-        //     discontinuities: [[0, "essential"]],
+        //     discontinuities: [[-2, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   };

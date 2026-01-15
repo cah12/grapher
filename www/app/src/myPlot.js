@@ -1399,8 +1399,10 @@ class MyPlot extends Plot {
             }
           }
           if (maxXVal !== 0) {
-            if (maxXVal > 1e100) {
-              invalid = true;
+            if (curve.discontinuityY && curve.discontinuityY.length === 0) {
+              if (maxXVal > 1e100) {
+                invalid = true;
+              }
             }
           }
           if (maxYVal !== 0) {
@@ -2036,9 +2038,11 @@ class MyPlot extends Plot {
           .axisDecimalPlaces(curves[0].yAxis());
 
         let _discont = structuredClone(curves[0].discontinuity);
-        _discont = _discont.filter((e) => e[1] !== "unknown2");
+        let _discontY = structuredClone(curves[0].discontinuityY);
+        let dis = _discont.concat(_discontY);
+        dis = dis.filter((e) => e[1] !== "unknown2");
 
-        const discontinuity = _discont.map(function (e) {
+        const discontinuity = dis.map(function (e) {
           e[0] = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
             precisionX
@@ -2052,7 +2056,7 @@ class MyPlot extends Plot {
           return e;
         });
 
-        let n = discontinuity.length;
+        let n = dis.length;
         let isAre = "is",
           discont = "discontinuity";
         let values = "Value";
