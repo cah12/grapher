@@ -456,6 +456,8 @@ class MyPlot extends Plot {
         self._functionDlg.unboundedRange = functionDlgData.unboundedRange;
         self._functionDlg.upperLimit = functionDlgData.upperLimit;
         self._functionDlg.variable = functionDlgData.variable;
+        self._functionDlg.parametric_variable =
+          functionDlgData.parametric_variable;
       }
       if (functionDlgData.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
         self._functionDlg.color1 = functionDlgData.color1;
@@ -756,8 +758,10 @@ class MyPlot extends Plot {
         functionDlgData.expandedParametricFnX &&
         functionDlgData.expandedParametricFnY
       ) {
-        m_lowerX = functionDlgData.lowerX;
-        m_upperX = functionDlgData.upperX;
+        m_lowerX = functionDlgData.parametricLowerX;
+        m_upperX = functionDlgData.parametricUpperX;
+        // m_lowerX = functionDlgData.lowerX;
+        // m_upperX = functionDlgData.upperX;
       }
 
       let makeSamplesData = {
@@ -767,6 +771,7 @@ class MyPlot extends Plot {
         parametricFnY,
         parametric_variable: self._functionDlg.parametric_variable,
         variable: self._functionDlg.variable,
+        parametric_variable: self._functionDlg.parametric_variable,
         // lowerX: provided_m_lowerX || m_lowerX,
         // upperX: provided_m_upperX || m_upperX,
         //providedFn: providedFn, ///Added Today
