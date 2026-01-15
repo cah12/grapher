@@ -1832,12 +1832,12 @@ class Utility {
         let _indepVar;
         if (obj.parametricFnX && obj.parametricFnY) {
           if (!discontY) {
-            //_parser = new EvaluateExp(obj.parametricFnY);
+            _parser = new EvaluateExp(obj.parametricFnY);
 
-            _parser = new EvaluateExp(obj.discontinuityFn);
+            //_parser = new EvaluateExp(obj.discontinuityFn);
           } else {
-            //_parser = new EvaluateExp(obj.parametricFnX);
-            _parser = new EvaluateExp(obj.discontinuityFn_y);
+            _parser = new EvaluateExp(obj.parametricFnX);
+            //_parser = new EvaluateExp(obj.discontinuityFn_y);
           }
 
           _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
