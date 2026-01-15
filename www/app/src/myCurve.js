@@ -53,7 +53,7 @@ class MyCurve extends Curve {
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
-    //self.discontinuityY = self.discontinuityY || [];
+    self.discontinuityY = self.discontinuityY || [];
 
     /* function findDiscontinuity() {
       const result = [];
@@ -464,64 +464,69 @@ class MyCurve extends Curve {
       }
     }
 
-    for (let n = 0; n < self.discontinuityY.length; n++) {
-      if (
-        self.discontinuityY[n][1] != "infinite" &&
-        self.discontinuityY[n][1] != "essential"
-      ) {
-        for (let i = 0; i < samples.length; i++) {
-          if (!Static.AxisInYX) {
-            if (samples[i].x > self.discontinuityY[n][0] && i > 0) {
-              indexBeforeDiscontinuity.push(i - 1);
-              if (
-                self.discontinuityY[n][2] != undefined &&
-                isFinite(self.discontinuityY[n][2])
-              ) {
-                samples[i - 1].y = self.discontinuityY[n][2];
-              } else if (self.discontinuityY[n][1] == "jump") {
-                const x = (samples[i - 1].x + samples[i].x) / 2;
-                const adjust =
-                  Math.abs(self.discontinuityY[n][0] - x) < 1e-4 ? true : false;
+    if (self.discontinuityY && self.discontinuityY.length) {
+      for (let n = 0; n < self.discontinuityY.length; n++) {
+        if (
+          self.discontinuityY[n][1] != "infinite" &&
+          self.discontinuityY[n][1] != "essential"
+        ) {
+          for (let i = 0; i < samples.length; i++) {
+            if (!Static.AxisInYX) {
+              if (samples[i].x > self.discontinuityY[n][0] && i > 0) {
+                indexBeforeDiscontinuity.push(i - 1);
                 if (
-                  self.discontinuityY[n][0] - samples[i - 1].x > smallNumber &&
-                  adjust
+                  self.discontinuityY[n][2] != undefined &&
+                  isFinite(self.discontinuityY[n][2])
                 ) {
-                  samples[i - 1].x = self.discontinuityY[n][0] - smallNumber;
-                  samples[i].x = self.discontinuityY[n][0] + smallNumber;
-                  samples[i - 1].y = math.evaluate(self.fn, {
-                    x: self.discontinuityY[n][0] - smallNumber,
-                  });
-                  samples[i].y = math.evaluate(self.fn, {
-                    x: self.discontinuityY[n][0] + smallNumber,
-                  });
+                  samples[i - 1].y = self.discontinuityY[n][2];
+                } else if (self.discontinuityY[n][1] == "jump") {
+                  const x = (samples[i - 1].x + samples[i].x) / 2;
+                  const adjust =
+                    Math.abs(self.discontinuityY[n][0] - x) < 1e-4
+                      ? true
+                      : false;
+                  if (
+                    self.discontinuityY[n][0] - samples[i - 1].x >
+                      smallNumber &&
+                    adjust
+                  ) {
+                    samples[i - 1].x = self.discontinuityY[n][0] - smallNumber;
+                    samples[i].x = self.discontinuityY[n][0] + smallNumber;
+                    samples[i - 1].y = math.evaluate(self.fn, {
+                      x: self.discontinuityY[n][0] - smallNumber,
+                    });
+                    samples[i].y = math.evaluate(self.fn, {
+                      x: self.discontinuityY[n][0] + smallNumber,
+                    });
+                  }
                 }
+                break;
               }
-              break;
-            }
-          } else {
-            if (samples[i].y > self.discontinuityY[n][0] && i > 0) {
-              indexBeforeDiscontinuity.push(i - 1);
-              break;
+            } else {
+              if (samples[i].y > self.discontinuityY[n][0] && i > 0) {
+                indexBeforeDiscontinuity.push(i - 1);
+                break;
+              }
             }
           }
         }
-      }
-      if (
-        self.discontinuityY[n][1] === "infinite" ||
-        self.discontinuityY[n][1] === "essential"
-      ) {
-        for (i; i < samples.length; i++) {
-          if (!Static.AxisInYX) {
-            if (Math.abs(samples[i].x) >= Static.LargeNumber) {
-              indexBeforeDiscontinuity.push(i);
-              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-              break;
-            }
-          } else {
-            if (Math.abs(samples[i].y) >= Static.LargeNumber) {
-              indexBeforeDiscontinuity.push(i);
-              i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-              break;
+        if (
+          self.discontinuityY[n][1] === "infinite" ||
+          self.discontinuityY[n][1] === "essential"
+        ) {
+          for (i; i < samples.length; i++) {
+            if (!Static.AxisInYX) {
+              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+                indexBeforeDiscontinuity.push(i);
+                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+                break;
+              }
+            } else {
+              if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+                indexBeforeDiscontinuity.push(i);
+                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+                break;
+              }
             }
           }
         }
