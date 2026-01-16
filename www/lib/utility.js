@@ -1954,7 +1954,15 @@ class Utility {
                     if (
                       math.sign(samples[n].y) === math.sign(samples[n - 1].y)
                     ) {
-                      samples[n].y *= -1;
+                      if (discontY === true) {
+                        const dg = nerdamer.deg(
+                          obj.parametricFnX,
+                          obj.parametric_variable
+                        );
+                        if (math.abs(dg) % 2 != 0) {
+                          samples[n].y *= -1;
+                        }
+                      }
                     }
 
                     n++;
@@ -4243,7 +4251,7 @@ class Utility {
         //   this.first = true;
         //   return {
         //     //right
-        //     discontinuities: [[-2, "essential"]],
+        //     discontinuities: [[0, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   }; //1/x
@@ -4252,7 +4260,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       /* [2, "essential"] */
+        //       /* [0, "essential"] */
         //     ],
         //     turningPoints: [],
         //     period: null,
