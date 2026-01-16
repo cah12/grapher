@@ -894,6 +894,30 @@ class MyPlot extends Plot {
               }
             }
           }
+          if (
+            discontTurningPoints.discontinuities.length &&
+            !d.discontinuities.length &&
+            isFinite(makeSamplesData.parametricFnX)
+          ) {
+            console.log(makeSamplesData.parametricFnX);
+            for (
+              let i = 0;
+              i < discontTurningPoints.discontinuities.length;
+              i++
+            ) {
+              discontTurningPoints.discontinuities[i][1] = "unknown2";
+            }
+          }
+          if (
+            d.discontinuities.length &&
+            !discontTurningPoints.discontinuities.length &&
+            isFinite(makeSamplesData.parametricFnY)
+          ) {
+            console.log(makeSamplesData.parametricFnY);
+            for (let i = 0; i < d.discontinuities.length; i++) {
+              d.discontinuities[i][1] = "unknown2";
+            }
+          }
         } else {
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,

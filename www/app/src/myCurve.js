@@ -305,7 +305,9 @@ class MyCurve extends Curve {
           Utility.adjustForDecimalPlaces(self.discontinuity[0][0], 6) &&
         !self.unboundedRange
       ) {
-        return super.drawCurve(painter, style, xMap, yMap, from, to);
+        if (self.discontinuity.length == 0 && self.discontinuityY.length == 0) {
+          return super.drawCurve(painter, style, xMap, yMap, from, to);
+        }
       }
       indexBeforeDiscontinuity = self.indices(samples);
       if (
@@ -355,33 +357,37 @@ class MyCurve extends Curve {
     to,
     indexBeforeDiscontinuity
   ) {
-    if (indexBeforeDiscontinuity && indexBeforeDiscontinuity.length) {
-      this.discontinuosCurvePending = false;
-      const plot = this.plot();
-      let m_from = from,
-        m_to;
-      for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
-        if (indexBeforeDiscontinuity[i] < 0) continue;
-        m_to = indexBeforeDiscontinuity[i];
-        if (m_from < m_to) {
-          super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+    if (indexBeforeDiscontinuity) {
+      if (indexBeforeDiscontinuity.length) {
+        this.discontinuosCurvePending = false;
+        const plot = this.plot();
+        let m_from = from,
+          m_to;
+        for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
+          if (indexBeforeDiscontinuity[i] < 0) continue;
+          m_to = indexBeforeDiscontinuity[i];
+          if (m_from < m_to) {
+            super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+          }
+          if (m_from == m_to) {
+            // break;
+            continue;
+          }
+          m_from = m_to + 1;
         }
-        if (m_from == m_to) {
-          // break;
-          continue;
+
+        if (
+          indexBeforeDiscontinuity.length == 1 &&
+          indexBeforeDiscontinuity[0] == -1
+        ) {
+          super.drawCurve(painter, style, xMap, yMap, m_from, to);
         }
-        m_from = m_to + 1;
-      }
 
-      if (
-        indexBeforeDiscontinuity.length == 1 &&
-        indexBeforeDiscontinuity[0] == -1
-      ) {
-        super.drawCurve(painter, style, xMap, yMap, m_from, to);
-      }
-
-      if ((m_to === undefined || m_to < to) && m_from < to) {
-        super.drawCurve(painter, style, xMap, yMap, m_from, to);
+        if ((m_to === undefined || m_to < to) && m_from < to) {
+          super.drawCurve(painter, style, xMap, yMap, m_from, to);
+        }
+      } else {
+        super.drawCurve(painter, style, xMap, yMap, from, to);
       }
     }
 
@@ -393,14 +399,31 @@ class MyCurve extends Curve {
     let i = 0;
     const smallNumber = 1e-100;
     let indexBeforeDiscontinuity = [];
+
+    let swapXY = false;
+    let shf = 0;
+
     for (let n = 0; n < self.discontinuity.length; n++) {
+      if (n === 0 && self.parametricFnX && isFinite(self.parametricFnX)) {
+        //swap x and y
+        samples = samples.map((pt) => {
+          const temp = pt.x;
+          pt.x = pt.y;
+          pt.y = temp;
+          return pt;
+        });
+
+        samples = samples.sort((a, b) => a.x - b.x);
+        swapXY = true;
+        shf = parseFloat(self.parametricFnX);
+      }
       if (
         self.discontinuity[n][1] != "infinite" &&
         self.discontinuity[n][1] != "essential"
       ) {
         for (let i = 0; i < samples.length; i++) {
           if (!Static.AxisInYX) {
-            if (samples[i].x > self.discontinuity[n][0] && i > 0) {
+            if (samples[i].x > self.discontinuity[n][0] - shf && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
               if (
                 self.discontinuity[n][2] != undefined &&
@@ -462,6 +485,16 @@ class MyCurve extends Curve {
           }
         }
       }
+    }
+
+    if (swapXY) {
+      samples = samples.map((pt) => {
+        const temp = pt.x;
+        pt.x = pt.y;
+        pt.y = temp;
+        return pt;
+      });
+      samples = samples.sort((a, b) => a.pos - b.pos);
     }
 
     if (self.discontinuityY && self.discontinuityY.length) {

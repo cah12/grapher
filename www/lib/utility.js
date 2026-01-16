@@ -1756,6 +1756,9 @@ class Utility {
         } else {
           discont = structuredClone(obj.discontinuityY);
         }
+        if (!discont.length) {
+          return;
+        }
 
         if (obj.parametricFnX && obj.parametricFnY) {
           samples = samples.sort((a, b) => a.x - b.x);
@@ -4235,9 +4238,7 @@ class Utility {
         //   this.first = true;
         //   return {
         //     //right
-        //     discontinuities: [
-        //       /* [0, "essential"] */
-        //     ],
+        //     discontinuities: [[0, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   }; //1/x
@@ -4245,7 +4246,9 @@ class Utility {
         //   //left
         //   this.first = false;
         //   return {
-        //     discontinuities: [[0, "essential"]],
+        //     discontinuities: [
+        //       /* [0, "essential"] */
+        //     ],
         //     turningPoints: [],
         //     period: null,
         //   };
