@@ -1745,6 +1745,13 @@ class Utility {
 
   static makeParametricSamples(obj) {
     function handleDiscontinuityTurningPoints(samples, discontY = false) {
+      // if (
+      //   discontY == false &&
+      //   obj.discontinuity.length &&
+      //   obj.discontinuityY.length
+      // ) {
+      //   return;
+      // }
       if (
         obj.discontinuity.length ||
         (obj.discontinuityY && obj.discontinuityY.length)
@@ -1944,12 +1951,12 @@ class Utility {
                     } else {
                       samples[n].y = math.sign(yVal) * lmt;
                     }
-                    // if (
-                    //   math.sign(samples[n].y) === math.sign(samples[n - 1].y)
-                    // ) {
-                    //   samples[n].y *= -1;
-                    // }
-                    //}
+                    if (
+                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
+                    ) {
+                      samples[n].y *= -1;
+                    }
+
                     n++;
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                     break;
@@ -2010,26 +2017,24 @@ class Utility {
         });
       }
 
-      // if (samples.length > 1) {
-      //   for (let i = 1; i < samples.length; i++) {
-      //     if (
-      //       samples[i].x === -1 * Static.LargeNumber &&
-      //       samples[i - 1].x === Static.LargeNumber
-      //     ) {
-      //       const temp = samples[i];
-      //       samples[i] = samples[i - 1];
-      //       samples[i - 1] = temp;
-      //     }
-      //     if (
-      //       samples[i].y === -1 * Static.LargeNumber &&
-      //       samples[i - 1].y === Static.LargeNumber
-      //     ) {
-      //       const temp = samples[i];
-      //       samples[i] = samples[i - 1];
-      //       samples[i - 1] = temp;
-      //     }
-      //   }
-      // }
+      if (samples.length > 1) {
+        for (let i = 1; i < samples.length; i++) {
+          if (
+            samples[i].x === -1 * Static.LargeNumber &&
+            samples[i - 1].x === Static.LargeNumber
+          ) {
+            samples[i].x *= -1;
+            samples[i - 1].x *= -1;
+          }
+          if (
+            samples[i].y === -1 * Static.LargeNumber &&
+            samples[i - 1].y === Static.LargeNumber
+          ) {
+            samples[i].y *= -1;
+            samples[i - 1].y *= -1;
+          }
+        }
+      }
     }
 
     var parametricFnX = obj.parametricFnX;
@@ -4238,7 +4243,7 @@ class Utility {
         //   this.first = true;
         //   return {
         //     //right
-        //     discontinuities: [[0, "essential"]],
+        //     discontinuities: [[-2, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   }; //1/x
@@ -4246,9 +4251,7 @@ class Utility {
         //   //left
         //   this.first = false;
         //   return {
-        //     discontinuities: [
-        //       /* [0, "essential"] */
-        //     ],
+        //     discontinuities: [[0, "essential"]],
         //     turningPoints: [],
         //     period: null,
         //   };

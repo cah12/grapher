@@ -55,6 +55,12 @@ class MyCurve extends Curve {
     const self = this;
     self.discontinuityY = self.discontinuityY || [];
 
+    // if (self.discontinuityY.length && self.discontinuity.length) {
+    //   for (let i = 0; i < self.discontinuity.length; i++) {
+    //     self.discontinuity[i][1] = "unknown2";
+    //   }
+    // }
+
     /* function findDiscontinuity() {
       const result = [];
       const samples = self.data().samples();
@@ -309,6 +315,7 @@ class MyCurve extends Curve {
           return super.drawCurve(painter, style, xMap, yMap, from, to);
         }
       }
+      samples = samples.sort((a, b) => a.pos - b.pos);
       indexBeforeDiscontinuity = self.indices(samples);
       if (
         !self.unboundedRange &&
@@ -498,6 +505,11 @@ class MyCurve extends Curve {
     }
 
     if (self.discontinuityY && self.discontinuityY.length) {
+      if (samples[0].x > samples[samples.length - 1].x) {
+        samples = samples.reverse();
+
+        //samples = samples.sort((a, b) => b.pos - a.pos);
+      }
       for (let n = 0; n < self.discontinuityY.length; n++) {
         if (
           self.discontinuityY[n][1] != "infinite" &&
@@ -549,13 +561,13 @@ class MyCurve extends Curve {
         ) {
           for (i; i < samples.length; i++) {
             if (!Static.AxisInYX) {
-              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+              if (Math.abs(samples[i].y) >= Static.LargeNumber) {
                 indexBeforeDiscontinuity.push(i);
                 i = i + 2; //skip next two points to avoid multiple discontinuities at same location
                 break;
               }
             } else {
-              if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
                 indexBeforeDiscontinuity.push(i);
                 i = i + 2; //skip next two points to avoid multiple discontinuities at same location
                 break;
@@ -564,6 +576,7 @@ class MyCurve extends Curve {
           }
         }
       }
+      samples = samples.sort((a, b) => a.pos - b.pos);
     }
 
     if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
