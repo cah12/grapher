@@ -832,11 +832,11 @@ class MyPlot extends Plot {
               );
               const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
               if (!Number.isFinite(disc)) {
-                // const val = d.discontinuities[i][0];
-                // d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
-                // d.discontinuities.push([val, "unknown2"]);
-                // i++;
-                d.discontinuities[i][1] = "unknown2";
+                const val = d.discontinuities[i][0];
+                d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
+                d.discontinuities.push([val, "unknown2"]);
+                i++;
+                //d.discontinuities[i][1] = "unknown2";
               } else {
                 d.discontinuities[i][0] = disc;
               }
@@ -885,12 +885,12 @@ class MyPlot extends Plot {
               );
               const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
               if (!Number.isFinite(disc)) {
-                // const val = discontTurningPoints.discontinuities[i][0];
-                // discontTurningPoints.discontinuities[i][0] =
-                //   Static.LargeNumber * math.sign(disc);
-                // discontTurningPoints.discontinuities.push([val, "unknown2"]);
-                // i++;
-                discontTurningPoints.discontinuities[i][1] = "unknown2";
+                const val = discontTurningPoints.discontinuities[i][0];
+                discontTurningPoints.discontinuities[i][0] =
+                  Static.LargeNumber * math.sign(disc);
+                discontTurningPoints.discontinuities.push([val, "unknown2"]);
+                i++;
+                //discontTurningPoints.discontinuities[i][1] = "unknown2";
               } else {
                 discontTurningPoints.discontinuities[i][0] = disc;
               }
@@ -940,6 +940,18 @@ class MyPlot extends Plot {
             period: null,
           };
         }
+        ///////
+        // if (
+        //   makeSamplesData.discontinuityY.length &&
+        //   discontTurningPoints.discontinuities.length === 0 &&
+        //   !isFinite(makeSamplesData.parametricFnY)
+        // ) {
+        //   for (let i = 0; i < makeSamplesData.discontinuityY.length; i++) {
+        //     makeSamplesData.discontinuityY[i][1] = "unknown2";
+        //   }
+        // }
+
+        /////////
         discont = discontTurningPoints.discontinuities;
         /* if (
           typeof discontTurningPoints.period !== "number" &&

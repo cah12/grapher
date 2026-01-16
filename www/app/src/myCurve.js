@@ -55,9 +55,13 @@ class MyCurve extends Curve {
     const self = this;
     self.discontinuityY = self.discontinuityY || [];
 
-    // if (self.discontinuityY.length && self.discontinuity.length) {
-    //   for (let i = 0; i < self.discontinuity.length; i++) {
-    //     self.discontinuity[i][1] = "unknown2";
+    // if (
+    //   self.discontinuityY.length &&
+    //   self.discontinuity.length === 0 &&
+    //   !isFinite(self.parametricFnY)
+    // ) {
+    //   for (let i = 0; i < self.discontinuityY.length; i++) {
+    //     self.discontinuityY[i][1] = "unknown2";
     //   }
     // }
 
@@ -471,20 +475,29 @@ class MyCurve extends Curve {
       ) {
         for (i; i < samples.length; i++) {
           if (!Static.AxisInYX) {
-            if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+            if (
+              Math.abs(samples[i].y) >= Static.LargeNumber ||
+              Math.abs(samples[i].x) >= Static.LargeNumber
+            ) {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
               break;
             }
             if (self.discontinuityY && self.discontinuityY.length) {
-              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+              if (
+                Math.abs(samples[i].x) >= Static.LargeNumber ||
+                Math.abs(samples[i].y) >= Static.LargeNumber
+              ) {
                 indexBeforeDiscontinuity.push(i);
                 i = i + 2; //skip next two points to avoid multiple discontinuities at same location
                 break;
               }
             }
           } else {
-            if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+            if (
+              Math.abs(samples[i].x) >= Static.LargeNumber ||
+              Math.abs(samples[i].y) >= Static.LargeNumber
+            ) {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
               break;
@@ -561,13 +574,19 @@ class MyCurve extends Curve {
         ) {
           for (i; i < samples.length; i++) {
             if (!Static.AxisInYX) {
-              if (Math.abs(samples[i].y) >= Static.LargeNumber) {
+              if (
+                Math.abs(samples[i].y) >= Static.LargeNumber ||
+                Math.abs(samples[i].x) >= Static.LargeNumber
+              ) {
                 indexBeforeDiscontinuity.push(i);
                 i = i + 2; //skip next two points to avoid multiple discontinuities at same location
                 break;
               }
             } else {
-              if (Math.abs(samples[i].x) >= Static.LargeNumber) {
+              if (
+                Math.abs(samples[i].x) >= Static.LargeNumber ||
+                Math.abs(samples[i].y) >= Static.LargeNumber
+              ) {
                 indexBeforeDiscontinuity.push(i);
                 i = i + 2; //skip next two points to avoid multiple discontinuities at same location
                 break;
