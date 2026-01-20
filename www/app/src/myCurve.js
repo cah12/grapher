@@ -53,31 +53,6 @@ class MyCurve extends Curve {
 
   async drawCurve(painter, style, xMap, yMap, from, to) {
     const self = this;
-    self.discontinuityY = self.discontinuityY || [];
-
-    // if (
-    //   self.discontinuityY.length &&
-    //   self.discontinuity.length === 0 &&
-    //   !isFinite(self.parametricFnY)
-    // ) {
-    //   for (let i = 0; i < self.discontinuityY.length; i++) {
-    //     self.discontinuityY[i][1] = "unknown2";
-    //   }
-    // }
-
-    /* function findDiscontinuity() {
-      const result = [];
-      const samples = self.data().samples();
-      if (samples.length < 2) return result;
-      const step = Math.abs(samples[1].x - samples[0].x); //samples[1].x - samples[0].x;
-      for (let i = 1; i < samples.length; i++) {
-        if (samples[i].x - samples[i - 1].x > 2 * step) {
-          result.push(i - 1);
-        }
-        console.log(456);
-      }
-      return result;
-    } */
 
     try {
       // const self = this;
@@ -133,7 +108,7 @@ class MyCurve extends Curve {
               self.period,
               self.discontinuity,
               self.left,
-              self.right
+              self.right,
             );
           } else if (
             !self.period &&
@@ -194,7 +169,7 @@ class MyCurve extends Curve {
           yMap,
           from,
           to,
-          data.discontinuitySamples
+          data.discontinuitySamples,
         );
 
         //data.discontinuitySamples = null;
@@ -262,6 +237,7 @@ class MyCurve extends Curve {
         }
       }
     }
+
     if (!hasInfiniteOrJump) return false;
 
     if (
@@ -277,9 +253,10 @@ class MyCurve extends Curve {
   async doDraw(painter, style, xMap, yMap, from, to, samples) {
     const self = this;
     const plot = self.plot();
+    self.discontinuityY = self.discontinuityY || [];
     if (
-      !(self.discontinuityY && self.discontinuityY.length) &&
       !self.discontinuity.length &&
+      !self.discontinuityY.length &&
       !self.discontinuosCurvePending
     ) {
       // if (!Utility.isAutoScale(plot)) {
@@ -315,12 +292,36 @@ class MyCurve extends Curve {
           Utility.adjustForDecimalPlaces(self.discontinuity[0][0], 6) &&
         !self.unboundedRange
       ) {
-        if (self.discontinuity.length == 0 && self.discontinuityY.length == 0) {
+        if (self.discontinuity.length == 0) {
           return super.drawCurve(painter, style, xMap, yMap, from, to);
         }
       }
       samples = samples.sort((a, b) => a.pos - b.pos);
       indexBeforeDiscontinuity = self.indices(samples);
+      if (self.discontinuityY && self.discontinuityY.length) {
+        //swap x any y in samples
+        samples = samples.map((pt) => {
+          let x = pt.x;
+          pt.x = pt.y;
+          pt.y = x;
+          return pt;
+        });
+        samples = samples.sort((a, b) => a.x - b.x);
+        let indexBeforeDiscontinuityY = self.indices(samples, true);
+        samples = samples.map((pt) => {
+          let x = pt.x;
+          pt.x = pt.y;
+          pt.y = x;
+          return pt;
+        });
+        samples = samples.sort((a, b) => a.pos - b.pos);
+        indexBeforeDiscontinuity = indexBeforeDiscontinuity.concat(
+          indexBeforeDiscontinuityY,
+        );
+        indexBeforeDiscontinuity = indexBeforeDiscontinuity.sort(
+          (a, b) => a - b,
+        );
+      }
       if (
         !self.unboundedRange &&
         !self.isDrawDiscontinuosCurve(indexBeforeDiscontinuity)
@@ -340,10 +341,10 @@ class MyCurve extends Curve {
               plot.setAxisScale(self.xAxis(), -10, 10);
             }
           } else {
+            plot.setAxisScale(self.yAxis(), -10, 10);
             if (self.discontinuityY && self.discontinuityY.length) {
               plot.setAxisScale(self.xAxis(), -6, 6);
             }
-            plot.setAxisScale(self.yAxis(), -10, 10);
           }
         }
       }
@@ -354,7 +355,7 @@ class MyCurve extends Curve {
         yMap,
         from,
         to,
-        indexBeforeDiscontinuity
+        indexBeforeDiscontinuity,
       );
     }
   }
@@ -366,7 +367,7 @@ class MyCurve extends Curve {
     yMap,
     from,
     to,
-    indexBeforeDiscontinuity
+    indexBeforeDiscontinuity,
   ) {
     if (indexBeforeDiscontinuity) {
       if (indexBeforeDiscontinuity.length) {
@@ -405,7 +406,7 @@ class MyCurve extends Curve {
     // plot.autoRefresh();
   }
 
-  indices(samples) {
+  indices(samples, do_y = false) {
     const self = this;
     let i = 0;
     const smallNumber = 1e-100;
@@ -414,8 +415,13 @@ class MyCurve extends Curve {
     let swapXY = false;
     let shf = 0;
 
-    for (let n = 0; n < self.discontinuity.length; n++) {
-      if (n === 0 && self.parametricFnX && isFinite(self.parametricFnX)) {
+    let discont = self.discontinuity;
+    if (do_y) {
+      discont = self.discontinuityY;
+    }
+
+    for (let n = 0; n < discont.length; n++) {
+      /* if (n === 0 && self.parametricFnX && isFinite(self.parametricFnX)) {
         //swap x and y
         samples = samples.map((pt) => {
           const temp = pt.x;
@@ -427,52 +433,40 @@ class MyCurve extends Curve {
         samples = samples.sort((a, b) => a.x - b.x);
         swapXY = true;
         shf = parseFloat(self.parametricFnX);
-      }
-      if (
-        self.discontinuity[n][1] != "infinite" &&
-        self.discontinuity[n][1] != "essential"
-      ) {
+      } */
+      if (discont[n][1] != "infinite" && discont[n][1] != "essential") {
         for (let i = 0; i < samples.length; i++) {
           if (!Static.AxisInYX) {
-            if (samples[i].x > self.discontinuity[n][0] - shf && i > 0) {
+            if (samples[i].x > discont[n][0] - shf && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
-              if (
-                self.discontinuity[n][2] != undefined &&
-                isFinite(self.discontinuity[n][2])
-              ) {
-                samples[i - 1].y = self.discontinuity[n][2];
-              } else if (self.discontinuity[n][1] == "jump") {
+              if (discont[n][2] != undefined && isFinite(discont[n][2])) {
+                samples[i - 1].y = discont[n][2];
+              } else if (discont[n][1] == "jump") {
                 const x = (samples[i - 1].x + samples[i].x) / 2;
                 const adjust =
-                  Math.abs(self.discontinuity[n][0] - x) < 1e-4 ? true : false;
-                if (
-                  self.discontinuity[n][0] - samples[i - 1].x > smallNumber &&
-                  adjust
-                ) {
-                  samples[i - 1].x = self.discontinuity[n][0] - smallNumber;
-                  samples[i].x = self.discontinuity[n][0] + smallNumber;
+                  Math.abs(discont[n][0] - x) < 1e-4 ? true : false;
+                if (discont[n][0] - samples[i - 1].x > smallNumber && adjust) {
+                  samples[i - 1].x = discont[n][0] - smallNumber;
+                  samples[i].x = discont[n][0] + smallNumber;
                   samples[i - 1].y = math.evaluate(self.fn, {
-                    x: self.discontinuity[n][0] - smallNumber,
+                    x: discont[n][0] - smallNumber,
                   });
                   samples[i].y = math.evaluate(self.fn, {
-                    x: self.discontinuity[n][0] + smallNumber,
+                    x: discont[n][0] + smallNumber,
                   });
                 }
               }
               break;
             }
           } else {
-            if (samples[i].y > self.discontinuity[n][0] && i > 0) {
+            if (samples[i].y > discont[n][0] && i > 0) {
               indexBeforeDiscontinuity.push(i - 1);
               break;
             }
           }
         }
       }
-      if (
-        self.discontinuity[n][1] === "infinite" ||
-        self.discontinuity[n][1] === "essential"
-      ) {
+      if (discont[n][1] === "infinite" || discont[n][1] === "essential") {
         for (i; i < samples.length; i++) {
           if (!Static.AxisInYX) {
             if (
@@ -482,16 +476,6 @@ class MyCurve extends Curve {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
               break;
-            }
-            if (self.discontinuityY && self.discontinuityY.length) {
-              if (
-                Math.abs(samples[i].x) >= Static.LargeNumber ||
-                Math.abs(samples[i].y) >= Static.LargeNumber
-              ) {
-                indexBeforeDiscontinuity.push(i);
-                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-                break;
-              }
             }
           } else {
             if (
@@ -517,113 +501,15 @@ class MyCurve extends Curve {
       samples = samples.sort((a, b) => a.pos - b.pos);
     }
 
-    if (self.discontinuityY && self.discontinuityY.length) {
-      if (samples[0].x > samples[samples.length - 1].x) {
-        samples = samples.reverse();
-
-        //samples = samples.sort((a, b) => b.pos - a.pos);
-      }
-      for (let n = 0; n < self.discontinuityY.length; n++) {
-        if (
-          self.discontinuityY[n][1] != "infinite" &&
-          self.discontinuityY[n][1] != "essential"
-        ) {
-          for (let i = 0; i < samples.length; i++) {
-            if (!Static.AxisInYX) {
-              if (samples[i].x > self.discontinuityY[n][0] && i > 0) {
-                indexBeforeDiscontinuity.push(i - 1);
-                if (
-                  self.discontinuityY[n][2] != undefined &&
-                  isFinite(self.discontinuityY[n][2])
-                ) {
-                  samples[i - 1].y = self.discontinuityY[n][2];
-                } else if (self.discontinuityY[n][1] == "jump") {
-                  const x = (samples[i - 1].x + samples[i].x) / 2;
-                  const adjust =
-                    Math.abs(self.discontinuityY[n][0] - x) < 1e-4
-                      ? true
-                      : false;
-                  if (
-                    self.discontinuityY[n][0] - samples[i - 1].x >
-                      smallNumber &&
-                    adjust
-                  ) {
-                    samples[i - 1].x = self.discontinuityY[n][0] - smallNumber;
-                    samples[i].x = self.discontinuityY[n][0] + smallNumber;
-                    samples[i - 1].y = math.evaluate(self.fn, {
-                      x: self.discontinuityY[n][0] - smallNumber,
-                    });
-                    samples[i].y = math.evaluate(self.fn, {
-                      x: self.discontinuityY[n][0] + smallNumber,
-                    });
-                  }
-                }
-                break;
-              }
-            } else {
-              if (samples[i].y > self.discontinuityY[n][0] && i > 0) {
-                indexBeforeDiscontinuity.push(i - 1);
-                break;
-              }
-            }
-          }
-        }
-        if (
-          self.discontinuityY[n][1] === "infinite" ||
-          self.discontinuityY[n][1] === "essential"
-        ) {
-          for (i; i < samples.length; i++) {
-            if (!Static.AxisInYX) {
-              if (
-                Math.abs(samples[i].y) >= Static.LargeNumber ||
-                Math.abs(samples[i].x) >= Static.LargeNumber
-              ) {
-                indexBeforeDiscontinuity.push(i);
-                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-                break;
-              }
-            } else {
-              if (
-                Math.abs(samples[i].x) >= Static.LargeNumber ||
-                Math.abs(samples[i].y) >= Static.LargeNumber
-              ) {
-                indexBeforeDiscontinuity.push(i);
-                i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-                break;
-              }
-            }
-          }
-        }
-      }
-      samples = samples.sort((a, b) => a.pos - b.pos);
-    }
-
-    if (indexBeforeDiscontinuity.length < self.discontinuity.length) {
+    if (indexBeforeDiscontinuity.length < discont.length) {
       indexBeforeDiscontinuity.push(samples.length - 1);
       if (
-        self.discontinuity[self.discontinuity.length - 1][2] != undefined &&
-        isFinite(self.discontinuity[self.discontinuity.length - 1][2])
+        discont[discont.length - 1][2] != undefined &&
+        isFinite(discont[discont.length - 1][2])
       ) {
-        samples[samples.length - 1].y =
-          self.discontinuity[self.discontinuity.length - 1][2];
+        samples[samples.length - 1].y = discont[discont.length - 1][2];
       }
     }
-
-    // if (indexBeforeDiscontinuity.length < self.discontinuityY.length) {
-    //   indexBeforeDiscontinuity.push(samples.length - 1);
-    //   if (
-    //     self.discontinuityY[self.discontinuityY.length - 1][2] != undefined &&
-    //     isFinite(self.discontinuityY[self.discontinuityY.length - 1][2])
-    //   ) {
-    //     samples[samples.length - 1].x =
-    //       self.discontinuityY[self.discontinuityY.length - 1][2];
-    //   }
-    // }
-    // indexBeforeDiscontinuity = indexBeforeDiscontinuity.filter(
-    //   (item, index) => {
-    //     return indexBeforeDiscontinuity.indexOf(item) === index;
-    //   }
-    // );
 
     if (indexBeforeDiscontinuity.length) {
       if (indexBeforeDiscontinuity[0] === 0) {
@@ -748,7 +634,7 @@ class MyCurve extends Curve {
               self.discontinuity = Utility.handlePeriodic(
                 self.discontinuity,
                 self.left,
-                self.right
+                self.right,
               );
             }
           }

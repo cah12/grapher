@@ -164,7 +164,7 @@ class MyPlot extends Plot {
       curve.setSamples(samples);
       curve.setPen(new Misc.Pen(Utility.randomColor(), 2));
       self.curveAttributeDlg.defaultIconSize = new Misc.Size(
-        curve.getLegendIconSize()
+        curve.getLegendIconSize(),
       );
       var attribute = "";
       if (Static.showline && Static.showsymbol) {
@@ -295,7 +295,7 @@ class MyPlot extends Plot {
         displayData.color1,
         displayData.color2,
         spectrogramData,
-        upload
+        upload,
       );
       sgram.setNumberOfContourPlanes(displayData.numberOfContourPlanes);
       sgram.showContour(displayData.showContour);
@@ -312,7 +312,7 @@ class MyPlot extends Plot {
         "#008b8b",
         "#ff0000",
         samples,
-        upload
+        upload,
       );
       sgram.attach(self);
     });
@@ -321,7 +321,7 @@ class MyPlot extends Plot {
       if (!samples.length) {
         const uploadStr = upload ? "during upload" : "";
         alert(
-          `Failed to generate samples for the curve "${title}" ${uploadStr}.`
+          `Failed to generate samples for the curve "${title}" ${uploadStr}.`,
         );
         return;
       }
@@ -338,18 +338,18 @@ class MyPlot extends Plot {
       self.setAxisScale(
         Axis.AxisId.xBottom,
         self._functionDlg.lowerLimit,
-        self._functionDlg.upperLimit
+        self._functionDlg.upperLimit,
       );
       let curve = new MyCurve(title);
       self.addCurveInit(curve);
       curve.functionData = new FunctionData(fn, numOfPoints);
       //console.log(1000, curve.functionData)
       curve.setData(
-        curve.functionData /*  new FunctionData(fn, numOfPoints) */
+        curve.functionData /*  new FunctionData(fn, numOfPoints) */,
       );
       curve.setPen(new Misc.Pen(Utility.randomColor(), 2));
       self.curveAttributeDlg.defaultIconSize = new Misc.Size(
-        curve.getLegendIconSize()
+        curve.getLegendIconSize(),
       );
 
       if (Static.showline) {
@@ -586,7 +586,7 @@ class MyPlot extends Plot {
       functionDlgData = null,
       providedFn = null,
       provided_m_lowerX = null,
-      provided_m_upperX = null
+      provided_m_upperX = null,
     ) {
       let newCurve = null;
 
@@ -631,8 +631,8 @@ class MyPlot extends Plot {
             Utility.alert(
               `Unable to derive samples for <b>"${Utility.adjustExpForDecimalPlaces(
                 fn,
-                decimalPlacesX
-              )}"</b>. Check the function for the square-root of a negative, and limits for possible divide-by-zero.`
+                decimalPlacesX,
+              )}"</b>. Check the function for the square-root of a negative, and limits for possible divide-by-zero.`,
             );
             //self._functionDlg.close();
             //self._functionDlg.closeDlg = true;
@@ -643,7 +643,7 @@ class MyPlot extends Plot {
             title,
             self._functionDlg.color1,
             self._functionDlg.color2,
-            s
+            s,
           );
 
           newCurve.latex = self._functionDlg.latex;
@@ -675,7 +675,7 @@ class MyPlot extends Plot {
             title,
             self._functionDlg.color1,
             self._functionDlg.color2,
-            fnData
+            fnData,
           );
           newCurve.latex = self._functionDlg.latex;
           //newCurve.attach(self);
@@ -728,7 +728,7 @@ class MyPlot extends Plot {
         self._functionDlg.expandedFn != "failedInverse"
       ) {
         fn = /* self._functionDlg.expandedFn = */ initializeCoeff(
-          self._functionDlg.expandedFn
+          self._functionDlg.expandedFn,
         );
       } else if (
         !functionDlgData &&
@@ -737,10 +737,10 @@ class MyPlot extends Plot {
         self._functionDlg.expandedFn != "failedInverse"
       ) {
         parametricFnX = initializeCoeff(
-          self._functionDlg.expandedParametricFnX
+          self._functionDlg.expandedParametricFnX,
         );
         parametricFnY = initializeCoeff(
-          self._functionDlg.expandedParametricFnY
+          self._functionDlg.expandedParametricFnY,
         );
       } else if (
         functionDlgData &&
@@ -786,147 +786,382 @@ class MyPlot extends Plot {
 
       let discontTurningPoints = null;
       let discont = [];
+      /////////////////////////
+      async function doDiscontinuities() {
+        makeSamplesData.discontinuityFn_y = makeSamplesData.parametricFnX;
+        let exp = `${makeSamplesData.parametricFnY}-x`;
+        exp = Utility.insertProductSign_total(
+          exp,
+          makeSamplesData.parametric_variable,
+        );
+        let sol = await Static.solveFor(exp, "t");
+        let str = null;
+        if (sol.length > 0) {
+          //self._functionDlg.parametric_variable
+          str = makeSamplesData.parametricFnX.replaceAll(
+            makeSamplesData.parametric_variable,
+            `(${sol[0]})`,
+          );
+          str = str.replaceAll("x", makeSamplesData.parametric_variable);
+          makeSamplesData.discontinuityFn_y = str;
+        }
+
+        const d = await Utility.discontinuity(
+          //fn_unsimplified,
+          makeSamplesData.parametricFnX,
+          //str,
+          makeSamplesData.lowerX,
+          makeSamplesData.upperX,
+          self._functionDlg.parametric_variable,
+        );
+        makeSamplesData.discontinuityY = d.discontinuities;
+        if (d.discontinuities && d.discontinuities.length) {
+          const scope = new Map();
+          for (let i = 0; i < d.discontinuities.length; i++) {
+            scope.set(
+              makeSamplesData.parametric_variable,
+              d.discontinuities[i][0],
+            );
+            const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
+            if (!Number.isFinite(disc)) {
+              /* const val = d.discontinuities[i][0];
+              d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
+              d.discontinuities.push([val, "unknown2"]);
+              i++; */
+              d.discontinuities[i][1] = "unknown2";
+            } else {
+              d.discontinuities[i][0] = disc;
+            }
+          }
+        }
+
+        //discontTurningPoints = [];
+        makeSamplesData.discontinuityFn = makeSamplesData.parametricFnY;
+        exp = `${makeSamplesData.parametricFnX}-x`;
+        exp = Utility.insertProductSign_total(
+          exp,
+          makeSamplesData.parametric_variable,
+        );
+        sol = await Static.solveFor(exp, "t");
+        str = null;
+        if (sol.length > 0) {
+          //self._functionDlg.parametric_variable
+          str = makeSamplesData.parametricFnY.replaceAll(
+            makeSamplesData.parametric_variable,
+            `(${sol[0]})`,
+          );
+          str = str.replaceAll("x", makeSamplesData.parametric_variable);
+          makeSamplesData.discontinuityFn = str;
+        }
+        discontTurningPoints = await Utility.discontinuity(
+          //fn_unsimplified,
+          makeSamplesData.parametricFnY,
+          //str,
+          makeSamplesData.lowerX,
+          makeSamplesData.upperX,
+          self._functionDlg.parametric_variable,
+        );
+        if (
+          discontTurningPoints &&
+          discontTurningPoints.discontinuities.length
+        ) {
+          const scope = new Map();
+          for (
+            let i = 0;
+            i < discontTurningPoints.discontinuities.length;
+            i++
+          ) {
+            scope.set(
+              makeSamplesData.parametric_variable,
+              discontTurningPoints.discontinuities[i][0],
+            );
+            const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
+            if (!Number.isFinite(disc)) {
+              /* const val = discontTurningPoints.discontinuities[i][0];
+              discontTurningPoints.discontinuities[i][0] =
+                Static.LargeNumber * math.sign(disc);
+              discontTurningPoints.discontinuities.push([val, "unknown2"]);
+              i++; */
+              discontTurningPoints.discontinuities[i][1] = "unknown2";
+            } else {
+              discontTurningPoints.discontinuities[i][0] = disc;
+            }
+          }
+        }
+
+        // const ratio = math
+        //   .simplify(
+        //     `(${makeSamplesData.parametricFnX})/(${makeSamplesData.parametricFnY})`,
+        //     {},
+        //     { rules: Static.simplify_rules },
+        //   )
+        //   .toString();
+
+        // if (isFinite(ratio)) {
+        /* let hasDiscontinuity = false;
+          if (
+            makeSamplesData.discontinuityY.length ||
+            discontTurningPoints.discontinuities.length
+          ) {
+            hasDiscontinuity = true;
+          }
+          makeSamplesData.discontinuityY = [];
+          discontTurningPoints.discontinuities = [];
+          if (hasDiscontinuity) {
+            makeSamplesData.discontinuityY.push([
+              Static.LargeNumber,
+              "essential",
+            ]);
+            makeSamplesData.discontinuityY.push([0, "unknown2"]);
+            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+          } */
+
+        /* if (
+          makeSamplesData.discontinuityY.length ||
+          discontTurningPoints.discontinuities.length
+        ) {
+          let val_dx_dt = null;
+          let val_dy_dt = null;
+          const dx_dt = math.derivative(
+            makeSamplesData.parametricFnX,
+            makeSamplesData.parametric_variable,
+          );
+          if (dx_dt == 0) {
+            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
+            val_dx_dt = 0;
+          } else {
+            const sol = await Static.solveFor(
+              dx_dt.toString(),
+              makeSamplesData.parametric_variable,
+              makeSamplesData.parametric_variable,
+            );
+            if (sol.length) {
+              val_dx_dt = sol[0];
+            } else {
+              val_dx_dt = 0;
+            }
+            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+            // makeSamplesData.discontinuityY.push([0, "unknown2"]);
+          }
+          const dy_dt = math.derivative(
+            makeSamplesData.parametricFnY,
+            makeSamplesData.parametric_variable,
+          );
+          if (dy_dt == 0) {
+            val_dy_dt = 0;
+            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
+            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+          } else {
+            const sol = await Static.solveFor(
+              dy_dt.toString(),
+              makeSamplesData.parametric_variable,
+              makeSamplesData.parametric_variable,
+            );
+            if (sol.length) {
+              val_dy_dt = sol[0];
+            } else {
+              val_dy_dt = 0;
+            }
+            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+
+            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
+            // const val = await Static.solveFor(
+            //   dy_dt.toString(),
+            //   makeSamplesData.parametric_variable,
+            // );
+            // discontTurningPoints.discontinuities.push([0, "unknown2"]);
+          }
+          if (val_dx_dt === val_dy_dt) {
+            if (dx_dt != 0) {
+              discontTurningPoints.discontinuities.push([
+                val_dx_dt,
+                "unknown2",
+              ]);
+            } else {
+              makeSamplesData.discontinuityY.push([val_dx_dt, "unknown2"]);
+            }
+          }
+          // discontTurningPoints.discontinuities =
+          //   discontTurningPoints.discontinuities.filter(
+          //     (e) => math.abs(e[0]) != Static.LargeNumber,
+          //   );
+
+          // discontTurningPoints.discontinuities =
+          //   discontTurningPoints.discontinuities.sort((a, b) => a[0] - b[0]);
+
+          // makeSamplesData.discontinuityY = makeSamplesData.discontinuityY.filter(
+          //   (e) => math.abs(e[0]) != Static.LargeNumber,
+          // );
+
+          // makeSamplesData.discontinuityY = makeSamplesData.discontinuityY.sort(
+          //   (a, b) => a[0] - b[0],
+          // );
+        } */
+      }
       ///////////////////////
       try {
         if (makeSamplesData.parametricFnX && makeSamplesData.parametricFnY) {
-          /* {
-          discontinuities: [[0.0, "essential"]],
-          turningPoints: [],
-          period: null,
-        }; */
-          //makeSamplesData.discontinuityY = [];
-
-          makeSamplesData.discontinuityFn_y = makeSamplesData.parametricFnX;
-          let exp = `${makeSamplesData.parametricFnY}-x`;
-          exp = Utility.insertProductSign_total(
-            exp,
-            makeSamplesData.parametric_variable
-          );
-          let sol = await Static.solveFor(exp, "t");
-          let str = null;
-          if (sol.length > 0) {
-            //self._functionDlg.parametric_variable
-            str = makeSamplesData.parametricFnX.replaceAll(
-              makeSamplesData.parametric_variable,
-              `(${sol[0]})`
-            );
-            str = str.replaceAll("x", makeSamplesData.parametric_variable);
-            makeSamplesData.discontinuityFn_y = str;
-          }
-
-          const d = await Utility.discontinuity(
-            //fn_unsimplified,
-            makeSamplesData.parametricFnX,
-            //str,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX,
-            self._functionDlg.parametric_variable
-          );
-          makeSamplesData.discontinuityY = d.discontinuities;
-          if (d.discontinuities && d.discontinuities.length) {
-            const scope = new Map();
-            for (let i = 0; i < d.discontinuities.length; i++) {
-              scope.set(
-                makeSamplesData.parametric_variable,
-                d.discontinuities[i][0]
-              );
-              const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
-              if (!Number.isFinite(disc)) {
-                const val = d.discontinuities[i][0];
-                d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
-                d.discontinuities.push([val, "unknown2"]);
-                i++;
-                //d.discontinuities[i][1] = "unknown2";
-              } else {
-                d.discontinuities[i][0] = disc;
-              }
-            }
-          }
-
-          //discontTurningPoints = [];
-          makeSamplesData.discontinuityFn = makeSamplesData.parametricFnY;
-          exp = `${makeSamplesData.parametricFnX}-x`;
-          exp = Utility.insertProductSign_total(
-            exp,
-            makeSamplesData.parametric_variable
-          );
-          sol = await Static.solveFor(exp, "t");
-          str = null;
-          if (sol.length > 0) {
-            //self._functionDlg.parametric_variable
-            str = makeSamplesData.parametricFnY.replaceAll(
-              makeSamplesData.parametric_variable,
-              `(${sol[0]})`
-            );
-            str = str.replaceAll("x", makeSamplesData.parametric_variable);
-            makeSamplesData.discontinuityFn = str;
-          }
-          discontTurningPoints = await Utility.discontinuity(
-            //fn_unsimplified,
-            makeSamplesData.parametricFnY,
-            //str,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX,
-            self._functionDlg.parametric_variable
-          );
+          // makeSamplesData.discontinuityFn_y = makeSamplesData.parametricFnX;
+          // let exp = `${makeSamplesData.parametricFnY}-x`;
+          // exp = Utility.insertProductSign_total(
+          //   exp,
+          //   makeSamplesData.parametric_variable
+          // );
+          // let sol = await Static.solveFor(exp, "t");
+          // let str = null;
+          // if (sol.length > 0) {
+          //   //self._functionDlg.parametric_variable
+          //   str = makeSamplesData.parametricFnX.replaceAll(
+          //     makeSamplesData.parametric_variable,
+          //     `(${sol[0]})`
+          //   );
+          //   str = str.replaceAll("x", makeSamplesData.parametric_variable);
+          //   makeSamplesData.discontinuityFn_y = str;
+          // }
+          // const d = await Utility.discontinuity(
+          //   //fn_unsimplified,
+          //   makeSamplesData.parametricFnX,
+          //   //str,
+          //   makeSamplesData.lowerX,
+          //   makeSamplesData.upperX,
+          //   self._functionDlg.parametric_variable
+          // );
+          // makeSamplesData.discontinuityY = d.discontinuities;
+          // if (d.discontinuities && d.discontinuities.length) {
+          //   const scope = new Map();
+          //   for (let i = 0; i < d.discontinuities.length; i++) {
+          //     scope.set(
+          //       makeSamplesData.parametric_variable,
+          //       d.discontinuities[i][0]
+          //     );
+          //     const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
+          //     if (!Number.isFinite(disc)) {
+          //       const val = d.discontinuities[i][0];
+          //       d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
+          //       d.discontinuities.push([val, "unknown2"]);
+          //       i++;
+          //       //d.discontinuities[i][1] = "unknown2";
+          //     } else {
+          //       d.discontinuities[i][0] = disc;
+          //     }
+          //   }
+          // }
+          // //discontTurningPoints = [];
+          // makeSamplesData.discontinuityFn = makeSamplesData.parametricFnY;
+          // exp = `${makeSamplesData.parametricFnX}-x`;
+          // exp = Utility.insertProductSign_total(
+          //   exp,
+          //   makeSamplesData.parametric_variable
+          // );
+          // sol = await Static.solveFor(exp, "t");
+          // str = null;
+          // if (sol.length > 0) {
+          //   //self._functionDlg.parametric_variable
+          //   str = makeSamplesData.parametricFnY.replaceAll(
+          //     makeSamplesData.parametric_variable,
+          //     `(${sol[0]})`
+          //   );
+          //   str = str.replaceAll("x", makeSamplesData.parametric_variable);
+          //   makeSamplesData.discontinuityFn = str;
+          // }
+          // discontTurningPoints = await Utility.discontinuity(
+          //   //fn_unsimplified,
+          //   makeSamplesData.parametricFnY,
+          //   //str,
+          //   makeSamplesData.lowerX,
+          //   makeSamplesData.upperX,
+          //   self._functionDlg.parametric_variable
+          // );
+          // if (
+          //   discontTurningPoints &&
+          //   discontTurningPoints.discontinuities.length
+          // ) {
+          //   const scope = new Map();
+          //   for (
+          //     let i = 0;
+          //     i < discontTurningPoints.discontinuities.length;
+          //     i++
+          //   ) {
+          //     scope.set(
+          //       makeSamplesData.parametric_variable,
+          //       discontTurningPoints.discontinuities[i][0]
+          //     );
+          //     const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
+          //     if (!Number.isFinite(disc)) {
+          //       const val = discontTurningPoints.discontinuities[i][0];
+          //       discontTurningPoints.discontinuities[i][0] =
+          //         Static.LargeNumber * math.sign(disc);
+          //       discontTurningPoints.discontinuities.push([val, "unknown2"]);
+          //       i++;
+          //       //discontTurningPoints.discontinuities[i][1] = "unknown2";
+          //     } else {
+          //       discontTurningPoints.discontinuities[i][0] = disc;
+          //     }
+          //   }
+          // }
+          // if (
+          //   discontTurningPoints.discontinuities.length &&
+          //   !d.discontinuities.length &&
+          //   isFinite(makeSamplesData.parametricFnX)
+          // ) {
+          //   //console.log(makeSamplesData.parametricFnX);
+          //   for (
+          //     let i = 0;
+          //     i < discontTurningPoints.discontinuities.length;
+          //     i++
+          //   ) {
+          //     discontTurningPoints.discontinuities[i][1] = "unknown2";
+          //   }
+          // }
+          // if (
+          //   d.discontinuities.length &&
+          //   !discontTurningPoints.discontinuities.length &&
+          //   isFinite(makeSamplesData.parametricFnY)
+          // ) {
+          //   //console.log(makeSamplesData.parametricFnY);
+          //   for (let i = 0; i < d.discontinuities.length; i++) {
+          //     d.discontinuities[i][1] = "unknown2";
+          //   }
+          // }
+          await doDiscontinuities();
+          /*
+          ///Continuity
           if (
-            discontTurningPoints &&
-            discontTurningPoints.discontinuities.length
+            !MyPlot.recall &&
+            isFinite(
+              math
+                .simplify(
+                  `(${makeSamplesData.parametricFnX})/(${makeSamplesData.parametricFnY})`,
+                )
+                .toString(),
+            )
           ) {
-            const scope = new Map();
-            for (
-              let i = 0;
-              i < discontTurningPoints.discontinuities.length;
-              i++
-            ) {
-              scope.set(
-                makeSamplesData.parametric_variable,
-                discontTurningPoints.discontinuities[i][0]
-              );
-              const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
-              if (!Number.isFinite(disc)) {
-                const val = discontTurningPoints.discontinuities[i][0];
-                discontTurningPoints.discontinuities[i][0] =
-                  Static.LargeNumber * math.sign(disc);
-                discontTurningPoints.discontinuities.push([val, "unknown2"]);
-                i++;
-                //discontTurningPoints.discontinuities[i][1] = "unknown2";
-              } else {
-                discontTurningPoints.discontinuities[i][0] = disc;
-              }
-            }
+            //for (let i = 0; i < d.discontinuities.length; i++) {
+            d.discontinuities = [];
+            d.discontinuities.push([0, "unknown2"]);
+            // }
+            discontTurningPoints.discontinuities.length = [];
+            discontTurningPoints.discontinuities.push([0, "unknown2"]);
+            MyPlot.recall = true;
+            await doDiscontinuities();
+            // for (
+            //   let i = 0;
+            //   i < discontTurningPoints.discontinuities.length;
+            //   i++
+            // ) {
+            //   discontTurningPoints.discontinuities[i][1] = "unknown2";
+            // }
           }
-          if (
-            discontTurningPoints.discontinuities.length &&
-            !d.discontinuities.length &&
-            isFinite(makeSamplesData.parametricFnX)
-          ) {
-            console.log(makeSamplesData.parametricFnX);
-            for (
-              let i = 0;
-              i < discontTurningPoints.discontinuities.length;
-              i++
-            ) {
-              discontTurningPoints.discontinuities[i][1] = "unknown2";
-            }
-          }
-          if (
-            d.discontinuities.length &&
-            !discontTurningPoints.discontinuities.length &&
-            isFinite(makeSamplesData.parametricFnY)
-          ) {
-            console.log(makeSamplesData.parametricFnY);
-            for (let i = 0; i < d.discontinuities.length; i++) {
-              d.discontinuities[i][1] = "unknown2";
-            }
-          }
+          MyPlot.recall = false; */
         } else {
+          //Not parametric
           discontTurningPoints = await Utility.discontinuity(
             //fn_unsimplified,
             makeSamplesData.fx,
             makeSamplesData.lowerX,
             makeSamplesData.upperX,
-            self._functionDlg.variable
+            self._functionDlg.variable,
           );
         }
         if (
@@ -970,13 +1205,13 @@ class MyPlot extends Plot {
           typeof discontTurningPoints.period !== "number" &&
           Utility.isPeriodic(makeSamplesData.fx) &&
           !Utility.hasOnlyJumpDiscontinuities(
-            discontTurningPoints.discontinuities
+            discontTurningPoints.discontinuities,
           )
         ) {
           Utility.alert(
             "The period of the curve is unknown. The Grapher treated this curve as bounded.",
             null,
-            "unboundedRange123"
+            "unboundedRange123",
           );
           self._functionDlg.unboundedRange = false;
         }
@@ -1000,7 +1235,7 @@ class MyPlot extends Plot {
         const mf = $("#fnDlg_function")[0];
         Utility.displayErrorMessage(
           mf,
-          `Too many variables. Try defining "${unknowns}"`
+          `Too many variables. Try defining "${unknowns}"`,
         );
         return;
       }
@@ -1041,11 +1276,11 @@ class MyPlot extends Plot {
         makeSamplesData.discontinuity = discont;
         makeSamplesData.turning_points = discontTurningPoints.turningPoints;
         makeSamplesData.xDecimalPlaces = self.axisDecimalPlaces(
-          Axis.AxisId.xBottom
+          Axis.AxisId.xBottom,
         );
 
         makeSamplesData.yDecimalPlaces = self.axisDecimalPlaces(
-          Axis.AxisId.yLeft
+          Axis.AxisId.yLeft,
         );
 
         const samples = Utility.makeSamples(makeSamplesData);
@@ -1073,8 +1308,8 @@ class MyPlot extends Plot {
                 mf,
                 `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
                   fn,
-                  decimalPlacesX
-                )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                  decimalPlacesX,
+                )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`,
               );
               return;
             }
@@ -1083,8 +1318,8 @@ class MyPlot extends Plot {
               mf,
               `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
                 fn,
-                decimalPlacesX
-              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
+                decimalPlacesX,
+              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`,
             );
             return;
           }
@@ -1128,7 +1363,7 @@ class MyPlot extends Plot {
                 upperX,
                 numOfSamples,
                 variable,
-                self
+                self,
               );
             }
 
@@ -1139,7 +1374,7 @@ class MyPlot extends Plot {
               Utility.alert(
                 `Grapher tried but failed to get an inverse function of <b>"${fn}"</b>. This happens if an <b>inverse of the function does not exist</b> or the <b>the polynomial is too complex for SymPy (the Grapher's solver).</b>. The inverse <b>relation</b> is plotted.`,
                 null,
-                "failedInverse"
+                "failedInverse",
               );
               // Utility.displayWarnMessage(
               //   mf,
@@ -1166,8 +1401,8 @@ class MyPlot extends Plot {
               mf,
               `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
                 fn,
-                decimalPlacesX
-              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`
+                decimalPlacesX,
+              )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`,
             );
             return;
           }
@@ -1176,8 +1411,8 @@ class MyPlot extends Plot {
             mf,
             `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
               fn,
-              decimalPlacesX
-            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`
+              decimalPlacesX,
+            )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding explicit multiplication may resolve the problem.`,
           );
           return;
         }
@@ -1208,7 +1443,7 @@ class MyPlot extends Plot {
             Symbol2.Style.Ellipse,
             new Misc.Brush(Utility.invert(color)),
             new Misc.Pen(color),
-            new Misc.Size(8, 8)
+            new Misc.Size(8, 8),
           );
           newCurve.setSymbol(sym);
           let attribute = "";
@@ -1222,7 +1457,7 @@ class MyPlot extends Plot {
           Utility.setLegendAttribute(
             newCurve,
             attribute,
-            newCurve.getLegendIconSize()
+            newCurve.getLegendIconSize(),
           ); //attribute = "line" or "symbol" or "lineAndSymbol"
         }
         //Utility.addSymbol(newCurve, Symbol2.Style.Ellipse);
@@ -1252,12 +1487,12 @@ class MyPlot extends Plot {
             width =
               math.max(
                 math.abs(newCurve.minXValue()),
-                math.abs(newCurve.maxXValue())
+                math.abs(newCurve.maxXValue()),
               ) * 2;
             height =
               math.max(
                 math.abs(newCurve.minYValue()),
-                math.abs(newCurve.maxYValue())
+                math.abs(newCurve.maxYValue()),
               ) * 2;
           } catch (error) {
             console.log(error);
@@ -1278,11 +1513,11 @@ class MyPlot extends Plot {
             if ((tp || ip) && scaleX != 1) {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x * scaleX,
-                decimalPlacesX + 1
+                decimalPlacesX + 1,
               );
               pt.y = Utility.adjustForDecimalPlaces(
                 pt.y * scaleY,
-                decimalPlacesY
+                decimalPlacesY,
               );
               pt.x = pt.x / scaleX;
               pt.y = pt.y / scaleY;
@@ -1291,11 +1526,11 @@ class MyPlot extends Plot {
             try {
               pt.x = Utility.adjustForDecimalPlaces(
                 pt.x,
-                math.max(4, (decimalPlacesX + 1) * 2)
+                math.max(4, (decimalPlacesX + 1) * 2),
               );
               pt.y = Utility.adjustForDecimalPlaces(
                 pt.y,
-                math.max(4, decimalPlacesY * 2)
+                math.max(4, decimalPlacesY * 2),
               );
             } catch (error) {
               console.log(error);
@@ -1313,7 +1548,7 @@ class MyPlot extends Plot {
                 );
               }
               return true;
-            }
+            },
           );
           newCurve.inflectionPoints = newCurve.inflectionPoints.filter(
             (item, index) => {
@@ -1324,7 +1559,7 @@ class MyPlot extends Plot {
                 );
               }
               return true;
-            }
+            },
           );
         }
 
@@ -1375,7 +1610,7 @@ class MyPlot extends Plot {
       {
         zIndex: 1003,
       },
-      self.plotDiv
+      self.plotDiv,
     );
 
     /* Static.watchCentroidWithArea = true;					
@@ -1456,7 +1691,7 @@ class MyPlot extends Plot {
 
           if (invalid) {
             Utility.alert(
-              `Unable to perform the operation. Check that values in the domain and range are within [1e-100, 1e+100] and [1e-300, 1e+300] respectively.`
+              `Unable to perform the operation. Check that values in the domain and range are within [1e-100, 1e+100] and [1e-300, 1e+300] respectively.`,
             );
             return;
           }
@@ -1552,7 +1787,7 @@ class MyPlot extends Plot {
                 try {
                   m_translateX = await self.defines.expandDefines(
                     arr[0],
-                    variable
+                    variable,
                   );
                   m_translateX = math.evaluate(m_translateX);
                 } catch (error) {
@@ -1594,7 +1829,7 @@ class MyPlot extends Plot {
                 try {
                   m_translateY = await self.defines.expandDefines(
                     arr[1],
-                    variable
+                    variable,
                   );
                   m_translateY = math.evaluate(m_translateY);
                 } catch (error) {
@@ -1627,7 +1862,7 @@ class MyPlot extends Plot {
                     curves[i],
                     "Translate",
                     m_translateX,
-                    m_translateY
+                    m_translateY,
                   );
                   curves[i] = null;
                 }
@@ -1639,7 +1874,7 @@ class MyPlot extends Plot {
               // Utility.promptErrorMsg = "Invalid input. Expected a number.";
 
               return true;
-            } /////////
+            }, /////////
           );
         }
         if (operationType == "Scale") {
@@ -1662,7 +1897,7 @@ class MyPlot extends Plot {
                       await self.transformation.transform(
                         curves[i],
                         "Scale",
-                        scale
+                        scale,
                       );
                       curves[i] = null;
                     }
@@ -1674,7 +1909,7 @@ class MyPlot extends Plot {
               } catch (error) {
                 console.log(error);
               }
-            }
+            },
           );
         }
         if (operationType == "Reflect x equal") {
@@ -1694,7 +1929,7 @@ class MyPlot extends Plot {
                       await self.transformation.transform(
                         curves[i],
                         "Reflect x equal",
-                        m_val
+                        m_val,
                       );
                       curves[i] = null;
                     }
@@ -1706,7 +1941,7 @@ class MyPlot extends Plot {
               } catch (error) {
                 console.log(error);
               }
-            } ////////////
+            }, ////////////
           );
         }
         if (operationType == "Reflect y equal") {
@@ -1723,7 +1958,7 @@ class MyPlot extends Plot {
                     await self.transformation.transform(
                       curves[i],
                       "Reflect y equal",
-                      m_val
+                      m_val,
                     );
                     curves[i] = null;
                   }
@@ -1752,7 +1987,7 @@ class MyPlot extends Plot {
           for (let i = 0; i < curves.length; i++) {
             await self.transformation.transform(
               curves[i],
-              "Reflect x and y-axis"
+              "Reflect x and y-axis",
             );
           }
           // if (self.tbar.isButtonChecked(self.tbar.auto))
@@ -1777,7 +2012,7 @@ class MyPlot extends Plot {
               Utility.alert(
                 `Your selection, "${curves[
                   i
-                ].title()}", is not described by a known function.`
+                ].title()}", is not described by a known function.`,
               );
               self.curveSelector.abortSelection();
               functions = [];
@@ -1940,7 +2175,7 @@ class MyPlot extends Plot {
               if (_combinedFn)
                 combinedFn = Utility.adjustExpForDecimalPlaces(
                   _combinedFn,
-                  decimalPlacesX
+                  decimalPlacesX,
                 );
             }
           }
@@ -1966,14 +2201,14 @@ class MyPlot extends Plot {
                 curves = [];
                 Utility.alert(
                   "Improper selection order or overlapping domain.",
-                  "small"
+                  "small",
                 );
               }
             }
             //console.log(samples);
             if (samples.length) {
               const curve = new MyCurve(
-                Utility.generateCurveName(self, "joined_")
+                Utility.generateCurveName(self, "joined_"),
               );
               curve.setSamples(samples);
               curve.attach(self);
@@ -2088,12 +2323,12 @@ class MyPlot extends Plot {
         const discontinuity = dis.map(function (e) {
           e[0] = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(e[0], Math.min(decimalPlacesX, 9)),
-            precisionX
+            precisionX,
           );
           if (e.length === 3) {
             e[2] = Utility.toPrecision(
               Utility.adjustForDecimalPlaces(e[2], Math.min(decimalPlacesY, 9)),
-              precisionY
+              precisionY,
             );
           }
           return e;
@@ -2104,7 +2339,7 @@ class MyPlot extends Plot {
           discont = "discontinuity";
         let values = "Value";
         if (discontinuity && n > 1) {
-          (isAre = "are"), (discont = "discontinuities"), (values = "Values");
+          ((isAre = "are"), (discont = "discontinuities"), (values = "Values"));
         }
         let str = `There ${isAre} ${n} ${discont}.`;
         if (n) {
@@ -2162,7 +2397,7 @@ class MyPlot extends Plot {
                       curve.variable,
                       curve.data().samples(),
                       decimalPlacesX,
-                      decimalPlacesY
+                      decimalPlacesY,
                     );
                   }
                 }
@@ -2199,7 +2434,7 @@ class MyPlot extends Plot {
                     style: "normal",
                     th: 12,
                     weight: "bold",
-                  })
+                  }),
                 );
 
                 marker.attach(self);
@@ -2218,7 +2453,7 @@ class MyPlot extends Plot {
               try {
                 const invFn = await Utility.inverseFunction(
                   curve.expandedFn,
-                  curve.variable
+                  curve.variable,
                 );
                 if (invFn.length && invFn.length < 2) {
                   Static.inverseFunction = true;
@@ -2237,14 +2472,14 @@ class MyPlot extends Plot {
                     if (i > 0) {
                       self._functionDlg.title = Utility.generateCurveName(
                         self /* ,
-                        "0~curve_" */
+                        "0~curve_" */,
                       );
                     }
                     await self.functionDlgCb(
                       null,
                       curve.expandedFn,
                       min_x,
-                      max_x
+                      max_x,
                     );
                   }
                 }
@@ -2255,7 +2490,7 @@ class MyPlot extends Plot {
                     null,
                     curve.expandedFn,
                     min_x,
-                    max_x
+                    max_x,
                   );
                 }
                 Static.inverseFunction = false;
@@ -2337,8 +2572,8 @@ class MyPlot extends Plot {
                   0,
                   math.evaluate(
                     curve.expandedFn.replaceAll(curve.variable, "U"),
-                    { U: 0 }
-                  )
+                    { U: 0 },
+                  ),
                 );
                 pts.push(pt);
               } catch (error) {
@@ -2356,14 +2591,14 @@ class MyPlot extends Plot {
                 solution = await Static.solveFor(
                   fn,
                   curve.parametric_variable,
-                  curve.parametric_variable
+                  curve.parametric_variable,
                 );
                 Utility.progressWait(false);
                 if (!solution.length) {
                   const mf = $("#fnDlg_function")[0];
                   Utility.displayErrorMessage(
                     mf,
-                    `Unable to find a solution for "${fn}".`
+                    `Unable to find a solution for "${fn}".`,
                   );
                   return;
                 }
@@ -2376,7 +2611,7 @@ class MyPlot extends Plot {
                   res = solution[i].toString();
                   let _fn = curve.parametricFnY.replaceAll(
                     curve.parametric_variable,
-                    `(${res})`
+                    `(${res})`,
                   );
                   var _y = nerdamer(_fn);
                   _y = parseFloat(_y.evaluate().toString());
@@ -2386,7 +2621,7 @@ class MyPlot extends Plot {
                       pts,
                       _pt,
                       decimalPlacesX,
-                      decimalPlacesY
+                      decimalPlacesY,
                     )
                   ) {
                     pts.push(_pt);
@@ -2426,7 +2661,7 @@ class MyPlot extends Plot {
                   style: "normal",
                   th: 12,
                   weight: "bold",
-                })
+                }),
               );
 
               marker.attach(self);
@@ -2486,7 +2721,7 @@ class MyPlot extends Plot {
                     curve.data().samples(),
                     curve,
                     decimalPlacesX,
-                    decimalPlacesY
+                    decimalPlacesY,
                   );
                 }
               }
@@ -2521,7 +2756,7 @@ class MyPlot extends Plot {
                   style: "normal",
                   th: 12,
                   weight: "bold",
-                })
+                }),
               );
 
               marker.attach(self);
@@ -2535,12 +2770,12 @@ class MyPlot extends Plot {
           ) {
             str += `${operationType.replace(
               " point",
-              ""
+              "",
             )} points for parametric functions not yet supported.\n`;
           } else if (!curves[i].expandedFn && !curves[i].parametricFnX) {
             str += `No function expression found to determine ${operationType.replace(
               " point",
-              ""
+              "",
             )} points for ${curves[i].title()}.\n`;
           } else if (
             operationType !== "Y-Intercept" &&
@@ -2550,7 +2785,7 @@ class MyPlot extends Plot {
             if (!points || !points.length) {
               str += `${curves[i].title()} has 0 ${operationType.replace(
                 " point",
-                ""
+                "",
               )} point\n`;
             }
           }
@@ -2573,21 +2808,21 @@ class MyPlot extends Plot {
 
           if (curves[0].xAxis() !== curves[1].xAxis()) {
             alert(
-              "Cannot find the intersection of a curve with different x-axis."
+              "Cannot find the intersection of a curve with different x-axis.",
             );
             return;
           }
 
           if (curves[0].yAxis() !== curves[1].yAxis()) {
             alert(
-              "Cannot find the intersection of a curve with different y-axis."
+              "Cannot find the intersection of a curve with different y-axis.",
             );
             return;
           }
 
           if (curves[0].fn && curves[0].fn === curves[1].fn) {
             alert(
-              "Cannot find the intersection of a curves of the same function."
+              "Cannot find the intersection of a curves of the same function.",
             );
             return;
           }
@@ -2598,7 +2833,7 @@ class MyPlot extends Plot {
             curves[0].parametricFnY === curves[1].parametricFnY
           ) {
             alert(
-              "Cannot find the intersection of a curves with the same parametric functions."
+              "Cannot find the intersection of a curves with the same parametric functions.",
             );
             return;
           }
@@ -2701,7 +2936,7 @@ class MyPlot extends Plot {
                   point1Line1,
                   point2Line1,
                   point1Line2,
-                  point2Line2
+                  point2Line2,
                 );
               } catch (error) {
                 console.log(error);
@@ -2749,7 +2984,7 @@ class MyPlot extends Plot {
                     style: "normal",
                     th: 12,
                     weight: "bold",
-                  })
+                  }),
                 );
 
                 marker.attach(self);
@@ -2812,7 +3047,7 @@ class MyPlot extends Plot {
                   : Math.abs(point2Line1[0] - point1Line1[0]),
                 Math.abs(point2Line1[1] - point1Line1[1]) < 1e-12
                   ? 1e-12
-                  : Math.abs(point2Line1[1] - point1Line1[1])
+                  : Math.abs(point2Line1[1] - point1Line1[1]),
               ).normalized();
               //console.log(rect1.toString());
 
@@ -2834,7 +3069,7 @@ class MyPlot extends Plot {
                     : Math.abs(point2Line2[0] - point1Line2[0]),
                   Math.abs(point2Line2[1] - point1Line2[1]) < 1e-12
                     ? 1e-12
-                    : Math.abs(point2Line2[1] - point1Line2[1])
+                    : Math.abs(point2Line2[1] - point1Line2[1]),
                 ).normalized();
 
                 //console.log(rect2.toString());
@@ -2846,7 +3081,7 @@ class MyPlot extends Plot {
                       point1Line1,
                       point2Line1,
                       point1Line2,
-                      point2Line2
+                      point2Line2,
                     );
                   } catch (error) {
                     console.log(error);
@@ -2872,7 +3107,7 @@ class MyPlot extends Plot {
                         res,
                         pt,
                         decimalPlacesX,
-                        decimalPlacesY
+                        decimalPlacesY,
                       )
                     ) {
                       res.push(pt);
@@ -2923,7 +3158,7 @@ class MyPlot extends Plot {
                 point1Line1[0],
                 point1Line1[1],
                 point2Line1[0] - point1Line1[0],
-                point2Line1[1] - point1Line1[1]
+                point2Line1[1] - point1Line1[1],
               ).normalized();
 
               for (let j = 1; j < samples2.length; j++) {
@@ -2940,7 +3175,7 @@ class MyPlot extends Plot {
                   point1Line2[0],
                   point1Line2[1],
                   point2Line2[0] - point1Line2[0],
-                  point2Line2[1] - point1Line2[1]
+                  point2Line2[1] - point1Line2[1],
                 ).normalized();
 
                 if (rect1.intersects(rect2)) {
@@ -2950,7 +3185,7 @@ class MyPlot extends Plot {
                       point1Line1,
                       point2Line1,
                       point1Line2,
-                      point2Line2
+                      point2Line2,
                     );
                   } catch (error) {
                     console.log(error);
@@ -2976,7 +3211,7 @@ class MyPlot extends Plot {
                         res,
                         pt,
                         decimalPlacesX,
-                        decimalPlacesY
+                        decimalPlacesY,
                       )
                     ) {
                       res.push(pt);
@@ -3032,7 +3267,7 @@ class MyPlot extends Plot {
               try {
                 step = math.max(
                   1e-5,
-                  math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px))
+                  math.abs(xMap.invTransform(2 * px) - xMap.invTransform(px)),
                 );
 
                 //console.log("step", step);
@@ -3125,7 +3360,7 @@ class MyPlot extends Plot {
                 arr,
                 res[i],
                 decimalPlacesX,
-                decimalPlacesY
+                decimalPlacesY,
               )
             ) {
               arr.push(res[i]);
@@ -3191,7 +3426,7 @@ class MyPlot extends Plot {
                 style: "normal",
                 th: 12,
                 weight: "bold",
-              })
+              }),
             );
 
             marker.attach(self);
@@ -3284,12 +3519,12 @@ class MyPlot extends Plot {
     this.curvePropertiesPane = new CurvePropertiesPane(
       this.leftSidebar.gridItem(0).bodyElement,
       this,
-      Static.curvePropPane
+      Static.curvePropPane,
     );
     m_settings = new PlotPropertiesPane(
       this.leftSidebar.gridItem(1).bodyElement,
       this,
-      Static.plotPropPane
+      Static.plotPropPane,
     );
     this.plotPropertiesPane = m_settings;
 
@@ -3315,7 +3550,7 @@ class MyPlot extends Plot {
               plotDivContainerSize.width;
             plotDiv.css(
               "width",
-              98 - leftSidebarPercentW - rightSidebarPercentW + "%"
+              98 - leftSidebarPercentW - rightSidebarPercentW + "%",
             );
             plotDiv.css("left", leftSidebarPercentW + "%");
           }
@@ -3352,7 +3587,7 @@ class MyPlot extends Plot {
               plotDivContainerSize.width;
             plotDiv.css(
               "width",
-              98 - leftSidebarPercentW - rightSidebarPercentW + "%"
+              98 - leftSidebarPercentW - rightSidebarPercentW + "%",
             );
             plotDiv.css("left", leftSidebarPercentW + "%");
             self.rightSidebar
@@ -3383,7 +3618,7 @@ class MyPlot extends Plot {
     this.infoPropertiesPane = new InfoPropertiesPane(
       this.rightSidebar.gridItem(0).bodyElement,
       this,
-      Static.infoPropPane
+      Static.infoPropPane,
     );
     //this.rightSidebar.showGridItem(0, true);
     this.rightSidebar.showSidebar(false);
@@ -3553,7 +3788,7 @@ class MyPlot extends Plot {
             Utility.alert(info);
           } else {
             Utility.alert(
-              'No curve fitting equation found for "' + curve.title() + '."'
+              'No curve fitting equation found for "' + curve.title() + '."',
             );
           }
         },
@@ -3576,7 +3811,7 @@ class MyPlot extends Plot {
           self.watchAreaBelowCurve.setEnable(false);
         } else {
           self.watchAreaBelowCurve.setEnable(
-            self.tbar.isDropdownItemChecked("Watch", 6)
+            self.tbar.isDropdownItemChecked("Watch", 6),
           );
         }
       }
@@ -3756,7 +3991,7 @@ class MyPlot extends Plot {
         if (currentCurve && m_gridlinesAccordingToCurve) {
           self.grid.setAxes(currentCurve.xAxis(), currentCurve.yAxis());
         }
-      }
+      },
     );
 
     Static.bind("currentCurveChanged", function (e, newCurve) {
@@ -3898,7 +4133,7 @@ class MyPlot extends Plot {
             .parent()
             .attr(
               "title",
-              "Upload data files. (This function is not availabe while you are logged in to the momgo fileSystemServices."
+              "Upload data files. (This function is not availabe while you are logged in to the momgo fileSystemServices.",
             );
         });
         Static.bind("disconnected", () => {
@@ -3907,7 +4142,7 @@ class MyPlot extends Plot {
             .parent()
             .attr(
               "title",
-              "Upload data files. (This function is not availabe while logged in to the momgo fileSystemServices."
+              "Upload data files. (This function is not availabe while logged in to the momgo fileSystemServices.",
             );
         });
       }
@@ -3925,7 +4160,7 @@ class MyPlot extends Plot {
     }
 
     const fileSystemServices = (self.fileSystemServices = new FileSystem(
-      fsOptions
+      fsOptions,
     ));
 
     class GrapherEditor extends Editor {
@@ -3966,7 +4201,7 @@ class MyPlot extends Plot {
             if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
               self.plot.file.setPlotData(
                 { content: data, fileName: filename },
-                true
+                true,
               );
             }
             if (ext === ".plt") {
@@ -4017,7 +4252,7 @@ class MyPlot extends Plot {
                   if (ext === ".plt" || ext === ".txt" || ext === ".tbl") {
                     self.plot.file.setPlotData(
                       { content: data, fileName: filename },
-                      true
+                      true,
                     );
                   }
                   if (ext === ".plt") {
@@ -4027,7 +4262,7 @@ class MyPlot extends Plot {
 
                   return;
                 }
-              }
+              },
             );
           }
         }
@@ -4205,8 +4440,8 @@ class MyPlot extends Plot {
     // const last = $(tbDiv[0].lastChild);
     tbDiv.append(
       $(
-        '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden; margin:5px; margin-left:20px"></span>'
-      )
+        '<span class="GrapherTitle" style="cursor:default;text-overflow:ellipsis;white-space:nowrap;overflow:hidden; margin:5px; margin-left:20px"></span>',
+      ),
     );
 
     // console.log(tbDiv[0].lastChild);
@@ -4270,11 +4505,11 @@ class MyPlot extends Plot {
           let percentW = self.elementWidthToPercentage(oldWidth + delta);
           leftSidebarSelector.css("width", percentW);
           percentW = self.elementWidthToPercentage(
-            parseFloat(plotContainerSelector.css("left")) + delta
+            parseFloat(plotContainerSelector.css("left")) + delta,
           );
           plotContainerSelector.css("left", percentW);
           percentW = self.elementWidthToPercentage(
-            parseFloat(plotContainerSelector.css("width")) - delta
+            parseFloat(plotContainerSelector.css("width")) - delta,
           );
           plotContainerSelector.css("width", percentW);
           leftDividerPos = oldWidth + delta;
@@ -4299,15 +4534,15 @@ class MyPlot extends Plot {
           }
           const delta = rightDividerPos - e.clientX;
           let percentW = self.elementWidthToPercentage(
-            parseFloat(rightSidebarSelector.css("left")) - delta
+            parseFloat(rightSidebarSelector.css("left")) - delta,
           );
           rightSidebarSelector.css("left", percentW);
           percentW = self.elementWidthToPercentage(
-            parseFloat(rightSidebarSelector.css("width")) + delta
+            parseFloat(rightSidebarSelector.css("width")) + delta,
           );
           rightSidebarSelector.css("width", percentW);
           percentW = self.elementWidthToPercentage(
-            parseFloat(plotContainerSelector.css("width")) - delta
+            parseFloat(plotContainerSelector.css("width")) - delta,
           );
           plotContainerSelector.css("width", percentW);
           rightDividerPos = parseFloat(rightSidebarSelector.css("left"));
@@ -4542,7 +4777,7 @@ class MyPlot extends Plot {
         Utility.alert(
           `Axes ${s} failed because one or more plot item(s) is(are) associated with an axis other than the bottom or left axis.`,
           null,
-          "swapAxisFailed"
+          "swapAxisFailed",
         );
       }
       if (item.unboundedRange) {
@@ -4570,3 +4805,4 @@ class MyPlot extends Plot {
   }
 }
 MyPlot.init();
+MyPlot.recall = false;

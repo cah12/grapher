@@ -36,7 +36,7 @@ class AlertDlg {
 		</div>\
 		</div>\
 		</div>\
-		</div>'
+		</div>',
     );
 
     //console.log(dlg)
@@ -198,7 +198,7 @@ class PromptDlg {
 		</div>\
 		</div>\
 		</div>\
-		</div>'
+		</div>',
     );
 
     //console.log(dlg)
@@ -330,11 +330,11 @@ class Utility {
     if (on) {
       Utility.progressSpinner2.css(
         "left",
-        parseInt($("#centralDiv").css("width")) * 0.5 - 21
+        parseInt($("#centralDiv").css("width")) * 0.5 - 21,
       );
       Utility.progressSpinner2.css(
         "top",
-        parseInt($("#centralDiv").css("height")) * 0.5 - 21
+        parseInt($("#centralDiv").css("height")) * 0.5 - 21,
       );
       Utility.progressSpinner2.show();
     } else {
@@ -480,7 +480,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary < 0 &&
@@ -522,7 +522,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary >= 0 &&
@@ -564,7 +564,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary >= 0 &&
@@ -606,7 +606,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary >= 0 &&
@@ -648,7 +648,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary < 0 &&
@@ -690,7 +690,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary >= 0 &&
@@ -732,7 +732,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary < 0 &&
@@ -774,7 +774,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     } else if (
       leftBoundary >= 0 &&
@@ -816,7 +816,7 @@ class Utility {
         (x - data[rightColumn - 1][0].x) /
           (data[rightColumn][0].x - data[rightColumn - 1][0].x),
         (y - col0[bottomRow - 1].y) /
-          (col0[bottomRow].y - col0[bottomRow - 1].y)
+          (col0[bottomRow].y - col0[bottomRow - 1].y),
       );
     }
     return undefined;
@@ -923,7 +923,7 @@ class Utility {
       y1,
       y2,
       x,
-      y
+      y,
     );
   }
 
@@ -1053,10 +1053,10 @@ class Utility {
         let sym = new Symbol2();
         sym.setStyle(curveData.symbolType);
         sym.setSize(
-          new Misc.Size(curveData.symbolWidth, curveData.symbolWidth)
+          new Misc.Size(curveData.symbolWidth, curveData.symbolWidth),
         );
         sym.setPen(
-          new Misc.Pen(curveData.symbolPenColor, curveData.symbolPenWidth)
+          new Misc.Pen(curveData.symbolPenColor, curveData.symbolPenWidth),
         );
         sym.setBrush(new Misc.Brush(curveData.symbolBrushColor));
         curve.setSymbol(sym);
@@ -1085,8 +1085,8 @@ class Utility {
         new Misc.Pen(
           curveData.pen.color,
           curveData.pen.width,
-          curveData.pen.style
-        )
+          curveData.pen.style,
+        ),
       );
 
       curve.setAxes(curveData.xAxis, curveData.yAxis);
@@ -1243,7 +1243,7 @@ class Utility {
     return arrayOfTwoMemberArrays.map(function (arrayOfTwoMembers) {
       return new Misc.Point(
         parseFloat(arrayOfTwoMembers[0]),
-        parseFloat(arrayOfTwoMembers[1])
+        parseFloat(arrayOfTwoMembers[1]),
       );
     });
   }
@@ -1470,7 +1470,7 @@ class Utility {
     var mixedrgb = [rgb[0] + mix[0], rgb[1] + mix[1], rgb[2] + mix[2]].map(
       function (x) {
         return Math.round(x / 2.0);
-      }
+      },
     );
     return "rgb(" + mixedrgb.join(",") + ")";
   }
@@ -1653,7 +1653,7 @@ class Utility {
           return false;
         }
       },
-      "small"
+      "small",
     );
   }
 
@@ -1768,7 +1768,7 @@ class Utility {
         }
 
         if (obj.parametricFnX && obj.parametricFnY) {
-          samples = samples.sort((a, b) => a.x - b.x);
+          //samples = samples.sort((a, b) => a.x - b.x);
         }
 
         // const lmt_l = samples[0].x;
@@ -1842,12 +1842,12 @@ class Utility {
         let _indepVar;
         if (obj.parametricFnX && obj.parametricFnY) {
           if (!discontY) {
-            _parser = new EvaluateExp(obj.parametricFnY);
+            //_parser = new EvaluateExp(obj.parametricFnY);
 
-            //_parser = new EvaluateExp(obj.discontinuityFn);
+            _parser = new EvaluateExp(obj.discontinuityFn);
           } else {
-            _parser = new EvaluateExp(obj.parametricFnX);
-            //_parser = new EvaluateExp(obj.discontinuityFn_y);
+            //_parser = new EvaluateExp(obj.parametricFnX);
+            _parser = new EvaluateExp(obj.discontinuityFn_y);
           }
 
           _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
@@ -1858,11 +1858,12 @@ class Utility {
 
         let n = 0;
         const _scope = new Map();
-        /* const step_ = samples[1].x - samples[0].x;
-        //const delta = step_ * 1e-5;
-        let delta = (samples[1].x - samples[0].x) * 1e-5; */
+        // const step_ = samples[1].x - samples[0].x;
+        // const delta = step_ * 1e-5;
+        const delta = (samples[1].x - samples[0].x) * 1e-5;
+        //let delta = (samples[1].x - samples[0].x) * 1e-5;
         // console.log(delta);
-        let delta;
+        /* let delta;
         let _fn;
         if (!discontY) {
           _fn = obj.parametricFnX;
@@ -1877,7 +1878,7 @@ class Utility {
           _scope.set(_indepVar, obj.upperX);
           const _upperX = math.evaluate(_fn, _scope);
           delta = (_upperX - _lowerX) * 1e-5;
-        }
+        } */
 
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
@@ -1906,455 +1907,16 @@ class Utility {
                 x = math.evaluate(obj.parametricFnY, scp);
               }
             } */
-            if (x == d) {
-              /* const ind = Math.floor(obj.numOfSamples / 2);
+            /* if (x == d) {
+               const ind = Math.floor(obj.numOfSamples / 2);
               for (let i = 1; i < samples.length; i++) {
                 if (samples[i].pos == ind) {
                   samples[ind].x = lmt;
                   samples[ind - 1].x = -1 * lmt;
                   break;
                 }
-              } */
+              } 
               break;
-            }
-            if (x > d) {
-              _scope.set(_indepVar, d - delta); //
-              //_scope.set(_indepVar, samples[n - 1].x); //
-              yVal = _parser.eval(_scope);
-              try {
-                if (n > 0) {
-                  if (
-                    discont[i][1] == "infinite" ||
-                    discont[i][1] == "essential"
-                  ) {
-                    const _sign1 = math.sign(yVal);
-                    if (math.abs(samples[n].x) === Static.LargeNumber) {
-                      samples[n].y = _sign1 * lmt;
-                    } else if (samples[n - 1].x != lowerX) {
-                      samples[n - 1].y = _sign1 * lmt;
-                    }
-
-                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
-
-                    _scope.set(_indepVar, d + delta);
-                    yVal = _parser.eval(_scope);
-
-                    // if (yVal.im) {
-                    //   samples[n].y =;
-                    // } else {
-                    if (
-                      math.abs(samples[n].x) === Static.LargeNumber &&
-                      n > 0 &&
-                      n < samples.length - 2
-                    ) {
-                      samples[n + 1].y = math.sign(yVal) * lmt;
-                    } else {
-                      samples[n].y = math.sign(yVal) * lmt;
-                    }
-                    if (
-                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
-                    ) {
-                      if (discontY === true) {
-                        const dg = nerdamer.deg(
-                          obj.parametricFnX,
-                          obj.parametric_variable
-                        );
-                        if (math.abs(dg) % 2 != 0) {
-                          samples[n].y *= -1;
-                        }
-                      }
-                    }
-
-                    n++;
-                    //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
-                    break;
-                  } else if (
-                    discont[i][1] == "removable" ||
-                    discont[i][1] == "unknown2"
-                  ) {
-                    if (discont.length > 1 && i > 0) {
-                      // if (discont[i - 1][1] == "infinite") {
-                      samples[n - 1].x = discont[i][0];
-                      samples[n - 1].y = discont[i][2];
-                      // }
-                    } else {
-                      samples[n - 1].y = discont[i][2];
-                      samples[n].y = discont[i][2];
-                    }
-                    n++;
-                    break;
-                  }
-                }
-              } catch (error) {
-                console.log(n);
-                console.log(error);
-              }
-
-              break;
-            }
-          }
-        }
-      }
-
-      if (obj && obj.turning_points && obj.turning_points.length) {
-        const _tp = obj.turning_points;
-        const discont = obj.discontinuity;
-        const tp = _tp.filter(function (item) {
-          return discont.indexOf(item[0]) === -1;
-        });
-        for (let i = 0; i < tp.length; i++) {
-          samples.push(new Misc.Point(tp[i][0], tp[i][1]));
-        }
-      }
-
-      samples = samples.filter((item, index) => {
-        return _.isFinite(samples[index].y);
-      });
-
-      samples = samples.sort(function (a, b) {
-        return a.x - b.x;
-      });
-
-      samples = samples.filter((item, index) => {
-        return samples[index].y != "#";
-      });
-
-      if (obj.parametricFnX && obj.parametricFnY) {
-        samples = samples.sort(function (a, b) {
-          return a.pos - b.pos;
-        });
-      }
-
-      if (samples.length > 1) {
-        for (let i = 1; i < samples.length; i++) {
-          if (
-            samples[i].x === -1 * Static.LargeNumber &&
-            samples[i - 1].x === Static.LargeNumber
-          ) {
-            samples[i].x *= -1;
-            samples[i - 1].x *= -1;
-          }
-          if (
-            samples[i].y === -1 * Static.LargeNumber &&
-            samples[i - 1].y === Static.LargeNumber
-          ) {
-            samples[i].y *= -1;
-            samples[i - 1].y *= -1;
-          }
-        }
-      }
-    }
-
-    var parametricFnX = obj.parametricFnX;
-    var parametricFnY = obj.parametricFnY;
-    var lowerX = obj.lowerX;
-    var upperX = obj.upperX;
-    var numOfSamples = obj.numOfSamples;
-    var indepVarIsDegree = obj.indepVarIsDegree;
-    var parametric_variable = obj.parametric_variable;
-    var indepVar = obj.variable; // || Utility.findIndepVar(fx);
-
-    let _pos = 0;
-
-    if (typeof numOfSamples === "undefined") numOfSamples = 100;
-
-    if (parametric_variable !== "t") {
-      parametricFnX = Utility.purgeAndMarkKeywords(parametricFnX);
-      while (parametricFnX.indexOf(parametric_variable) != -1)
-        parametricFnX = parametricFnX.replace(parametric_variable, "t");
-      parametricFnX = Utility.replaceKeywordMarkers(parametricFnX);
-
-      parametricFnY = Utility.purgeAndMarkKeywords(parametricFnY);
-      while (parametricFnY.indexOf(parametric_variable) != -1)
-        parametricFnY = parametricFnY.replace(parametric_variable, "t");
-      parametricFnY = Utility.replaceKeywordMarkers(parametricFnY);
-    }
-
-    if (parametricFnX.indexOf("t") == -1 && parametricFnY.indexOf("t") == -1) {
-      const pt = new Misc.Point(
-        math.evaluate(parametricFnX),
-        math.evaluate(parametricFnY)
-      );
-      pt.pos = _pos;
-      return [pt];
-    }
-
-    let parserFnX = new EvaluateExp(parametricFnX);
-    if (parserFnX.error) {
-      Utility.alert(parserFnX.errorMessage);
-      return null;
-    }
-    let parserFnY = new EvaluateExp(parametricFnY);
-    if (parserFnY.error) {
-      Utility.alert(parserFnY.errorMessage);
-      return null;
-    }
-    var samples = [];
-    var step = (upperX - lowerX) / (numOfSamples - 1);
-
-    for (var i = 0; i <= numOfSamples - 1; ++i) {
-      var tVal = lowerX + i * step;
-
-      let xVal = parserFnX.eval({ t: tVal });
-      if (!isFinite(xVal)) {
-        if (Utility.errorResponse == Utility.warn) {
-          Utility.alert(
-            `"${xVal}" is an invalid "x" parametric input or  causes a "divide by zero" error.`
-          );
-          return null;
-        } else if (Utility.errorResponse == Utility.warnIgnore) {
-          Utility.alertYesNo(
-            "Error found!!! Do you want to silently ignore errors?",
-            function (answer) {
-              if (answer == Cancel) {
-                //console.log("C");
-                return null;
-              }
-              if (answer == Yes) {
-                //console.log("Y");
-                Utility.errorResponse = Utility.silentIgnore;
-                Utility.errorResponseChanged = true;
-                obj.warnIgnoreCb && obj.warnIgnoreCb();
-                return null;
-              }
-              if (answer == No) {
-                console.log("N");
-                return null;
-              }
-              //return 1
-            }
-          );
-          samples = [];
-        } else {
-          continue;
-        }
-      }
-
-      let yVal = parserFnY.eval({ t: tVal });
-      if (!isFinite(yVal)) {
-        if (Utility.errorResponse == Utility.warn) {
-          Utility.alert(
-            `"${yVal}" is an invalid "y" parametric input or  causes a "divide by zero" error.`
-          );
-          return null;
-        } else if (Utility.errorResponse == Utility.warnIgnore) {
-          /* Utility.alertYesNo(
-            "Error found!!! Do you want to silently ignore errors?",
-            function (answer) {
-              if (answer == Cancel) {
-                //console.log("C");
-                return null;
-              }
-              if (answer == Yes) {
-                //console.log("Y");
-                Utility.errorResponse = Utility.silentIgnore;
-                Utility.errorResponseChanged = true;
-                obj.warnIgnoreCb && obj.warnIgnoreCb();
-                return null;
-              }
-              if (answer == No) {
-                console.log("N");
-                return null;
-              }
-              //return 1
-            }
-          );
-          samples = []; */
-        } else {
-          continue;
-        }
-      }
-
-      const pt = new Misc.Point(xVal, yVal, _pos);
-      //pt.pos = _pos;
-      _pos++;
-      samples.push(pt);
-      /* if (samples.length == 0) {
-        samples.push(new Misc.Point(xVal, yVal));
-      } else {
-        if (
-          samples[samples.length - 1].x !== xVal &&
-          samples[samples.length - 1].y !== yVal
-        )
-          samples.push(new Misc.Point(xVal, yVal));
-      } */
-    }
-    // samples = _.uniq(samples, function (e) {
-    //   return e.x && e.y;
-    // });
-    handleDiscontinuityTurningPoints(samples, false);
-    if (obj.discontinuityY && obj.discontinuityY.length) {
-      //handle y discontinuities
-      samples = samples.map((item, index) => {
-        const temp = item.x;
-        item.x = item.y;
-        item.y = temp;
-        return item;
-      });
-      handleDiscontinuityTurningPoints(samples, true);
-      samples = samples.map((item, index) => {
-        const temp = item.x;
-        item.x = item.y;
-        item.y = temp;
-        return item;
-      });
-
-      // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
-      // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
-    }
-
-    return samples;
-  }
-
-  /**
-   * Make data for a Curve or Spectrocurve
-   * @param {object} obj data required by  makeSamples()
-   *
-   * obj has the following properties:
-   * - fx - The function e.g. "x^2 + 2x + 1"
-   * - lowerX - lower x limit e.g.: -10
-   * - upperX - upper x limit e.g.: 10
-   * - lowerY - lower y limit e.g.: -10 (only valid for Spectrocurve)
-   * - upperY - upper y limit e.g.: -10 (only valid for Spectrocurve)
-   * - numOfSamples - Number of points
-   * - indepVar - The character representing the x independent variable. If this property is not provided, makeSamples() try to determine the independent variable.
-   * - indepVarY - The character representing the y independent variable.
-   * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
-   */
-  static makeSamples(obj, limits_x = null) {
-    function handleDiscontinuityTurningPoints(samples, discontY = false) {
-      if (
-        obj.discontinuity.length ||
-        (obj.discontinuityY && obj.discontinuityY.length)
-      ) {
-        // samples = samples.sort((a, b) => a.x - b.x);
-        let discont;
-        if (!discontY) {
-          discont = structuredClone(obj.discontinuity);
-        } else {
-          discont = structuredClone(obj.discontinuityY);
-        }
-
-        if (obj.parametricFnX && obj.parametricFnY) {
-          samples = samples.sort((a, b) => a.x - b.x);
-        }
-
-        // const lmt_l = samples[0].x;
-        // const lmt_u = samples[samples.length - 1].x;
-        const lmt_l = obj.lowerX;
-        const lmt_u = obj.upperX;
-        const step = (samples[1].x - samples[0].x) * 1e-20;
-        //const lmt = 1e35;
-        const lmt = Static.LargeNumber;
-
-        //Ensure discontinuities are in range
-        for (let i = 0; i < discont.length; i++) {
-          if (
-            Utility.adjustForDecimalPlaces(discont[i][0], 4) <
-              Utility.adjustForDecimalPlaces(lmt_l, 4) ||
-            Utility.adjustForDecimalPlaces(discont[i][0], 4) >
-              Utility.adjustForDecimalPlaces(lmt_u, 4)
-          ) {
-            discont.splice(i, 1);
-            i--;
-          }
-        }
-        if (!discontY) {
-          obj.discontinuity = structuredClone(discont);
-        } else {
-          obj.discontinuityY = structuredClone(discont);
-        }
-
-        //on the left boundary
-        if (
-          discont &&
-          discont.length &&
-          Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
-            Utility.adjustForDecimalPlaces(lowerX, 4) &&
-          Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
-            Utility.adjustForDecimalPlaces(lowerX, 4)
-        ) {
-          try {
-            if (
-              discont &&
-              discont.length &&
-              (discont[0][1] === "infinite" || discont[0][1] === "essential")
-            ) {
-              samples[0].y = math.sign(samples[0].y) * lmt;
-            }
-          } catch (error) {
-            console.log(error);
-          }
-          discont[0][0] = "#";
-        }
-        //on the right boundary
-        if (
-          discont &&
-          discont.length &&
-          discont[discont.length - 1][0] <= upperX &&
-          Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
-            Utility.adjustForDecimalPlaces(upperX, 4)
-        ) {
-          try {
-            if (discont[0][1] === "infinite" || discont[0][1] === "essential") {
-              samples[samples.length - 1].y =
-                math.sign(samples[samples.length - 1].y) * lmt;
-            }
-          } catch (error) {
-            console.log(error);
-          }
-          discont[discont.length - 1][0] = "#";
-        }
-
-        let _parser;
-        let _indepVar;
-        if (obj.parametricFnX && obj.parametricFnY) {
-          if (!discontY) {
-            //_parser = new EvaluateExp(obj.parametricFnY);
-
-            _parser = new EvaluateExp(obj.discontinuityFn);
-          } else {
-            //_parser = new EvaluateExp(obj.parametricFnX);
-            _parser = new EvaluateExp(obj.discontinuityFn_y);
-          }
-
-          _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
-        } else {
-          _parser = new EvaluateExp(obj.fx);
-          _indepVar = obj.variable; // || Utility.findIndepVar(obj.fx);
-        }
-
-        let n = 0;
-        const _scope = new Map();
-        const step_ = samples[1].x - samples[0].x;
-        //const delta = step_ * 1e-5;
-        let delta = (samples[1].x - samples[0].x) * 1e-5;
-        // console.log(delta);
-        for (let i = 0; i < discont.length; i++) {
-          // if (discont[i][1] !== "infinite") {
-          //   continue;
-          // }
-          if (discont && discont.length && discont[i][1] == "jump") {
-            continue;
-          }
-          const d = discont[i][0];
-          if (d == "#") {
-            continue;
-          }
-
-          const scp = new Map();
-          for (; n < samples.length; n++) {
-            // if (n > 0) {
-            //   delta = (samples[n].x - samples[n - 1].x) * 1e-5;
-            // }
-            let x = samples[n].x;
-            /* scp.set(_indepVar, x);
-            if (obj.parametricFnX && obj.parametricFnY) {
-              if (!discontY) {
-                x = math.evaluate(obj.parametricFnX, scp);
-              } else {
-                x = math.evaluate(obj.parametricFnY, scp);
-              }
             } */
             if (x > d) {
               _scope.set(_indepVar, d - delta);
@@ -2366,9 +1928,7 @@ class Utility {
                     discont[i][1] == "essential"
                   ) {
                     const _sign1 = math.sign(yVal);
-                    if (math.abs(samples[n].x) === Static.LargeNumber) {
-                      samples[n].y = _sign1 * lmt;
-                    } else if (samples[n - 1].x != lowerX) {
+                    if (samples[n - 1].x != lowerX) {
                       samples[n - 1].y = _sign1 * lmt;
                     }
 
@@ -2376,24 +1936,10 @@ class Utility {
 
                     _scope.set(_indepVar, d + delta);
                     yVal = _parser.eval(_scope);
-
                     // if (yVal.im) {
                     //   samples[n].y =;
                     // } else {
-                    if (
-                      math.abs(samples[n].x) === Static.LargeNumber &&
-                      n > 0 &&
-                      n < samples.length - 2
-                    ) {
-                      samples[n + 1].y = math.sign(yVal) * lmt;
-                    } else {
-                      samples[n].y = math.sign(yVal) * lmt;
-                    }
-                    if (
-                      math.sign(samples[n].y) === math.sign(samples[n - 1].y)
-                    ) {
-                      samples[n].y *= -1;
-                    }
+                    samples[n].y = math.sign(yVal) * lmt;
                     //}
                     n++;
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
@@ -2455,27 +2001,477 @@ class Utility {
         });
       }
 
-      // if (samples.length > 1) {
-      //   for (let i = 1; i < samples.length; i++) {
-      //     if (
-      //       samples[i].x === -1 * Static.LargeNumber &&
-      //       samples[i - 1].x === Static.LargeNumber
-      //     ) {
-      //       const temp = samples[i];
-      //       samples[i] = samples[i - 1];
-      //       samples[i - 1] = temp;
-      //     }
-      //     if (
-      //       samples[i].y === -1 * Static.LargeNumber &&
-      //       samples[i - 1].y === Static.LargeNumber
-      //     ) {
-      //       const temp = samples[i];
-      //       samples[i] = samples[i - 1];
-      //       samples[i - 1] = temp;
-      //     }
-      //   }
-      // }
+      /* if (samples.length > 1) {
+        for (let i = 1; i < samples.length; i++) {
+          if (
+            samples[i].x === -1 * Static.LargeNumber &&
+            samples[i - 1].x === Static.LargeNumber
+          ) {
+            samples[i].x *= -1;
+            samples[i - 1].x *= -1;
+          }
+          if (
+            samples[i].y === -1 * Static.LargeNumber &&
+            samples[i - 1].y === Static.LargeNumber
+          ) {
+            samples[i].y *= -1;
+            samples[i - 1].y *= -1;
+          }
+        }
+      } */
     }
+
+    var parametricFnX = obj.parametricFnX;
+    var parametricFnY = obj.parametricFnY;
+    var lowerX = obj.lowerX;
+    var upperX = obj.upperX;
+    var numOfSamples = obj.numOfSamples;
+    var indepVarIsDegree = obj.indepVarIsDegree;
+    var parametric_variable = obj.parametric_variable;
+    var indepVar = obj.variable; // || Utility.findIndepVar(fx);
+
+    let _pos = 0;
+
+    if (
+      (obj.discontinuity.length ||
+        (obj.discontinuityY && obj.discontinuityY.length)) &&
+      Static.number_of_points_auto /*&&
+      fx   &&
+      Utility.isPeriodic(fx) */
+    ) {
+      let s = Static.min_discontinuity_samples;
+      if (
+        Utility.isPeriodic(obj.parametricFnX) ||
+        Utility.isPeriodic(obj.parametricFnY)
+      ) {
+        s = s * 20;
+      }
+      //numOfSamples = Math.round((numOfSamples *= 2));
+      numOfSamples = Math.max(numOfSamples, s);
+    }
+
+    if (typeof numOfSamples === "undefined") numOfSamples = 100;
+
+    if (parametric_variable !== "t") {
+      parametricFnX = Utility.purgeAndMarkKeywords(parametricFnX);
+      while (parametricFnX.indexOf(parametric_variable) != -1)
+        parametricFnX = parametricFnX.replace(parametric_variable, "t");
+      parametricFnX = Utility.replaceKeywordMarkers(parametricFnX);
+
+      parametricFnY = Utility.purgeAndMarkKeywords(parametricFnY);
+      while (parametricFnY.indexOf(parametric_variable) != -1)
+        parametricFnY = parametricFnY.replace(parametric_variable, "t");
+      parametricFnY = Utility.replaceKeywordMarkers(parametricFnY);
+    }
+
+    if (parametricFnX.indexOf("t") == -1 && parametricFnY.indexOf("t") == -1) {
+      const pt = new Misc.Point(
+        math.evaluate(parametricFnX),
+        math.evaluate(parametricFnY),
+      );
+      pt.pos = _pos;
+      return [pt];
+    }
+
+    let parserFnX = new EvaluateExp(parametricFnX);
+    if (parserFnX.error) {
+      Utility.alert(parserFnX.errorMessage);
+      return null;
+    }
+    let parserFnY = new EvaluateExp(parametricFnY);
+    if (parserFnY.error) {
+      Utility.alert(parserFnY.errorMessage);
+      return null;
+    }
+    var samples = [];
+    var step = (upperX - lowerX) / (numOfSamples - 1);
+
+    for (var i = 0; i <= numOfSamples - 1; ++i) {
+      var tVal = lowerX + i * step;
+
+      let xVal = parserFnX.eval({ t: tVal });
+      if (!isFinite(xVal)) {
+        if (Utility.errorResponse == Utility.warn) {
+          Utility.alert(
+            `"${xVal}" is an invalid "x" parametric input or  causes a "divide by zero" error.`,
+          );
+          return null;
+        } else if (Utility.errorResponse == Utility.warnIgnore) {
+          Utility.alertYesNo(
+            "Error found!!! Do you want to silently ignore errors?",
+            function (answer) {
+              if (answer == Cancel) {
+                //console.log("C");
+                return null;
+              }
+              if (answer == Yes) {
+                //console.log("Y");
+                Utility.errorResponse = Utility.silentIgnore;
+                Utility.errorResponseChanged = true;
+                obj.warnIgnoreCb && obj.warnIgnoreCb();
+                return null;
+              }
+              if (answer == No) {
+                console.log("N");
+                return null;
+              }
+              //return 1
+            },
+          );
+          samples = [];
+        } else {
+          continue;
+        }
+      }
+
+      let yVal = parserFnY.eval({ t: tVal });
+      if (!isFinite(yVal)) {
+        if (Utility.errorResponse == Utility.warn) {
+          Utility.alert(
+            `"${yVal}" is an invalid "y" parametric input or  causes a "divide by zero" error.`,
+          );
+          return null;
+        } else if (Utility.errorResponse == Utility.warnIgnore) {
+          /* Utility.alertYesNo(
+            "Error found!!! Do you want to silently ignore errors?",
+            function (answer) {
+              if (answer == Cancel) {
+                //console.log("C");
+                return null;
+              }
+              if (answer == Yes) {
+                //console.log("Y");
+                Utility.errorResponse = Utility.silentIgnore;
+                Utility.errorResponseChanged = true;
+                obj.warnIgnoreCb && obj.warnIgnoreCb();
+                return null;
+              }
+              if (answer == No) {
+                console.log("N");
+                return null;
+              }
+              //return 1
+            }
+          );
+          samples = []; */
+        } else {
+          continue;
+        }
+      }
+
+      const pt = new Misc.Point(xVal, yVal, _pos);
+      //pt.pos = _pos;
+      _pos++;
+      samples.push(pt);
+      /* if (samples.length == 0) {
+        samples.push(new Misc.Point(xVal, yVal));
+      } else {
+        if (
+          samples[samples.length - 1].x !== xVal &&
+          samples[samples.length - 1].y !== yVal
+        )
+          samples.push(new Misc.Point(xVal, yVal));
+      } */
+    }
+    // samples = _.uniq(samples, function (e) {
+    //   return e.x && e.y;
+    // });
+    handleDiscontinuityTurningPoints(samples, false);
+    if (obj.discontinuityY && obj.discontinuityY.length) {
+      //handle y discontinuities
+      samples = samples.map((item, index) => {
+        const temp = item.x;
+        item.x = item.y;
+        item.y = temp;
+        return item;
+      });
+      samples = samples.sort((a, b) => a.x - b.x);
+      handleDiscontinuityTurningPoints(samples, true);
+      samples = samples.map((item, index) => {
+        const temp = item.x;
+        item.x = item.y;
+        item.y = temp;
+        return item;
+      });
+      samples = samples.sort((a, b) => a.pos - b.pos);
+
+      // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
+      // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
+    }
+
+    return samples;
+  }
+
+  /**
+   * Make data for a Curve or Spectrocurve
+   * @param {object} obj data required by  makeSamples()
+   *
+   * obj has the following properties:
+   * - fx - The function e.g. "x^2 + 2x + 1"
+   * - lowerX - lower x limit e.g.: -10
+   * - upperX - upper x limit e.g.: 10
+   * - lowerY - lower y limit e.g.: -10 (only valid for Spectrocurve)
+   * - upperY - upper y limit e.g.: -10 (only valid for Spectrocurve)
+   * - numOfSamples - Number of points
+   * - indepVar - The character representing the x independent variable. If this property is not provided, makeSamples() try to determine the independent variable.
+   * - indepVarY - The character representing the y independent variable.
+   * @returns {object | Array<Misc.Point>} An oject containing data for a Spectrocurve (e.g.: {data: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...], zLimits: { min: 0, max: 20 }}) or an array of points for a Curve (e.g.: [new Mis.Point(0, 1), new Mis.Point(10, -21), ...])
+   */
+  static makeSamples(obj, limits_x = null) {
+    // function handleDiscontinuityTurningPoints(samples, discontY = false) {
+    //   if (
+    //     obj.discontinuity.length ||
+    //     (obj.discontinuityY && obj.discontinuityY.length)
+    //   ) {
+    //     // samples = samples.sort((a, b) => a.x - b.x);
+    //     let discont;
+    //     if (!discontY) {
+    //       discont = structuredClone(obj.discontinuity);
+    //     } else {
+    //       discont = structuredClone(obj.discontinuityY);
+    //     }
+
+    //     if (obj.parametricFnX && obj.parametricFnY) {
+    //       samples = samples.sort((a, b) => a.x - b.x);
+    //     }
+
+    //     // const lmt_l = samples[0].x;
+    //     // const lmt_u = samples[samples.length - 1].x;
+    //     const lmt_l = obj.lowerX;
+    //     const lmt_u = obj.upperX;
+    //     const step = (samples[1].x - samples[0].x) * 1e-20;
+    //     //const lmt = 1e35;
+    //     const lmt = Static.LargeNumber;
+
+    //     //Ensure discontinuities are in range
+    //     for (let i = 0; i < discont.length; i++) {
+    //       if (
+    //         Utility.adjustForDecimalPlaces(discont[i][0], 4) <
+    //           Utility.adjustForDecimalPlaces(lmt_l, 4) ||
+    //         Utility.adjustForDecimalPlaces(discont[i][0], 4) >
+    //           Utility.adjustForDecimalPlaces(lmt_u, 4)
+    //       ) {
+    //         discont.splice(i, 1);
+    //         i--;
+    //       }
+    //     }
+    //     if (!discontY) {
+    //       obj.discontinuity = structuredClone(discont);
+    //     } else {
+    //       obj.discontinuityY = structuredClone(discont);
+    //     }
+
+    //     //on the left boundary
+    //     if (
+    //       discont &&
+    //       discont.length &&
+    //       Utility.adjustForDecimalPlaces(discont[0][0], 4) >=
+    //         Utility.adjustForDecimalPlaces(lowerX, 4) &&
+    //       Utility.adjustForDecimalPlaces(discont[0][0], 4) ===
+    //         Utility.adjustForDecimalPlaces(lowerX, 4)
+    //     ) {
+    //       try {
+    //         if (
+    //           discont &&
+    //           discont.length &&
+    //           (discont[0][1] === "infinite" || discont[0][1] === "essential")
+    //         ) {
+    //           samples[0].y = math.sign(samples[0].y) * lmt;
+    //         }
+    //       } catch (error) {
+    //         console.log(error);
+    //       }
+    //       discont[0][0] = "#";
+    //     }
+    //     //on the right boundary
+    //     if (
+    //       discont &&
+    //       discont.length &&
+    //       discont[discont.length - 1][0] <= upperX &&
+    //       Utility.adjustForDecimalPlaces(discont[discont.length - 1][0], 4) ===
+    //         Utility.adjustForDecimalPlaces(upperX, 4)
+    //     ) {
+    //       try {
+    //         if (discont[0][1] === "infinite" || discont[0][1] === "essential") {
+    //           samples[samples.length - 1].y =
+    //             math.sign(samples[samples.length - 1].y) * lmt;
+    //         }
+    //       } catch (error) {
+    //         console.log(error);
+    //       }
+    //       discont[discont.length - 1][0] = "#";
+    //     }
+
+    //     let _parser;
+    //     let _indepVar;
+    //     if (obj.parametricFnX && obj.parametricFnY) {
+    //       if (!discontY) {
+    //         //_parser = new EvaluateExp(obj.parametricFnY);
+
+    //         _parser = new EvaluateExp(obj.discontinuityFn);
+    //       } else {
+    //         //_parser = new EvaluateExp(obj.parametricFnX);
+    //         _parser = new EvaluateExp(obj.discontinuityFn_y);
+    //       }
+
+    //       _indepVar = obj.parametric_variable; // || Utility.findIndepVar(obj.fx);
+    //     } else {
+    //       _parser = new EvaluateExp(obj.fx);
+    //       _indepVar = obj.variable; // || Utility.findIndepVar(obj.fx);
+    //     }
+
+    //     let n = 0;
+    //     const _scope = new Map();
+    //     const step_ = samples[1].x - samples[0].x;
+    //     //const delta = step_ * 1e-5;
+    //     let delta = (samples[1].x - samples[0].x) * 1e-5;
+    //     // console.log(delta);
+    //     for (let i = 0; i < discont.length; i++) {
+    //       // if (discont[i][1] !== "infinite") {
+    //       //   continue;
+    //       // }
+    //       if (discont && discont.length && discont[i][1] == "jump") {
+    //         continue;
+    //       }
+    //       const d = discont[i][0];
+    //       if (d == "#") {
+    //         continue;
+    //       }
+
+    //       const scp = new Map();
+    //       for (; n < samples.length; n++) {
+    //         // if (n > 0) {
+    //         //   delta = (samples[n].x - samples[n - 1].x) * 1e-5;
+    //         // }
+    //         let x = samples[n].x;
+    //         /* scp.set(_indepVar, x);
+    //         if (obj.parametricFnX && obj.parametricFnY) {
+    //           if (!discontY) {
+    //             x = math.evaluate(obj.parametricFnX, scp);
+    //           } else {
+    //             x = math.evaluate(obj.parametricFnY, scp);
+    //           }
+    //         } */
+    //         if (x > d) {
+    //           _scope.set(_indepVar, d - delta);
+    //           yVal = _parser.eval(_scope);
+    //           try {
+    //             if (n > 0) {
+    //               if (
+    //                 discont[i][1] == "infinite" ||
+    //                 discont[i][1] == "essential"
+    //               ) {
+    //                 const _sign1 = math.sign(yVal);
+    //                 if (math.abs(samples[n].x) === Static.LargeNumber) {
+    //                   samples[n].y = _sign1 * lmt;
+    //                 } else if (samples[n - 1].x != lowerX) {
+    //                   samples[n - 1].y = _sign1 * lmt;
+    //                 }
+
+    //                 //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+
+    //                 _scope.set(_indepVar, d + delta);
+    //                 yVal = _parser.eval(_scope);
+
+    //                 // if (yVal.im) {
+    //                 //   samples[n].y =;
+    //                 // } else {
+    //                 if (
+    //                   math.abs(samples[n].x) === Static.LargeNumber &&
+    //                   n > 0 &&
+    //                   n < samples.length - 2
+    //                 ) {
+    //                   samples[n + 1].y = math.sign(yVal) * lmt;
+    //                 } else {
+    //                   samples[n].y = math.sign(yVal) * lmt;
+    //                 }
+    //                 if (
+    //                   math.sign(samples[n].y) === math.sign(samples[n - 1].y)
+    //                 ) {
+    //                   samples[n].y *= -1;
+    //                 }
+    //                 //}
+    //                 n++;
+    //                 //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
+    //                 break;
+    //               } else if (
+    //                 discont[i][1] == "removable" ||
+    //                 discont[i][1] == "unknown2"
+    //               ) {
+    //                 if (discont.length > 1 && i > 0) {
+    //                   // if (discont[i - 1][1] == "infinite") {
+    //                   samples[n - 1].x = discont[i][0];
+    //                   samples[n - 1].y = discont[i][2];
+    //                   // }
+    //                 } else {
+    //                   samples[n - 1].y = discont[i][2];
+    //                   samples[n].y = discont[i][2];
+    //                 }
+    //                 n++;
+    //                 break;
+    //               }
+    //             }
+    //           } catch (error) {
+    //             console.log(n);
+    //             console.log(error);
+    //           }
+
+    //           break;
+    //         }
+    //       }
+    //     }
+    //   }
+
+    //   if (obj && obj.turning_points && obj.turning_points.length) {
+    //     const _tp = obj.turning_points;
+    //     const discont = obj.discontinuity;
+    //     const tp = _tp.filter(function (item) {
+    //       return discont.indexOf(item[0]) === -1;
+    //     });
+    //     for (let i = 0; i < tp.length; i++) {
+    //       samples.push(new Misc.Point(tp[i][0], tp[i][1]));
+    //     }
+    //   }
+
+    //   samples = samples.filter((item, index) => {
+    //     return _.isFinite(samples[index].y);
+    //   });
+
+    //   samples = samples.sort(function (a, b) {
+    //     return a.x - b.x;
+    //   });
+
+    //   samples = samples.filter((item, index) => {
+    //     return samples[index].y != "#";
+    //   });
+
+    //   if (obj.parametricFnX && obj.parametricFnY) {
+    //     samples = samples.sort(function (a, b) {
+    //       return a.pos - b.pos;
+    //     });
+    //   }
+
+    //   // if (samples.length > 1) {
+    //   //   for (let i = 1; i < samples.length; i++) {
+    //   //     if (
+    //   //       samples[i].x === -1 * Static.LargeNumber &&
+    //   //       samples[i - 1].x === Static.LargeNumber
+    //   //     ) {
+    //   //       const temp = samples[i];
+    //   //       samples[i] = samples[i - 1];
+    //   //       samples[i - 1] = temp;
+    //   //     }
+    //   //     if (
+    //   //       samples[i].y === -1 * Static.LargeNumber &&
+    //   //       samples[i - 1].y === Static.LargeNumber
+    //   //     ) {
+    //   //       const temp = samples[i];
+    //   //       samples[i] = samples[i - 1];
+    //   //       samples[i - 1] = temp;
+    //   //     }
+    //   //   }
+    //   // }
+    // }
     //////////////
     function handleError(xVal) {
       if (Utility.errorResponse == Utility.warn) {
@@ -2486,7 +2482,7 @@ class Utility {
             xVal +
             " is an invalid input or f(" +
             xVal +
-            ') causes a "divide by zero" error.'
+            ') causes a "divide by zero" error.',
         );
         return null;
       } else if (Utility.errorResponse == Utility.warnIgnore) {
@@ -2511,7 +2507,7 @@ class Utility {
               return null;
             }
             //return 1
-          }
+          },
         );
 
         samples = [];
@@ -2604,7 +2600,7 @@ class Utility {
       this.alert(
         `Grapher tried but failed to get an inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>the polynomial is too complex for SymPy (the Grapher's solver).</b>. The inverse <b>relation</b> is plotted.`,
         null,
-        "failedInverse"
+        "failedInverse",
       );
       // this.alert(
       //   "Grapher tried but failed to get the inverse function. This happens if an <b>inverse of the function does not exist</b> or the <b>order of the polynomial is greater than 3</b>. Grapher, as of now, does not support finding the inverse of a polynomial with an order greater than 3.",
@@ -2788,7 +2784,7 @@ class Utility {
               xVal +
               "," +
               yVal +
-              '): yields infinity. Probably a "divide by zero" error. Try changing the limits or adjusting number of points.'
+              '): yields infinity. Probably a "divide by zero" error. Try changing the limits or adjusting number of points.',
           );
           return null;
         } else if (Utility.errorResponse == Utility.warnIgnore) {
@@ -2813,7 +2809,7 @@ class Utility {
                 return null;
               }
               //return 1
-            }
+            },
           );
           samples = [];
           // break;
@@ -3274,7 +3270,7 @@ class Utility {
             .simplify(
               solution[i].toString().replaceAll("abs", "1*"),
               {},
-              { exactFractions: false }
+              { exactFractions: false },
             )
             .toString();
           if (s_sol.indexOf("abs") !== -1 || s_sol.indexOf("i") !== -1) {
@@ -3301,7 +3297,7 @@ class Utility {
               math
                 .simplify(sol, {}, { exactFractions: false })
                 .toString()
-                .replaceAll(" ", "")
+                .replaceAll(" ", ""),
             );
           } catch (error) {
             console.log(error);
@@ -3336,7 +3332,7 @@ class Utility {
     variable,
     samples,
     decimalPlacesX = 100,
-    decimalPlacesY = 100
+    decimalPlacesY = 100,
   ) {
     if (!variable || fn.indexOf(variable) == -1) {
       return [];
@@ -3394,9 +3390,9 @@ class Utility {
               Utility.adjustForDecimalPlaces(xVal, decimalPlacesX),
               Utility.adjustForDecimalPlaces(
                 math.evaluate(m_fn, { x: xVal }),
-                decimalPlacesY
-              )
-            )
+                decimalPlacesY,
+              ),
+            ),
           );
         }
       } catch (error) {
@@ -3491,7 +3487,7 @@ class Utility {
     samples,
     curve = null,
     decimalPlacesX = 200,
-    decimalPlacesY = 400
+    decimalPlacesY = 400,
   ) {
     let result = [];
     if (samples.length < 2) {
@@ -3586,7 +3582,7 @@ class Utility {
     samples,
     curve = null,
     decimalPlacesX = 200,
-    decimalPlacesY = 400
+    decimalPlacesY = 400,
   ) {
     let result = [];
     if (samples.length < 2) {
@@ -3668,7 +3664,7 @@ class Utility {
           endPoint1Line1,
           endPoint2Line1,
           endPoint1Line2,
-          endPoint2Line2
+          endPoint2Line2,
         );
       } catch (error) {
         console.log(error);
@@ -3905,7 +3901,7 @@ class Utility {
     ) {
       operand = operand.substring(
         operand.indexOf("(") + 1,
-        operand.lastIndexOf(")")
+        operand.lastIndexOf(")"),
       );
       unmodifiedOperand = `(${operand})`;
     }
@@ -4034,7 +4030,7 @@ class Utility {
 
       exp = exp.replace(
         keyword + operand,
-        "(1/(" + replacement + operand + "))"
+        "(1/(" + replacement + operand + "))",
       );
     }
     return exp;
@@ -4056,7 +4052,7 @@ class Utility {
       let operand = obj.operand;
       exp = exp.replace(
         keyword + operand,
-        "((" + replacement1 + operand + ")/(" + replacement2 + operand + "))"
+        "((" + replacement1 + operand + ")/(" + replacement2 + operand + "))",
       );
     }
     return exp;
@@ -4141,7 +4137,7 @@ class Utility {
     variable = "x",
     initialGuess = 0,
     tolerance = 1e-10,
-    maxIterations = 100
+    maxIterations = 100,
   ) {
     let x = initialGuess;
     for (let i = 0; i < maxIterations; i++) {
@@ -4210,11 +4206,11 @@ class Utility {
 
     x = Utility.adjustForDecimalPlaces(x, 4);
     let fx1 = Utility.adjustForDecimalPlaces(
-      math.evaluate(expression, { x: x - epsilon * epsilon })
+      math.evaluate(expression, { x: x - epsilon * epsilon }),
     );
     if (!math.isNumeric(fx1)) {
       fx1 = Utility.adjustForDecimalPlaces(
-        math.evaluate(expression, { x: x + epsilon * epsilon })
+        math.evaluate(expression, { x: x + epsilon * epsilon }),
       );
     }
 
@@ -4247,25 +4243,41 @@ class Utility {
         //   turningPoints: [],
         //   period: null,
         // }; //1/x
-        // if (!this.first) {
-        //   this.first = true;
-        //   return {
-        //     //right
-        //     discontinuities: [[0, "essential"]],
-        //     turningPoints: [],
-        //     period: null,
-        //   }; //1/x
-        // } else {
-        //   //left
-        //   this.first = false;
-        //   return {
-        //     discontinuities: [
-        //       /* [0, "essential"] */
-        //     ],
-        //     turningPoints: [],
-        //     period: null,
-        //   };
-        // }
+        if (!this.first) {
+          this.first = true;
+          return {
+            //right
+            discontinuities: [
+              //[0, "essential"],
+              /* [-3 * Math.PI, "essential"],
+              [-2 * Math.PI, "essential"],
+              [-Math.PI, "essential"],
+              [0.0, "essential"],
+              [Math.PI, "essential"],
+              [2 * Math.PI, "essential"],
+              [3 * Math.PI, "essential"], */
+            ],
+            turningPoints: [],
+            period: null,
+          }; //1/x
+        } else {
+          //left
+          this.first = false;
+          return {
+            discontinuities: [
+              //[0, "essential"],
+              [-3 * Math.PI, "essential"],
+              [-2 * Math.PI, "essential"],
+              [-Math.PI, "essential"],
+              [0.0, "essential"],
+              [Math.PI, "essential"],
+              [2 * Math.PI, "essential"],
+              [3 * Math.PI, "essential"],
+            ],
+            turningPoints: [],
+            period: null,
+          };
+        }
         // return {
         //   discontinuities: [
         //     [-3.22, "removable"],
@@ -5131,7 +5143,7 @@ class Utility {
       // Number of digits right of decimal point.
       (match[1] ? match[1].length : 0) -
         // Adjust for scientific notation.
-        (match[2] ? +match[2] : 0)
+        (match[2] ? +match[2] : 0),
     );
   }
 
@@ -5550,7 +5562,7 @@ class Utility {
           return resolve(Utility.res);
         },
         type,
-        doNotShowOptionId
+        doNotShowOptionId,
       );
     });
   }
@@ -5591,7 +5603,7 @@ class Utility {
       ? Utility.mRgb(
           parseInt(result[1], 16),
           parseInt(result[2], 16),
-          parseInt(result[3], 16)
+          parseInt(result[3], 16),
         )
       : null;
   }
@@ -5834,7 +5846,7 @@ class Utility {
           }
         } else {
           alert(
-            "The aplication is attempting to use too small a step in the trapezoidial rule."
+            "The aplication is attempting to use too small a step in the trapezoidial rule.",
           );
         }
         return Static.total_volume;
@@ -5848,7 +5860,7 @@ class Utility {
         }
       } else {
         alert(
-          "The aplication is attempted to use too small a step in the trapezoidial rule."
+          "The aplication is attempted to use too small a step in the trapezoidial rule.",
         );
       }
 
@@ -6196,7 +6208,7 @@ class Utility {
       while (str.indexOf(Utility.keywordMarkers[i].marker) != -1) {
         str = str.replace(
           Utility.keywordMarkers[i].marker,
-          Utility.keywordMarkers[i].keyword
+          Utility.keywordMarkers[i].keyword,
         );
         // console.log("replaceKey");
       }
@@ -6233,7 +6245,7 @@ class Utility {
       while (str.indexOf(Utility.trigKeywordMarkers[i].marker) != -1) {
         str = str.replace(
           Utility.trigKeywordMarkers[i].marker,
-          Utility.trigKeywordMarkers[i].keyword
+          Utility.trigKeywordMarkers[i].keyword,
         );
         // console.log("replaceKey");
       }
@@ -6677,7 +6689,7 @@ class Utility {
         let operand2 = operandsArr[1];
         str = str.replace(
           `frac${operand1}${operand2}`,
-          `${operand1}/${operand2}`
+          `${operand1}/${operand2}`,
         );
         index = str.indexOf("frac");
       }
@@ -6849,7 +6861,7 @@ class Utility {
     upperLimit,
     numOfPoints,
     variable,
-    plot
+    plot,
   ) {
     let str = relationFn;
     const mf = $("#fnDlg_function")[0];
@@ -6877,7 +6889,7 @@ class Utility {
         lowerLimit,
         upperLimit,
         (upperLimit - lowerLimit) / numOfPoints,
-        true
+        true,
       );
     } catch (error) {
       console.log(error);
@@ -6893,7 +6905,7 @@ class Utility {
       }
       Utility.displayErrorMessage(
         mf,
-        `Tried but failed to plot inverse relation. Cannot handle multiple inverse declaration, ${decStr}.`
+        `Tried but failed to plot inverse relation. Cannot handle multiple inverse declaration, ${decStr}.`,
       );
       return;
     }
@@ -6901,7 +6913,7 @@ class Utility {
     if (dec !== relationFn) {
       Utility.displayErrorMessage(
         mf,
-        `Tried but failed to plot inverse relation. Found ${relationFn}. Expected ${dec}.`
+        `Tried but failed to plot inverse relation. Found ${relationFn}. Expected ${dec}.`,
       );
       return;
     }
@@ -6910,13 +6922,13 @@ class Utility {
       let _dec = dec.replace(arg, variable);
       Utility.displayWarnMessage(
         mf,
-        `Tried but failed to plot inverse relation. Unable to resolve independent variable. Found ${relationFn}. Expected ${_dec}.`
+        `Tried but failed to plot inverse relation. Unable to resolve independent variable. Found ${relationFn}. Expected ${_dec}.`,
       );
       return;
     }
 
     let m_defn = plot.defines.getDefine(
-      dec.replace("^(-1)", "").replace(arg, variable)
+      dec.replace("^(-1)", "").replace(arg, variable),
     );
     //m_defn = m_defn.replaceAll(variable, `(${arg})`);
     let p;
@@ -7027,7 +7039,7 @@ class Utility {
         !Utility.mFuzzyCompare(
           Utility.slope(data[i - 1], data[i]),
           testSlope,
-          eps
+          eps,
         )
       ) {
         return exp;
@@ -7036,7 +7048,7 @@ class Utility {
 
     return Utility.linearEquationFromPoints(
       data[data.length - 1],
-      data[0]
+      data[0],
     ).replaceAll("x", variable);
   }
 
@@ -7133,7 +7145,7 @@ class Utility {
     exp,
     variable = "x",
     otherSide = null,
-    dependentVariable = null
+    dependentVariable = null,
   ) {
     if (
       dependentVariable &&
@@ -7147,7 +7159,7 @@ class Utility {
     }
     if (exp.indexOf("=") !== -1) {
       throw new Error(
-        "Expected an expression as first argument. Got an equation."
+        "Expected an expression as first argument. Got an equation.",
       );
     }
     if (
@@ -7216,7 +7228,7 @@ class Utility {
         ) {
           result = result.replace(
             `${prefix}^${obj.operand[0]}`,
-            `(${prefix}^${obj.operand[0]})`
+            `(${prefix}^${obj.operand[0]})`,
           );
           bracketAdded = true;
         }
@@ -7233,11 +7245,11 @@ class Utility {
             const oprnd = Utility.getOperand(
               result,
               prefix + "^",
-              result.indexOf(prefix + "^")
+              result.indexOf(prefix + "^"),
             );
             result = result.replace(
               `${prefix}^${oprnd.operand}`,
-              `(${prefix}(${oprnd.operand}))#${obj.operand}` //
+              `(${prefix}(${oprnd.operand}))#${obj.operand}`, //
             );
           }
         }
@@ -7250,7 +7262,7 @@ class Utility {
           obj = Utility.getOperand(
             result,
             prefix + "^" + operandOfExponent,
-            index - prefix.length + 1
+            index - prefix.length + 1,
           );
           if (!obj) {
             Static.errorMessage = `Failed to determine operand for "^". Please check.`;
@@ -7272,7 +7284,7 @@ class Utility {
           result = result.replace(strToReplace, replacementStr);
           index = result.indexOf(
             "^" /* ,
-            result.indexOf(operand, index) + operand.length + 2 */
+            result.indexOf(operand, index) + operand.length + 2 */,
           );
         } else {
           if (bracketAdded) {
@@ -7447,7 +7459,7 @@ class Utility {
         Utility.alert(
           `The equation contains both "r" and "y". The Grapher treated "r" as an unknown. Generally, for explicit dependent variable, you should use "y" with cartesian graphs and "r" with polar graphs.`,
           null,
-          "y_with_cartesian_graphs_and_r_with_polar_graphs"
+          "y_with_cartesian_graphs_and_r_with_polar_graphs",
         );
       } else if (latex.indexOf("=") !== -1 && latex.indexOf("r") !== -1) {
         result = result.replaceAll("r", "y");
@@ -7511,7 +7523,7 @@ class Utility {
           let operand = obj.operand;
           result = result.replace(
             `log_${base}${operand}`,
-            `log(${operand},${base})`
+            `log(${operand},${base})`,
           );
           index = result.indexOf("log_(");
         }
@@ -7531,7 +7543,7 @@ class Utility {
 
           result = result.replace(
             `log_${base}${operand}`,
-            `log(${operand},${base})`
+            `log(${operand},${base})`,
           );
           index = result.indexOf("log_");
         }
@@ -7922,7 +7934,7 @@ class Utility {
       const mf = $("#fnDlg_function")[0];
       Utility.displayErrorMessage(
         mf,
-        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`
+        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`,
       );
       result = Utility.replaceKeywordMarkers(result);
       return;
@@ -7932,7 +7944,7 @@ class Utility {
       const mf = $("#fnDlg_function")[0];
       Utility.displayErrorMessage(
         mf,
-        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`
+        `Unable to correctly parse the input. Try adding paranthesis around the argument of ${m_arr_str}.`,
       );
       result = Utility.replaceKeywordMarkers(result);
       return;
@@ -8026,7 +8038,7 @@ class Utility {
         if (obj) {
           m_fn = m_fn.replace(
             `log${operand}`,
-            `\\mathrm{log_{${obj.base}}}\\left(${obj.operand}\\right)`
+            `\\mathrm{log_{${obj.base}}}\\left(${obj.operand}\\right)`,
           );
         } else {
           m_fn = m_fn.replaceAt(ind, "log", "ln");
@@ -8096,7 +8108,7 @@ class Utility {
   static tex2svgMultiline(
     latex,
     lengthHint = 24,
-    options = { em: 16, ex: 6, display: false }
+    options = { em: 16, ex: 6, display: false },
   ) {
     //////Helpers//////////
     const mj = function (tex) {
@@ -8228,7 +8240,7 @@ Utility.progressSpinner2 = $(
   '<img id="imageLoader" class="loader" style= "display:none; z-index:100000; width:40px;height:40px; position: absolute;" src=' +
     Static.imagePath +
     "imageLoader.png" +
-    ">"
+    ">",
 );
 Utility.progressSpinnerInit = false;
 Utility.progressWaitOnCount = 0;
