@@ -1760,8 +1760,10 @@ class Utility {
         let discont;
         if (!discontY) {
           discont = structuredClone(obj.discontinuity);
+          //samples = samples.sort((a, b) => a.x - b.x);
         } else {
           discont = structuredClone(obj.discontinuityY);
+          //samples = samples.sort((a, b) => a.y - b.y);
         }
         if (!discont.length) {
           return;
@@ -1860,10 +1862,10 @@ class Utility {
         const _scope = new Map();
         // const step_ = samples[1].x - samples[0].x;
         // const delta = step_ * 1e-5;
-        const delta = (samples[1].x - samples[0].x) * 1e-5;
+        //const delta = (samples[1].x - samples[0].x) * 1e-5;
         //let delta = (samples[1].x - samples[0].x) * 1e-5;
         // console.log(delta);
-        /* let delta;
+        let delta;
         let _fn;
         if (!discontY) {
           _fn = obj.parametricFnX;
@@ -1878,7 +1880,7 @@ class Utility {
           _scope.set(_indepVar, obj.upperX);
           const _upperX = math.evaluate(_fn, _scope);
           delta = (_upperX - _lowerX) * 1e-5;
-        } */
+        }
 
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
@@ -1987,19 +1989,23 @@ class Utility {
         return _.isFinite(samples[index].y);
       });
 
-      samples = samples.sort(function (a, b) {
-        return a.x - b.x;
-      });
+      // samples = samples.sort(function (a, b) {
+      //   return a.x - b.x;
+      // });
 
       samples = samples.filter((item, index) => {
         return samples[index].y != "#";
       });
 
-      if (obj.parametricFnX && obj.parametricFnY) {
-        samples = samples.sort(function (a, b) {
-          return a.pos - b.pos;
-        });
-      }
+      // if (!discontY) {
+      //   samples = samples.sort((a, b) => a.pos - b.pos);
+      // }
+
+      // if (obj.parametricFnX && obj.parametricFnY) {
+      //   samples = samples.sort(function (a, b) {
+      //     return a.pos - b.pos;
+      //   });
+      // }
 
       /* if (samples.length > 1) {
         for (let i = 1; i < samples.length; i++) {
@@ -2176,6 +2182,14 @@ class Utility {
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
     // });
+
+    //Ensure points are sorted and numbered
+    samples = samples.sort((a, b) => a.x - b.x);
+    samples = samples.map((item, index) => {
+      item.pos = index;
+      return item;
+    });
+
     handleDiscontinuityTurningPoints(samples, false);
     if (obj.discontinuityY && obj.discontinuityY.length) {
       //handle y discontinuities
@@ -2193,12 +2207,11 @@ class Utility {
         item.y = temp;
         return item;
       });
-      samples = samples.sort((a, b) => a.pos - b.pos);
 
       // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
       // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
     }
-
+    samples = samples.sort((a, b) => a.pos - b.pos);
     return samples;
   }
 
@@ -4243,41 +4256,43 @@ class Utility {
         //   turningPoints: [],
         //   period: null,
         // }; //1/x
-        if (!this.first) {
-          this.first = true;
-          return {
-            //right
-            discontinuities: [
-              //[0, "essential"],
-              /* [-3 * Math.PI, "essential"],
-              [-2 * Math.PI, "essential"],
-              [-Math.PI, "essential"],
-              [0.0, "essential"],
-              [Math.PI, "essential"],
-              [2 * Math.PI, "essential"],
-              [3 * Math.PI, "essential"], */
-            ],
-            turningPoints: [],
-            period: null,
-          }; //1/x
-        } else {
-          //left
-          this.first = false;
-          return {
-            discontinuities: [
-              //[0, "essential"],
-              [-3 * Math.PI, "essential"],
-              [-2 * Math.PI, "essential"],
-              [-Math.PI, "essential"],
-              [0.0, "essential"],
-              [Math.PI, "essential"],
-              [2 * Math.PI, "essential"],
-              [3 * Math.PI, "essential"],
-            ],
-            turningPoints: [],
-            period: null,
-          };
-        }
+        // if (!this.first) {
+        //   this.first = true;
+        //   return {
+        //     //right
+        //     discontinuities: [
+        //       [2, "essential"],
+        //       // [0, "unknown2"],
+        //       /* [-3 * Math.PI, "essential"],
+        //       [-2 * Math.PI, "essential"],
+        //       [-Math.PI, "essential"],
+        //       [0.0, "essential"],
+        //       [Math.PI, "essential"],
+        //       [2 * Math.PI, "essential"],
+        //       [3 * Math.PI, "essential"], */
+        //     ],
+        //     turningPoints: [],
+        //     period: null,
+        //   }; //1/x
+        // } else {
+        //   //left
+        //   this.first = false;
+        //   return {
+        //     discontinuities: [
+        //       [0, "essential"],
+        //       // [0, "unknown2"],
+        //       /* [-3 * Math.PI, "essential"],
+        //       [-2 * Math.PI, "essential"],
+        //       [-Math.PI, "essential"],
+        //       [0.0, "essential"],
+        //       [Math.PI, "essential"],
+        //       [2 * Math.PI, "essential"],
+        //       [3 * Math.PI, "essential"], */
+        //     ],
+        //     turningPoints: [],
+        //     period: null,
+        //   };
+        // }
         // return {
         //   discontinuities: [
         //     [-3.22, "removable"],

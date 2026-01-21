@@ -916,7 +916,7 @@ class MyPlot extends Plot {
             //discontTurningPoints.discontinuities.push([0, "unknown2"]);
           } */
 
-        /* if (
+        if (
           makeSamplesData.discontinuityY.length ||
           discontTurningPoints.discontinuities.length
         ) {
@@ -997,7 +997,7 @@ class MyPlot extends Plot {
           // makeSamplesData.discontinuityY = makeSamplesData.discontinuityY.sort(
           //   (a, b) => a[0] - b[0],
           // );
-        } */
+        }
       }
       ///////////////////////
       try {

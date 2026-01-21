@@ -420,6 +420,29 @@ class MyCurve extends Curve {
       discont = self.discontinuityY;
     }
 
+    // check for large numbers
+    for (i; i < samples.length; i++) {
+      if (!Static.AxisInYX) {
+        if (
+          Math.abs(samples[i].y) >= Static.LargeNumber ||
+          Math.abs(samples[i].x) >= Static.LargeNumber
+        ) {
+          indexBeforeDiscontinuity.push(i);
+          i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+          continue;
+        }
+      } else {
+        if (
+          Math.abs(samples[i].x) >= Static.LargeNumber ||
+          Math.abs(samples[i].y) >= Static.LargeNumber
+        ) {
+          indexBeforeDiscontinuity.push(i);
+          i = i + 2; //skip next two points to avoid multiple discontinuities at same location
+          continue;
+        }
+      }
+    }
+
     for (let n = 0; n < discont.length; n++) {
       /* if (n === 0 && self.parametricFnX && isFinite(self.parametricFnX)) {
         //swap x and y
@@ -466,7 +489,7 @@ class MyCurve extends Curve {
           }
         }
       }
-      if (discont[n][1] === "infinite" || discont[n][1] === "essential") {
+      /* if (discont[n][1] === "infinite" || discont[n][1] === "essential") {
         for (i; i < samples.length; i++) {
           if (!Static.AxisInYX) {
             if (
@@ -475,7 +498,7 @@ class MyCurve extends Curve {
             ) {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-              break;
+              continue;
             }
           } else {
             if (
@@ -484,11 +507,11 @@ class MyCurve extends Curve {
             ) {
               indexBeforeDiscontinuity.push(i);
               i = i + 2; //skip next two points to avoid multiple discontinuities at same location
-              break;
+              continue;
             }
           }
         }
-      }
+      } */
     }
 
     if (swapXY) {
