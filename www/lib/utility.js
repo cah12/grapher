@@ -2032,6 +2032,75 @@ class Utility {
       } */
     }
 
+    function adjustSamplesForLimits(samples) {
+      const scope = new Map();
+      const small = 1e-40;
+
+      scope.set(obj.parametric_variable, obj.lowerX);
+      let required_lowerX = math.evaluate(obj.parametricFnX, scope);
+      if (required_lowerX.isComplex) {
+        // samples.push
+        let y;
+        let re = required_lowerX.re;
+        let adj = required_lowerX.re + small;
+        scope.set(obj.parametric_variable, adj);
+        required_lowerX = math.evaluate(obj.parametricFnX, scope);
+        if (required_lowerX.isComplex) {
+          adj = required_lowerX.re - small;
+          scope.set(obj.parametric_variable, adj);
+          required_lowerX = math.evaluate(obj.parametricFnX, scope);
+          scope.set(obj.parametric_variable, required_lowerX);
+          y = math.evaluate(obj.parametricFnY, scope);
+        } else {
+          scope.set(obj.parametric_variable, required_lowerX);
+          y = math.evaluate(obj.parametricFnY, scope);
+        }
+        samples.unshift(new Misc.Point(re, y, -1));
+      } else if (
+        Utility.adjustForDecimalPlaces(required_lowerX, 8) !=
+        Utility.adjustForDecimalPlaces(samples[0].x, 8)
+      ) {
+        const _small = 1e-8;
+        const step = samples[1].x - samples[0].x;
+        let _x = samples[0].x - step;
+        scope.set(obj.parametric_variable, _x);
+        let y = math.evaluate(obj.parametricFnY, scope);
+        let n = 1;
+        while (y.isComplex && n < 15000) {
+          _x = _x + n * _small;
+          scope.set(obj.parametric_variable, _x);
+          y = math.evaluate(obj.parametricFnY, scope);
+          n++;
+        }
+        if (y.isComplex) {
+          y = y.re;
+        }
+        samples.unshift(new Misc.Point(_x, y, -1));
+      }
+      scope.set(obj.parametric_variable, obj.upperX);
+      const required_upperX = math.evaluate(obj.parametricFnX, scope);
+
+      if (required_upperX.isComplex) {
+        let y;
+        let adj;
+        let re = required_upperX.re;
+        adj = required_upperX.re - small;
+        scope.set(obj.parametric_variable, adj);
+        required_upperX = math.evaluate(obj.parametricFnX, scope);
+        if (required_upperX.isComplex) {
+          adj = required_upperX.re + small;
+          scope.set(obj.parametric_variable, adj);
+          required_upperX = math.evaluate(obj.parametricFnX, scope);
+          scope.set(obj.parametric_variable, required_upperX);
+          y = math.evaluate(obj.parametricFnY, scope);
+        } else {
+          scope.set(obj.parametric_variable, required_upperX);
+          y = math.evaluate(obj.parametricFnY, scope);
+        }
+        samples.push(new Misc.Point(re, y, samples.length));
+      }
+    }
+
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;
     var lowerX = obj.lowerX;
@@ -2184,6 +2253,8 @@ class Utility {
           samples.push(new Misc.Point(xVal, yVal));
       } */
     }
+
+    adjustSamplesForLimits(samples);
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
     // });
@@ -4270,7 +4341,7 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [2, "essential"],
+        //       //[2, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
@@ -4288,7 +4359,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [0, "essential"],
+        //       //[0, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
