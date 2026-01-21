@@ -1881,6 +1881,7 @@ class Utility {
           const _upperX = math.evaluate(_fn, _scope);
           delta = (_upperX - _lowerX) * 1e-5;
         }
+        delta = math.abs(delta);
 
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
@@ -1943,21 +1944,25 @@ class Utility {
                     // } else {
                     samples[n].y = math.sign(yVal) * lmt;
                     //}
+
                     n++;
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                     break;
                   } else if (
-                    discont[i][1] == "removable" ||
-                    discont[i][1] == "unknown2"
+                    discont[i][1] == "removable" /* ||
+                    discont[i][1] == "unknown2" */
                   ) {
                     if (discont.length > 1 && i > 0) {
                       // if (discont[i - 1][1] == "infinite") {
                       samples[n - 1].x = discont[i][0];
-                      samples[n - 1].y = discont[i][2];
-                      // }
+                      if (discont[i][1] == "removable") {
+                        samples[n - 1].y = discont[i][2];
+                      }
                     } else {
                       samples[n - 1].y = discont[i][2];
-                      samples[n].y = discont[i][2];
+                      if (discont[i][1] == "removable") {
+                        samples[n - 1].y = discont[i][2];
+                      }
                     }
                     n++;
                     break;
@@ -4261,7 +4266,7 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [2, "essential"],
+        //       [0, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
@@ -4279,7 +4284,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [0, "essential"],
+        //       [2, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
