@@ -2187,34 +2187,38 @@ class Utility {
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
     // });
-
-    //Ensure points are sorted and numbered
-    samples = samples.sort((a, b) => a.x - b.x);
-    samples = samples.map((item, index) => {
-      item.pos = index;
-      return item;
-    });
-
-    handleDiscontinuityTurningPoints(samples, false);
-    if (obj.discontinuityY && obj.discontinuityY.length) {
-      //handle y discontinuities
-      samples = samples.map((item, index) => {
-        const temp = item.x;
-        item.x = item.y;
-        item.y = temp;
-        return item;
-      });
+    if (
+      (obj.discontinuity && obj.discontinuity.length) ||
+      (obj.discontinuityY && obj.discontinuityY.length)
+    ) {
+      //Ensure points are sorted and numbered
       samples = samples.sort((a, b) => a.x - b.x);
-      handleDiscontinuityTurningPoints(samples, true);
-      samples = samples.map((item, index) => {
-        const temp = item.x;
-        item.x = item.y;
-        item.y = temp;
+      /*samples = samples.map((item, index) => {
+        item.pos = index;
         return item;
-      });
+      }); */
 
-      // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
-      // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
+      handleDiscontinuityTurningPoints(samples, false);
+      if (obj.discontinuityY && obj.discontinuityY.length) {
+        //handle y discontinuities
+        samples = samples.map((item, index) => {
+          const temp = item.x;
+          item.x = item.y;
+          item.y = temp;
+          return item;
+        });
+        samples = samples.sort((a, b) => a.x - b.x);
+        handleDiscontinuityTurningPoints(samples, true);
+        samples = samples.map((item, index) => {
+          const temp = item.x;
+          item.x = item.y;
+          item.y = temp;
+          return item;
+        });
+
+        // obj.discontinuity = obj.discontinuity.concat(obj.discontinuityY);
+        // obj.discontinuity = obj.discontinuity.sort((a, b) => a[0] - b[0]);
+      }
     }
     samples = samples.sort((a, b) => a.pos - b.pos);
     return samples;
@@ -4266,7 +4270,7 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [0, "essential"],
+        //       [2, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
@@ -4284,7 +4288,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [2, "essential"],
+        //       [0, "essential"],
         //       // [0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
