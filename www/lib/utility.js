@@ -1949,19 +1949,20 @@ class Utility {
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                     break;
                   } else if (
-                    discont[i][1] == "removable" /* ||
-                    discont[i][1] == "unknown2" */
+                    discont[i][1] == "removable" ||
+                    discont[i][1] == "unknown2"
                   ) {
                     if (discont.length > 1 && i > 0) {
                       // if (discont[i - 1][1] == "infinite") {
                       samples[n - 1].x = discont[i][0];
-                      if (discont[i][1] == "removable") {
+                      if (discont[i][2]) {
                         samples[n - 1].y = discont[i][2];
                       }
+                      // }
                     } else {
-                      samples[n - 1].y = discont[i][2];
-                      if (discont[i][1] == "removable") {
+                      if (discont[i][2]) {
                         samples[n - 1].y = discont[i][2];
+                        samples[n].y = discont[i][2];
                       }
                     }
                     n++;
@@ -2101,6 +2102,7 @@ class Utility {
       }
     }
 
+    var domainTruncated = false;
     var parametricFnX = obj.parametricFnX;
     var parametricFnY = obj.parametricFnY;
     var lowerX = obj.lowerX;
@@ -2167,6 +2169,9 @@ class Utility {
     var step = (upperX - lowerX) / (numOfSamples - 1);
 
     for (var i = 0; i <= numOfSamples - 1; ++i) {
+      if (i > 1 && samples.length === 0) {
+        domainTruncated = true;
+      }
       var tVal = lowerX + i * step;
 
       let xVal = parserFnX.eval({ t: tVal });
@@ -2254,7 +2259,13 @@ class Utility {
       } */
     }
 
-    adjustSamplesForLimits(samples);
+    samples = samples.filter((value, index, array) => {
+      return array.indexOf(value) === index;
+    });
+
+    if (domainTruncated) {
+      adjustSamplesForLimits(samples);
+    }
     // samples = _.uniq(samples, function (e) {
     //   return e.x && e.y;
     // });
@@ -4341,15 +4352,14 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       //[2, "essential"],
-        //       // [0, "unknown2"],
-        //       /* [-3 * Math.PI, "essential"],
+        //       //[0, "essential"],
+        //       [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
         //       [0.0, "essential"],
         //       [Math.PI, "essential"],
         //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"], */
+        //       [3 * Math.PI, "essential"],
         //     ],
         //     turningPoints: [],
         //     period: null,
@@ -4360,7 +4370,7 @@ class Utility {
         //   return {
         //     discontinuities: [
         //       //[0, "essential"],
-        //       // [0, "unknown2"],
+        //       //[0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
@@ -6207,6 +6217,27 @@ class Utility {
       return Static.keywords[i];
     }
     return null;
+  }
+
+  static uniqArrayOfArrays(arrayOfArrays) {
+    // Step 1: Convert each inner array to a JSON string
+    const jsonStrings = arrayOfArrays.map(JSON.stringify);
+    // Result: ['[1,1,2]', '[1,2,1]', '[1,1,2]', '[2,1,1]', '[2,1,1]']
+
+    // Step 2: Use a Set to store only unique strings
+    const uniqueStrings = new Set(jsonStrings);
+    // Result: Set(3) { '[1,1,2]', '[1,2,1]', '[2,1,1]' }
+
+    // Step 3: Convert the Set back to an array of strings, then parse each string back into an array
+    let uniqueArrays = Array.from(uniqueStrings).map(JSON.parse);
+    // Result: [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
+
+    // sort arrays
+    uniqueArrays.sort(function (a, b) {
+      return a[0] - b[0];
+    });
+
+    return uniqueArrays;
   }
 
   static containsTrigKeyword(str) {

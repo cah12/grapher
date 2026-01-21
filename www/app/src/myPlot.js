@@ -920,6 +920,15 @@ class MyPlot extends Plot {
           makeSamplesData.discontinuityY.length ||
           discontTurningPoints.discontinuities.length
         ) {
+          //unique discontinuities
+
+          makeSamplesData.discontinuityY = Utility.uniqArrayOfArrays(
+            makeSamplesData.discontinuityY,
+          );
+
+          discontTurningPoints.discontinuities = Utility.uniqArrayOfArrays(
+            discontTurningPoints.discontinuities,
+          );
           let val_dx_dt = null;
           let val_dy_dt = null;
           const dx_dt = math.derivative(
