@@ -956,18 +956,18 @@ class MyPlot extends Plot {
           if (dy_dt.isConstantNode) {
             val_dy_dt = dy_dt.value;
           } else {
-            const sol = [Math.PI / 2, (3 * Math.PI) / 2];
-            /* const sol = await Static.solveFor(
+            //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
+            const sol = await Static.solveFor(
               dy_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
-            ); */
+            );
             if (sol.length) {
               val_dy_dt = sol;
             }
           }
           if (!val_dx_dt && !val_dy_dt) {
-            console.log(789);
+            //console.log(789);
             scope.set(
               makeSamplesData.parametric_variable,
               makeSamplesData.lowerX,
