@@ -966,9 +966,34 @@ class MyPlot extends Plot {
               val_dy_dt = sol;
             }
           }
-          //discontTurningPoints.discontinuities.push([0, "unknown2"]);
-          // makeSamplesData.discontinuityY.push([0, "unknown2"]);
-          if (!val_dx_dt) {
+          if (!val_dx_dt && !val_dy_dt) {
+            console.log(789);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.lowerX,
+            );
+            x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.upperX,
+            );
+            x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.lowerX,
+            );
+            y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.upperX,
+            );
+            y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
+            makeSamplesData.discontinuityY.push([y1, "unknown1", x1]);
+            makeSamplesData.discontinuityY.push([y2, "unknown1", x2]);
+            makeSamplesData.discontinuityY.sort(function (a, b) {
+              return a[0] - b[0];
+            });
+          } else if (!val_dx_dt) {
             scope.set(
               makeSamplesData.parametric_variable,
               makeSamplesData.lowerX,
