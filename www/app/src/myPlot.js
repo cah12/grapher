@@ -920,8 +920,6 @@ class MyPlot extends Plot {
           makeSamplesData.discontinuityY.length ||
           discontTurningPoints.discontinuities.length
         ) {
-          //unique discontinuities
-
           makeSamplesData.discontinuityY = Utility.uniqArrayOfArrays(
             makeSamplesData.discontinuityY,
           );
@@ -929,83 +927,165 @@ class MyPlot extends Plot {
           discontTurningPoints.discontinuities = Utility.uniqArrayOfArrays(
             discontTurningPoints.discontinuities,
           );
+
           let val_dx_dt = null;
           let val_dy_dt = null;
+          let x1, x2, y1, y2;
+          const scope = new Map();
           const dx_dt = math.derivative(
             makeSamplesData.parametricFnX,
             makeSamplesData.parametric_variable,
           );
-          if (dx_dt == 0) {
-            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
-            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
-            val_dx_dt = 0;
+          if (dx_dt.isConstantNode) {
+            val_dx_dt = dx_dt.value;
           } else {
+            //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
             const sol = await Static.solveFor(
               dx_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
             );
             if (sol.length) {
-              val_dx_dt = sol[0];
-            } else {
-              val_dx_dt = 0;
+              val_dx_dt = sol;
             }
-            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
-            // makeSamplesData.discontinuityY.push([0, "unknown2"]);
           }
           const dy_dt = math.derivative(
             makeSamplesData.parametricFnY,
             makeSamplesData.parametric_variable,
           );
-          if (dy_dt == 0) {
-            val_dy_dt = 0;
-            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
-            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+          if (dy_dt.isConstantNode) {
+            val_dy_dt = dy_dt.value;
           } else {
+            //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
             const sol = await Static.solveFor(
               dy_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
             );
             if (sol.length) {
-              val_dy_dt = sol[0];
-            } else {
-              val_dy_dt = 0;
-            }
-            //discontTurningPoints.discontinuities.push([0, "unknown2"]);
-
-            //makeSamplesData.discontinuityY.push([0, "unknown2"]);
-            // const val = await Static.solveFor(
-            //   dy_dt.toString(),
-            //   makeSamplesData.parametric_variable,
-            // );
-            // discontTurningPoints.discontinuities.push([0, "unknown2"]);
-          }
-          if (val_dx_dt === val_dy_dt) {
-            if (dx_dt != 0) {
-              discontTurningPoints.discontinuities.push([
-                val_dx_dt,
-                "unknown2",
-              ]);
-            } else {
-              makeSamplesData.discontinuityY.push([val_dx_dt, "unknown2"]);
+              val_dy_dt = sol;
             }
           }
-          // discontTurningPoints.discontinuities =
-          //   discontTurningPoints.discontinuities.filter(
-          //     (e) => math.abs(e[0]) != Static.LargeNumber,
-          //   );
+          //discontTurningPoints.discontinuities.push([0, "unknown2"]);
+          // makeSamplesData.discontinuityY.push([0, "unknown2"]);
+          if (!val_dx_dt) {
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.lowerX,
+            );
+            x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.upperX,
+            );
+            x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
+            if (!val_dy_dt) {
+              scope.set(
+                makeSamplesData.parametric_variable,
+                makeSamplesData.lowerX,
+              );
+              y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                makeSamplesData.upperX,
+              );
+              y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
+              // makeSamplesData.discontinuityY.push([x1, "unknown2"]);
+              // makeSamplesData.discontinuityY.push([x2, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([x1, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([x2, "unknown2"]);
+            } else if (val_dy_dt.length === 2) {
+              // val_dx_dt.sort(function (a, b) {
+              //   return a - b;
+              // });
+              scope.set(makeSamplesData.parametric_variable, val_dy_dt[0]);
+              y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
+              scope.set(makeSamplesData.parametric_variable, val_dy_dt[1]);
+              y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
 
-          // discontTurningPoints.discontinuities =
-          //   discontTurningPoints.discontinuities.sort((a, b) => a[0] - b[0]);
+              if (y1 > y2) {
+                let temp = y1;
+                y1 = y2;
+                y2 = temp;
+              }
+              // makeSamplesData.discontinuityY.push([y1, "unknown2"]);
+              // makeSamplesData.discontinuityY.push([y2, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([y1, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([y2, "unknown2"]);
+            }
+            if (val_dx_dt === 0) {
+              makeSamplesData.discontinuityY.push([y1, "unknown1", x1]);
+              makeSamplesData.discontinuityY.push([y2, "unknown1", x2]);
+              makeSamplesData.discontinuityY.sort(function (a, b) {
+                return a[0] - b[0];
+              });
+            } else {
+              discontTurningPoints.discontinuities.push([x1, "unknown1", y1]);
+              discontTurningPoints.discontinuities.push([x2, "unknown1", y2]);
+              discontTurningPoints.discontinuities.sort(function (a, b) {
+                return a[0] - b[0];
+              });
+            }
+          } else if (!val_dy_dt) {
+            // console.log(456);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.lowerX,
+            );
+            y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
+            scope.set(
+              makeSamplesData.parametric_variable,
+              makeSamplesData.upperX,
+            );
+            y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
+            if (!val_dx_dt) {
+              scope.set(
+                makeSamplesData.parametric_variable,
+                makeSamplesData.lowerX,
+              );
+              x1 = math.evaluate(makeSamplesData.parametricFnY, scope);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                makeSamplesData.upperX,
+              );
+              x2 = math.evaluate(makeSamplesData.parametricFnY, scope);
+              // makeSamplesData.discontinuityY.push([x1, "unknown2"]);
+              // makeSamplesData.discontinuityY.push([x2, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([x1, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([x2, "unknown2"]);
+            } else if (val_dx_dt.length === 2) {
+              // val_dx_dt.sort(function (a, b) {
+              //   return a - b;
+              // });
+              scope.set(makeSamplesData.parametric_variable, val_dx_dt[0]);
+              x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
+              scope.set(makeSamplesData.parametric_variable, val_dx_dt[1]);
+              x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
 
-          // makeSamplesData.discontinuityY = makeSamplesData.discontinuityY.filter(
-          //   (e) => math.abs(e[0]) != Static.LargeNumber,
-          // );
-
-          // makeSamplesData.discontinuityY = makeSamplesData.discontinuityY.sort(
-          //   (a, b) => a[0] - b[0],
-          // );
+              if (x1 > x2) {
+                let temp = x1;
+                x1 = x2;
+                x2 = temp;
+              }
+              // makeSamplesData.discontinuityY.push([y1, "unknown2"]);
+              // makeSamplesData.discontinuityY.push([y2, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([y1, "unknown2"]);
+              // discontTurningPoints.discontinuities.push([y2, "unknown2"]);
+            }
+            if (val_dy_dt != 0) {
+              makeSamplesData.discontinuityY.push([y1, "unknown1", x1]);
+              makeSamplesData.discontinuityY.push([y2, "unknown1", x2]);
+              makeSamplesData.discontinuityY.sort(function (a, b) {
+                return a[0] - b[0];
+              });
+            } else {
+              discontTurningPoints.discontinuities.push([x1, "unknown1", y1]);
+              discontTurningPoints.discontinuities.push([x2, "unknown1", y2]);
+              discontTurningPoints.discontinuities.sort(function (a, b) {
+                return a[0] - b[0];
+              });
+            }
+          }
         }
       }
       ///////////////////////

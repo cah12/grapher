@@ -1745,13 +1745,17 @@ class Utility {
 
   static makeParametricSamples(obj) {
     function handleDiscontinuityTurningPoints(samples, discontY = false) {
-      // if (
-      //   discontY == false &&
-      //   obj.discontinuity.length &&
-      //   obj.discontinuityY.length
-      // ) {
-      //   return;
-      // }
+      obj.unknown1_1 = null;
+      obj.unknown1_2 = null;
+
+      function updatePointUnknown1Pos(index) {
+        if (obj.unknown1_1 == null) {
+          obj.unknown1_1 = index;
+        } else {
+          obj.unknown1_2 = index;
+        }
+      }
+
       if (
         obj.discontinuity.length ||
         (obj.discontinuityY && obj.discontinuityY.length)
@@ -1949,22 +1953,60 @@ class Utility {
                     //samples.push(new Misc.Point(d - delta, math.sign(yVal) * lmt));
                     break;
                   } else if (
-                    discont[i][1] == "removable" /* ||
-                    discont[i][1] == "unknown2" */
+                    discont[i][1] == "removable" ||
+                    discont[i][1] == "unknown2" ||
+                    discont[i][1] == "unknown1" //specific to parametric(always one pair)
                   ) {
-                    if (discont.length > 1 && i > 0) {
-                      // if (discont[i - 1][1] == "infinite") {
-                      samples[n - 1].x = discont[i][0];
-                      //if (discont[i][2]) {
-                      samples[n - 1].y = discont[i][2];
+                    if (discont[i][1] === "unknown1") {
+                      // if (!discontY) {
+                      if (discont.length > 1 /*  && i > 0 */) {
+                        samples[n - 1].x = discont[i][0];
+                        samples[n - 1].y = discont[i][2];
+                        //updatePointUnknown1Pos(samples[n - 1].pos);
+                        updatePointUnknown1Pos(n - 1);
+                      } else {
+                        samples[n - 1].y = discont[i][2];
+                        samples[n].y = discont[i][2];
+                      }
                       //}
-                      // }
+                      /* else {
+                        if (discont.length > 1 && i > 0) {
+                          samples[n - 1].y = discont[i][0];
+                          samples[n - 1].x = discont[i][2];
+                        } else {
+                          samples[n - 1].x = discont[i][2];
+                          samples[n].x = discont[i][2];
+                        }
+                      } */
                     } else {
-                      //if (discont[i][2]) {
-                      samples[n - 1].y = discont[i][2];
-                      samples[n].y = discont[i][2];
-                      //}
+                      //if (!discontY) {
+                      if (discont.length > 1 && i > 0) {
+                        samples[n - 1].x = discont[i][0];
+                        samples[n - 1].y = discont[i][2];
+                      } else {
+                        samples[n - 1].y = discont[i][2];
+                        samples[n].y = discont[i][2];
+                      }
+                      // } else {
+                      //   if (discont.length > 1 /* && i > 0 */) {
+                      //     samples[n - 1].y = discont[i][0];
+                      //     samples[n - 1].x = discont[i][2];
+                      //     updatePointUnknown1Pos(samples[n - 1].pos);
+                      //   } else {
+                      //     samples[n - 1].x = discont[i][2];
+                      //     samples[n].x = discont[i][2];
+                      //   }
+                      // }
+
+                      // if (discont[i][1] == "unknown1") {
+                      //   if (unknown1_1 == null) {
+                      //     unknown1_1 = samples[n - 1].pos;
+                      //   } else {
+                      //     unknown1_2 = samples[n - 1].pos;
+                      //   }
+                      // }
                     }
+
                     n++;
                     break;
                   }
@@ -1979,6 +2021,24 @@ class Utility {
           }
         }
       }
+
+      /* if (unknown1_1 != null && unknown1_2 != null) {
+        // if (unknown1_1 > unknown1_2) {
+        //   const temp = unknown1_1;
+        //   unknown1_1 = unknown1_2;
+        //   unknown1_2 = temp;
+        // }
+        const newsamples = [];
+        for (let i = 0; i < samples.length; i++) {
+          // if (samples[i].pos > unknown1_1 && samples[i].pos < unknown1_2) {
+          //   samples[i].y = "#";
+          // }
+          if (samples[i].pos <= unknown1_1 && samples[i].pos >= unknown1_2) {
+            newsamples.push(samples[i]);
+          }
+        }
+        samples = newsamples;
+      } */
 
       if (obj && obj.turning_points && obj.turning_points.length) {
         const _tp = obj.turning_points;
@@ -2031,6 +2091,16 @@ class Utility {
           }
         }
       } */
+
+      // if (isFinite(obj.parametricFnX) && discontY) {
+      //   samples.sort((a, b) => a.y - b.y);
+      //   samples = samples.filter((item, index, array) => {
+      //     if (index == 0) return true;
+      //     return array[index].y > array[index - 1].y;
+      //   });
+      // }
+
+      return samples;
     }
 
     function adjustSamplesForLimits(samples) {
@@ -2280,7 +2350,7 @@ class Utility {
         return item;
       }); */
 
-      handleDiscontinuityTurningPoints(samples, false);
+      samples = handleDiscontinuityTurningPoints(samples, false);
       if (obj.discontinuityY && obj.discontinuityY.length) {
         //handle y discontinuities
         samples = samples.map((item, index) => {
@@ -2290,7 +2360,7 @@ class Utility {
           return item;
         });
         samples = samples.sort((a, b) => a.x - b.x);
-        handleDiscontinuityTurningPoints(samples, true);
+        samples = handleDiscontinuityTurningPoints(samples, true);
         samples = samples.map((item, index) => {
           const temp = item.x;
           item.x = item.y;
@@ -2303,6 +2373,20 @@ class Utility {
       }
     }
     samples = samples.sort((a, b) => a.pos - b.pos);
+
+    if (isFinite(obj.parametricFnX)) {
+      samples.sort((a, b) => a.y - b.y);
+      for (let i = 0; i < samples.length; i++) {
+        samples[i].pos = i;
+      }
+    }
+    if (isFinite(obj.parametricFnY)) {
+      samples.sort((a, b) => a.x - b.x);
+      for (let i = 0; i < samples.length; i++) {
+        samples[i].pos = i;
+      }
+    }
+
     return samples;
   }
 
@@ -4352,14 +4436,14 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       //[0, "essential"],
-        //       [-3 * Math.PI, "essential"],
+        //       //[-2, "essential"],
+        //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
         //       [0.0, "essential"],
         //       [Math.PI, "essential"],
         //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"],
+        //       [3 * Math.PI, "essential"], */
         //     ],
         //     turningPoints: [],
         //     period: null,
@@ -4371,13 +4455,13 @@ class Utility {
         //     discontinuities: [
         //       //[0, "essential"],
         //       //[0, "unknown2"],
-        //       /* [-3 * Math.PI, "essential"],
+        //       [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
         //       [0.0, "essential"],
         //       [Math.PI, "essential"],
         //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"], */
+        //       [3 * Math.PI, "essential"],
         //     ],
         //     turningPoints: [],
         //     period: null,
