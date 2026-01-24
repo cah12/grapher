@@ -956,12 +956,12 @@ class MyPlot extends Plot {
           if (dy_dt.isConstantNode) {
             val_dy_dt = dy_dt.value;
           } else {
-            //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
-            const sol = await Static.solveFor(
+            const sol = [Math.PI / 2, (3 * Math.PI) / 2];
+            /* const sol = await Static.solveFor(
               dy_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
-            );
+            ); */
             if (sol.length) {
               val_dy_dt = sol;
             }
@@ -1023,9 +1023,15 @@ class MyPlot extends Plot {
               // val_dx_dt.sort(function (a, b) {
               //   return a - b;
               // });
-              scope.set(makeSamplesData.parametric_variable, val_dy_dt[0]);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                parseFloat(val_dy_dt[0]),
+              );
               y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
-              scope.set(makeSamplesData.parametric_variable, val_dy_dt[1]);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                parseFloat(val_dy_dt[1]),
+              );
               y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
 
               if (y1 > y2) {
@@ -1082,9 +1088,15 @@ class MyPlot extends Plot {
               // val_dx_dt.sort(function (a, b) {
               //   return a - b;
               // });
-              scope.set(makeSamplesData.parametric_variable, val_dx_dt[0]);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                parseFloat(val_dx_dt[0]),
+              );
               x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
-              scope.set(makeSamplesData.parametric_variable, val_dx_dt[1]);
+              scope.set(
+                makeSamplesData.parametric_variable,
+                parseFloat(val_dx_dt[1]),
+              );
               x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
 
               if (x1 > x2) {

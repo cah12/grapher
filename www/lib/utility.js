@@ -4436,14 +4436,14 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [0, "essential"],
-        //       /* [-3 * Math.PI, "essential"],
+        //       //[0, "essential"],
+        //       [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
         //       [0.0, "essential"],
         //       [Math.PI, "essential"],
         //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"], */
+        //       [3 * Math.PI, "essential"],
         //     ],
         //     turningPoints: [],
         //     period: null,
@@ -4453,7 +4453,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [0, "essential"],
+        //       // [0, "essential"],
         //       //[0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
