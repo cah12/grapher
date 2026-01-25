@@ -2390,7 +2390,9 @@ class Utility {
       (hasInfiniteOrEssential(obj.discontinuity) &&
         hasInfiniteOrEssential(obj.discontinuityY))
     ) {
-      samples.sort((a, b) => a.y - b.y);
+      samples.sort((a, b) => {
+        return a.y - b.y;
+      });
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
       }
@@ -4451,7 +4453,7 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [-2, "essential"],
+        //       [-2.0, "essential"],
         //       // [1, "essential"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
@@ -4469,7 +4471,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [0, "essential"],
+        //       [0.0, "infinite"],
         //       //[0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],

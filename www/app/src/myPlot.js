@@ -940,6 +940,7 @@ class MyPlot extends Plot {
             val_dx_dt = dx_dt.value;
           } else {
             //const sol = [Math.PI / 2, 3 * Math.PI / 2];
+            //const sol = [1.2599210498948731647672106072782];
             const sol = await Static.solveFor(
               dx_dt.toString(),
               makeSamplesData.parametric_variable,
@@ -957,6 +958,7 @@ class MyPlot extends Plot {
             val_dy_dt = dy_dt.value;
           } else {
             //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
+            //const sol = [-2];
             const sol = await Static.solveFor(
               dy_dt.toString(),
               makeSamplesData.parametric_variable,
