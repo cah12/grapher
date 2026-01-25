@@ -2376,50 +2376,18 @@ class Utility {
     }
     samples = samples.sort((a, b) => a.pos - b.pos);
 
-    if (isFinite(obj.parametricFnX) && !isFinite(obj.parametricFnY)) {
+    if (isFinite(obj.parametricFnX) /*  && !isFinite(obj.parametricFnY )*/) {
       samples.sort((a, b) => a.y - b.y);
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
       }
     }
-    if (isFinite(obj.parametricFnY) && !isFinite(obj.parametricFnX)) {
+    if (isFinite(obj.parametricFnY) /*  && !isFinite(obj.parametricFnX) */) {
       samples.sort((a, b) => a.x - b.x);
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
       }
     }
-
-    /* if (!isFinite(obj.parametricFnY) && !isFinite(obj.parametricFnX)) {
-      const num = samples.length - 1;
-      let pos = 0;
-      const _samples = samples.filter((pt, index, array) => {
-        if (index < num) {
-          if (pt.x < array[index + 1].x) {
-            pt.pos = pos++;
-            return true;
-          }
-        }
-        return false;
-      });
-
-      samples = _samples;
-    } */
-    /* if (
-      !isFinite(obj.parametricFnY) &&
-      !isFinite(obj.parametricFnX) 
-    ) {
-      samples.sort((a, b) => a.x - b.x);
-      if (samples[0].pos > 0) {
-        const _samples = [];
-        const num = samples.length - samples[0].pos;
-        for (let i = 0; i < num; i++) {
-          const pt = samples[i];
-          pt.pos = i;
-          _samples.push(pt);
-        }
-        samples = _samples;
-      }
-    } */
 
     return samples;
   }
