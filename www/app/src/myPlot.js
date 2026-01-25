@@ -2444,7 +2444,7 @@ class MyPlot extends Plot {
         let _discont = structuredClone(curves[0].discontinuity);
         let _discontY = structuredClone(curves[0].discontinuityY);
         let dis = _discont.concat(_discontY);
-        dis = dis.filter((e) => e[1] !== "unknown2");
+        dis = dis.filter((e) => e[1] !== "unknown2" && e[1] !== "unknown1");
 
         const discontinuity = dis.map(function (e) {
           e[0] = Utility.toPrecision(
