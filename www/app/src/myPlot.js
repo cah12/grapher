@@ -939,7 +939,7 @@ class MyPlot extends Plot {
           if (dx_dt.isConstantNode) {
             val_dx_dt = dx_dt.value;
           } else {
-            //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
+            //const sol = [Math.PI / 2, 3 * Math.PI / 2];
             const sol = await Static.solveFor(
               dx_dt.toString(),
               makeSamplesData.parametric_variable,
@@ -1025,12 +1025,12 @@ class MyPlot extends Plot {
               // });
               scope.set(
                 makeSamplesData.parametric_variable,
-                math.evaluate(val_dy_dt[0]),
+                parseFloat(val_dy_dt[0]),
               );
               y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
               scope.set(
                 makeSamplesData.parametric_variable,
-                math.evaluate(val_dy_dt[1]),
+                parseFloat(val_dy_dt[1]),
               );
               y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
 
@@ -1090,12 +1090,12 @@ class MyPlot extends Plot {
               // });
               scope.set(
                 makeSamplesData.parametric_variable,
-                math.evaluate(val_dx_dt[0]),
+                parseFloat(val_dx_dt[0]),
               );
               x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
               scope.set(
                 makeSamplesData.parametric_variable,
-                math.evaluate(val_dx_dt[1]),
+                parseFloat(val_dx_dt[1]),
               );
               x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
 
