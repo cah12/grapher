@@ -1744,6 +1744,15 @@ class Utility {
   }
 
   static makeParametricSamples(obj) {
+    function hasInfiniteOrEssential(discont) {
+      for (let i = 0; i < discont.length; i++) {
+        if (discont[i][1] === "infinite" || discont[i][1] === "essential") {
+          return true;
+        }
+      }
+      return false;
+    }
+
     function handleDiscontinuityTurningPoints(samples, discontY = false) {
       obj.unknown1_1 = null;
       obj.unknown1_2 = null;
@@ -2376,7 +2385,11 @@ class Utility {
     }
     samples = samples.sort((a, b) => a.pos - b.pos);
 
-    if (isFinite(obj.parametricFnX) /*  && !isFinite(obj.parametricFnY )*/) {
+    if (
+      isFinite(obj.parametricFnX) ||
+      (hasInfiniteOrEssential(obj.discontinuity) &&
+        hasInfiniteOrEssential(obj.discontinuityY))
+    ) {
       samples.sort((a, b) => a.y - b.y);
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
@@ -4438,15 +4451,15 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       // [-1, "essential"],
+        //       [-2, "essential"],
         //       // [1, "essential"],
-        //       [-3 * Math.PI, "essential"],
+        //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
         //       [0.0, "essential"],
         //       [Math.PI, "essential"],
         //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"],
+        //       [3 * Math.PI, "essential"], */
         //     ],
         //     turningPoints: [],
         //     period: null,
@@ -4456,7 +4469,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       //[2, "essential"],
+        //       [0, "essential"],
         //       //[0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
