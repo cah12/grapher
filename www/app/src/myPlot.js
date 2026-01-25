@@ -1025,12 +1025,12 @@ class MyPlot extends Plot {
               // });
               scope.set(
                 makeSamplesData.parametric_variable,
-                parseFloat(val_dy_dt[0]),
+                math.evaluate(val_dy_dt[0]),
               );
               y1 = math.evaluate(makeSamplesData.parametricFnY, scope);
               scope.set(
                 makeSamplesData.parametric_variable,
-                parseFloat(val_dy_dt[1]),
+                math.evaluate(val_dy_dt[1]),
               );
               y2 = math.evaluate(makeSamplesData.parametricFnY, scope);
 
@@ -1090,12 +1090,12 @@ class MyPlot extends Plot {
               // });
               scope.set(
                 makeSamplesData.parametric_variable,
-                parseFloat(val_dx_dt[0]),
+                math.evaluate(val_dx_dt[0]),
               );
               x1 = math.evaluate(makeSamplesData.parametricFnX, scope);
               scope.set(
                 makeSamplesData.parametric_variable,
-                parseFloat(val_dx_dt[1]),
+                math.evaluate(val_dx_dt[1]),
               );
               x2 = math.evaluate(makeSamplesData.parametricFnX, scope);
 

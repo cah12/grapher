@@ -4433,43 +4433,43 @@ class Utility {
         //   turningPoints: [],
         //   period: null,
         // }; //1/x
-        // if (!this.first) {
-        //   this.first = true;
-        //   return {
-        //     //right
-        //     discontinuities: [
-        //       [-1, "essential"],
-        //       [1, "essential"],
-        //       /* [-3 * Math.PI, "essential"],
-        //       [-2 * Math.PI, "essential"],
-        //       [-Math.PI, "essential"],
-        //       [0.0, "essential"],
-        //       [Math.PI, "essential"],
-        //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"], */
-        //     ],
-        //     turningPoints: [],
-        //     period: null,
-        //   }; //1/x
-        // } else {
-        //   //left
-        //   this.first = false;
-        //   return {
-        //     discontinuities: [
-        //       //[2, "essential"],
-        //       //[0, "unknown2"],
-        //       /* [-3 * Math.PI, "essential"],
-        //       [-2 * Math.PI, "essential"],
-        //       [-Math.PI, "essential"],
-        //       [0.0, "essential"],
-        //       [Math.PI, "essential"],
-        //       [2 * Math.PI, "essential"],
-        //       [3 * Math.PI, "essential"], */
-        //     ],
-        //     turningPoints: [],
-        //     period: null,
-        //   };
-        // }
+        if (!this.first) {
+          this.first = true;
+          return {
+            //right
+            discontinuities: [
+              // [-1, "essential"],
+              // [1, "essential"],
+              [-3 * Math.PI, "essential"],
+              [-2 * Math.PI, "essential"],
+              [-Math.PI, "essential"],
+              [0.0, "essential"],
+              [Math.PI, "essential"],
+              [2 * Math.PI, "essential"],
+              [3 * Math.PI, "essential"],
+            ],
+            turningPoints: [],
+            period: null,
+          }; //1/x
+        } else {
+          //left
+          this.first = false;
+          return {
+            discontinuities: [
+              //[2, "essential"],
+              //[0, "unknown2"],
+              /* [-3 * Math.PI, "essential"],
+              [-2 * Math.PI, "essential"],
+              [-Math.PI, "essential"],
+              [0.0, "essential"],
+              [Math.PI, "essential"],
+              [2 * Math.PI, "essential"],
+              [3 * Math.PI, "essential"], */
+            ],
+            turningPoints: [],
+            period: null,
+          };
+        }
         // return {
         //   discontinuities: [
         //     [-3.22, "removable"],
