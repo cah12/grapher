@@ -1887,6 +1887,8 @@ class Utility {
         }
         delta = math.abs(delta);
 
+        delta = math.max(delta, 1e-5);
+
         for (let i = 0; i < discont.length; i++) {
           // if (discont[i][1] !== "infinite") {
           //   continue;
@@ -2374,18 +2376,50 @@ class Utility {
     }
     samples = samples.sort((a, b) => a.pos - b.pos);
 
-    if (isFinite(obj.parametricFnX)) {
+    if (isFinite(obj.parametricFnX) && !isFinite(obj.parametricFnY)) {
       samples.sort((a, b) => a.y - b.y);
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
       }
     }
-    if (isFinite(obj.parametricFnY)) {
+    if (isFinite(obj.parametricFnY) && !isFinite(obj.parametricFnX)) {
       samples.sort((a, b) => a.x - b.x);
       for (let i = 0; i < samples.length; i++) {
         samples[i].pos = i;
       }
     }
+
+    /* if (!isFinite(obj.parametricFnY) && !isFinite(obj.parametricFnX)) {
+      const num = samples.length - 1;
+      let pos = 0;
+      const _samples = samples.filter((pt, index, array) => {
+        if (index < num) {
+          if (pt.x < array[index + 1].x) {
+            pt.pos = pos++;
+            return true;
+          }
+        }
+        return false;
+      });
+
+      samples = _samples;
+    } */
+    /* if (
+      !isFinite(obj.parametricFnY) &&
+      !isFinite(obj.parametricFnX) 
+    ) {
+      samples.sort((a, b) => a.x - b.x);
+      if (samples[0].pos > 0) {
+        const _samples = [];
+        const num = samples.length - samples[0].pos;
+        for (let i = 0; i < num; i++) {
+          const pt = samples[i];
+          pt.pos = i;
+          _samples.push(pt);
+        }
+        samples = _samples;
+      }
+    } */
 
     return samples;
   }
@@ -4436,7 +4470,8 @@ class Utility {
         //   return {
         //     //right
         //     discontinuities: [
-        //       [0, "essential"],
+        //       [-1, "essential"],
+        //       [1, "essential"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
         //       [-Math.PI, "essential"],
@@ -4453,7 +4488,7 @@ class Utility {
         //   this.first = false;
         //   return {
         //     discontinuities: [
-        //       [2, "essential"],
+        //       //[2, "essential"],
         //       //[0, "unknown2"],
         //       /* [-3 * Math.PI, "essential"],
         //       [-2 * Math.PI, "essential"],
