@@ -296,7 +296,7 @@ class MyCurve extends Curve {
           return super.drawCurve(painter, style, xMap, yMap, from, to);
         }
       }
-      //samples = samples.sort((a, b) => a.pos - b.pos);
+      samples = samples.sort((a, b) => a.pos - b.pos);
       indexBeforeDiscontinuity = self.indices(samples);
       if (self.discontinuityY && self.discontinuityY.length) {
         //swap x any y in samples
