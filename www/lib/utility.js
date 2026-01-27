@@ -1158,7 +1158,7 @@ class Utility {
     return d;
   }
 
-  static copyCurve(curve) {
+  static async copyCurve(curve) {
     const plot = curve.plot();
     let newTitle = Utility.generateCurveCopyName(plot, curve.title());
     const curveData = Utility.getPlotCurveData(curve);
@@ -1166,7 +1166,12 @@ class Utility {
     if (curveData.functionDlgData) {
       curveData.functionDlgData.title = newTitle;
     }
-    Utility.pltPlotCurveData(plot, curveData).attach(plot);
+    try {
+      const curve = await Utility.pltPlotCurveData(plot, curveData);
+      curve.attach(plot);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   static copyCurves(curves) {
@@ -4443,6 +4448,11 @@ class Utility {
       }; //[];
       if (Static.imagePath === "images/") {
         return await this.discontinuity1(exp, lower, upper, indepVar);
+        // return {
+        //   discontinuities: [],
+        //   turningPoints: [],
+        //   period: null,
+        // };
         // return {
         //   discontinuities: [[2, "essential"]],
         //   turningPoints: [],
