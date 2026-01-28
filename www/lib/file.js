@@ -192,10 +192,10 @@ class MFile {
         d.color1 = colorMap.color1();
         d.color2 = colorMap.color2();
         d.showContour = list[i].testDisplayMode(
-          PlotSpectrogram.DisplayMode.ContourMode
+          PlotSpectrogram.DisplayMode.ContourMode,
         );
         d.showSpectrogram = list[i].testDisplayMode(
-          PlotSpectrogram.DisplayMode.ImageMode
+          PlotSpectrogram.DisplayMode.ImageMode,
         );
         d.numberOfContourPlanes = list[i].numberOfContourPlanes();
         data.push(d);
@@ -257,7 +257,7 @@ class MFile {
         if (p.bottomScaleEngineType == "[LinearScaleEngine]") {
           _plot.setAxisScaleEngine(
             Axis.AxisId.xBottom,
-            new LinearScaleEngine()
+            new LinearScaleEngine(),
           );
         }
         if (p.topScaleEngineType == "[LinearScaleEngine]") {
@@ -287,19 +287,19 @@ class MFile {
         _plot.setFooterFont(new Misc.Font(p.footerFont));
         _plot.setAxisTitleFont(
           Axis.AxisId.xBottom,
-          new Misc.Font(p.axisTitleFont)
+          new Misc.Font(p.axisTitleFont),
         );
         _plot.setAxisTitleFont(
           Axis.AxisId.xTop,
-          new Misc.Font(p.axisTitleFont)
+          new Misc.Font(p.axisTitleFont),
         );
         _plot.setAxisTitleFont(
           Axis.AxisId.yLeft,
-          new Misc.Font(p.axisTitleFont)
+          new Misc.Font(p.axisTitleFont),
         );
         _plot.setAxisTitleFont(
           Axis.AxisId.yRight,
-          new Misc.Font(p.axisTitleFont)
+          new Misc.Font(p.axisTitleFont),
         );
 
         _plot.setTitle(p.title);
@@ -396,7 +396,6 @@ class MFile {
           }
         }
 
-        //setMathMode(p.math_mode);
         for (let i = 1; i < obj.length; ++i) {
           if (
             obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
@@ -409,7 +408,7 @@ class MFile {
         }
 
         for (let i = 1; i < obj.length; ++i) {
-          setMathMode(obj[i].math_mode);
+          plot._functionDlg.setMathMode(obj[i].math_mode);
           //Deal with Rtti_PlotCurve
           if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
             let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
@@ -464,7 +463,7 @@ class MFile {
               _plot.uploadSpectrogram(
                 displayData,
                 obj[i].spectrogramData,
-                obj[i].upload
+                obj[i].upload,
               );
             }
             curve.attach(_plot);
@@ -483,13 +482,13 @@ class MFile {
 
               if (sym) {
                 sym.setSize(
-                  new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight)
+                  new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight),
                 );
                 if (sym.setRotation) {
                   sym.setRotation(obj[i].rotation);
                 }
                 sym.setPen(
-                  new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth)
+                  new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth),
                 );
                 sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
                 marker.setSymbol(sym);
@@ -500,8 +499,8 @@ class MFile {
                 new Misc.Pen(
                   obj[i].linePen.color,
                   obj[i].linePen.width,
-                  obj[i].linePen.style
-                )
+                  obj[i].linePen.style,
+                ),
               );
               marker.setAxes(obj[i].xAxis, obj[i].yAxis);
               marker.setValue(obj[i].x, obj[i].y);
@@ -514,8 +513,8 @@ class MFile {
                   obj[i].labelFont.name,
                   obj[i].labelFont.style,
                   obj[i].labelFont.weight,
-                  obj[i].labelFont.fontColor
-                )
+                  obj[i].labelFont.fontColor,
+                ),
               );
               marker.attach(_plot);
               //
@@ -523,7 +522,8 @@ class MFile {
           }
         }
 
-        setMathMode(p.math_mode);
+        //setMathMode(p.math_mode);
+        plot._functionDlg.setMathMode(Static.math_mode);
 
         //Upload.reset($("#fileInput"));
       } catch (error) {
@@ -583,7 +583,7 @@ class MFile {
           XLSX.utils.sheet_to_json generates an array of objects
           XLSX.utils.sheet_to_formulae generates a list of formulae */
           csvArray = Utility.toArrays(
-            XLSX.utils.sheet_to_csv(workbook.Sheets[firstSheet])
+            XLSX.utils.sheet_to_csv(workbook.Sheets[firstSheet]),
           );
         } else {
           csvArray = Utility.toArrays(data.content);
@@ -695,7 +695,7 @@ class MFile {
 
                   return;
                 }
-              }
+              },
             );
           } else {
             for (let i = 0; i < list.length; ++i) {
@@ -857,13 +857,13 @@ class MFile {
 
           return true;
         },
-        "small"
+        "small",
       );
     };
 
     this.init(plot);
 
-    function setMathMode(mode) {
+    /* function setMathMode(mode) {
       if (mode === undefined) {
         mode = "deg";
       }
@@ -874,6 +874,6 @@ class MFile {
           $(radioButtons[i]).trigger("change");
         }
       }
-    }
+    } */
   } //,,,,
 }
