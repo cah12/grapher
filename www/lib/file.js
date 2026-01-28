@@ -522,8 +522,8 @@ class MFile {
           }
         }
 
-        //setMathMode(p.math_mode);
-        setMathMode(Static.math_mode);
+        setMathMode(p.math_mode);
+        //setMathMode(Static.math_mode);
 
         //Upload.reset($("#fileInput"));
       } catch (error) {
