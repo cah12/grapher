@@ -396,6 +396,7 @@ class MFile {
           }
         }
 
+        //setMathMode(p.math_mode);
         for (let i = 1; i < obj.length; ++i) {
           if (
             obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
@@ -523,7 +524,6 @@ class MFile {
         }
 
         setMathMode(p.math_mode);
-        //setMathMode(Static.math_mode);
 
         //Upload.reset($("#fileInput"));
       } catch (error) {
