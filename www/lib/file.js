@@ -408,7 +408,7 @@ class MFile {
         }
 
         for (let i = 1; i < obj.length; ++i) {
-          plot._functionDlg.setMathMode(obj[i].math_mode);
+          setMathMode(obj[i].math_mode);
           //Deal with Rtti_PlotCurve
           if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
             let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
@@ -523,7 +523,7 @@ class MFile {
         }
 
         //setMathMode(p.math_mode);
-        plot._functionDlg.setMathMode(Static.math_mode);
+        setMathMode(Static.math_mode);
 
         //Upload.reset($("#fileInput"));
       } catch (error) {
@@ -863,7 +863,7 @@ class MFile {
 
     this.init(plot);
 
-    /* function setMathMode(mode) {
+    function setMathMode(mode) {
       if (mode === undefined) {
         mode = "deg";
       }
@@ -874,6 +874,6 @@ class MFile {
           $(radioButtons[i]).trigger("change");
         }
       }
-    } */
+    }
   } //,,,,
 }

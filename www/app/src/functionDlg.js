@@ -284,10 +284,6 @@ class MFunctionDlg {
 
     Replacement.replace();
 
-    this.setMathMode = function (mode) {
-      Replacement.config.angles = mode;
-    };
-
     $('input[name="math_mode"]')
       .off("change")
       .on("change", async function () {
