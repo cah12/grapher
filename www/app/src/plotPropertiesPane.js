@@ -9,7 +9,7 @@ class PlotPropertiesPane extends PropertiesPane {
     self.setHeader(
       plot.leftSidebar.gridItem(1).headerElement,
       "Easy Grapher",
-      true
+      true,
     );
     const headerElement = plot.leftSidebar.gridItem(1).headerElement;
     headerElement.css({ height: 40, fontSize: 18 });
@@ -31,7 +31,7 @@ class PlotPropertiesPane extends PropertiesPane {
         '<tr>\
         <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
         <td style="border: 1px solid"><math-field class="math-field-limits" style="display: flex; justify-content: center; margin: 1px; font-size: 16px;" value=""></math-field></td>\
-      </tr>'
+      </tr>',
       );
 
       const row_inputs = $(row).find("math-field");
@@ -106,7 +106,7 @@ class PlotPropertiesPane extends PropertiesPane {
               <th style="text-align: center;">y<sub>1</sub></th>\
           </tr>\
         </table>\
-      </div>'
+      </div>',
     );
 
     const t = this.table();
@@ -127,7 +127,7 @@ class PlotPropertiesPane extends PropertiesPane {
         ' width="20" height="20"></button></div>\
         </div>\
       </td>\
-    </tr>'
+    </tr>',
     );
     t.prepend(e);
 
@@ -179,7 +179,7 @@ class PlotPropertiesPane extends PropertiesPane {
           if (x.length) {
             const _x = await plot.defines.expandDefines(
               inputs[0].getValue("ascii-math"),
-              plot._functionDlg.getVariable()
+              plot._functionDlg.getVariable(),
             );
             x = Utility.logBaseAdjust(_x);
             try {
@@ -191,14 +191,14 @@ class PlotPropertiesPane extends PropertiesPane {
             }
             inputs[0].value = Utility.toPrecision(
               Utility.adjustForDecimalPlaces(x, decimalPlacesX),
-              precisionX
+              precisionX,
             );
           }
           if (y.length) {
             //Utility.logBaseAdjust(fnDlgFunctionVal)
             const _y = await plot.defines.expandDefines(
               inputs[1].getValue("ascii-math"),
-              plot._functionDlg.getVariable()
+              plot._functionDlg.getVariable(),
             );
             y = Utility.logBaseAdjust(_y);
             try {
@@ -210,7 +210,7 @@ class PlotPropertiesPane extends PropertiesPane {
             }
             inputs[1].value = Utility.toPrecision(
               Utility.adjustForDecimalPlaces(y, decimalPlacesY),
-              precisionY
+              precisionY,
             );
           }
 
@@ -262,16 +262,16 @@ class PlotPropertiesPane extends PropertiesPane {
           inputs[0].value = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(
               samples[indexInSamples].x,
-              decimalPlacesX
+              decimalPlacesX,
             ),
-            precisionX
+            precisionX,
           );
           inputs[1].value = Utility.toPrecision(
             Utility.adjustForDecimalPlaces(
               samples[indexInSamples].y,
-              decimalPlacesY
+              decimalPlacesY,
             ),
-            precisionY
+            precisionY,
           );
           indexInSamples++;
         }
@@ -316,7 +316,7 @@ class PlotPropertiesPane extends PropertiesPane {
     //   },
     // });
 
-    let executeButtonClicked = false;
+    //let executeButtonClicked = false;
 
     mf.addEventListener("beforeinput", (e) => {
       //if (e.data == "insertLineBreak" && mf.caretPoint) {
@@ -342,18 +342,23 @@ class PlotPropertiesPane extends PropertiesPane {
 
     Static.enterButton = $("#executeButton");
 
-    $("#executeButton").click(function () {
-      executeButtonClicked = true;
+    $("#executeButton").click(async function () {
+      try {
+        //executeButtonClicked = true;
 
-      Static.errorMessage = "";
-      mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
-      const m_value = $("#fnDlg_function")[0].value;
-      //if (m_value) {
-      plot._functionDlg.doEnter(m_value, true);
-      executeButtonClicked = false;
+        Static.errorMessage = "";
+        mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
+        const m_value = $("#fnDlg_function")[0].value;
+        //if (m_value) {
+        await plot._functionDlg.doEnter(m_value, true);
+        //console.log(1234);
+        //executeButtonClicked = false;
 
-      $("#fnDlg_function")[0].executeCommand("selectAll");
-      $("#fnDlg_function").focus();
+        $("#fnDlg_function")[0].executeCommand("selectAll");
+        $("#fnDlg_function").focus();
+      } catch (error) {
+        console.log(error);
+      }
     });
 
     $("#fnDlg_function")
@@ -372,12 +377,14 @@ class PlotPropertiesPane extends PropertiesPane {
 
     $("#fnDlg_function")
       .off("keyup")
-      .on("keyup", function (e) {
+      .on("keyup", async function (e) {
         mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
         if (e.key === "Enter" || e.keyCode === 13) {
-          mathVirtualKeyboard.hide();
-          $("#executeButton").click();
-          e.target.focus();
+          Static.errorMessage = "";
+          mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
+
+          $("#fnDlg_function")[0].executeCommand("selectAll");
+          $("#fnDlg_function").focus();
         }
       });
 
@@ -499,11 +506,11 @@ class PlotPropertiesPane extends PropertiesPane {
         const lastRow = $("#pointTableTable").find("TR").last();
         lastRow.find("math-field").first()[0].value = Utility.toPrecision(
           Utility.adjustForDecimalPlaces(element.x, decimalPlacesX),
-          precisionX
+          precisionX,
         );
         lastRow.find("math-field").last()[0].value = Utility.toPrecision(
           Utility.adjustForDecimalPlaces(element.y, decimalPlacesY),
-          precisionY
+          precisionY,
         );
         $("#pointTableTable").append(makePointTableRow());
       }
@@ -1059,8 +1066,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
 
         plot.autoRefresh();
@@ -1079,8 +1086,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1189,8 +1196,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1208,8 +1215,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1318,8 +1325,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1337,8 +1344,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1449,8 +1456,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -1468,8 +1475,8 @@ class PlotPropertiesPane extends PropertiesPane {
           "disabled",
           !se.testAttribute(
             ScaleEngine.Attributes.IncludeReference |
-              ScaleEngine.Attributes.Symmetric
-          )
+              ScaleEngine.Attributes.Symmetric,
+          ),
         );
         plot.autoRefresh();
       },
@@ -2497,7 +2504,7 @@ class PlotPropertiesPane extends PropertiesPane {
 
       let maxWidth = Math.max(
         Math.abs(yAxisInterval.maxValue() - yAxisInterval.minValue()),
-        Math.abs(xAxisInterval.maxValue() - xAxisInterval.minValue())
+        Math.abs(xAxisInterval.maxValue() - xAxisInterval.minValue()),
       );
       //console.log("maxWidth", yAxisInterval.width());
       let minY = yAxisInterval.minValue();
@@ -2721,7 +2728,7 @@ class PlotPropertiesPane extends PropertiesPane {
             aspectRatio(true);
           }
         }
-      }
+      },
     );
 
     $(window).resize(function () {
@@ -3182,13 +3189,13 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.trigger("decimalPlacesChanged");
       bottom_min.val(
         parseFloat(bottom_min.val()).toPrecision(
-          parseInt(bottom_precision.val())
-        )
+          parseInt(bottom_precision.val()),
+        ),
       );
       bottom_max.val(
         parseFloat(bottom_max.val()).toPrecision(
-          parseInt(bottom_precision.val())
-        )
+          parseInt(bottom_precision.val()),
+        ),
       );
     });
 
@@ -3197,10 +3204,10 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.trigger("invalidateWatch");
       Static.trigger("decimalPlacesChanged");
       top_min.val(
-        parseFloat(top_min.val()).toPrecision(parseInt(top_precision.val()))
+        parseFloat(top_min.val()).toPrecision(parseInt(top_precision.val())),
       );
       top_max.val(
-        parseFloat(top_max.val()).toPrecision(parseInt(top_precision.val()))
+        parseFloat(top_max.val()).toPrecision(parseInt(top_precision.val())),
       );
     });
     left_precision.change(function () {
@@ -3208,10 +3215,10 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.trigger("invalidateWatch");
       Static.trigger("decimalPlacesChanged");
       left_min.val(
-        parseFloat(left_min.val()).toPrecision(parseInt(left_precision.val()))
+        parseFloat(left_min.val()).toPrecision(parseInt(left_precision.val())),
       );
       left_max.val(
-        parseFloat(left_max.val()).toPrecision(parseInt(left_precision.val()))
+        parseFloat(left_max.val()).toPrecision(parseInt(left_precision.val())),
       );
     });
     right_precision.change(function () {
@@ -3219,10 +3226,14 @@ class PlotPropertiesPane extends PropertiesPane {
       Static.trigger("invalidateWatch");
       Static.trigger("decimalPlacesChanged");
       right_min.val(
-        parseFloat(right_min.val()).toPrecision(parseInt(right_precision.val()))
+        parseFloat(right_min.val()).toPrecision(
+          parseInt(right_precision.val()),
+        ),
       );
       right_max.val(
-        parseFloat(right_max.val()).toPrecision(parseInt(right_precision.val()))
+        parseFloat(right_max.val()).toPrecision(
+          parseInt(right_precision.val()),
+        ),
       );
     });
 
@@ -3272,25 +3283,25 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.yLeft,
           parseFloat(left_min.val()),
-          parseFloat(left_max.val())
+          parseFloat(left_max.val()),
         );
       if (bottom_min.val() !== bottom_max.val())
         plot.setAxisScale(
           Axis.AxisId.xBottom,
           parseFloat(bottom_min.val()),
-          parseFloat(bottom_max.val())
+          parseFloat(bottom_max.val()),
         );
       if (right_min.val() !== right_max.val())
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
-          parseFloat(right_max.val())
+          parseFloat(right_max.val()),
         );
       if (top_min.val() !== top_max.val())
         plot.setAxisScale(
           Axis.AxisId.xTop,
           parseFloat(top_min.val()),
-          parseFloat(top_max.val())
+          parseFloat(top_max.val()),
         );
     });
 
@@ -3313,10 +3324,10 @@ class PlotPropertiesPane extends PropertiesPane {
     function initLimitsInput() {
       var intv = plot.axisInterval(Axis.AxisId.xBottom);
       bottom_min.val(
-        intv.minValue().toPrecision(parseInt(bottom_precision.val()))
+        intv.minValue().toPrecision(parseInt(bottom_precision.val())),
       );
       bottom_max.val(
-        intv.maxValue().toPrecision(parseInt(bottom_precision.val()))
+        intv.maxValue().toPrecision(parseInt(bottom_precision.val())),
       );
       intv = plot.axisInterval(Axis.AxisId.yLeft);
       left_min.val(intv.minValue().toPrecision(parseInt(left_precision.val())));
@@ -3326,10 +3337,10 @@ class PlotPropertiesPane extends PropertiesPane {
       top_max.val(intv.maxValue().toPrecision(parseInt(top_precision.val())));
       intv = plot.axisInterval(Axis.AxisId.yRight);
       right_min.val(
-        intv.minValue().toPrecision(parseInt(right_precision.val()))
+        intv.minValue().toPrecision(parseInt(right_precision.val())),
       );
       right_max.val(
-        intv.maxValue().toPrecision(parseInt(right_precision.val()))
+        intv.maxValue().toPrecision(parseInt(right_precision.val())),
       );
     }
     bottom_min.change(function () {
@@ -3337,7 +3348,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.xBottom,
           parseFloat(bottom_min.val()),
-          parseFloat(bottom_max.val())
+          parseFloat(bottom_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3364,7 +3375,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.xBottom,
           parseFloat(bottom_min.val()),
-          parseFloat(bottom_max.val())
+          parseFloat(bottom_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3391,7 +3402,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.xTop,
           parseFloat(top_min.val()),
-          parseFloat(top_max.val())
+          parseFloat(top_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3418,7 +3429,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.xTop,
           parseFloat(top_min.val()),
-          parseFloat(top_max.val())
+          parseFloat(top_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3445,7 +3456,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.yLeft,
           parseFloat(left_min.val()),
-          parseFloat(left_max.val())
+          parseFloat(left_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3472,7 +3483,7 @@ class PlotPropertiesPane extends PropertiesPane {
         plot.setAxisScale(
           Axis.AxisId.yLeft,
           parseFloat(left_min.val()),
-          parseFloat(left_max.val())
+          parseFloat(left_max.val()),
         );
       const currentCurve = plot.rv.currentCurve();
       if (Static.aspectRatioOneToOne && currentCurve) {
@@ -3499,14 +3510,14 @@ class PlotPropertiesPane extends PropertiesPane {
         if (plot.grid === plot.threeDgrid) {
           plot.threeDgrid.setZaxisScale(
             parseFloat(right_min.val()),
-            parseFloat(right_max.val())
+            parseFloat(right_max.val()),
           );
           return;
         }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
-          parseFloat(right_max.val())
+          parseFloat(right_max.val()),
         );
       }
       const currentCurve = plot.rv.currentCurve();
@@ -3534,14 +3545,14 @@ class PlotPropertiesPane extends PropertiesPane {
         if (plot.grid === plot.threeDgrid) {
           plot.threeDgrid.setZaxisScale(
             parseFloat(right_min.val()),
-            parseFloat(right_max.val())
+            parseFloat(right_max.val()),
           );
           return;
         }
         plot.setAxisScale(
           Axis.AxisId.yRight,
           parseFloat(right_min.val()),
-          parseFloat(right_max.val())
+          parseFloat(right_max.val()),
         );
       }
       const currentCurve = plot.rv.currentCurve();
@@ -3640,14 +3651,14 @@ class PlotPropertiesPane extends PropertiesPane {
       Utility.enableComponent(
         plot,
         AbstractScaleDraw.ScaleComponent.Backbone,
-        this.checked
+        this.checked,
       );
     });
     show_ticks.change(function () {
       Utility.enableComponent(
         plot,
         AbstractScaleDraw.ScaleComponent.Ticks,
-        this.checked
+        this.checked,
       );
       //tickLengthRow.toggle(this.checked);
     });
@@ -3660,7 +3671,7 @@ class PlotPropertiesPane extends PropertiesPane {
       Utility.enableComponent(
         plot,
         AbstractScaleDraw.ScaleComponent.Labels,
-        this.checked
+        this.checked,
       );
     });
     point_selection.change(function () {
@@ -3677,7 +3688,7 @@ class PlotPropertiesPane extends PropertiesPane {
             "Modify/Remove Point",
             plot,
             curve.title(),
-            point
+            point,
           );
         });
       } else {
@@ -3766,7 +3777,7 @@ class PlotPropertiesPane extends PropertiesPane {
           }
         }
         setZoomerAxesInfo();
-      }
+      },
     );
 
     function zoomerAxisControlsDisabled(on) {
@@ -4141,7 +4152,7 @@ class PlotPropertiesPane extends PropertiesPane {
           }
         }
         setGridAxesInfo();
-      }
+      },
     );
 
     Static.bind("pSel", function (e, on) {
@@ -4657,28 +4668,28 @@ class PlotPropertiesPane extends PropertiesPane {
 
     this.setPlotPropertiesSettings = function () {
       const bottom_decimalPlaces_val = localStorage.getItem(
-        "DecimalPlacesBottomAxis"
+        "DecimalPlacesBottomAxis",
       );
       if (bottom_decimalPlaces_val) {
         bottom_decimalPlaces.val(bottom_decimalPlaces_val);
         bottom_decimalPlaces.trigger("change");
       }
       const top_decimalPlaces_val = localStorage.getItem(
-        "DecimalPlacesTopAxis"
+        "DecimalPlacesTopAxis",
       );
       if (top_decimalPlaces_val) {
         top_decimalPlaces.val(top_decimalPlaces_val);
         top_decimalPlaces.trigger("change");
       }
       const left_decimalPlaces_val = localStorage.getItem(
-        "DecimalPlacesLeftAxis"
+        "DecimalPlacesLeftAxis",
       );
       if (left_decimalPlaces_val) {
         left_decimalPlaces.val(left_decimalPlaces_val);
         left_decimalPlaces.trigger("change");
       }
       const right_decimalPlaces_val = localStorage.getItem(
-        "DecimalPlacesRightAxis"
+        "DecimalPlacesRightAxis",
       );
       if (right_decimalPlaces_val) {
         right_decimalPlaces.val(right_decimalPlaces_val);
@@ -4730,7 +4741,7 @@ class PlotPropertiesPane extends PropertiesPane {
     this.savePlotPropertiesSettings = function () {
       localStorage.setItem(
         "DecimalPlacesBottomAxis",
-        bottom_decimalPlaces.val()
+        bottom_decimalPlaces.val(),
       );
       localStorage.setItem("DecimalPlacesTopAxis", top_decimalPlaces.val());
       localStorage.setItem("DecimalPlacesLeftAxis", left_decimalPlaces.val());

@@ -248,8 +248,8 @@ class MFunctionDlg {
                 <br>\
                 <div class="modal-footer">\
                 <!--button id="fnDlg_enter" type="button" class="btn btn-default">Enter</button-->\
-                <button id="fnDlg_ok" type="button" class="btn btn-default" data-dismiss="modal">Ok</button>\
-                <button id="fnDlg_cancel" type="button" class="btn btn-default"  data-dismiss="modal">Close</button>\
+                <button id="fnDlg_ok" type="button" class="btn btn-default" data-dismiss="modal">Done</button>\
+                <!--button id="fnDlg_cancel" type="button" class="btn btn-default"  data-dismiss="modal">Close</button-->\
                 </div>\
                 </div>\
                 </div>\

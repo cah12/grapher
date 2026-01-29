@@ -4447,12 +4447,12 @@ class Utility {
         turningPoints: [],
       }; //[];
       if (Static.imagePath === "images/") {
-        return await this.discontinuity1(exp, lower, upper, indepVar);
-        // return {
-        //   discontinuities: [],
-        //   turningPoints: [],
-        //   period: null,
-        // };
+        //return await this.discontinuity1(exp, lower, upper, indepVar);
+        return {
+          discontinuities: [],
+          turningPoints: [],
+          period: null,
+        };
         // return {
         //   discontinuities: [[2, "essential"]],
         //   turningPoints: [],
