@@ -396,7 +396,6 @@ class MFile {
           }
         }
 
-        //setMathMode(p.math_mode);
         for (let i = 1; i < obj.length; ++i) {
           if (
             obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve &&
@@ -409,121 +408,129 @@ class MFile {
         }
 
         for (let i = 1; i < obj.length; ++i) {
-          setMathMode(obj[i].math_mode);
-          //Deal with Rtti_PlotCurve
-          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
-            let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
-            curve.attach(_plot);
-          }
-
-          // if (p.sideBarVisible && !_plot.tbar.isButtonChecked(_plot.sBar)) {
-          //   $("#sideBarCheckBoxId").click();
-          // }
-          _plot.tbar.setButtonCheck(_plot.sBar, p.sideBarVisible);
-
-          //Deal with Rtti_PlotSpectroCurve
-          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
-            //console.log("obj[i].color1, obj[i].color2", obj[i].color1, obj[i].color2)
-            let curve = null;
-            if (obj[i].fn) {
-              curve = _plot.functionDlgCb(obj[i].functionDlgData);
-            } else {
-              //curve = new curveConstructor(obj[i].title);
-              curve = _plot.createCurve(obj[i].rtti, obj[i].title);
-              curve.setSamples(obj[i].samples);
+          try {
+            await setMathMode(obj[i].math_mode);
+            //Deal with Rtti_PlotCurve
+            if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
+              let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
+              curve.attach(_plot);
             }
 
-            //let curve = new SpectroCurve(obj[i].title);
-            curve.setPenWidth(obj[i].penWidth);
-            //curve.setSamples(obj[i].samples);
-            curve.setColorInterval(obj[i].color1, obj[i].color2);
-            curve.setColorRange(new Interval(obj[i].minZ, obj[i].maxZ));
-            curve.minZ = obj[i].minZ;
-            curve.maxZ = obj[i].maxZ;
+            // if (p.sideBarVisible && !_plot.tbar.isButtonChecked(_plot.sBar)) {
+            //   $("#sideBarCheckBoxId").click();
+            // }
+            _plot.tbar.setButtonCheck(_plot.sBar, p.sideBarVisible);
 
-            //curve.attach(_plot);
-          }
-
-          //Deal with Rtti_PlotSpectrogram
-          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
-            let curve = null;
-            if (obj[i].fn) {
-              curve = _plot.functionDlgCb(obj[i].functionDlgData);
-              curve.setNumberOfContourPlanes(obj[i].numberOfContourPlanes);
-              curve.showContour(obj[i].showContour);
-              curve.showSpectrogram(obj[i].showSpectrogram);
-            } else {
-              const displayData = {
-                title: obj[i].title,
-                color1: obj[i].color1,
-                color2: obj[i].color2,
-                showContour: obj[i].showContour,
-                showSpectrogram: obj[i].showSpectrogram,
-                numberOfContourPlanes: obj[i].numberOfContourPlanes,
-              };
-              _plot.uploadSpectrogram(
-                displayData,
-                obj[i].spectrogramData,
-                obj[i].upload,
-              );
-            }
-            curve.attach(_plot);
-          }
-
-          //Deal with PlotItem.RttiValues.Rtti_PlotMarker
-          if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
-            //let marker = new markerConstructor(obj[i].title);
-            let marker = _plot.createCurve(obj[i].rtti, obj[i].title);
-            if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
-              let sym = null;
-              if (obj[i].type && obj[i].type === "arrow")
-                sym = new ArrowSymbol();
-              else if (obj[i].type && obj[i].type === "dotOnLine")
-                sym = new DotOnLineSymbol();
-
-              if (sym) {
-                sym.setSize(
-                  new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight),
-                );
-                if (sym.setRotation) {
-                  sym.setRotation(obj[i].rotation);
-                }
-                sym.setPen(
-                  new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth),
-                );
-                sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
-                marker.setSymbol(sym);
+            //Deal with Rtti_PlotSpectroCurve
+            if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve) {
+              //console.log("obj[i].color1, obj[i].color2", obj[i].color1, obj[i].color2)
+              let curve = null;
+              if (obj[i].fn) {
+                curve = _plot.functionDlgCb(obj[i].functionDlgData);
+              } else {
+                //curve = new curveConstructor(obj[i].title);
+                curve = _plot.createCurve(obj[i].rtti, obj[i].title);
+                curve.setSamples(obj[i].samples);
               }
 
-              marker.setLineStyle(obj[i].lineStyle);
-              marker.setLinePen(
-                new Misc.Pen(
-                  obj[i].linePen.color,
-                  obj[i].linePen.width,
-                  obj[i].linePen.style,
-                ),
-              );
-              marker.setAxes(obj[i].xAxis, obj[i].yAxis);
-              marker.setValue(obj[i].x, obj[i].y);
-              marker.setLabel(obj[i].label);
-              marker.setLabelAlignment(obj[i].labelAlignment);
-              marker.setLabelOrientation(obj[i].labelOrientation); //Misc.Font = function (th, name, style, weight,fontColor)
-              marker.setLabelFont(
-                new Misc.Font(
-                  obj[i].labelFont.th,
-                  obj[i].labelFont.name,
-                  obj[i].labelFont.style,
-                  obj[i].labelFont.weight,
-                  obj[i].labelFont.fontColor,
-                ),
-              );
-              marker.attach(_plot);
-              //
-            }
-          }
-        }
+              //let curve = new SpectroCurve(obj[i].title);
+              curve.setPenWidth(obj[i].penWidth);
+              //curve.setSamples(obj[i].samples);
+              curve.setColorInterval(obj[i].color1, obj[i].color2);
+              curve.setColorRange(new Interval(obj[i].minZ, obj[i].maxZ));
+              curve.minZ = obj[i].minZ;
+              curve.maxZ = obj[i].maxZ;
 
-        setMathMode(p.math_mode);
+              //curve.attach(_plot);
+            }
+
+            //Deal with Rtti_PlotSpectrogram
+            if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotSpectrogram) {
+              let curve = null;
+              if (obj[i].fn) {
+                curve = _plot.functionDlgCb(obj[i].functionDlgData);
+                curve.setNumberOfContourPlanes(obj[i].numberOfContourPlanes);
+                curve.showContour(obj[i].showContour);
+                curve.showSpectrogram(obj[i].showSpectrogram);
+              } else {
+                const displayData = {
+                  title: obj[i].title,
+                  color1: obj[i].color1,
+                  color2: obj[i].color2,
+                  showContour: obj[i].showContour,
+                  showSpectrogram: obj[i].showSpectrogram,
+                  numberOfContourPlanes: obj[i].numberOfContourPlanes,
+                };
+                _plot.uploadSpectrogram(
+                  displayData,
+                  obj[i].spectrogramData,
+                  obj[i].upload,
+                );
+              }
+              curve.attach(_plot);
+            }
+
+            //Deal with PlotItem.RttiValues.Rtti_PlotMarker
+            if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotMarker) {
+              //let marker = new markerConstructor(obj[i].title);
+              let marker = _plot.createCurve(obj[i].rtti, obj[i].title);
+              if (obj[i].symbolType !== Symbol2.Style.NoSymbol) {
+                let sym = null;
+                if (obj[i].type && obj[i].type === "arrow")
+                  sym = new ArrowSymbol();
+                else if (obj[i].type && obj[i].type === "dotOnLine")
+                  sym = new DotOnLineSymbol();
+
+                if (sym) {
+                  sym.setSize(
+                    new Misc.Size(obj[i].symbolWidth, obj[i].symbolHeight),
+                  );
+                  if (sym.setRotation) {
+                    sym.setRotation(obj[i].rotation);
+                  }
+                  sym.setPen(
+                    new Misc.Pen(obj[i].symbolPenColor, obj[i].symbolPenWidth),
+                  );
+                  sym.setBrush(new Misc.Brush(obj[i].symbolBrushColor));
+                  marker.setSymbol(sym);
+                }
+
+                marker.setLineStyle(obj[i].lineStyle);
+                marker.setLinePen(
+                  new Misc.Pen(
+                    obj[i].linePen.color,
+                    obj[i].linePen.width,
+                    obj[i].linePen.style,
+                  ),
+                );
+                marker.setAxes(obj[i].xAxis, obj[i].yAxis);
+                marker.setValue(obj[i].x, obj[i].y);
+                marker.setLabel(obj[i].label);
+                marker.setLabelAlignment(obj[i].labelAlignment);
+                marker.setLabelOrientation(obj[i].labelOrientation); //Misc.Font = function (th, name, style, weight,fontColor)
+                marker.setLabelFont(
+                  new Misc.Font(
+                    obj[i].labelFont.th,
+                    obj[i].labelFont.name,
+                    obj[i].labelFont.style,
+                    obj[i].labelFont.weight,
+                    obj[i].labelFont.fontColor,
+                  ),
+                );
+                marker.attach(_plot);
+                //
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } //////////
+
+        try {
+          await setMathMode(p.math_mode);
+        } catch (error) {
+          console.log(error);
+        }
 
         //Upload.reset($("#fileInput"));
       } catch (error) {
@@ -863,15 +870,18 @@ class MFile {
 
     this.init(plot);
 
-    function setMathMode(mode) {
+    async function setMathMode(mode) {
       if (mode === undefined) {
         mode = "deg";
       }
-      let radioButtons = document.getElementsByName("math_mode");
-      for (let i = 0; i < radioButtons.length; i++) {
-        if (radioButtons[i].value === mode) {
-          radioButtons[i].checked = true; // Select the radio button with value 'myValue'
-          $(radioButtons[i]).trigger("change");
+      if (Static.math_mode != mode) {
+        //Static.math_mode = mode;
+        let radioButtons = document.getElementsByName("math_mode");
+        for (let i = 0; i < radioButtons.length; i++) {
+          if (radioButtons[i].value === mode) {
+            radioButtons[i].checked = true; // Select the radio button with value 'myValue'
+            $(radioButtons[i]).trigger("change");
+          }
         }
       }
     }
