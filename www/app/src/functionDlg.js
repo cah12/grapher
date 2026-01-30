@@ -504,7 +504,8 @@ class MFunctionDlg {
       $("#functionModal")
         .off("hidden.bs.modal")
         .on("hidden.bs.modal", async function () {
-          $("#executeButton").trigger("focus");
+          //$("#executeButton").trigger("focus");
+          $("#fnDlg_function").trigger("focus");
           /* if (Static.math_mode != Replacement.config.angles) {
             if (Static.imagePath != "images/") {
               try {

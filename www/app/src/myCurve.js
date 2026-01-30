@@ -332,7 +332,7 @@ class MyCurve extends Curve {
       if (!self.setAxis) {
         self.setAxis = true;
         if (!self.unboundedRange) {
-          Utility.setAutoScale(plot, true);
+          //Utility.setAutoScale(plot, true);
         }
         if (Utility.isScaleAdjustNeeded(self)) {
           if (!Static.AxisInYX) {
@@ -728,7 +728,9 @@ class MyCurve extends Curve {
       } ////////////
       if (!self.setAxis) {
         self.setAxis = true;
-        if (!self.unboundedRange) Utility.setAutoScale(plot, true);
+        if (!self.unboundedRange) {
+          // Utility.setAutoScale(plot, true);
+        }
         if (Utility.isScaleAdjustNeeded(self)) {
           plot.setAxisScale(self.yAxis(), -6, 6);
           if (self.discontinuityY && self.discontinuityY.length) {

@@ -316,7 +316,7 @@ class PlotPropertiesPane extends PropertiesPane {
     //   },
     // });
 
-    //let executeButtonClicked = false;
+    let executeButtonClicked = false;
 
     mf.addEventListener("beforeinput", (e) => {
       //if (e.data == "insertLineBreak" && mf.caretPoint) {
@@ -344,15 +344,15 @@ class PlotPropertiesPane extends PropertiesPane {
 
     $("#executeButton").click(async function () {
       try {
-        //executeButtonClicked = true;
+        executeButtonClicked = true;
 
         Static.errorMessage = "";
         mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
         const m_value = $("#fnDlg_function")[0].value;
         //if (m_value) {
         await plot._functionDlg.doEnter(m_value, true);
-        //console.log(1234);
-        //executeButtonClicked = false;
+        console.log(123);
+        executeButtonClicked = false;
 
         $("#fnDlg_function")[0].executeCommand("selectAll");
         $("#fnDlg_function").focus();
@@ -377,14 +377,12 @@ class PlotPropertiesPane extends PropertiesPane {
 
     $("#fnDlg_function")
       .off("keyup")
-      .on("keyup", async function (e) {
+      .on("keyup", function (e) {
         mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
         if (e.key === "Enter" || e.keyCode === 13) {
-          Static.errorMessage = "";
-          mf.applyStyle({ backgroundColor: "none" }, { range: [0, -1] });
-
-          $("#fnDlg_function")[0].executeCommand("selectAll");
-          $("#fnDlg_function").focus();
+          mathVirtualKeyboard.hide();
+          $("#executeButton").click();
+          e.target.focus();
         }
       });
 
