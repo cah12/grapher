@@ -801,6 +801,7 @@ class MFunctionDlg {
         self.variable = null;
         self.parametric_variable = null;
 
+        self.numerical_fallbackFn = null;
         self.expandedFn = null;
         self.parametricFnX = null;
         self.parametricFnY = null;
@@ -1794,7 +1795,8 @@ class MFunctionDlg {
                       variable,
                     );
                     Utility.progressWait2(false);
-                    if (!solution.length) {
+                    if (!solution.length && !Static.numerical_fallback) {
+                      //return self.doNumerical(fnDlgFunctionVal);
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
@@ -1802,6 +1804,9 @@ class MFunctionDlg {
                       );
                       Utility.progressWait2(false);
                       return;
+                    }
+                    if (!solution.length) {
+                      self.numerical_fallbackFn = fnDlgFunctionVal;
                     }
                   } catch (error) {
                     console.log(error);
@@ -1813,10 +1818,12 @@ class MFunctionDlg {
                     Utility.progressWait2(false);
                     return;
                   }
-                  arr = ["y", solution[0].replaceAll("abs", "")];
-                  Static.g_solution_arr = solution;
+                  if (solution && solution.length) {
+                    arr = ["y", solution[0].replaceAll("abs", "")];
+                    Static.g_solution_arr = solution;
 
-                  fnDlgFunctionVal = `y=${arr[1]}`;
+                    fnDlgFunctionVal = `y=${arr[1]}`;
+                  }
                 } else {
                   Utility.displayErrorMessage(
                     mf,
@@ -2206,7 +2213,7 @@ class MFunctionDlg {
                         variable,
                       );
                       Utility.progressWait2(false);
-                      if (!solution.length) {
+                      if (!solution.length && !Static.numerical_fallback) {
                         const mf = $("#fnDlg_function")[0];
                         Utility.displayErrorMessage(
                           mf,
@@ -2373,7 +2380,7 @@ class MFunctionDlg {
                   self.expandedFn = self.fn = fnDlgFunctionVal;
                 }
                 //console.timeEnd("timer");
-                if (!self.expandedFn) {
+                if (!self.expandedFn && !Static.numerical_fallback) {
                   Utility.progressWait2(false);
                   return;
                 }

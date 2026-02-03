@@ -582,6 +582,37 @@ class MyPlot extends Plot {
       return m_fn;
     }
 
+    this.doNumerical = async function (fnDlg) {
+      // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
+      // return [
+      //   [new Misc.Point(-10, 10), new Misc.Point(0, 0)],
+      //   [new Misc.Point(0, 0), new Misc.Point(10, 10)],
+      // ];
+      // return [];
+      try {
+        const { branches } = await numeric(
+          Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
+          fnDlg.lowerLimit,
+          fnDlg.upperLimit,
+          fnDlg.variable,
+        );
+        //console.log(branches);
+        const _branches = [];
+        for (let i = 0; i < branches.length; i++) {
+          const branch = [];
+          const brn = branches[i];
+          for (let n = 0; n < brn.length; n++) {
+            branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+          }
+          _branches.push(branch);
+        }
+        console.log(_branches);
+        return _branches;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     this.functionDlgCb = async function (
       functionDlgData = null,
       providedFn = null,
@@ -1128,230 +1159,53 @@ class MyPlot extends Plot {
         }
       }
       ///////////////////////
-      try {
-        if (makeSamplesData.parametricFnX && makeSamplesData.parametricFnY) {
-          // makeSamplesData.discontinuityFn_y = makeSamplesData.parametricFnX;
-          // let exp = `${makeSamplesData.parametricFnY}-x`;
-          // exp = Utility.insertProductSign_total(
-          //   exp,
-          //   makeSamplesData.parametric_variable
-          // );
-          // let sol = await Static.solveFor(exp, "t");
-          // let str = null;
-          // if (sol.length > 0) {
-          //   //self._functionDlg.parametric_variable
-          //   str = makeSamplesData.parametricFnX.replaceAll(
-          //     makeSamplesData.parametric_variable,
-          //     `(${sol[0]})`
-          //   );
-          //   str = str.replaceAll("x", makeSamplesData.parametric_variable);
-          //   makeSamplesData.discontinuityFn_y = str;
-          // }
-          // const d = await Utility.discontinuity(
-          //   //fn_unsimplified,
-          //   makeSamplesData.parametricFnX,
-          //   //str,
-          //   makeSamplesData.lowerX,
-          //   makeSamplesData.upperX,
-          //   self._functionDlg.parametric_variable
-          // );
-          // makeSamplesData.discontinuityY = d.discontinuities;
-          // if (d.discontinuities && d.discontinuities.length) {
-          //   const scope = new Map();
-          //   for (let i = 0; i < d.discontinuities.length; i++) {
-          //     scope.set(
-          //       makeSamplesData.parametric_variable,
-          //       d.discontinuities[i][0]
-          //     );
-          //     const disc = math.evaluate(makeSamplesData.parametricFnY, scope);
-          //     if (!Number.isFinite(disc)) {
-          //       const val = d.discontinuities[i][0];
-          //       d.discontinuities[i][0] = Static.LargeNumber * math.sign(disc);
-          //       d.discontinuities.push([val, "unknown2"]);
-          //       i++;
-          //       //d.discontinuities[i][1] = "unknown2";
-          //     } else {
-          //       d.discontinuities[i][0] = disc;
-          //     }
-          //   }
-          // }
-          // //discontTurningPoints = [];
-          // makeSamplesData.discontinuityFn = makeSamplesData.parametricFnY;
-          // exp = `${makeSamplesData.parametricFnX}-x`;
-          // exp = Utility.insertProductSign_total(
-          //   exp,
-          //   makeSamplesData.parametric_variable
-          // );
-          // sol = await Static.solveFor(exp, "t");
-          // str = null;
-          // if (sol.length > 0) {
-          //   //self._functionDlg.parametric_variable
-          //   str = makeSamplesData.parametricFnY.replaceAll(
-          //     makeSamplesData.parametric_variable,
-          //     `(${sol[0]})`
-          //   );
-          //   str = str.replaceAll("x", makeSamplesData.parametric_variable);
-          //   makeSamplesData.discontinuityFn = str;
-          // }
-          // discontTurningPoints = await Utility.discontinuity(
-          //   //fn_unsimplified,
-          //   makeSamplesData.parametricFnY,
-          //   //str,
-          //   makeSamplesData.lowerX,
-          //   makeSamplesData.upperX,
-          //   self._functionDlg.parametric_variable
-          // );
-          // if (
-          //   discontTurningPoints &&
-          //   discontTurningPoints.discontinuities.length
-          // ) {
-          //   const scope = new Map();
-          //   for (
-          //     let i = 0;
-          //     i < discontTurningPoints.discontinuities.length;
-          //     i++
-          //   ) {
-          //     scope.set(
-          //       makeSamplesData.parametric_variable,
-          //       discontTurningPoints.discontinuities[i][0]
-          //     );
-          //     const disc = math.evaluate(makeSamplesData.parametricFnX, scope);
-          //     if (!Number.isFinite(disc)) {
-          //       const val = discontTurningPoints.discontinuities[i][0];
-          //       discontTurningPoints.discontinuities[i][0] =
-          //         Static.LargeNumber * math.sign(disc);
-          //       discontTurningPoints.discontinuities.push([val, "unknown2"]);
-          //       i++;
-          //       //discontTurningPoints.discontinuities[i][1] = "unknown2";
-          //     } else {
-          //       discontTurningPoints.discontinuities[i][0] = disc;
-          //     }
-          //   }
-          // }
-          // if (
-          //   discontTurningPoints.discontinuities.length &&
-          //   !d.discontinuities.length &&
-          //   isFinite(makeSamplesData.parametricFnX)
-          // ) {
-          //   //console.log(makeSamplesData.parametricFnX);
-          //   for (
-          //     let i = 0;
-          //     i < discontTurningPoints.discontinuities.length;
-          //     i++
-          //   ) {
-          //     discontTurningPoints.discontinuities[i][1] = "unknown2";
-          //   }
-          // }
-          // if (
-          //   d.discontinuities.length &&
-          //   !discontTurningPoints.discontinuities.length &&
-          //   isFinite(makeSamplesData.parametricFnY)
-          // ) {
-          //   //console.log(makeSamplesData.parametricFnY);
-          //   for (let i = 0; i < d.discontinuities.length; i++) {
-          //     d.discontinuities[i][1] = "unknown2";
-          //   }
-          // }
-          await doDiscontinuities();
-          /*
-          ///Continuity
+      if (!self._functionDlg.numerical_fallbackFn) {
+        try {
+          if (makeSamplesData.parametricFnX && makeSamplesData.parametricFnY) {
+            await doDiscontinuities();
+          } else {
+            //Not parametric
+            discontTurningPoints = await Utility.discontinuity(
+              //fn_unsimplified,
+              makeSamplesData.fx,
+              makeSamplesData.lowerX,
+              makeSamplesData.upperX,
+              self._functionDlg.variable,
+            );
+          }
           if (
-            !MyPlot.recall &&
-            isFinite(
-              math
-                .simplify(
-                  `(${makeSamplesData.parametricFnX})/(${makeSamplesData.parametricFnY})`,
-                )
-                .toString(),
+            !discontTurningPoints ||
+            (Array.isArray(discontTurningPoints) &&
+              discontTurningPoints.length == 0)
+          ) {
+            discontTurningPoints = {
+              discontinuities: [],
+              turningPoints: [],
+              period: null,
+            };
+          }
+
+          discont = discontTurningPoints.discontinuities;
+
+          if (
+            self._functionDlg.unboundedRange &&
+            typeof discontTurningPoints.period !== "number" &&
+            Utility.isPeriodic(makeSamplesData.fx) &&
+            !Utility.hasOnlyJumpDiscontinuities(
+              discontTurningPoints.discontinuities,
             )
           ) {
-            //for (let i = 0; i < d.discontinuities.length; i++) {
-            d.discontinuities = [];
-            d.discontinuities.push([0, "unknown2"]);
-            // }
-            discontTurningPoints.discontinuities.length = [];
-            discontTurningPoints.discontinuities.push([0, "unknown2"]);
-            MyPlot.recall = true;
-            await doDiscontinuities();
-            // for (
-            //   let i = 0;
-            //   i < discontTurningPoints.discontinuities.length;
-            //   i++
-            // ) {
-            //   discontTurningPoints.discontinuities[i][1] = "unknown2";
-            // }
+            Utility.alert(
+              "The period of the curve is unknown. The Grapher treated this curve as bounded.",
+              null,
+              "unboundedRange123",
+            );
+            self._functionDlg.unboundedRange = false;
           }
-          MyPlot.recall = false; */
-        } else {
-          //Not parametric
-          discontTurningPoints = await Utility.discontinuity(
-            //fn_unsimplified,
-            makeSamplesData.fx,
-            makeSamplesData.lowerX,
-            makeSamplesData.upperX,
-            self._functionDlg.variable,
-          );
+        } catch (error) {
+          discont = [];
         }
-        if (
-          !discontTurningPoints ||
-          (Array.isArray(discontTurningPoints) &&
-            discontTurningPoints.length == 0)
-        ) {
-          discontTurningPoints = {
-            discontinuities: [],
-            turningPoints: [],
-            period: null,
-          };
-        }
-        ///////
-        // if (
-        //   makeSamplesData.discontinuityY.length &&
-        //   discontTurningPoints.discontinuities.length === 0 &&
-        //   !isFinite(makeSamplesData.parametricFnY)
-        // ) {
-        //   for (let i = 0; i < makeSamplesData.discontinuityY.length; i++) {
-        //     makeSamplesData.discontinuityY[i][1] = "unknown2";
-        //   }
-        // }
-
-        /////////
-        discont = discontTurningPoints.discontinuities;
-        /* if (
-          typeof discontTurningPoints.period !== "number" &&
-          Utility.isPeriodic(makeSamplesData.fx) &&
-          self._functionDlg.unboundedRange
-        ) {
-          Utility.alert(
-            "The period of the curve is unknown. The Grapher treated this curve as bounded.",
-            null,
-            "unboundedRange123"
-          );
-          self._functionDlg.unboundedRange = false;
-        } */
-        if (
-          self._functionDlg.unboundedRange &&
-          typeof discontTurningPoints.period !== "number" &&
-          Utility.isPeriodic(makeSamplesData.fx) &&
-          !Utility.hasOnlyJumpDiscontinuities(
-            discontTurningPoints.discontinuities,
-          )
-        ) {
-          Utility.alert(
-            "The period of the curve is unknown. The Grapher treated this curve as bounded.",
-            null,
-            "unboundedRange123",
-          );
-          self._functionDlg.unboundedRange = false;
-        }
-      } catch (error) {
-        discont = [];
       }
-
-      //console.log(discont);
-      // discont = discont.sort(function (a, b) {
-      //   return a - b;
-      // });
-
       if (self._functionDlg.coeffs.length && discont.length) {
         const cfs = self._functionDlg.coeffs;
         let unknowns = `${cfs[0]}`;
@@ -1401,8 +1255,10 @@ class MyPlot extends Plot {
               (makeSamplesData.upperX - makeSamplesData.lowerX) / 300;
           }
         }
-        makeSamplesData.discontinuity = discont;
-        makeSamplesData.turning_points = discontTurningPoints.turningPoints;
+        if (!self._functionDlg.numerical_fallbackFn) {
+          makeSamplesData.discontinuity = discont;
+          makeSamplesData.turning_points = discontTurningPoints.turningPoints;
+        }
         makeSamplesData.xDecimalPlaces = self.axisDecimalPlaces(
           Axis.AxisId.xBottom,
         );
@@ -1411,8 +1267,25 @@ class MyPlot extends Plot {
           Axis.AxisId.yLeft,
         );
 
-        const samples = Utility.makeSamples(makeSamplesData);
-        discont = makeSamplesData.discontinuity;
+        let samples = null;
+        if (!self._functionDlg.numerical_fallbackFn) {
+          samples = Utility.makeSamples(makeSamplesData);
+          discont = makeSamplesData.discontinuity;
+        } else {
+          try {
+            samples = await self.doNumerical(self._functionDlg);
+            for (let i = 0; i < samples.length; i++) {
+              if (i > 0) {
+                title = Utility.generateCurveName(self);
+              }
+              newCurve = addCurve(title, samples[i], false, fn);
+              newCurve.attach(self);
+            }
+            return;
+          } catch (error) {
+            console.log(error);
+          }
+        }
 
         if (
           !samples ||

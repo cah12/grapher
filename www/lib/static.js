@@ -527,6 +527,7 @@ Static.number_of_points_auto = true;
 Static.magnifying = false;
 Static.math_mode = "deg";
 Static.inverseFunction = false;
+Static.numerical_fallback = true;
 
 Static.AxisInYX = false;
 
