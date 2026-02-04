@@ -592,6 +592,7 @@ class MyPlot extends Plot {
       // return [];
       fnDlg.expandedFn = null;
       fnDlg.fn = null;
+      fnDlg.coeffs = [];
       try {
         const { branches } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
