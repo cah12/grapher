@@ -583,6 +583,7 @@ class MyPlot extends Plot {
     }
 
     this.doNumerical = async function (fnDlg) {
+      Utility.progressWait2(true);
       // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
       // return [
       //   [new Misc.Point(-10, 10), new Misc.Point(0, 0)],
@@ -610,6 +611,7 @@ class MyPlot extends Plot {
         return _branches;
       } catch (error) {
         console.log(error);
+        Utility.progressWait2(false);
       }
     };
 
