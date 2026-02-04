@@ -973,7 +973,7 @@ class MFunctionDlg {
                   const mf = $("#fnDlg_function")[0];
                   Utility.displayErrorMessage(
                     mf,
-                    `Unable to find a solution for "${fn}".`,
+                    `Unable to symbolically solve "${fn}".`,
                   );
                   Utility.progressWait2(false);
                   return;
@@ -1321,7 +1321,7 @@ class MFunctionDlg {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
-                        `Unable to find a solution for "${fn}".`,
+                        `Unable to symbolically solve "${fn}".`,
                       );
                       Utility.progressWait2(false);
                       return;
@@ -1370,7 +1370,7 @@ class MFunctionDlg {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
-                        `Unable to find a solution for "${fn}".`,
+                        `Unable to symbolically solve "${fn}".`,
                       );
                       Utility.progressWait2(false);
                       return;
@@ -1807,7 +1807,7 @@ class MFunctionDlg {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
-                        `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                        `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                       );
                       Utility.progressWait2(false);
                       return;
@@ -1820,7 +1820,7 @@ class MFunctionDlg {
                     Utility.progressWait2(false);
                     Utility.displayErrorMessage(
                       mf,
-                      `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                      `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                     );
                     Utility.progressWait2(false);
                     return;
@@ -2166,7 +2166,7 @@ class MFunctionDlg {
                       const mf = $("#fnDlg_function")[0];
                       Utility.displayErrorMessage(
                         mf,
-                        `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                        `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                       );
                       Utility.progressWait2(false);
                       return;
@@ -2225,7 +2225,7 @@ class MFunctionDlg {
                           const mf = $("#fnDlg_function")[0];
                           Utility.displayErrorMessage(
                             mf,
-                            `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                            `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                           );
                           Utility.progressWait2(false);
                           return;
@@ -2325,7 +2325,7 @@ class MFunctionDlg {
                     const mf = $("#fnDlg_function")[0];
                     Utility.displayErrorMessage(
                       mf,
-                      `Unable to find a solution for "${fn}".`,
+                      `Unable to symbolically solve "${fn}".`,
                     );
                     Utility.progressWait2(false);
                     return;

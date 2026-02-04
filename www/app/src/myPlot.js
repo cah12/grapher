@@ -2603,7 +2603,7 @@ class MyPlot extends Plot {
                   const mf = $("#fnDlg_function")[0];
                   Utility.displayErrorMessage(
                     mf,
-                    `Unable to find a solution for "${fn}".`,
+                    `Unable to symbolically solve "${fn}".`,
                   );
                   return;
                 }
