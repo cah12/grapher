@@ -618,6 +618,105 @@ class MyPlot extends Plot {
       }
     };
 
+    this.doNumerical2 = async function (fnDlg) {
+      function isLastFirst(branches, i) {
+        if (i === 0) {
+          return true;
+        }
+        const lastPt = branches[i - 1][branches[i - 1].length - 1];
+        const firstPt = branches[i][0];
+        if (
+          math.abs(math.abs(lastPt[0]) - math.abs(firstPt[0])) <= 1e-10 &&
+          math.abs(math.abs(lastPt[1]) - math.abs(firstPt[1])) <= 1e-10
+        ) {
+          return true;
+        }
+
+        return false;
+      }
+
+      function isFirstFirst(branches, i) {
+        if (i === 0) {
+          throw new Error("isFirstFirst - i must be > 0");
+        }
+        const lastPt = branches[i - 1][0];
+        const firstPt = branches[i][0];
+        if (
+          math.abs(lastPt[0] - firstPt[0]) <= 1e-2 &&
+          math.abs(lastPt[1] - firstPt[1]) <= 1e-2
+        ) {
+          return true;
+        }
+
+        return false;
+      }
+
+      function isLastLast(branches, i) {
+        if (i === 0) {
+          throw new Error("isFirstFirst - i must be > 0");
+        }
+        const lastPt = branches[i - 1][branches[i - 1].length - 1];
+        const firstPt = branches[i][branches[i].length - 1];
+        if (
+          math.abs(lastPt[0] - firstPt[0]) <= 1e-2 &&
+          math.abs(lastPt[1] - firstPt[1]) <= 1e-2
+        ) {
+          return true;
+        }
+
+        return false;
+      }
+
+      Utility.progressWait2(true);
+      // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
+      // return [
+      //   [new Misc.Point(-10, 10), new Misc.Point(0, 0)],
+      //   [new Misc.Point(0, 0), new Misc.Point(10, 10)],
+      // ];
+      // return [];
+      fnDlg.expandedFn = null;
+      fnDlg.fn = null;
+      fnDlg.coeffs = [];
+      try {
+        const { branches } = await numeric(
+          Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
+          fnDlg.lowerLimit,
+          fnDlg.upperLimit,
+          fnDlg.variable,
+        );
+        //console.log(branches);
+        let _branches = [];
+        for (let i = 0; i < branches.length; i++) {
+          let branch = [];
+          const brn = branches[i];
+          for (let n = 0; n < brn.length; n++) {
+            branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+          }
+          if (i == 0) {
+            _branches = _branches.concat(branch);
+            continue;
+          }
+          if (isFirstFirst(branches, i)) {
+            _branches.reverse();
+            _branches = _branches.concat(branch);
+          }
+          if (isLastLast(branches, i)) {
+            console.log(branch);
+            branch.reverse();
+            console.log(branch);
+            _branches = _branches.concat(branch);
+          }
+        }
+        //console.log(_branches);
+        const result = [];
+        result.push(_branches);
+        return result;
+      } catch (error) {
+        console.log(error);
+        Utility.progressWait2(false);
+      }
+    };
+
     this.functionDlgCb = async function (
       functionDlgData = null,
       providedFn = null,
