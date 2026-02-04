@@ -590,6 +590,8 @@ class MyPlot extends Plot {
       //   [new Misc.Point(0, 0), new Misc.Point(10, 10)],
       // ];
       // return [];
+      fnDlg.expandedFn = null;
+      fnDlg.fn = null;
       try {
         const { branches } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
