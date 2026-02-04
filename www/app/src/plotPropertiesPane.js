@@ -830,6 +830,19 @@ class PlotPropertiesPane extends PropertiesPane {
       id: "drawingSettings",
       parentId: "graphSettings",
     });
+    var plotingType = this.addProperty({
+      name: "Ploting Type",
+      title: "Set the ploting type and behavior.",
+      id: "plotingType",
+      parentId: "drawingSettings",
+      type: "select",
+      //disabled: true,
+      selectorOptions: [
+        "Numeric fallback",
+        "Symbolic solving",
+        "Numeric solving",
+      ],
+    });
     var axesOrientation = this.addProperty({
       name: "Axes orientation",
       title:
@@ -2423,6 +2436,20 @@ class PlotPropertiesPane extends PropertiesPane {
       }
       plot.setAutoReplot(autoReplot);
       plot.autoRefresh();
+    });
+
+    plotingType.change(function () {
+      var index = $(this)[0].selectedIndex;
+      if (index == 0) {
+        //numeric fallback
+        Static.numerical_fallback = 1;
+      } else if (index == 1) {
+        //no numeric fallback
+        Static.numerical_fallback = 0;
+      } else if (index == 2) {
+        //numeric
+        Static.numerical_fallback = 2;
+      }
     });
 
     ///////////////////////////////////////////////

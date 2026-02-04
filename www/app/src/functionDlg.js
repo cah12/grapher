@@ -1789,11 +1789,16 @@ class MFunctionDlg {
 
                   try {
                     //Utility.progressWait();
-                    solution = await Static.solveFor(
-                      fnDlgFunctionVal,
-                      "y",
-                      variable,
-                    );
+                    if (Static.numerical_fallback == 2) {
+                      solution = [];
+                    } else {
+                      solution = await Static.solveFor(
+                        fnDlgFunctionVal,
+                        "y",
+                        variable,
+                      );
+                    }
+
                     Utility.progressWait2(false);
                     if (!solution.length && !Static.numerical_fallback) {
                       //return self.doNumerical(fnDlgFunctionVal);
