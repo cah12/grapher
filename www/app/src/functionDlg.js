@@ -2232,6 +2232,7 @@ class MFunctionDlg {
                         }
                       } else {
                         solution = [];
+                        self.numerical_fallbackFn = fnDlgFunctionVal;
                       }
                     } catch (error) {
                       console.log(error);
@@ -2239,7 +2240,9 @@ class MFunctionDlg {
                     }
                     arr = [solution[0]];
                   }
-                  fnDlgFunctionVal = arr[0];
+                  if (arr && arr[0]) {
+                    fnDlgFunctionVal = arr[0];
+                  }
                 }
               }
             }
