@@ -1791,6 +1791,8 @@ class MFunctionDlg {
                     //Utility.progressWait();
                     if (Static.numerical_fallback == 2) {
                       solution = [];
+                      self.expandedFn = null;
+                      self.fn = null;
                     } else {
                       solution = await Static.solveFor(
                         fnDlgFunctionVal,
