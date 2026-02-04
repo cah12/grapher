@@ -2214,20 +2214,24 @@ class MFunctionDlg {
                     }
                     try {
                       //Utility.progressWait();
-                      solution = await Static.solveFor(
-                        fnDlgFunctionVal,
-                        _v,
-                        variable,
-                      );
-                      Utility.progressWait2(false);
-                      if (!solution.length && !Static.numerical_fallback) {
-                        const mf = $("#fnDlg_function")[0];
-                        Utility.displayErrorMessage(
-                          mf,
-                          `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                      if (Static.numerical_fallback != 2) {
+                        solution = await Static.solveFor(
+                          fnDlgFunctionVal,
+                          _v,
+                          variable,
                         );
                         Utility.progressWait2(false);
-                        return;
+                        if (!solution.length && !Static.numerical_fallback) {
+                          const mf = $("#fnDlg_function")[0];
+                          Utility.displayErrorMessage(
+                            mf,
+                            `Unable to find a solution for "${fnDlgFunctionVal}".`,
+                          );
+                          Utility.progressWait2(false);
+                          return;
+                        }
+                      } else {
+                        solution = [];
                       }
                     } catch (error) {
                       console.log(error);
