@@ -599,6 +599,7 @@ class MyPlot extends Plot {
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
           fnDlg.variable,
+          fnDlg.numOfPoints,
         );
         //console.log(branches);
         const _branches = [];
