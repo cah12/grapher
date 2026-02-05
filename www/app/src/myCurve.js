@@ -297,7 +297,11 @@ class MyCurve extends Curve {
         }
       }
       //samples = samples.sort((a, b) => a.pos - b.pos);
-      indexBeforeDiscontinuity = self.indices(samples);
+      if (self.discontinuityIndex && self.discontinuityIndex.length) {
+        indexBeforeDiscontinuity = self.discontinuityIndex;
+      } else {
+        indexBeforeDiscontinuity = self.indices(samples);
+      }
       if (self.discontinuityY && self.discontinuityY.length) {
         //swap x any y in samples
         samples = samples.map((pt) => {

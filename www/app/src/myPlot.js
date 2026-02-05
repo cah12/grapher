@@ -1377,15 +1377,37 @@ class MyPlot extends Plot {
           discont = makeSamplesData.discontinuity;
         } else {
           try {
-            samples = await self.doNumerical(self._functionDlg);
-            for (let i = 0; i < samples.length; i++) {
-              if (i > 0) {
-                title = Utility.generateCurveName(self);
+            if (Static.piecewise) {
+              samples = await self.doNumerical(self._functionDlg);
+              for (let i = 0; i < samples.length; i++) {
+                if (i > 0) {
+                  title = Utility.generateCurveName(self);
+                }
+                newCurve = addCurve(title, samples[i], false, fn);
+                newCurve.attach(self);
               }
-              newCurve = addCurve(title, samples[i], false, fn);
+              return;
+            } else {
+              // if (samples && samples.length) {//discontinuity
+              samples = await self.doNumerical(self._functionDlg);
+              newCurve = addCurve(title, samples[0], false, fn);
+              newCurve.discontinuityIndex = [];
+              let _samples = samples[0];
+              for (let i = 1; i < samples.length; i++) {
+                newCurve.discontinuityIndex.push(_samples.length - 1);
+                newCurve.discontinuityIndex.push(_samples.length);
+                newCurve.discontinuity.push([
+                  _samples[_samples.length - 1].x,
+                  "unknown2",
+                ]);
+                newCurve.discontinuity.push([samples[0].x, "unknown2"]);
+                _samples = _samples.concat(samples[i]);
+              }
+              newCurve.setSamples(_samples);
               newCurve.attach(self);
+              return;
+              // }
             }
-            return;
           } catch (error) {
             console.log(error);
           }

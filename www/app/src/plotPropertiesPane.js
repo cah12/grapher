@@ -843,6 +843,15 @@ class PlotPropertiesPane extends PropertiesPane {
         "Numeric solving",
       ],
     });
+    var piecewise = this.addProperty({
+      name: "Piecewise",
+      title: "Set the ploting type and behavior.",
+      id: "piecewise",
+      parentId: "drawingSettings",
+      type: "checkbox",
+      //disabled: true,
+      checked: false,
+    });
     var axesOrientation = this.addProperty({
       name: "Axes orientation",
       title:
@@ -2443,13 +2452,20 @@ class PlotPropertiesPane extends PropertiesPane {
       if (index == 0) {
         //numeric fallback
         Static.numerical_fallback = 1;
+        self.show("piecewise");
       } else if (index == 1) {
         //no numeric fallback
         Static.numerical_fallback = 0;
+        self.hide("piecewise");
       } else if (index == 2) {
         //numeric
         Static.numerical_fallback = 2;
+        self.show("piecewise");
       }
+    });
+
+    piecewise.change(function () {
+      Static.piecewise = $(this)[0].checked;
     });
 
     ///////////////////////////////////////////////

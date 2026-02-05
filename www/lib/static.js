@@ -529,6 +529,8 @@ Static.math_mode = "deg";
 Static.inverseFunction = false;
 Static.numerical_fallback = 1; //0 no numeric fallback, 1 numeric fallback, 2 numeric
 
+Static.piecewise = false;
+
 Static.AxisInYX = false;
 
 ////////////https://simplegrapher.onrender.com///////////////
