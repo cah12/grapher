@@ -900,6 +900,24 @@ require([
   // console.log(ppGrid, ppGrid.rtti);
 
   ////////////////////////////////////////////////////////////////
+
+  // Example usage (in browser with mathjs loaded or in Node with `mathjs`):
+
+  /* const expr = "y^2 - x";
+  const branches = generatePointsAllBranches(expr, -10, 10, {
+    numX: 200,
+    ySamples: 400,
+  });
+  // console.log(branches.length, branches[0] && branches[0].slice(0, 5));
+  for (let i = 0; i < branches.length; i++) {
+    const branch = branches[i];
+    console.log(`*********branch: ${i}*******`);
+    for (let j = 0; j < branch.length; j++) {
+      const pt = branch[j];
+      console.log(`${pt[0]}, ${pt[1]}`);
+    }
+    console.log("/n");
+  } */
 });
 
 /*
