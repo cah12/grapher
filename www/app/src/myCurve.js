@@ -70,10 +70,10 @@ class MyCurve extends Curve {
         return self.doDraw(painter, style, xMap, yMap, from, to);
       } else {
         const data = self.data();
-        if (self.discontinuosCurvePending) {
-          data.discontinuitySamples = null;
-          return;
-        }
+        // if (self.discontinuosCurvePending) {
+        //   data.discontinuitySamples = null;
+        //   return;
+        // }
 
         const plot = self.plot();
 
@@ -148,6 +148,19 @@ class MyCurve extends Curve {
         // try {
         //if (data.toString() != "[SyntheticPointData]") {
         data.discontinuitySamples = Utility.makeSamples(obj);
+
+        /* if (!Utility.isPeriodic(self.fn)) {
+          if (math.abs(data.discontinuitySamples[0].x) === Static.LargeNumber) {
+            data.discontinuitySamples[0].x =
+              Static.LargeNumber * math.sign(data.discontinuitySamples[0].x);
+            data.discontinuitySamples[data.discontinuitySamples.length - 1].x =
+              Static.LargeNumber *
+              math.sign(
+                data.discontinuitySamples[data.discontinuitySamples.length - 1]
+                  .x,
+              );
+          }
+        } */
 
         if (Static.AxisInYX) {
           //Swap x and y in discontinuity samples
