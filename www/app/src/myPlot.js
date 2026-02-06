@@ -645,7 +645,7 @@ class MyPlot extends Plot {
           }
           _branches.push(branch);
         }
-        console.log(_branches);
+        //console.log(_branches);
         return _branches;
       } catch (error) {
         console.log(error);
