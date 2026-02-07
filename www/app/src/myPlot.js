@@ -672,20 +672,38 @@ class MyPlot extends Plot {
       fnDlg.coeffs = [];
       try {
         //console.time("numeric");
-        const { branches } = await numeric(
+        const { branches, discontinuities } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
           fnDlg.variable,
           fnDlg.numOfPoints,
         );
+        if (Utility.hasInfiniteOrEssential(discontinuities)) {
+          const autoReplot = self.autoReplot();
+          self.setAutoReplot(false);
+          self.setAxisScale(Axis.AxisId.yLeft, -6, 6);
+          self.setAutoReplot(autoReplot);
+          self.autoRefresh();
+          // if (self.discontinuityY && self.discontinuityY.length) {
+          //   plot.setAxisScale(self.xAxis(), -10, 10);
+          // }
+        }
         //console.log(branches);
         const _branches = [];
         for (let i = 0; i < branches.length; i++) {
           const branch = [];
           const brn = branches[i];
+          let y;
           for (let n = 0; n < brn.length; n++) {
-            branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+            y = brn[n][1];
+            if (y === "##") {
+              y = Static.LargeNumber;
+            }
+            if (y === "-##") {
+              y = -Static.LargeNumber;
+            }
+            branch.push(new Misc.Point(brn[n][0], y));
           }
           _branches.push(branch);
         }

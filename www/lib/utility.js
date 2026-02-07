@@ -1748,15 +1748,24 @@ class Utility {
     plot.autoRefresh();
   }
 
-  static makeParametricSamples(obj) {
-    function hasInfiniteOrEssential(discont) {
-      for (let i = 0; i < discont.length; i++) {
-        if (discont[i][1] === "infinite" || discont[i][1] === "essential") {
-          return true;
-        }
+  static hasInfiniteOrEssential(discont) {
+    for (let i = 0; i < discont.length; i++) {
+      if (discont[i][1] === "infinite" || discont[i][1] === "essential") {
+        return true;
       }
-      return false;
     }
+    return false;
+  }
+
+  static makeParametricSamples(obj) {
+    // function hasInfiniteOrEssential(discont) {
+    //   for (let i = 0; i < discont.length; i++) {
+    //     if (discont[i][1] === "infinite" || discont[i][1] === "essential") {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // }
 
     function handleDiscontinuityTurningPoints(samples, discontY = false) {
       obj.unknown1_1 = null;
@@ -2392,8 +2401,8 @@ class Utility {
 
     if (
       isFinite(obj.parametricFnX) ||
-      (hasInfiniteOrEssential(obj.discontinuity) &&
-        hasInfiniteOrEssential(obj.discontinuityY))
+      (Utility.hasInfiniteOrEssential(obj.discontinuity) &&
+        Utility.hasInfiniteOrEssential(obj.discontinuityY))
     ) {
       samples.sort((a, b) => {
         return a.y - b.y;

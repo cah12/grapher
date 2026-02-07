@@ -352,8 +352,8 @@ class MyCurve extends Curve {
           //Utility.setAutoScale(plot, true);
         }
         if (Utility.isScaleAdjustNeeded(self)) {
-          const autoReplot = plot.autoReplot();
-          plot.setAutoReplot(false);
+          // const autoReplot = plot.autoReplot();
+          // plot.setAutoReplot(false);
           if (!Static.AxisInYX) {
             plot.setAxisScale(self.yAxis(), -6, 6);
             if (self.discontinuityY && self.discontinuityY.length) {
@@ -365,8 +365,8 @@ class MyCurve extends Curve {
               plot.setAxisScale(self.xAxis(), -6, 6);
             }
           }
-          plot.setAutoReplot(autoReplot);
-          plot.autoRefresh();
+          // plot.setAutoReplot(autoReplot);
+          plot.replot();
         }
       }
       self.drawDiscontinuosCurve(
