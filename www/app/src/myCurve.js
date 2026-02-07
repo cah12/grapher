@@ -352,6 +352,8 @@ class MyCurve extends Curve {
           //Utility.setAutoScale(plot, true);
         }
         if (Utility.isScaleAdjustNeeded(self)) {
+          const autoReplot = plot.autoReplot();
+          plot.setAutoReplot(false);
           if (!Static.AxisInYX) {
             plot.setAxisScale(self.yAxis(), -6, 6);
             if (self.discontinuityY && self.discontinuityY.length) {
@@ -363,6 +365,8 @@ class MyCurve extends Curve {
               plot.setAxisScale(self.xAxis(), -6, 6);
             }
           }
+          plot.setAutoReplot(autoReplot);
+          plot.autoRefresh();
         }
       }
       self.drawDiscontinuosCurve(
@@ -574,197 +578,201 @@ class MyCurve extends Curve {
     return indexBeforeDiscontinuity.sort((a, b) => a - b);
   }
 
-  async drawCurve1(painter, style, xMap, yMap, from, to) {
-    const self = this;
+  // async drawCurve1(painter, style, xMap, yMap, from, to) {
+  //   const self = this;
 
-    const plot = self.plot();
-    const autoReplot = plot.autoReplot();
+  //   const plot = self.plot();
+  //   const autoReplot = plot.autoReplot();
 
-    plot.setAutoReplot(false);
+  //   plot.setAutoReplot(false);
 
-    let samples = null;
-    if (!self.unboundedRange) {
-      samples = self.data().samples();
-    }
+  //   let samples = null;
+  //   if (!self.unboundedRange) {
+  //     samples = self.data().samples();
+  //   }
 
-    let indexBeforeDiscontinuity = [];
+  //   let indexBeforeDiscontinuity = [];
 
-    if (
-      //!self.unboundedRange &&
-      (self.discontinuity && self.discontinuity.length) ||
-      self.hasDiscontinuity
-    ) {
-      if (!self.unboundedRange) {
-        //Account for discontinuity
-        //samples are free of discontinuity.
-        const samples = self.data().samples();
+  //   if (
+  //     //!self.unboundedRange &&
+  //     (self.discontinuity && self.discontinuity.length) ||
+  //     self.hasDiscontinuity
+  //   ) {
+  //     if (!self.unboundedRange) {
+  //       //Account for discontinuity
+  //       //samples are free of discontinuity.
+  //       const samples = self.data().samples();
 
-        //console.log(self.discontinuity);
+  //       //console.log(self.discontinuity);
 
-        for (let n = 0; n < self.discontinuity.length; n++) {
-          for (let i = 0; i < samples.length; i++) {
-            if (!Static.AxisInYX) {
-              if (samples[i].x > self.discontinuity[n]) {
-                indexBeforeDiscontinuity.push(i - 1);
-                break;
-              }
-            } else {
-              if (samples[i].y > self.discontinuity[n]) {
-                indexBeforeDiscontinuity.push(i - 1);
-                break;
-              }
-            }
-          }
-        }
+  //       for (let n = 0; n < self.discontinuity.length; n++) {
+  //         for (let i = 0; i < samples.length; i++) {
+  //           if (!Static.AxisInYX) {
+  //             if (samples[i].x > self.discontinuity[n]) {
+  //               indexBeforeDiscontinuity.push(i - 1);
+  //               break;
+  //             }
+  //           } else {
+  //             if (samples[i].y > self.discontinuity[n]) {
+  //               indexBeforeDiscontinuity.push(i - 1);
+  //               break;
+  //             }
+  //           }
+  //         }
+  //       }
 
-        if (indexBeforeDiscontinuity.length < self.discontinuity.length)
-          indexBeforeDiscontinuity.push(samples.length - 1);
+  //       if (indexBeforeDiscontinuity.length < self.discontinuity.length)
+  //         indexBeforeDiscontinuity.push(samples.length - 1);
 
-        let m_from = from,
-          m_to;
-        for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
-          if (indexBeforeDiscontinuity[i] < 0) continue;
-          m_to = indexBeforeDiscontinuity[i];
-          if (m_from < m_to) {
-            //console.log(486, self.data().samples());
-            super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
-            //console.log(487, self.data().samples());
-          }
-          m_from = m_to + 1;
-        }
+  //       let m_from = from,
+  //         m_to;
+  //       for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
+  //         if (indexBeforeDiscontinuity[i] < 0) continue;
+  //         m_to = indexBeforeDiscontinuity[i];
+  //         if (m_from < m_to) {
+  //           //console.log(486, self.data().samples());
+  //           super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+  //           //console.log(487, self.data().samples());
+  //         }
+  //         m_from = m_to + 1;
+  //       }
 
-        if (
-          indexBeforeDiscontinuity.length == 1 &&
-          indexBeforeDiscontinuity[0] == -1
-        ) {
-          //console.log(486, self.data().samples());
-          super.drawCurve(painter, style, xMap, yMap, m_from, to);
-          //console.log(487, self.data().samples());
-        }
+  //       if (
+  //         indexBeforeDiscontinuity.length == 1 &&
+  //         indexBeforeDiscontinuity[0] == -1
+  //       ) {
+  //         //console.log(486, self.data().samples());
+  //         super.drawCurve(painter, style, xMap, yMap, m_from, to);
+  //         //console.log(487, self.data().samples());
+  //       }
 
-        if (m_to < to && m_from < to) {
-          super.drawCurve(painter, style, xMap, yMap, m_from, to);
-        }
-      } else {
-        try {
-          const plot = self.plot();
-          const autoReplot = plot.autoReplot();
-          plot.setAutoReplot(false);
+  //       if (m_to < to && m_from < to) {
+  //         super.drawCurve(painter, style, xMap, yMap, m_from, to);
+  //       }
+  //     } else {
+  //       try {
+  //         const plot = self.plot();
+  //         const autoReplot = plot.autoReplot();
+  //         plot.setAutoReplot(false);
 
-          //self.unboundedDiscontinuity = self.discontinuity;
-          //console.log("Draw unbounded");
-          const data = self.data();
+  //         //self.unboundedDiscontinuity = self.discontinuity;
+  //         //console.log("Draw unbounded");
+  //         const data = self.data();
 
-          const sz = data.size();
+  //         const sz = data.size();
 
-          const scaleDiv = plot.axisScaleDiv(self.xAxis());
-          let left = scaleDiv.lowerBound(),
-            right = scaleDiv.upperBound();
+  //         const scaleDiv = plot.axisScaleDiv(self.xAxis());
+  //         let left = scaleDiv.lowerBound(),
+  //           right = scaleDiv.upperBound();
 
-          if (!self.hasDiscontinuity && self.discontinuity.length) {
-            self.hasDiscontinuity = true;
-          }
+  //         if (!self.hasDiscontinuity && self.discontinuity.length) {
+  //           self.hasDiscontinuity = true;
+  //         }
 
-          if (self.left != left && self.right != right) {
-            //console.log(456);
-            self.left = left;
-            self.right = right;
+  //         if (self.left != left && self.right != right) {
+  //           //console.log(456);
+  //           self.left = left;
+  //           self.right = right;
 
-            if (Utility.isPeriodic(self.fn)) {
-              self.discontinuity = Utility.handlePeriodic(
-                self.discontinuity,
-                self.left,
-                self.right,
-              );
-            }
-          }
+  //           if (Utility.isPeriodic(self.fn)) {
+  //             self.discontinuity = Utility.handlePeriodic(
+  //               self.discontinuity,
+  //               self.left,
+  //               self.right,
+  //             );
+  //           }
+  //         }
 
-          if (!self.discontinuity.length) {
-            data.discontinuitySamples = null;
-            return super.drawCurve(painter, style, xMap, yMap, from, to);
-          }
+  //         if (!self.discontinuity.length) {
+  //           data.discontinuitySamples = null;
+  //           return super.drawCurve(painter, style, xMap, yMap, from, to);
+  //         }
 
-          const obj = {
-            fx: self.fn,
-            lowerX: left,
-            upperX: right,
-            numOfSamples: sz,
-            //indepVarIsDegree: obj.indepVarIsDegree,
-            indepVar: Utility.findIndepVar(self.fn),
-            //indepVarY = obj.variableY; // || findIndepVarY(fx); TODO
+  //         const obj = {
+  //           fx: self.fn,
+  //           lowerX: left,
+  //           upperX: right,
+  //           numOfSamples: sz,
+  //           //indepVarIsDegree: obj.indepVarIsDegree,
+  //           indepVar: Utility.findIndepVar(self.fn),
+  //           //indepVarY = obj.variableY; // || findIndepVarY(fx); TODO
 
-            discontinuity: self.discontinuity,
-          };
+  //           discontinuity: self.discontinuity,
+  //         };
 
-          data.discontinuitySamples = Utility.makeSamples(obj);
+  //         data.discontinuitySamples = Utility.makeSamples(obj);
 
-          if (self.discontinuity && data.discontinuitySamples) {
-            for (let n = 0; n < self.discontinuity.length; n++) {
-              for (let i = 0; i < data.discontinuitySamples.length; i++) {
-                if (data.discontinuitySamples[i].x > self.discontinuity[n]) {
-                  indexBeforeDiscontinuity.push(i - 1);
-                  break;
-                }
-              }
-            }
-          }
+  //         if (self.discontinuity && data.discontinuitySamples) {
+  //           for (let n = 0; n < self.discontinuity.length; n++) {
+  //             for (let i = 0; i < data.discontinuitySamples.length; i++) {
+  //               if (data.discontinuitySamples[i].x > self.discontinuity[n]) {
+  //                 indexBeforeDiscontinuity.push(i - 1);
+  //                 break;
+  //               }
+  //             }
+  //           }
+  //         }
 
-          if (
-            data.discontinuitySamples &&
-            indexBeforeDiscontinuity &&
-            self.discontinuity &&
-            indexBeforeDiscontinuity.length < self.discontinuity.length
-          )
-            indexBeforeDiscontinuity.push(data.discontinuitySamples.length - 1);
+  //         if (
+  //           data.discontinuitySamples &&
+  //           indexBeforeDiscontinuity &&
+  //           self.discontinuity &&
+  //           indexBeforeDiscontinuity.length < self.discontinuity.length
+  //         )
+  //           indexBeforeDiscontinuity.push(data.discontinuitySamples.length - 1);
 
-          let m_from = from,
-            m_to;
-          for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
-            if (indexBeforeDiscontinuity[i] <= 0) continue;
-            m_to = indexBeforeDiscontinuity[i];
-            if (m_from < m_to) {
-              super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
-            }
-            m_from = m_to + 1;
-          }
+  //         let m_from = from,
+  //           m_to;
+  //         for (let i = 0; i < indexBeforeDiscontinuity.length; i++) {
+  //           if (indexBeforeDiscontinuity[i] <= 0) continue;
+  //           m_to = indexBeforeDiscontinuity[i];
+  //           if (m_from < m_to) {
+  //             super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+  //           }
+  //           m_from = m_to + 1;
+  //         }
 
-          if (data.discontinuitySamples && data.discontinuitySamples.length) {
-            m_to = data.discontinuitySamples.length - 1;
-            if (m_from < m_to) {
-              super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
-            }
-          }
+  //         if (data.discontinuitySamples && data.discontinuitySamples.length) {
+  //           m_to = data.discontinuitySamples.length - 1;
+  //           if (m_from < m_to) {
+  //             super.drawCurve(painter, style, xMap, yMap, m_from, m_to);
+  //           }
+  //         }
 
-          /* if (m_to < to && m_from < to) {
-            super.drawCurve(painter, style, xMap, yMap, m_from, to);
-          } */
-          //self.unboundedDiscontinuity = null;
-        } catch (error) {
-          console.log(error);
-        }
-      } ////////////
-      if (!self.setAxis) {
-        self.setAxis = true;
-        if (!self.unboundedRange) {
-          // Utility.setAutoScale(plot, true);
-        }
-        if (Utility.isScaleAdjustNeeded(self)) {
-          plot.setAxisScale(self.yAxis(), -6, 6);
-          if (self.discontinuityY && self.discontinuityY.length) {
-            plot.setAxisScale(self.xAxis(), -10, 10);
-          }
-        }
-      }
-    } else {
-      super.drawCurve(painter, style, xMap, yMap, from, to);
-    }
-    if (!self.unboundedRange) {
-      //self.plot().getLayout().getCentralWidget().setMouseTracking(true);
-      plot.setAutoReplot(autoReplot);
-      plot.autoRefresh();
-    }
+  //         /* if (m_to < to && m_from < to) {
+  //           super.drawCurve(painter, style, xMap, yMap, m_from, to);
+  //         } */
+  //         //self.unboundedDiscontinuity = null;
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     } ////////////
+  //     if (!self.setAxis) {
+  //       self.setAxis = true;
+  //       if (!self.unboundedRange) {
+  //         // Utility.setAutoScale(plot, true);
+  //       }
+  //       if (Utility.isScaleAdjustNeeded(self)) {
+  //         const autoReplot = plot.autoReplot();
+  //         plot.setAutoReplot(false);
+  //         plot.setAxisScale(self.yAxis(), -6, 6);
+  //         if (self.discontinuityY && self.discontinuityY.length) {
+  //           plot.setAxisScale(self.xAxis(), -10, 10);
+  //         }
+  //         plot.setAutoReplot(autoReplot);
+  //         plot.autoRefresh();
+  //       }
+  //     }
+  //   } else {
+  //     super.drawCurve(painter, style, xMap, yMap, from, to);
+  //   }
+  //   if (!self.unboundedRange) {
+  //     //self.plot().getLayout().getCentralWidget().setMouseTracking(true);
+  //     plot.setAutoReplot(autoReplot);
+  //     plot.autoRefresh();
+  //   }
 
-    //self.plot().getCentralWidget().setMouseTracking(true);
-  }
+  //   //self.plot().getCentralWidget().setMouseTracking(true);
+  // }
 }
 //MyCurve.init();

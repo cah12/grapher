@@ -792,6 +792,8 @@ class MFunctionDlg {
           );
           return;
         } */
+        const autoReplot = plot.autoReplot();
+        plot.setAutoReplot(false);
 
         Static.g_solution_arr = null;
         Static.inverseFunction = false;
@@ -820,6 +822,7 @@ class MFunctionDlg {
             `You cannot use "T" in expressions. It is used internally for working with "${_theta}".`,
           );
           Utility.progressWait2(false);
+          plot.setAutoReplot(autoReplot);
           return;
         }
 
@@ -856,6 +859,7 @@ class MFunctionDlg {
           mf.setValue("?....?", { suppressChangeNotifications: true });
           Utility.displayErrorMessage(mf, `You made an invalid entry.`);
           Utility.progressWait2(false);
+          plot.setAutoReplot(autoReplot);
           return;
         }
 
@@ -872,6 +876,7 @@ class MFunctionDlg {
             }.`,
           );
           Utility.progressWait2(false);
+          plot.setAutoReplot(autoReplot);
           return;
         }
 
@@ -900,6 +905,7 @@ class MFunctionDlg {
           const arr = fn.split("=");
           if (arr.length !== 2) {
             Utility.progressWait2(false);
+            //plot.setAutoReplot(autoReplot);
             return false; //failed to force definition
           }
 
@@ -911,6 +917,7 @@ class MFunctionDlg {
             );
             if (!expandedRHS) {
               Utility.progressWait2(false);
+              //plot.setAutoReplot(autoReplot);
               return null;
             }
 
@@ -921,6 +928,7 @@ class MFunctionDlg {
             );
             if (!expandedLHS) {
               Utility.progressWait2(false);
+              //plot.setAutoReplot(autoReplot);
               return null;
             }
             fn = `${expandedLHS}=${expandedRHS}`;
@@ -960,6 +968,7 @@ class MFunctionDlg {
 
               if (deg_of_poly < 1 && deg_of_poly != 0 && deg_of_poly != 0.5) {
                 Utility.progressWait2(false);
+                //plot.setAutoReplot(autoReplot);
                 return false;
               }
 
@@ -976,6 +985,7 @@ class MFunctionDlg {
                     `Unable to symbolically solve "${fn}".`,
                   );
                   Utility.progressWait2(false);
+                  //plot.setAutoReplot(autoReplot);
                   return;
                 }
               } catch (error) {
@@ -1005,6 +1015,7 @@ class MFunctionDlg {
                 res = res.replace("U", dec);
                 if (res.indexOf("U") !== -1) {
                   Utility.progressWait2(false);
+                  //plot.setAutoReplot(autoReplot);
                   return false; //failed to force definition
                 }
                 if (plot.defines.getDefine(dec)) {
@@ -1012,6 +1023,7 @@ class MFunctionDlg {
                     `You are attempting to re-define ${dec}. Redefinition is not permitted.`,
                   );
                   Utility.progressWait2(false);
+                  //plot.setAutoReplot(autoReplot);
                   return;
                 }
 
@@ -1027,18 +1039,22 @@ class MFunctionDlg {
                 }
 
                 Utility.progressWait2(false);
+                //plot.setAutoReplot(autoReplot);
                 return true;
               } catch (error) {
                 console.log(error);
+                //plot.setAutoReplot(autoReplot);
                 return;
               }
 
               //////////////
             }
             Utility.progressWait2(false);
+            //plot.setAutoReplot(autoReplot);
             return false;
           } catch (error) {
             console.log(error);
+            //plot.setAutoReplot(autoReplot);
             return false;
           }
         }
@@ -1103,6 +1119,7 @@ class MFunctionDlg {
                 );
               }
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return;
             }
           }
@@ -1110,6 +1127,7 @@ class MFunctionDlg {
           if (!fnDlgFunctionVal) {
             alert("Invalid entry");
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
           }
 
@@ -1134,6 +1152,7 @@ class MFunctionDlg {
               `Only "less than or equal" (i.e <=) permitted in defining the domain.`,
             );
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return;
           }
           let variablePlusExpanded = null;
@@ -1155,6 +1174,7 @@ class MFunctionDlg {
                   `The domain, ${domainRangeRestriction}, is improperly declared.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
 
@@ -1179,10 +1199,12 @@ class MFunctionDlg {
                   `The domain, ${domainRangeRestriction}, is improperly declared. Try defining "${match[0]}".`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             } catch (error) {
               console.log(error);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
           }
@@ -1201,6 +1223,7 @@ class MFunctionDlg {
               `The domain, ${domainRangeRestriction}, is improperly declared.`,
             );
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
           }
 
@@ -1617,11 +1640,13 @@ class MFunctionDlg {
                   `Improperly declared domain. Expected "${self.variable}" as the variable.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
 
               if (!handleDomain()) {
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
               if (
@@ -1633,6 +1658,7 @@ class MFunctionDlg {
                   `Unable to resolve the declared domain.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             } else {
@@ -1642,6 +1668,7 @@ class MFunctionDlg {
                   `Improperly declared domain. Expected "${self.parametric_variable}" as the variable.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
               handleDomain();
@@ -1654,6 +1681,7 @@ class MFunctionDlg {
                   `Unable to resolve the declared domain.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             }
@@ -1701,6 +1729,7 @@ class MFunctionDlg {
                   `Degree of polynomial in "y" greater than 3 not yet supported - "${lhs}".`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               if (!lhs) {
@@ -1719,6 +1748,7 @@ class MFunctionDlg {
                 }
 
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               rhs = await plot.defines.expandDefines(
@@ -1733,6 +1763,7 @@ class MFunctionDlg {
                   `Degree of polynomial in "y" greater than 3 not yet supported - "${rhs}".`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               if (!rhs) {
@@ -1751,6 +1782,7 @@ class MFunctionDlg {
                 }
 
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               fnDlgFunctionVal = `${lhs}=${rhs}`;
@@ -1770,6 +1802,7 @@ class MFunctionDlg {
                   `The equation, ${fnDlgFunctionVal}, simplifies 0*y=${res}. This leads to the invalid divide-by-zero.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
 
@@ -1810,6 +1843,7 @@ class MFunctionDlg {
                         `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                       );
                       Utility.progressWait2(false);
+                      plot.setAutoReplot(autoReplot);
                       return;
                     }
                     if (!solution.length) {
@@ -1823,6 +1857,7 @@ class MFunctionDlg {
                       `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                   if (solution && solution.length) {
@@ -1837,11 +1872,13 @@ class MFunctionDlg {
                     `Unable to resolve for "y". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`,
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               }
             } catch (error) {
               console.log(error);
+              plot.setAutoReplot(autoReplot);
               return;
             }
           }
@@ -1871,6 +1908,7 @@ class MFunctionDlg {
             } catch (error) {
               Utility.displayErrorMessage(mf, error.message);
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return;
             }
 
@@ -1880,6 +1918,7 @@ class MFunctionDlg {
               } catch (error) {
                 Utility.displayErrorMessage(mf, error.message);
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
             }
@@ -1895,6 +1934,7 @@ class MFunctionDlg {
                 "Improrper declaration. Try adding 'x=' to the start of the equation",
               );
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             self.xIsDependentVariable = true;
@@ -1927,6 +1967,7 @@ class MFunctionDlg {
                       `Cannot use "y" in this context. It is reserved for use as the independent variable.`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
 
@@ -1943,6 +1984,7 @@ class MFunctionDlg {
                       `Unable to resolve for "${m_rhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                 }
@@ -1975,11 +2017,13 @@ class MFunctionDlg {
                       `Tried but failed to define "${m_rhs_fnDec}".`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                   arr[1] = m_rhs;
                 } catch (error) {
                   console.log(error);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               }
@@ -2004,6 +2048,7 @@ class MFunctionDlg {
                           `Cannot use "y" in this context. It is reserved for use as the independent variable.`,
                         );
                         Utility.progressWait2(false);
+                        plot.setAutoReplot(autoReplot);
                         return;
                       }
 
@@ -2021,10 +2066,12 @@ class MFunctionDlg {
                           `Unable to resolve for "${m_lhs_fnDec}". The absolute value of the degree of polynomial must be greater than 1 or equal to 0.5`,
                         );
                         Utility.progressWait2(false);
+                        plot.setAutoReplot(autoReplot);
                         return;
                       }
                     } catch (error) {
                       console.log(error);
+                      plot.setAutoReplot(autoReplot);
                       return;
                     }
                   } else {
@@ -2040,6 +2087,7 @@ class MFunctionDlg {
                         `The equation, ${fnDlgFunctionVal}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`,
                       );
                       Utility.progressWait2(false);
+                      plot.setAutoReplot(autoReplot);
                       return;
                     }
                   }
@@ -2076,6 +2124,7 @@ class MFunctionDlg {
                         `Tried but failed to define "${m_lhs_fnDec}".`,
                       );
                       Utility.progressWait2(false);
+                      plot.setAutoReplot(autoReplot);
                       return;
                     }
                     arr[0] = m_lhs;
@@ -2107,10 +2156,12 @@ class MFunctionDlg {
                       `Failed to expand, ${arr[0]}, the left-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                 } catch (error) {
                   console.log(error);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               }
@@ -2136,10 +2187,12 @@ class MFunctionDlg {
                       `Failed to expand, ${arr[1]}, the right-hand-side. Perhaps because all or part of it is unknown and cannot be derive.`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                 } catch (error) {
                   console.log(error);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
                 expanded = true;
@@ -2169,6 +2222,7 @@ class MFunctionDlg {
                         `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                       );
                       Utility.progressWait2(false);
+                      plot.setAutoReplot(autoReplot);
                       return;
                     }
                   } catch (error) {
@@ -2188,6 +2242,7 @@ class MFunctionDlg {
                       `You are attempting to re-define ${dec}. Redefinition is not permitted.`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                   $(window).trigger("defineAdded", [dec, fnDlgFunctionVal]);
@@ -2201,6 +2256,7 @@ class MFunctionDlg {
                       `The equation, ${arr[0]}=${arr[1]}, is missing the dependent variable "y".\nRevise the entry to exclude the equal sign or add "y".`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
                   if (m_lhs.length == 1 && m_rhs.indexOf("y") == -1) {
@@ -2228,6 +2284,7 @@ class MFunctionDlg {
                             `Unable to symbolically solve "${fnDlgFunctionVal}".`,
                           );
                           Utility.progressWait2(false);
+                          plot.setAutoReplot(autoReplot);
                           return;
                         }
                       } else {
@@ -2265,6 +2322,7 @@ class MFunctionDlg {
                     `Invalid function declaration.\nExpected something of the form 'f(x)=X^2'.`,
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return false;
                 }
                 let errorType = plot.defines.validateDefineName(
@@ -2277,6 +2335,7 @@ class MFunctionDlg {
                       '", must start with alpha character.',
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return false;
                 }
                 if (errorType == Defines.DefineError.contain) {
@@ -2287,6 +2346,7 @@ class MFunctionDlg {
                         '", contains, or is part of, the earlier define.',
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return false;
                   }
                   errorType = 0;
@@ -2300,11 +2360,13 @@ class MFunctionDlg {
                       '" keyword!',
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return false;
                 }
                 if (errorType != Defines.DefineError.noError) {
                   alert(`An error exist within the defines.`);
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return false;
                 }
 
@@ -2333,6 +2395,7 @@ class MFunctionDlg {
                       `Unable to symbolically solve "${fn}".`,
                     );
                     Utility.progressWait2(false);
+                    plot.setAutoReplot(autoReplot);
                     return;
                   }
 
@@ -2353,6 +2416,7 @@ class MFunctionDlg {
                     `Failed to successfully expand ${arr[1]}`,
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
 
@@ -2366,6 +2430,7 @@ class MFunctionDlg {
               }
             } catch (error) {
               console.log(error);
+              plot.setAutoReplot(autoReplot);
               return;
             }
           } /////////////////////c
@@ -2398,6 +2463,7 @@ class MFunctionDlg {
                 //console.timeEnd("timer");
                 if (!self.expandedFn && !Static.numerical_fallback) {
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
                 if (typeof self.expandedFn == "object") {
@@ -2425,6 +2491,7 @@ class MFunctionDlg {
                     c.attach(plot);
                   }
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               } catch (error) {
@@ -2453,10 +2520,12 @@ class MFunctionDlg {
                   }
 
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               } catch (error) {
                 console.log(error);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
             }
@@ -2477,6 +2546,7 @@ class MFunctionDlg {
                     `Failed to successfully expand ${fnDlgFunctionVal}`,
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
 
@@ -2492,11 +2562,13 @@ class MFunctionDlg {
                     `You are attempting to use an unknown derivative on the right-hand-side of the equation.`,
                   );
                   Utility.progressWait2(false);
+                  plot.setAutoReplot(autoReplot);
                   return;
                 }
               }
             } catch (error) {
               console.log(error);
+              plot.setAutoReplot(autoReplot);
               return;
             }
           } else {
@@ -2511,6 +2583,7 @@ class MFunctionDlg {
                   `Improperrly defined parametric function.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               let arr = [obj.operand, obj.base];
@@ -2528,6 +2601,7 @@ class MFunctionDlg {
                   `Failed to successfully expand ${arr[0]}`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
               self.expandedParametricFnY =
@@ -2544,10 +2618,12 @@ class MFunctionDlg {
                   `Failed to successfully expand ${arr[1]}`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return;
               }
             } catch (error) {
               console.log(error);
+              plot.setAutoReplot(autoReplot);
               return;
             }
           } ///////////////////////c
@@ -2561,6 +2637,7 @@ class MFunctionDlg {
                   `Invalid function. Probably yields infinity.`,
                 );
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
               self.coeffs = getCoeffs(self.expandedFn);
@@ -2574,6 +2651,7 @@ class MFunctionDlg {
                 );
                 $("#cont_variable").show();
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             } else if (
@@ -2602,6 +2680,7 @@ class MFunctionDlg {
                 );
                 $("#cont_variable").show();
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             }
@@ -2619,7 +2698,9 @@ class MFunctionDlg {
           }
 
           function replaceParameterWith_1(str) {
-            if (self.coeffs == undefined || self.coeffs.length == 0) return str;
+            if (self.coeffs == undefined || self.coeffs.length == 0) {
+              return str;
+            }
             let s = Utility.purgeAndMarkKeywords(str);
             for (let i = 0; i < self.coeffs.length; i++) {
               if (s.indexOf(self.coeffs[i]) != -1) {
@@ -2640,6 +2721,7 @@ class MFunctionDlg {
               Utility.alert("Please enter a valid lower(x) limit.");
               $("#settingsButton").click();
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             var lower = Math.abs(self.lowerLimit);
@@ -2650,12 +2732,14 @@ class MFunctionDlg {
                 )}.`,
               );
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
           } catch (err) {
             Utility.alert("Please enter a valid lower(x) limit.");
             $("#settingsButton").click();
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
           }
 
@@ -2670,6 +2754,7 @@ class MFunctionDlg {
               Utility.alert("Please enter a valid upper(x) limit.");
               $("#settingsButton").click();
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             // var upper = Math.abs(self.upperLimit);
@@ -2685,6 +2770,7 @@ class MFunctionDlg {
             Utility.alert("Please enter a valid upper(x) limit.");
             $("#settingsButton").click();
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
             //}
           }
@@ -2692,6 +2778,7 @@ class MFunctionDlg {
           if (!validateLimits(self.lowerLimit, self.upperLimit)) {
             $("#settingsButton").click();
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
           }
 
@@ -2765,6 +2852,7 @@ class MFunctionDlg {
             ) {
               $("#settingsButton").click();
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             self.unboundedRange = $("#fnDlg_unboundedRange")[0].checked;
@@ -2789,6 +2877,7 @@ class MFunctionDlg {
                   `Undefined symbols "${m_uniqChars}"`,
                 );
               Utility.progressWait2(false);
+              plot.setAutoReplot(autoReplot);
               return;
             }
 
@@ -2803,6 +2892,7 @@ class MFunctionDlg {
             } catch (err) {
               Utility.alert("Please enter a valid lower(y) limit.");
               $("#settingsButton").click();
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             try {
@@ -2812,6 +2902,7 @@ class MFunctionDlg {
             } catch (err) {
               Utility.alert("Please enter a valid upper(y) limit.");
               $("#settingsButton").click();
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             try {
@@ -2822,6 +2913,7 @@ class MFunctionDlg {
             } catch (err) {
               Utility.alert("Please enter a valid lower(f(xy)) limit.");
               $("#settingsButton").click();
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             try {
@@ -2832,6 +2924,7 @@ class MFunctionDlg {
             } catch (err) {
               Utility.alert("Please enter a valid upper(f(xy)) limit.");
               $("#settingsButton").click();
+              plot.setAutoReplot(autoReplot);
               return false;
             }
             self.variableY = $("#fnDlg_variableY").val();
@@ -2878,8 +2971,8 @@ class MFunctionDlg {
               const isAutoScale = Utility.isAutoScale(plot);
 
               if (!isAutoScale) {
-                const autoReplot = plot.autoReplot();
-                plot.setAutoReplot(false);
+                // const autoReplot = plot.autoReplot();
+                // plot.setAutoReplot(false);
                 let xScaleDiv = plot.axisScaleDiv(Axis.AxisId.xBottom);
                 let yScaleDiv = plot.axisScaleDiv(Axis.AxisId.yLeft);
                 let x_min = xScaleDiv.lowerBound();
@@ -2889,15 +2982,15 @@ class MFunctionDlg {
                 _newCurve = await cb();
                 plot.setAxisScale(Axis.AxisId.xBottom, x_min, x_max);
                 plot.setAxisScale(Axis.AxisId.yLeft, y_min, y_max);
-                plot.setAutoReplot(autoReplot);
-                plot.autoRefresh();
+                // plot.setAutoReplot(autoReplot);
+                // plot.autoRefresh();
               } else {
                 const autoReplot = plot.autoReplot();
                 plot.setAutoReplot(false);
                 Utility.setAutoScale(plot, false);
                 _newCurve = await cb();
-                plot.setAutoReplot(autoReplot);
-                plot.autoRefresh();
+                // plot.setAutoReplot(autoReplot);
+                // plot.autoRefresh();
                 if (
                   // _newCurve.discontinuity &&
                   // !_newCurve.discontinuity.length
@@ -2909,11 +3002,13 @@ class MFunctionDlg {
             } else {
               _newCurve = await cb();
             }
-            plot.autoRefresh();
+            // plot.setAutoReplot(autoReplot);
+            // plot.autoRefresh();
             Utility.progressWait2(false);
           } catch (error) {
             console.log(error);
             Utility.progressWait2(false);
+            plot.setAutoReplot(autoReplot);
             return false;
           }
 
@@ -2993,9 +3088,10 @@ class MFunctionDlg {
               self.title = Utility.generateCurveName(plot);
               let _newCurve2 = null;
               try {
-                _newCurve2 = cb();
+                _newCurve2 = await cb();
               } catch (error) {
                 Utility.progressWait2(false);
+                plot.setAutoReplot(autoReplot);
                 return false;
               }
             }
@@ -3032,6 +3128,8 @@ class MFunctionDlg {
           }
         }
         Utility.progressWait2(false);
+        plot.setAutoReplot(autoReplot);
+        plot.autoRefresh();
         return true;
       };
 

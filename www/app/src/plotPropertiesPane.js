@@ -351,7 +351,7 @@ class PlotPropertiesPane extends PropertiesPane {
         const m_value = $("#fnDlg_function")[0].value;
         //if (m_value) {
         await plot._functionDlg.doEnter(m_value, true);
-        console.log(123);
+        //console.log(123);
         executeButtonClicked = false;
 
         $("#fnDlg_function")[0].executeCommand("selectAll");

@@ -606,12 +606,16 @@ class MyPlot extends Plot {
         if (arrSides.length > 1) {
           fn = `(${arrSides[0]})-(${arrSides[1]})`;
         }
+        let num = 400;
+        if (Utility.isPeriodic(fn)) {
+          num = Static.min_discontinuity_samples;
+        }
         const branches = generatePointsAllBranches(
           Utility.insertProductSign_total(fn),
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
           {
-            numX: 1000,
+            numX: math.max(num, fnDlg.numOfPoints),
             ySamples: 2000,
           },
         );
@@ -1350,6 +1354,8 @@ class MyPlot extends Plot {
           discont = makeSamplesData.discontinuity;
         } else {
           try {
+            const autoReplot = self.autoReplot();
+            self.setAutoReplot(false);
             if (Static.piecewise) {
               samples = await self.doNumerical(self._functionDlg);
               for (let i = 0; i < samples.length; i++) {
@@ -1359,6 +1365,8 @@ class MyPlot extends Plot {
                 newCurve = addCurve(title, samples[i], false, fn);
                 newCurve.attach(self);
               }
+              self.setAutoReplot(autoReplot);
+              self.replot();
               return;
             } else {
               // if (samples && samples.length) {//discontinuity
@@ -1378,6 +1386,8 @@ class MyPlot extends Plot {
               }
               newCurve.setSamples(_samples);
               newCurve.attach(self);
+              self.setAutoReplot(autoReplot);
+              self.replot();
               return;
               // }
             }
