@@ -582,7 +582,7 @@ class MyPlot extends Plot {
       return m_fn;
     }
 
-    this.doNumerical = async function (fnDlg) {
+    this.doNumerical2 = async function (fnDlg) {
       Utility.progressWait2(true);
       // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
       // return [
@@ -594,6 +594,7 @@ class MyPlot extends Plot {
       fnDlg.fn = null;
       fnDlg.coeffs = [];
       try {
+        console.time("numeric");
         // const { branches } = await numeric(
         //   Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
         //   fnDlg.lowerLimit,
@@ -650,6 +651,7 @@ class MyPlot extends Plot {
           _branches.push(branch);
         }
         //console.log(_branches);
+        console.timeEnd("numeric");
         return _branches;
       } catch (error) {
         console.log(error);
@@ -657,7 +659,7 @@ class MyPlot extends Plot {
       }
     };
 
-    this.doNumerical2 = async function (fnDlg) {
+    this.doNumerical = async function (fnDlg) {
       Utility.progressWait2(true);
       // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
       // return [
@@ -669,6 +671,7 @@ class MyPlot extends Plot {
       fnDlg.fn = null;
       fnDlg.coeffs = [];
       try {
+        //console.time("numeric");
         const { branches } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
           fnDlg.lowerLimit,
@@ -686,7 +689,8 @@ class MyPlot extends Plot {
           }
           _branches.push(branch);
         }
-        console.log(_branches);
+        //console.log(_branches);
+        //console.timeEnd("numeric");
         return _branches;
       } catch (error) {
         console.log(error);
