@@ -1756,6 +1756,18 @@ class Utility {
     }
     return false;
   }
+  static hasInfiniteOrEssentialOrJump(discont) {
+    for (let i = 0; i < discont.length; i++) {
+      if (
+        discont[i][1] === "infinite" ||
+        discont[i][1] === "essential" ||
+        discont[i][1] === "jump"
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   static makeParametricSamples(obj) {
     // function hasInfiniteOrEssential(discont) {

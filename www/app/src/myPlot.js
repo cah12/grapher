@@ -679,7 +679,7 @@ class MyPlot extends Plot {
           fnDlg.variable,
           fnDlg.numOfPoints,
         );
-        if (Utility.hasInfiniteOrEssential(discontinuities)) {
+        if (Utility.hasInfiniteOrEssentialOrJump(discontinuities)) {
           const autoReplot = self.autoReplot();
           self.setAutoReplot(false);
           self.setAxisScale(Axis.AxisId.yLeft, -6, 6);
