@@ -3081,9 +3081,9 @@ class MFunctionDlg {
           if (Static.g_solution_arr && !Static.inverseFunction) {
             for (let i = 1; i < Static.g_solution_arr.length; i++) {
               const m_fn = Static.g_solution_arr[i].toString();
-              if (m_fn.indexOf("|") !== -1 || m_fn.indexOf("i") !== -1) {
-                continue;
-              }
+              // if (m_fn.indexOf("|") !== -1 || m_fn.indexOf("i") !== -1) { //Why skip complex and absolute value functions?
+              //   continue;
+              // }
               self.expandedFn = self.fn = m_fn;
               self.title = Utility.generateCurveName(plot);
               let _newCurve2 = null;
