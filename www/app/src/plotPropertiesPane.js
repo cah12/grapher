@@ -844,8 +844,8 @@ class PlotPropertiesPane extends PropertiesPane {
       ],
     });
     var piecewise = this.addProperty({
-      name: "Piecewise",
-      title: "Set the ploting type and behavior.",
+      name: "Paths",
+      title: "Each path is drawn separately.",
       id: "piecewise",
       parentId: "drawingSettings",
       type: "checkbox",

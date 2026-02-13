@@ -694,6 +694,7 @@ class MyPlot extends Plot {
         for (let i = 0; i < branches.length; i++) {
           const branch = [];
           const brn = branches[i];
+          if (brn.length == 0) continue;
           let y;
           for (let n = 0; n < brn.length; n++) {
             y = brn[n][1];
@@ -1393,7 +1394,8 @@ class MyPlot extends Plot {
             } else {
               // if (samples && samples.length) {//discontinuity
               samples = await self.doNumerical(self._functionDlg);
-              newCurve = addCurve(title, samples[0], false, fn);
+              const dummySamples = [new Misc.Point(0, 0)];
+              newCurve = addCurve(title, dummySamples, false, fn);
               newCurve.discontinuityIndex = [];
               let _samples = samples[0];
               for (let i = 1; i < samples.length; i++) {
