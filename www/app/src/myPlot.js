@@ -659,6 +659,72 @@ class MyPlot extends Plot {
       }
     };
 
+    // Static.bind("rescaled", async function (e, axisId, lower, upper) {
+    //   var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+    //   // console.log(L[0]);
+    //   if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
+
+    //   const autoReplot = self.autoReplot();
+
+    //   for (var i = 0; i < L.length; ++i) {
+    //     if (!L[i].numerical_fallbackFn) continue;
+    //     var curve = L[i];
+    //     curve.discontinuity = [];
+    //     try {
+    //       //console.time("numeric");
+    //       const { branches, discontinuities } = await numeric(
+    //         Utility.insertProductSign_total(curve.numerical_fallbackFn),
+    //         lower,
+    //         upper,
+    //         curve.variable,
+    //         curve.numOfSamples,
+    //       );
+
+    //       const _branches = [];
+    //       for (let i = 0; i < branches.length; i++) {
+    //         const branch = [];
+    //         const brn = branches[i];
+    //         if (brn.length == 0) continue;
+    //         let y;
+    //         for (let n = 0; n < brn.length; n++) {
+    //           branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+    //         }
+    //         _branches.push(branch);
+    //       }
+    //       //console.log(_branches);
+    //       //console.timeEnd("numeric");
+    //       if (curve.numerical_piecewise) {
+    //       } else {
+    //         curve.discontinuityIndex = [];
+    //         let _samples = _branches[0];
+    //         for (let i = 1; i < _branches.length; i++) {
+    //           curve.discontinuityIndex.push(_samples.length - 1);
+    //           curve.discontinuityIndex.push(_samples.length);
+    //           curve.discontinuity.push([
+    //             _samples[_samples.length - 1].x,
+    //             "unknown2",
+    //           ]);
+    //           curve.discontinuity.push([_branches[0].x, "unknown2"]);
+    //           _samples = _samples.concat(_branches[i]);
+    //         }
+    //         curve.setSamples(_samples);
+    //         curve.attach(self); // return _branches;
+    //       }
+    //     } catch (error) {
+    //       console.log(error);
+    //       Utility.progressWait2(false);
+    //     }
+    //   }
+    //   self.setAutoReplot(autoReplot);
+    //   self.replot();
+    //   // if (axisId == Axis.AxisId.xBottom) {
+    //   //   console.log(`Rescaled_x lower:${lower}, upper:${upper}`);
+    //   // }
+    //   // if (axisId == Axis.AxisId.yLeft) {
+    //   //   console.log(`Rescaled_y lower:${lower}, upper:${upper}`);
+    //   // }
+    // });
+
     this.doNumerical = async function (fnDlg) {
       Utility.progressWait2(true);
       // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
@@ -1386,6 +1452,9 @@ class MyPlot extends Plot {
                   title = Utility.generateCurveName(self);
                 }
                 newCurve = addCurve(title, samples[i], false, fn);
+                newCurve.numerical_piecewise = true;
+                newCurve.numerical_fallbackFn =
+                  self._functionDlg.numerical_fallbackFn;
                 newCurve.attach(self);
               }
               self.setAutoReplot(autoReplot);
@@ -1396,6 +1465,9 @@ class MyPlot extends Plot {
               samples = await self.doNumerical(self._functionDlg);
               const dummySamples = [new Misc.Point(0, 0)];
               newCurve = addCurve(title, dummySamples, false, fn);
+              newCurve.numerical_piecewise = false;
+              newCurve.numerical_fallbackFn =
+                self._functionDlg.numerical_fallbackFn;
               newCurve.discontinuityIndex = [];
               let _samples = samples[0];
               for (let i = 1; i < samples.length; i++) {
