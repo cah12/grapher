@@ -659,10 +659,15 @@ class MyPlot extends Plot {
       }
     };
 
+    self.numerical_rescale = false;
+
     // Static.bind("rescaled", async function (e, axisId, lower, upper) {
+    //   if (self.numerical_rescale) {
+    //     return;
+    //   }
     //   var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
     //   // console.log(L[0]);
-    //   if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
+    //   if (axisId == Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
     //   const autoReplot = self.autoReplot();
 
@@ -671,13 +676,21 @@ class MyPlot extends Plot {
     //     var curve = L[i];
     //     curve.discontinuity = [];
     //     try {
+    //       self.numerical_rescale = true;
     //       //console.time("numeric");
+    //       const sd = self.axisScaleDiv(Axis.AxisId.xBottom);
+    //       // const lower_x = sd.lowerBound();
+    //       // const upper_x = sd.upperBound();
+    //       const lower_x = self._functionDlg.lowerLimit;
+    //       const upper_x = self._functionDlg.upperLimit;
     //       const { branches, discontinuities } = await numeric(
     //         Utility.insertProductSign_total(curve.numerical_fallbackFn),
-    //         lower,
-    //         upper,
+    //         lower_x,
+    //         upper_x,
     //         curve.variable,
     //         curve.numOfSamples,
+    //         lower,
+    //         upper,
     //       );
 
     //       const _branches = [];
@@ -710,6 +723,7 @@ class MyPlot extends Plot {
     //         curve.setSamples(_samples);
     //         curve.attach(self); // return _branches;
     //       }
+    //       self.numerical_rescale = false;
     //     } catch (error) {
     //       console.log(error);
     //       Utility.progressWait2(false);
