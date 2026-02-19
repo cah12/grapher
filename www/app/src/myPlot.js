@@ -776,14 +776,18 @@ class MyPlot extends Plot {
           const brn = branches[i];
           if (brn.length == 0) continue;
           let y;
+          const s = 10;
           for (let n = 0; n < brn.length; n++) {
             y = brn[n][1];
-            if (y === "##") {
-              y = Static.LargeNumber;
+            if (
+              n < s &&
+              n != 0 &&
+              n != brn.length - 1 &&
+              Math.abs(y) != 1e300
+            ) {
+              continue;
             }
-            if (y === "-##") {
-              y = -Static.LargeNumber;
-            }
+
             branch.push(new Misc.Point(brn[n][0], y));
           }
           _branches.push(branch);
