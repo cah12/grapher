@@ -776,7 +776,7 @@ class MyPlot extends Plot {
           const brn = branches[i];
           if (brn.length == 0) continue;
           let y;
-          const s = 10;
+          const s = 0;
           for (let n = 0; n < brn.length; n++) {
             y = brn[n][1];
             if (
