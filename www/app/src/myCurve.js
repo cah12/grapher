@@ -66,7 +66,7 @@ class MyCurve extends Curve {
         self.parametricDiscontinuityIndex = findDiscontinuity(self);
       } */
 
-      if (!self.unboundedRange) {
+      if (!self.unboundedRange || self.numerical_fallbackFn) {
         return self.doDraw(painter, style, xMap, yMap, from, to);
       } else {
         const data = self.data();
