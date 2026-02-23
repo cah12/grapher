@@ -694,29 +694,29 @@ class MyPlot extends Plot {
             has_discontinuity,
           );
 
-          const _branches = [];
-          for (let i = 0; i < branches.length; i++) {
-            const branch = [];
-            const brn = branches[i];
-            if (brn.length == 0) continue;
-            let y;
-            for (let n = 0; n < brn.length; n++) {
-              branch.push(new Misc.Point(brn[n][0], brn[n][1]));
-            }
-            _branches.push(branch);
-          }
+          // const _branches = [];
+          // for (let i = 0; i < branches.length; i++) {
+          //   const branch = [];
+          //   const brn = branches[i];
+          //   if (brn.length == 0) continue;
+          //   let y;
+          //   for (let n = 0; n < brn.length; n++) {
+          //     branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+          //   }
+          //   _branches.push(branch);
+          // }
 
           curve.discontinuityIndex = [];
-          let _samples = _branches[0];
-          for (let i = 1; i < _branches.length; i++) {
+          let _samples = branches[0];
+          for (let i = 1; i < branches.length; i++) {
             curve.discontinuityIndex.push(_samples.length - 1);
             curve.discontinuityIndex.push(_samples.length);
             curve.discontinuity.push([
               _samples[_samples.length - 1].x,
               "unknown2",
             ]);
-            curve.discontinuity.push([_branches[0].x, "unknown2"]);
-            _samples = _samples.concat(_branches[i]);
+            curve.discontinuity.push([branches[0].x, "unknown2"]);
+            _samples = _samples.concat(branches[i]);
           }
           curve.setSamples(_samples);
           curve.attach(self); // return _branches;
@@ -768,31 +768,31 @@ class MyPlot extends Plot {
           // }
         }
         //console.log(branches);
-        const _branches = [];
-        for (let i = 0; i < branches.length; i++) {
-          const branch = [];
-          const brn = branches[i];
-          if (brn.length == 0) continue;
-          let y;
-          const s = 0;
-          for (let n = 0; n < brn.length; n++) {
-            y = brn[n][1];
-            if (
-              n < s &&
-              n != 0 &&
-              n != brn.length - 1 &&
-              Math.abs(y) != 1e300
-            ) {
-              continue;
-            }
+        // const _branches = [];
+        // for (let i = 0; i < branches.length; i++) {
+        //   const branch = [];
+        //   const brn = branches[i];
+        //   if (brn.length == 0) continue;
+        //   let y;
+        //   const s = 0;
+        //   for (let n = 0; n < brn.length; n++) {
+        //     y = brn[n][1];
+        //     if (
+        //       n < s &&
+        //       n != 0 &&
+        //       n != brn.length - 1 &&
+        //       Math.abs(y) != 1e300
+        //     ) {
+        //       continue;
+        //     }
 
-            branch.push(new Misc.Point(brn[n][0], y));
-          }
-          _branches.push(branch);
-        }
+        //     branch.push(new Misc.Point(brn[n][0], y));
+        //   }
+        //   _branches.push(branch);
+        // }
         //console.log(_branches);
         //console.timeEnd("numeric");
-        return _branches;
+        return branches;
       } catch (error) {
         console.log(error);
         Utility.progressWait2(false);
