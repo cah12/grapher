@@ -1757,6 +1757,7 @@ class Utility {
     return false;
   }
   static hasInfiniteOrEssentialOrJump(discont) {
+    if (!discont) return false;
     for (let i = 0; i < discont.length; i++) {
       if (
         discont[i][1] === "infinite" ||
