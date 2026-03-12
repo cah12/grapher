@@ -279,7 +279,8 @@ PaintUtil.ContextPainter = function (ctx) {
   };
 
   this.drawPolyline = function (polyline) {
-    const lmt = Math.max(m_ctx.canvas.width, m_ctx.canvas.height);
+    // const lmt = Math.max(m_ctx.canvas.width, m_ctx.canvas.height);
+    const lmt = 3.402823e38;
     // console.log(m_ctx.canvas.width);
     m_ctx.beginPath();
     m_ctx.moveTo(polyline[0].x, polyline[0].y);
