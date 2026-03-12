@@ -659,9 +659,9 @@ class MyPlot extends Plot {
       }
     };
 
-    self.numerical_rescale = false;
+    // self.numerical_rescale = false;
 
-    Static.bind("rescaled", async function (e, axisId, lower, upper) {
+    /* Static.bind("rescaled", async function (e, axisId, lower, upper) {
       if (self.numerical_rescale) {
         return;
       }
@@ -735,7 +735,7 @@ class MyPlot extends Plot {
       // if (axisId == Axis.AxisId.yLeft) {
       //   console.log(`Rescaled_y lower:${lower}, upper:${upper}`);
       // }
-    });
+    }); */
 
     this.doNumerical = async function (fnDlg) {
       Utility.progressWait2(true);
