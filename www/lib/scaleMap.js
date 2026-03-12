@@ -332,6 +332,11 @@ class ScaleMap {
     }; */
 
     this.transform1 = function (s) {
+      try {
+        s = parseFloat(s);
+      } catch (error) {
+        console.log(err);
+      }
       if (d_transform) {
         //alert(s)
         s = d_transform.transform(s);

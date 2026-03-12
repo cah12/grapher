@@ -42,7 +42,7 @@ PaintUtil.ContextPainter = function (ctx) {
           trans.m11 * x + trans.m21 * y + this.dx(),
           trans.m22 * y + trans.m12 * x + this.dy(),
           rect.width(),
-          rect.height()
+          rect.height(),
         );
       };
 
@@ -51,7 +51,7 @@ PaintUtil.ContextPainter = function (ctx) {
         var y = pt.y;
         return new Misc.Point(
           trans.m11 * x + trans.m21 * y + this.dx(),
-          trans.m22 * y + trans.m12 * x + this.dy()
+          trans.m22 * y + trans.m12 * x + this.dy(),
         );
       };
     }
@@ -224,7 +224,7 @@ PaintUtil.ContextPainter = function (ctx) {
       pt.x - pw * 1.0 - 1,
       pt.y - pw * 1.0 - 1,
       pw * 2.0,
-      pw * 2.0
+      pw * 2.0,
     );
   };
 
@@ -236,7 +236,7 @@ PaintUtil.ContextPainter = function (ctx) {
         points[i].x - pw * 1.0 - 1,
         points[i].y - pw * 1.0 - 1,
         pw * 2.0,
-        pw * 2.0
+        pw * 2.0,
       );
   };
 
@@ -279,10 +279,15 @@ PaintUtil.ContextPainter = function (ctx) {
   };
 
   this.drawPolyline = function (polyline) {
+    const lmt = Math.max(m_ctx.canvas.width, m_ctx.canvas.height);
+    // console.log(m_ctx.canvas.width);
     m_ctx.beginPath();
     m_ctx.moveTo(polyline[0].x, polyline[0].y);
-    for (var i = 1; i < polyline.length; ++i)
+    for (var i = 1; i < polyline.length; ++i) {
+      if (Math.abs(polyline[i].x) > lmt || Math.abs(polyline[i].y) > lmt)
+        continue;
       m_ctx.lineTo(polyline[i].x, polyline[i].y);
+    }
     m_ctx.stroke();
   };
 
@@ -512,7 +517,7 @@ PaintUtil.GraphicPainter = function (graphic) {
     if (rotation)
       elem.attr(
         "transform",
-        " rotate(" + rotation + " " + xCenter + " " + yCenter + ")"
+        " rotate(" + rotation + " " + xCenter + " " + yCenter + ")",
       );
   };
 
@@ -617,7 +622,7 @@ PaintUtil.GraphicPainter = function (graphic) {
         data.xCenter +
         " " +
         data.yCenter +
-        ")"
+        ")",
     );
     doSetBrush();
     //elem.attr("stroke",m_pen.color);
