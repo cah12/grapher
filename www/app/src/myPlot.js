@@ -659,13 +659,14 @@ class MyPlot extends Plot {
       }
     };
 
-    self.numerical_rescale = false;
+    // self.numerical_rescale = false;
 
     Static.bind("rescaled", async function (e, axisId, _lower, _upper) {
-      if (self.numerical_rescale) {
-        self.numerical_rescale = false;
-        return;
-      }
+      if (axisId != Axis.AxisId.yLeft) return;
+      // if (self.numerical_rescale) {
+      //   self.numerical_rescale = false;
+      //   return;
+      // }
       // console.log(L[0]);
       // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
@@ -700,7 +701,7 @@ class MyPlot extends Plot {
           }
           curve.discontinuity = [];
           // try {
-          self.numerical_rescale = true;
+          // self.numerical_rescale = true;
           const { branches, discontinuities, large_range_span } = await numeric(
             Utility.insertProductSign_total(curve.numerical_fallbackFn),
             lower,
@@ -740,7 +741,7 @@ class MyPlot extends Plot {
           curve.setSamples(_samples);
           curve.attach(self); // return _branches;
 
-          self.numerical_rescale = false;
+          // self.numerical_rescale = false;
         }
         // self.setAutoReplot(autoReplot);
         self.autoRefresh();
