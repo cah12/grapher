@@ -3518,6 +3518,7 @@ class PlotPropertiesPane extends PropertiesPane {
           top_min.change();
         }
       }
+      Static.trigger("left_min_change", left_min.val());
     });
     left_max.change(function () {
       if (!math.equal(left_min.val(), left_max.val()))
@@ -3545,6 +3546,7 @@ class PlotPropertiesPane extends PropertiesPane {
           top_max.change();
         }
       }
+      Static.trigger("left_max_change", left_max.val());
     });
     right_min.change(function () {
       if (!math.equal(right_min.val(), right_max.val())) {
