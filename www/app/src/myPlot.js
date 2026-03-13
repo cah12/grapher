@@ -659,19 +659,30 @@ class MyPlot extends Plot {
       }
     };
 
-    // self.numerical_rescale = false;
+    self.numerical_rescale = false;
 
-    Static.bind("rescaled", async function (e, axisId, lower, upper) {
-      // if (self.numerical_rescale) {
-      //   self.numerical_rescale = false;
-      //   return;
-      // }
+    Static.bind("rescaled", async function (e, axisId, _lower, _upper) {
+      if (self.numerical_rescale) {
+        self.numerical_rescale = false;
+        return;
+      }
       // console.log(L[0]);
       // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
+      const xScaleDiv = self.axisScaleDiv(Axis.AxisId.xBottom);
+      let lower = xScaleDiv.lowerBound();
+      let upper = xScaleDiv.upperBound();
       const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
-      const lowerY = yScaleDiv.lowerBound();
-      const upperY = yScaleDiv.upperBound();
+      let lowerY = yScaleDiv.lowerBound();
+      let upperY = yScaleDiv.upperBound();
+      if (axisId == Axis.AxisId.xBottom) {
+        lower = _lower;
+        upper = _upper;
+      }
+      if (axisId == Axis.AxisId.yLeft) {
+        lowerY = _lower;
+        upperY = _upper;
+      }
       try {
         var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
         // const autoReplot = self.autoReplot();
