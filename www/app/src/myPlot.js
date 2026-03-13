@@ -766,7 +766,6 @@ class MyPlot extends Plot {
           autoScale,
           fnDlg.variable,
           fnDlg.numOfPoints,
-          autoScale,
         );
         if (Utility.hasInfiniteOrEssentialOrJump(discontinuities)) {
           const autoReplot = self.autoReplot();
