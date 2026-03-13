@@ -661,13 +661,17 @@ class MyPlot extends Plot {
 
     // self.numerical_rescale = false;
 
-    /* Static.bind("rescaled", async function (e, axisId, lower, upper) {
-      if (self.numerical_rescale) {
-        return;
-      }
+    Static.bind("rescaled", async function (e, axisId, lower, upper) {
+      // if (self.numerical_rescale) {
+      //   self.numerical_rescale = false;
+      //   return;
+      // }
       // console.log(L[0]);
-      if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
+      // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
+      const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
+      const lowerY = yScaleDiv.lowerBound();
+      const upperY = yScaleDiv.upperBound();
       try {
         var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
         // const autoReplot = self.autoReplot();
@@ -676,7 +680,8 @@ class MyPlot extends Plot {
           var curve = L[i];
           if (!L[i].numerical_fallbackFn) continue;
           if (curve.numerical_piecewise) continue;
-          if (!curve.unboundedRange) continue;
+          // if (!curve.unboundedRange) continue;
+          if (!curve.large_range_span) continue;
 
           var has_discontinuity = false;
           if (curve.discontinuity && curve.discontinuity.length) {
@@ -685,10 +690,13 @@ class MyPlot extends Plot {
           curve.discontinuity = [];
           // try {
           self.numerical_rescale = true;
-          const { branches, discontinuities } = await numeric(
+          const { branches, discontinuities, large_range_span } = await numeric(
             Utility.insertProductSign_total(curve.numerical_fallbackFn),
             lower,
             upper,
+            lowerY,
+            upperY,
+            false,
             curve.variable,
             curve.numOfSamples,
             has_discontinuity,
@@ -735,7 +743,7 @@ class MyPlot extends Plot {
       // if (axisId == Axis.AxisId.yLeft) {
       //   console.log(`Rescaled_y lower:${lower}, upper:${upper}`);
       // }
-    }); */
+    });
 
     this.doNumerical = async function (fnDlg) {
       Utility.progressWait2(true);
@@ -757,7 +765,7 @@ class MyPlot extends Plot {
       const upperY = yScaleDiv.upperBound();
       try {
         //console.time("numeric");
-        const { branches, discontinuities } = await numeric(
+        const { branches, discontinuities, large_range_span } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
@@ -802,7 +810,7 @@ class MyPlot extends Plot {
         // }
         //console.log(_branches);
         //console.timeEnd("numeric");
-        return branches;
+        return { branches, large_range_span };
       } catch (error) {
         console.log(error);
         Utility.progressWait2(false);
@@ -1477,7 +1485,9 @@ class MyPlot extends Plot {
             const autoReplot = self.autoReplot();
             self.setAutoReplot(false);
             if (Static.piecewise) {
-              samples = await self.doNumerical(self._functionDlg);
+              const res = await self.doNumerical(self._functionDlg);
+              samples = res.branches;
+
               for (let i = 0; i < samples.length; i++) {
                 if (i > 0) {
                   title = Utility.generateCurveName(self);
@@ -1486,6 +1496,7 @@ class MyPlot extends Plot {
                 newCurve.numerical_piecewise = true;
                 newCurve.numerical_fallbackFn =
                   self._functionDlg.numerical_fallbackFn;
+                newCurve.large_range_span = res.large_range_span;
                 newCurve.attach(self);
               }
               self.setAutoReplot(autoReplot);
@@ -1493,7 +1504,8 @@ class MyPlot extends Plot {
               return;
             } else {
               // if (samples && samples.length) {//discontinuity
-              samples = await self.doNumerical(self._functionDlg);
+              const res = await self.doNumerical(self._functionDlg);
+              samples = res.branches;
               const dummySamples = [new Misc.Point(0, 0)];
               newCurve = addCurve(title, dummySamples, false, fn);
               newCurve.numerical_piecewise = false;
@@ -1512,6 +1524,7 @@ class MyPlot extends Plot {
                 _samples = _samples.concat(samples[i]);
               }
               newCurve.setSamples(_samples);
+              newCurve.large_range_span = res.large_range_span;
               newCurve.attach(self);
               self.setAutoReplot(autoReplot);
               self.replot();
