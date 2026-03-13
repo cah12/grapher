@@ -748,14 +748,25 @@ class MyPlot extends Plot {
       fnDlg.expandedFn = null;
       fnDlg.fn = null;
       fnDlg.coeffs = [];
+      const autoScale = Utility.isAutoScale(self);
+      const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
+      const xScaleDiv = self.axisScaleDiv(Axis.AxisId.xBottom);
+      const lowerX = xScaleDiv.lowerBound();
+      const upperX = xScaleDiv.upperBound();
+      const lowerY = yScaleDiv.lowerBound();
+      const upperY = yScaleDiv.upperBound();
       try {
         //console.time("numeric");
         const { branches, discontinuities } = await numeric(
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
+          lowerY,
+          upperY,
+          autoScale,
           fnDlg.variable,
           fnDlg.numOfPoints,
+          autoScale,
         );
         if (Utility.hasInfiniteOrEssentialOrJump(discontinuities)) {
           const autoReplot = self.autoReplot();
