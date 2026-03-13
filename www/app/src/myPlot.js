@@ -671,10 +671,10 @@ class MyPlot extends Plot {
       // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
       const xScaleDiv = self.axisScaleDiv(Axis.AxisId.xBottom);
-      // let lower = xScaleDiv.lowerBound();
-      // let upper = xScaleDiv.upperBound();
-      let lower = self._functionDlg.lowerLimit;
-      let upper = self._functionDlg.upperLimit;
+      let lower = xScaleDiv.lowerBound();
+      let upper = xScaleDiv.upperBound();
+      // let lower = self._functionDlg.lowerLimit;
+      // let upper = self._functionDlg.upperLimit;
       const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
       let lowerY = yScaleDiv.lowerBound();
       let upperY = yScaleDiv.upperBound();
@@ -769,8 +769,10 @@ class MyPlot extends Plot {
       // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
 
       const xScaleDiv = self.axisScaleDiv(Axis.AxisId.xBottom);
-      let lower = xScaleDiv.lowerBound();
-      let upper = xScaleDiv.upperBound();
+      // let lower = xScaleDiv.lowerBound();
+      // let upper = xScaleDiv.upperBound();
+      let lower = self._functionDlg.lowerLimit;
+      let upper = self._functionDlg.upperLimit;
       const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
       let lowerY = yScaleDiv.lowerBound();
       let upperY = yScaleDiv.upperBound();
