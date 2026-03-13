@@ -757,6 +757,102 @@ class MyPlot extends Plot {
       // }
     });
 
+    Static.bind("autoScaleChanged", async function (e, on) {
+      //if (axisId != Axis.AxisId.yLeft) return;
+      // if (self.numerical_rescale) {
+      //   self.numerical_rescale = false;
+      //   return;
+      // }
+      // console.log(L[0]);
+      // if (axisId != Axis.AxisId.xBottom) return; //Don't do numerical for x rescaling for now, as it causes too much lag. Need to optimize numeric() first.
+
+      const xScaleDiv = self.axisScaleDiv(Axis.AxisId.xBottom);
+      let lower = xScaleDiv.lowerBound();
+      let upper = xScaleDiv.upperBound();
+      const yScaleDiv = self.axisScaleDiv(Axis.AxisId.yLeft);
+      let lowerY = yScaleDiv.lowerBound();
+      let upperY = yScaleDiv.upperBound();
+      // if (axisId == Axis.AxisId.xBottom) {
+      //   lower = _lower;
+      //   upper = _upper;
+      // }
+      // if (axisId == Axis.AxisId.yLeft) {
+      //   lowerY = _lower;
+      //   upperY = _upper;
+      // }
+      try {
+        var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
+        // const autoReplot = self.autoReplot();
+
+        for (var i = 0; i < L.length; ++i) {
+          var curve = L[i];
+          if (!L[i].numerical_fallbackFn) continue;
+          if (curve.numerical_piecewise) continue;
+          // if (!curve.unboundedRange) continue;
+          if (!curve.large_range_span) continue;
+
+          var has_discontinuity = false;
+          if (curve.discontinuity && curve.discontinuity.length) {
+            has_discontinuity = true;
+          }
+          curve.discontinuity = [];
+          // try {
+          // self.numerical_rescale = true;
+          const { branches, discontinuities, large_range_span } = await numeric(
+            Utility.insertProductSign_total(curve.numerical_fallbackFn),
+            lower,
+            upper,
+            lowerY,
+            upperY,
+            on,
+            curve.variable,
+            curve.numOfSamples,
+            has_discontinuity,
+          );
+
+          // const _branches = [];
+          // for (let i = 0; i < branches.length; i++) {
+          //   const branch = [];
+          //   const brn = branches[i];
+          //   if (brn.length == 0) continue;
+          //   let y;
+          //   for (let n = 0; n < brn.length; n++) {
+          //     branch.push(new Misc.Point(brn[n][0], brn[n][1]));
+          //   }
+          //   _branches.push(branch);
+          // }
+
+          curve.discontinuityIndex = [];
+          let _samples = branches[0];
+          for (let i = 1; i < branches.length; i++) {
+            curve.discontinuityIndex.push(_samples.length - 1);
+            curve.discontinuityIndex.push(_samples.length);
+            curve.discontinuity.push([
+              _samples[_samples.length - 1].x,
+              "unknown2",
+            ]);
+            curve.discontinuity.push([branches[0].x, "unknown2"]);
+            _samples = _samples.concat(branches[i]);
+          }
+          curve.setSamples(_samples);
+          curve.attach(self); // return _branches;
+
+          // self.numerical_rescale = false;
+        }
+        // self.setAutoReplot(autoReplot);
+        self.autoRefresh();
+      } catch (error) {
+        console.log(error);
+        Utility.progressWait2(false);
+      }
+      // if (axisId == Axis.AxisId.xBottom) {
+      //   console.log(`Rescaled_x lower:${lower}, upper:${upper}`);
+      // }
+      // if (axisId == Axis.AxisId.yLeft) {
+      //   console.log(`Rescaled_y lower:${lower}, upper:${upper}`);
+      // }
+    });
+
     this.doNumerical = async function (fnDlg) {
       Utility.progressWait2(true);
       // console.log(`${fnDlgFunctionVal} failed. Try numerical method`);
