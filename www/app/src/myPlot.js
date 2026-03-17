@@ -688,7 +688,8 @@ class MyPlot extends Plot {
       // }
       try {
         var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
-        // const autoReplot = self.autoReplot();
+        const autoReplot = self.autoReplot();
+        self.setAutoReplot(false);
 
         for (var i = 0; i < L.length; ++i) {
           var curve = L[i];
@@ -745,7 +746,7 @@ class MyPlot extends Plot {
 
           // self.numerical_rescale = false;
         }
-        // self.setAutoReplot(autoReplot);
+        self.setAutoReplot(autoReplot);
         self.autoRefresh();
       } catch (error) {
         console.log(error);
@@ -787,6 +788,7 @@ class MyPlot extends Plot {
       try {
         var L = self.itemList(PlotItem.RttiValues.Rtti_PlotCurve);
         // const autoReplot = self.autoReplot();
+        // self.setAutoReplot(false);
 
         for (var i = 0; i < L.length; ++i) {
           var curve = L[i];
