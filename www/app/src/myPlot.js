@@ -741,7 +741,7 @@ class MyPlot extends Plot {
             _samples = _samples.concat(branches[i]);
           }
           curve.setSamples(_samples);
-          curve.attach(self); // return _branches;
+          // curve.attach(self); // return _branches;
 
           // self.numerical_rescale = false;
         }
@@ -839,7 +839,7 @@ class MyPlot extends Plot {
             _samples = _samples.concat(branches[i]);
           }
           curve.setSamples(_samples);
-          curve.attach(self); // return _branches;
+          // curve.attach(self); // return _branches;
 
           // self.numerical_rescale = false;
         }
