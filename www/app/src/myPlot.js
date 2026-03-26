@@ -880,6 +880,7 @@ class MyPlot extends Plot {
       try {
         //console.time("numeric");
         const { branches, discontinuities, large_range_span } = await numeric(
+          Static.math_mode,
           Utility.insertProductSign_total(fnDlg.numerical_fallbackFn),
           fnDlg.lowerLimit,
           fnDlg.upperLimit,
@@ -4220,6 +4221,7 @@ class MyPlot extends Plot {
         //disable: true,
         img: Static.imagePath + "trashAll.png",
         fun: function () {
+          Utility.progressWait2(true);
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
             .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
@@ -4241,6 +4243,7 @@ class MyPlot extends Plot {
               // curve.delete();
             }
           });
+          Utility.progressWait2(false);
         },
       },
       {
@@ -4249,6 +4252,7 @@ class MyPlot extends Plot {
         //disable: true,
         img: Static.imagePath + "trashAllHidden.png",
         fun: function () {
+          Utility.progressWait2(true);
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
             .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
@@ -4272,6 +4276,7 @@ class MyPlot extends Plot {
               }
             }
           });
+          Utility.progressWait2(false);
         },
       },
       {

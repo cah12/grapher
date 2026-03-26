@@ -918,6 +918,242 @@ require([
     }
     console.log("/n");
   } */
+
+  // var lowerBound = -0.000001;
+  // var upperBound = 0.000001;
+  // var data = [
+  //   [18, 13, 10, 9, 10, 13, 18],
+  //   [13, 8, 5, 4, 5, 8, 13],
+  //   [10, 5, 2, 1, 2, 5, 10],
+  //   [9, 4, 1, 12, 1, 4, 9],
+  //   [10, 5, 2, 1, 2, 5, 10],
+  //   [13, 8, 5, 4, 5, 8, 13],
+  //   [18, 13, 10, 9, 10, 13, 18],
+  //   [18, 13, 10, 9, 10, 13, 18],
+  // ];
+
+  // Assuming a marching squares library or custom implementation
+  // Example setup based on general JS implementations (like RaumZeit/MarchingSquares.js)
+
+  // function getILines(expr, xMin, xMax, yMin, yMax, steps) {
+  //   const parsed = math.parse(expr);
+
+  //   // 2. Generate the 2D scalar field (Z-values)
+  //   const data = [];
+  //   for (let j = 0; j <= steps; j++) {
+  //     const row = [];
+  //     const y = yMin + (j / steps) * (yMax - yMin);
+  //     for (let i = 0; i <= steps; i++) {
+  //       const x = xMin + (i / steps) * (xMax - xMin);
+  //       row.push(parsed.evaluate({ x: x, y: y })); // The implicit function x^2 - y
+  //     }
+  //     data.push(row);
+  //   }
+
+  //   // 3. Get isolines at level 0
+  //   const isoLines = MarchingSquaresJS.isoBands(data, -1e-32, 2 * 1e-32, {
+  //     noFrame: true,
+  //     // polygons: true,
+  //     // noQuadTree: true,
+  //   });
+
+  //   const result = [];
+  //   // 4. Transform grid indices back to coordinate space
+  //   for (let i = 0; i < isoLines.length; i++) {
+  //     const finalCoordinates = isoLines[i].map((point) => {
+  //       const [gridX, gridY] = point;
+  //       const x = xMin + (gridX * (xMax - xMin)) / steps;
+  //       const y = yMin + (gridY * (yMax - yMin)) / steps;
+  //       return [x, y];
+  //       // return [Math.round(x * 100) / 100, Math.round(y * 100) / 100]; // Rounded for clarity
+  //     });
+  //     // isoLines[i] = finalCoordinates;
+  //     result.push(finalCoordinates);
+  //   }
+
+  //   return result;
+  // }
+  // 1. Define domain and grid resolution
+
+  // const parsed = math.parse(f);
+  // // 1. Define domain and grid resolution
+  // const xMin = -573,
+  //   xMax = 573;
+  // const yMin = -300,
+  //   yMax = 300;
+  // const steps = 50; // Higher resolution improves accuracy
+
+  // // 2. Generate the 2D scalar field (Z-values)
+  // const data = [];
+  // for (let j = 0; j <= steps; j++) {
+  //   const row = [];
+  //   const y = yMin + (j / steps) * (yMax - yMin);
+  //   for (let i = 0; i <= steps; i++) {
+  //     const x = xMin + (i / steps) * (xMax - xMin);
+  //     row.push(parsed.evaluate({ x: x, y: y })); // The implicit function x^2 - y
+  //   }
+  //   data.push(row);
+  // }
+
+  // // 3. Get isolines at level 0
+  // const isoLines = MarchingSquaresJS.isoBands(data, 0, 1e-16);
+
+  // // 4. Transform grid indices back to coordinate space
+  // for (let i = 0; i < isoLines.length; i++) {
+  //   const finalCoordinates = isoLines[i].map((point) => {
+  //     const [gridX, gridY] = point;
+  //     const x = xMin + (gridX * (xMax - xMin)) / steps;
+  //     const y = yMin + (gridY * (yMax - yMin)) / steps;
+  //     return [x, y];
+  //     // return [Math.round(x * 100) / 100, Math.round(y * 100) / 100]; // Rounded for clarity
+  //   });
+  //   isoLines[i] = finalCoordinates;
+  // }
+
+  // const f = "2*x - y^2";
+
+  // const isoLines = getILines(f, -10, 10, -20, 20, 50);
+  // console.log(isoLines);
+
+  // 3. Render 'lines' using Canvas/SVG mapping back to screen coordinates
+
+  // const f = "x^2-y";
+
+  // const xMin = -10;
+  // const xMax = 10;
+  // const yMin = 0;
+  // const yMax = 100;
+
+  // const gridSpacing = 1; // Adjust this value to control the density of the grid
+  // const numXPoints = Math.ceil((xMax - xMin) / gridSpacing) + 1;
+  // const numYPoints = Math.ceil((yMax - yMin) / gridSpacing) + 1;
+  // // const grid = new Array(numXPoints * numYPoints);
+
+  // const grid = new Array(numYPoints)
+  //   .fill(null)
+  //   .map(() => new Array(numXPoints).fill(null));
+
+  // //console.log(grid);
+
+  // // Populate the grid with function values
+  // for (let j = 0; j < numYPoints; j++) {
+  //   for (let i = 0; i < numXPoints; i++) {
+  //     const xVal = xMin + i * gridSpacing;
+  //     const yVal = yMin + j * gridSpacing;
+  //     try {
+  //       const functionValue = math.evaluate(f, {
+  //         x: xVal,
+  //         y: yVal,
+  //       });
+  //       grid[j][i] = functionValue;
+  //     } catch (error) {
+  //       grid[k] = NaN;
+  //     }
+  //   }
+  // }
+
+  // // var bandWidth = upperBound - lowerBound;
+  // var band = MarchingSquaresJS.isoBands(
+  //   grid,
+  //   0,
+  //   1 /* {
+  //   noFrame: true,
+  //   // polygons: true,
+  //   // noQuadTree: true,
+  // } */,
+  // );
+
+  // console.log(band);
+
+  // 1. Generate grid data for z = x^2 - y
+  // Let's sample x from -10 to 10 and y from 0 to 100
+  // const size = 20;
+  // const data = Array(size * size);
+
+  // const xMin = -10;
+  // const xMax = 10;
+  // const yMin = 0;
+  // const yMax = 100;
+
+  // // // const data = Array(size)
+  // // //   .fill(0)
+  // // //   .map(() => Array(size).fill(0));
+
+  // for (let i = 0, k = 0; i < size; i++) {
+  //   for (let j = 0; j < size; j++, k++) {
+  //     // Map i, j to actual x, y values
+  //     // let x = i - size / 2; // -10 to 9
+  //     //let y = (j / size) * 100; // 0 to 100
+  //     const y = yMin + (j / size) * (100 - 0);
+
+  //     const x = xMin + (i / size) * (xMax - xMin);
+  //     // row.push(parsed.evaluate({ x: x, y: y })); // The implicit function x^2 - y
+
+  //     // Calculate z = x^2 - y
+  //     // data[j][i] = Math.pow(x, 2) - y;
+  //     data[k] = Math.pow(x, 2) - y;
+  //   }
+  // }
+
+  // var bandWidth = upperBound - lowerBound;
+  // var band = MarchingSquaresJS.isoLines(data, 0, {
+  //   // noFrame: true,
+  //   // polygons: true,
+  //   // noQuadTree: true,
+  // });
+
+  // console.log(band);
+
+  // var n = 256,
+  //   m = 256,
+  //   values = new Array(n * m);
+  // for (var j = 0.5, k = 0; j < m; ++j) {
+  //   for (var i = 0.5; i < n; ++i, ++k) {
+  //     values[k] = goldsteinPrice((i / n) * 4 - 2, 1 - (j / m) * 3);
+  //   }
+  // }
+
+  // const contours = d3.contours().size([size, size]).thresholds([0]);
+
+  // // console.log(contours);
+  // const polygons = contours(data);
+  // const result = [];
+  // polygons.forEach((polygon) => {
+  //   for (let i = 0; i < polygon.coordinates.length; i++) {
+  //     // console.log(polygon.coordinates[i]);
+  //     const _coordinates = polygon.coordinates[i];
+  //     for (let j = 0; j < _coordinates.length; j++) {
+  //       const coordns = _coordinates[j];
+  //       const finalCoordinates = coordns.map((point) => {
+  //         const [gridX, gridY] = point;
+  //         const x = -10 + (gridX * (10 - -10)) / 20;
+  //         const y = 0 + (gridY * (100 - 0)) / 20;
+  //         return [x, y];
+  //         // return [Math.round(x * 100) / 100, Math.round(y * 100) / 100]; // Rounded for clarity
+  //       });
+  //       result.push(finalCoordinates);
+  //     }
+  //   }
+  // });
+
+  // console.log(result);
+
+  // const transform = ([gx, gy]) => [
+  //   xScale.invert(gx), // Maps grid x back to -10 to 10
+  //   yScale.invert(gy), // Maps grid y back to 0 to 100
+  // ];
+
+  // Apply to each point in the contour geometry
+  // polygons.coordinates = polygons.coordinates.map((polygon) =>
+  //   polygon.map((ring) => ring.map(transform)),
+  // );
+
+  // polygons.forEach((polygon) => {
+  //   for (let i = 0; i < polygon.coordinates.length; i++) {
+  //     polygon.coordinates[i] = polygon.coordinates[i].map(transform);
+  //     console.log(polygon.coordinates[i]);
+  //   }
+  // });
 });
 
 /*
