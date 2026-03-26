@@ -4229,14 +4229,29 @@ class MyPlot extends Plot {
         fun: function () {
           //console.log(770);
           //console.log(el.children());
+          // const listItem = document.querySelector(
+          //   'li[title="Permanently remove all items"]',
+          // ).children[0];
+          // listItem.classList.add("wait");
+
+          // const parent = listItem.parentElement;
+          // parent.classList.add("wait");
+          // el.contextMenu("close");
+          // el.focus();
           Utility.progressWait2(true);
+          // $("body").addClass("wait");
           (async () => {
             try {
               await self.removeAll();
+              // parent.classList.remove("wait");
+              Utility.progressWait2(false);
+              // listItem.classList.remove("wait");
             } catch (e) {
-              console.log(e);
+              // listItem.classList.remove("wait");
             }
           })();
+          // el.contextMenu("close");
+          // /console.log(456);
           // Utility.progressWait2(false);
 
           // L.forEach(function (curve) {
@@ -4255,7 +4270,7 @@ class MyPlot extends Plot {
           // });
           // Utility.progressWait2(false);
           //console.log(772);
-          return false;
+          // return false;
         },
       },
       {
@@ -5176,7 +5191,7 @@ class MyPlot extends Plot {
       //   console.log(771);
       // }
     });
-    Utility.progressWait2(false);
+    // Utility.progressWait2(false);
   }
 
   isAxisSwappable(unswap) {
