@@ -316,11 +316,11 @@ class Utility {
 
     if (Utility.progressWaitOnCount > 0) {
       // $("html").addClass("wait");
-      $("body").addClass("is-loading");
+      $("html").addClass("is-loading");
     }
     if (Utility.progressWaitOnCount == 0) {
       // $("html").removeClass("wait");
-      $("body").removeClass("is-loading");
+      $("html").removeClass("is-loading");
     }
   }
 

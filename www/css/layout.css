@@ -591,6 +591,6 @@ body.ewResizeCursor *
 }
 
 /* Show when needed */
-body.is-loading .loading-overlay {
+html.is-loading .loading-overlay {
     display: block;
 }
