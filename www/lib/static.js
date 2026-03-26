@@ -537,7 +537,7 @@ Static.AxisInYX = false;
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python
 
-Static.solveFor = function (exp, v, indepVar = "x") {
+Static.solveFor = function (mode, exp, v, indepVar = "x") {
   //console.log(456);
   //Utility.progressWait();
   // exp = Utility.insertProductSign(exp, indepVar);
@@ -587,7 +587,7 @@ Static.solveFor = function (exp, v, indepVar = "x") {
     Utility.progressWait(false);
 
     exp = Utility.insertProductSign_total(exp, indepVar);
-    return solve_for(exp, v);
+    return solve_for(mode, exp, v);
   }
 };
 

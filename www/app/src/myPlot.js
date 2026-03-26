@@ -1144,7 +1144,7 @@ class MyPlot extends Plot {
           exp,
           makeSamplesData.parametric_variable,
         );
-        let sol = await Static.solveFor(exp, "t");
+        let sol = await Static.solveFor(Static.math_mode, exp, "t");
         let str = null;
         if (sol.length > 0) {
           //self._functionDlg.parametric_variable
@@ -1157,6 +1157,7 @@ class MyPlot extends Plot {
         }
 
         const d = await Utility.discontinuity(
+          Static.math_mode,
           //fn_unsimplified,
           makeSamplesData.parametricFnX,
           //str,
@@ -1192,7 +1193,7 @@ class MyPlot extends Plot {
           exp,
           makeSamplesData.parametric_variable,
         );
-        sol = await Static.solveFor(exp, "t");
+        sol = await Static.solveFor(Static.math_mode, exp, "t");
         str = null;
         if (sol.length > 0) {
           //self._functionDlg.parametric_variable
@@ -1204,6 +1205,7 @@ class MyPlot extends Plot {
           makeSamplesData.discontinuityFn = str;
         }
         discontTurningPoints = await Utility.discontinuity(
+          Static.math_mode,
           //fn_unsimplified,
           makeSamplesData.parametricFnY,
           //str,
@@ -1292,6 +1294,7 @@ class MyPlot extends Plot {
             //const sol = [Math.PI / 2, 3 * Math.PI / 2];
             //const sol = [1.2599210498948731647672106072782];
             const sol = await Static.solveFor(
+              Static.math_mode,
               dx_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
@@ -1310,6 +1313,7 @@ class MyPlot extends Plot {
             //const sol = [Math.PI / 2, (3 * Math.PI) / 2];
             //const sol = [-2];
             const sol = await Static.solveFor(
+              Static.math_mode,
               dy_dt.toString(),
               makeSamplesData.parametric_variable,
               makeSamplesData.parametric_variable,
@@ -1485,6 +1489,7 @@ class MyPlot extends Plot {
           } else {
             //Not parametric
             discontTurningPoints = await Utility.discontinuity(
+              Static.math_mode,
               //fn_unsimplified,
               makeSamplesData.fx,
               makeSamplesData.lowerX,
@@ -2954,6 +2959,7 @@ class MyPlot extends Plot {
               try {
                 // Utility.progressWait();
                 solution = await Static.solveFor(
+                  Static.math_mode,
                   fn,
                   curve.parametric_variable,
                   curve.parametric_variable,

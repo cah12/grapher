@@ -3479,7 +3479,7 @@ class Utility {
     //try {
     try {
       //Utility.progressWait();
-      solution = await Static.solveFor(_defn, "y", variable);
+      solution = await Static.solveFor(Static.math_mode, _defn, "y", variable);
       Utility.progressWait(false);
       if (!solution.length) {
         Utility.progressWait(false);
@@ -4460,7 +4460,7 @@ class Utility {
     });
   }
 
-  static async discontinuity(exp, lower, upper, indepVar) {
+  static async discontinuity(mode, exp, lower, upper, indepVar) {
     //Utility.progressWait();
     // this.first = true;
     try {
@@ -4469,7 +4469,7 @@ class Utility {
         turningPoints: [],
       }; //[];
       if (Static.imagePath === "images/") {
-        return await this.discontinuity1(exp, lower, upper, indepVar);
+        return await this.discontinuity1(mode, exp, lower, upper, indepVar);
         // return {
         //   discontinuities: [],
         //   turningPoints: [],
@@ -4669,7 +4669,13 @@ class Utility {
           exp = this.replaceTrigKeyword(exp, "cot", "tan");
           exp = this.replaceTrigTanKeyword(exp, "tan", "sin", "cos");
           exp = Utility.insertProductSign_total(exp, indepVar);
-          const _result = await discontinuity(exp, lower, upper, indepVar);
+          const _result = await discontinuity(
+            mode,
+            exp,
+            lower,
+            upper,
+            indepVar,
+          );
           if (_result) {
             Utility.progressWait(false);
             // return _result.discontinuities;
@@ -4951,7 +4957,7 @@ class Utility {
     return discontinuitiesArr;
   } */
 
-  static async discontinuity1(exp, lower, upper, indepVar) {
+  static async discontinuity1(mode, exp, lower, upper, indepVar) {
     ///////////////////////Variables//////////////////////
     let result = [];
     let d = 0;
