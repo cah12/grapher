@@ -4227,37 +4227,17 @@ class MyPlot extends Plot {
         //disable: true,
         img: Static.imagePath + "trashAll.png",
         fun: function () {
-          var L = self
-            .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
-            .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
-            .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram))
-            .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotZone))
-            .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotMarker));
-
-          L = _.filter(L, function (curve) {
-            return (
-              curve.title() !== "cgMarker@12345" &&
-              curve.title() !== "ClosestPointMarker123@###" &&
-              curve.title() !== "v_ruler1" &&
-              curve.title() !== "v_ruler2" &&
-              curve.title() !== "h_ruler1" &&
-              curve.title() !== "h_ruler2"
-            );
-          });
-
-          let count = L.length;
-          if (count > 0) {
-            Utility.progressWait2(true);
-          }
-          L.forEach(function (curve) {
-            self.trashDlg.trash(curve);
-            // curve.detach();
-            // curve.delete();
-            count--;
-            if (count == 0) {
-              Utility.progressWait2(false);
+          //console.log(770);
+          //console.log(el.children());
+          Utility.progressWait2(true);
+          (async () => {
+            try {
+              await self.removeAll();
+            } catch (e) {
+              console.log(e);
             }
-          });
+          })();
+          // Utility.progressWait2(false);
 
           // L.forEach(function (curve) {
           //   if (
@@ -4273,7 +4253,9 @@ class MyPlot extends Plot {
           //     // curve.delete();
           //   }
           // });
-          Utility.progressWait2(false);
+          // Utility.progressWait2(false);
+          //console.log(772);
+          return false;
         },
       },
       {
@@ -4372,6 +4354,7 @@ class MyPlot extends Plot {
       el.contextMenu(menu, {
         triggerOn: "contextmenu",
         zIndex: 1,
+        className: "my_right_click_menu",
       });
     });
     //Start with this menu
@@ -5157,6 +5140,43 @@ class MyPlot extends Plot {
     ////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////
+  }
+
+  async removeAll() {
+    const self = this;
+    var L = self
+      .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
+      .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
+      .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram))
+      .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotZone))
+      .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotMarker));
+
+    L = _.filter(L, function (curve) {
+      return (
+        curve.title() !== "cgMarker@12345" &&
+        curve.title() !== "ClosestPointMarker123@###" &&
+        curve.title() !== "v_ruler1" &&
+        curve.title() !== "v_ruler2" &&
+        curve.title() !== "h_ruler1" &&
+        curve.title() !== "h_ruler2"
+      );
+    });
+
+    // let count = L.length;
+    // if (count > 0) {
+    //   Utility.progressWait2(true);
+    // }
+    L.forEach(function (curve) {
+      self.trashDlg.trash(curve);
+      // curve.detach();
+      // curve.delete();
+      // count--;
+      // if (count == 0) {
+      //   Utility.progressWait2(false);
+      //   console.log(771);
+      // }
+    });
+    Utility.progressWait2(false);
   }
 
   isAxisSwappable(unswap) {
