@@ -784,6 +784,7 @@ class MFunctionDlg {
       };
 
       this.doEnter = async function (fnDlgFunctionVal, closeDlg) {
+        if (Utility.progressWaitOnCount > 0) return;
         /* if ($("#fnDlg_unboundedRange")[0].checked && Static.AxisInYX) {
           Utility.alert(
             `Plot items with unbounded range are no permitted with Swap Axes.`,

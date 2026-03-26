@@ -579,18 +579,4 @@ body.ewResizeCursor *
   user-select: none; /* Standard syntax */
 } 
 
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    cursor: wait;
-    z-index: 999999; /* Higher than any menu */
-    display: none;
-}
 
-/* Show when needed */
-html.is-loading .loading-overlay {
-    display: block;
-}
