@@ -4246,8 +4246,10 @@ class MyPlot extends Plot {
           });
 
           let count = L.length;
-          L.forEach(function (curve) {
+          if (count > 0) {
             Utility.progressWait2(true);
+          }
+          L.forEach(function (curve) {
             self.trashDlg.trash(curve);
             // curve.detach();
             // curve.delete();
