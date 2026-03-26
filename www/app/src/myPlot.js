@@ -4227,7 +4227,6 @@ class MyPlot extends Plot {
         //disable: true,
         img: Static.imagePath + "trashAll.png",
         fun: function () {
-          Utility.progressWait2(true);
           var L = self
             .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
             .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotSpectroCurve))
@@ -4235,20 +4234,43 @@ class MyPlot extends Plot {
             .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotZone))
             .concat(self.itemList(PlotItem.RttiValues.Rtti_PlotMarker));
 
-          L.forEach(function (curve) {
-            if (
+          L = _.filter(L, function (curve) {
+            return (
               curve.title() !== "cgMarker@12345" &&
               curve.title() !== "ClosestPointMarker123@###" &&
               curve.title() !== "v_ruler1" &&
               curve.title() !== "v_ruler2" &&
               curve.title() !== "h_ruler1" &&
               curve.title() !== "h_ruler2"
-            ) {
-              self.trashDlg.trash(curve);
-              // curve.detach();
-              // curve.delete();
+            );
+          });
+
+          let count = L.length;
+          L.forEach(function (curve) {
+            Utility.progressWait2(true);
+            self.trashDlg.trash(curve);
+            // curve.detach();
+            // curve.delete();
+            count--;
+            if (count == 0) {
+              Utility.progressWait2(false);
             }
           });
+
+          // L.forEach(function (curve) {
+          //   if (
+          //     curve.title() !== "cgMarker@12345" &&
+          //     curve.title() !== "ClosestPointMarker123@###" &&
+          //     curve.title() !== "v_ruler1" &&
+          //     curve.title() !== "v_ruler2" &&
+          //     curve.title() !== "h_ruler1" &&
+          //     curve.title() !== "h_ruler2"
+          //   ) {
+          //     self.trashDlg.trash(curve);
+          //     // curve.detach();
+          //     // curve.delete();
+          //   }
+          // });
           Utility.progressWait2(false);
         },
       },

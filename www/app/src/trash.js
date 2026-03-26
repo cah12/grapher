@@ -111,10 +111,10 @@ class Trash extends ModalDlg {
     };
 
     this.trash = function (plotItem) {
-      Utility.progressWait2(true);
+      //Utility.progressWait2(true);
       trashCollection.push(plotItem);
       plotItem.detach();
-      Utility.progressWait2(false);
+      //Utility.progressWait2(false);
     };
 
     this.trashCb = function () {
