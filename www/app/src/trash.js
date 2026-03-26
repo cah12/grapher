@@ -19,11 +19,11 @@ class Trash extends ModalDlg {
       [
         '<div class="col-sm-12"><div style="overflow:auto"><table id="trashTable"></table></div></div>',
       ],
-      "trash"
+      "trash",
     );
 
     this.addFooterElement(
-      '<button id="empty" type="button" class="btn btn-default" data-dismiss="modal">Empty bin</button>'
+      '<button id="empty" type="button" class="btn btn-default" data-dismiss="modal">Empty bin</button>',
     );
 
     this.addHandler("empty", "click", function () {
@@ -40,7 +40,7 @@ class Trash extends ModalDlg {
     });
 
     this.addFooterElement(
-      '<button id="restore" type="button" class="btn btn-primary" data-dismiss="modal">Restore</button>'
+      '<button id="restore" type="button" class="btn btn-primary" data-dismiss="modal">Restore</button>',
     );
 
     this.addHandler("restore", "click", function () {
@@ -56,7 +56,7 @@ class Trash extends ModalDlg {
               confirm(
                 `The plot already has a plot item with a title "${trashCollection[
                   i
-                ].title()}".\n\nReplace the plot item in the plot.`
+                ].title()}".\n\nReplace the plot item in the plot.`,
               )
             ) {
               existCurve.detach();
@@ -89,7 +89,7 @@ class Trash extends ModalDlg {
           let entry = $(
             "<tr></td><td><label><input class='selectedForTrash' type='checkbox' style='width:30px'>" +
               trashCollection[i].title() +
-              "</input></label></td></tr>"
+              "</input></label></td></tr>",
           );
           self.selector("trashTable").append(entry);
         }
@@ -111,8 +111,10 @@ class Trash extends ModalDlg {
     };
 
     this.trash = function (plotItem) {
+      Utility.progressWait2(true);
       trashCollection.push(plotItem);
       plotItem.detach();
+      Utility.progressWait2(false);
     };
 
     this.trashCb = function () {
