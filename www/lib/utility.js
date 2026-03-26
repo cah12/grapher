@@ -315,12 +315,12 @@ class Utility {
     }
 
     if (Utility.progressWaitOnCount > 0) {
-      document.body.classList.add("waiting");
-      $("html").addClass("wait");
+      // $("html").addClass("wait");
+      $("body").addClass("is-loading");
     }
     if (Utility.progressWaitOnCount == 0) {
-      document.body.classList.remove("waiting");
-      $("html").removeClass("wait");
+      // $("html").removeClass("wait");
+      $("body").removeClass("is-loading");
     }
   }
 
