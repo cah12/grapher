@@ -114,6 +114,7 @@ class Trash extends ModalDlg {
               }
             }
             self.selector("restore").hide();
+            self.selector("selectAll").show();
           });
       }
     };
