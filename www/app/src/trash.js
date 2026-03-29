@@ -45,18 +45,21 @@ class Trash extends ModalDlg {
 
     this.addHandler("restore", "click", function () {
       const dlg = self.getDlgModal();
-      dlg.addClass("wait-cursor-active");
-      // Utility.progressWait2(true);
+      dlg[0].style.display = "flex"; // Show modal
+      // dlg.addClass("wait-cursor-active");
+      Utility.progressWait2(true);
       setTimeout(function () {
         // self.closeDlg();
 
         try {
           trashCollection = self.doRestore(trashCollection, plot);
-          // Utility.progressWait2(false);
-          dlg.removeClass("wait-cursor-active");
+          Utility.progressWait2(false);
+          dlg[0].style.display = "none"; // Hide modal
+          // dlg.removeClass("wait-cursor-active");
         } catch (error) {
-          // Utility.progressWait2(false);
-          dlg.removeClass("wait-cursor-active");
+          Utility.progressWait2(false);
+          dlg[0].style.display = "none"; // Hide modal
+          // dlg.removeClass("wait-cursor-active");
           console.log(error);
         }
       }, 5);
@@ -106,6 +109,7 @@ class Trash extends ModalDlg {
             for (let i = 0; i < entries.length; i++) {
               if (entries[i].checked) {
                 self.selector("restore").show();
+                self.selector("selectAll").hide();
                 return;
               }
             }
@@ -124,6 +128,14 @@ class Trash extends ModalDlg {
     this.trashCb = function () {
       this.showDlg();
     };
+
+    // $(":checkbox").on("change", function () {
+    //   if (this.checked) {
+    //     self.selector("restore").show();
+    //   } else {
+    //     self.selector("restore").hide();
+    //   }
+    // });
   }
 
   doRestoreAsync(trashCollection, plot) {

@@ -582,5 +582,5 @@ body.ewResizeCursor *
 
 /* This ensures all elements, even nested ones, show the wait cursor */
 .wait-cursor-active, .wait-cursor-active * {
-    cursor: progress !important;
+    cursor: wait !important;
 }
