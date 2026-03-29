@@ -125,7 +125,7 @@ class ModalDlg {
                           </div>\
                           </div>\
                           </div>\
-                          '
+                          ',
     );
 
     this.getDlgModal = function () {
@@ -141,7 +141,11 @@ class ModalDlg {
     }
 
     this.closeDlg = function () {
+      // $(".modal-backdrop").remove();
       dlg.modal("hide");
+      // $("body").removeClass("modal-open");
+      // $(".modal-backdrop").remove();
+      // $("body").focus();
     };
 
     dlg.off("hidden.bs.modal").on("hidden.bs.modal", function () {

@@ -44,33 +44,35 @@ class Trash extends ModalDlg {
     );
 
     this.addHandler("restore", "click", function () {
-      const entries = self.selector("trashTable").find("INPUT");
-      let modifiedCollection = [];
-      for (let i = 0; i < entries.length; i++) {
-        if (!entries[i].checked) {
-          modifiedCollection.push(trashCollection[i]);
-        } else {
-          let existCurve = plot.findPlotItem(trashCollection[i].title());
-          if (existCurve) {
-            if (
-              confirm(
-                `The plot already has a plot item with a title "${trashCollection[
-                  i
-                ].title()}".\n\nReplace the plot item in the plot.`,
-              )
-            ) {
-              existCurve.detach();
-            } else {
-              modifiedCollection.push(trashCollection[i]);
-              continue;
-            }
-          }
-          //console.log(existCurve);
-          trashCollection[i].attach(plot);
+      const dlg = self.getDlgModal();
+      dlg.addClass("wait-cursor-active");
+      // Utility.progressWait2(true);
+      setTimeout(function () {
+        // self.closeDlg();
+
+        try {
+          trashCollection = self.doRestore(trashCollection, plot);
+          // Utility.progressWait2(false);
+          dlg.removeClass("wait-cursor-active");
+        } catch (error) {
+          // Utility.progressWait2(false);
+          dlg.removeClass("wait-cursor-active");
+          console.log(error);
         }
+      }, 5);
+    });
+
+    this.addFooterElement(
+      '<button id="selectAll" type="button" class="btn btn-primary">Select all</button>',
+    );
+
+    this.addHandler("selectAll", "click", function () {
+      const entries = self.selector("trashTable").find("INPUT");
+      for (let i = 0; i < entries.length; i++) {
+        entries[i].checked = true;
       }
-      //plot.autoRefresh();
-      trashCollection = modifiedCollection;
+      self.selector("selectAll").hide();
+      self.selector("restore").show();
     });
 
     this.initDlg = function () {
@@ -79,10 +81,12 @@ class Trash extends ModalDlg {
         self.selector("trash").hide();
         self.selector("empty").hide();
         self.selector("restore").hide();
+        self.selector("selectAll").hide();
       } else {
         self.selector("empty").show();
         self.selector("noTrash").hide();
         self.selector("trash").show();
+        self.selector("selectAll").show();
         self.selector("trashTable").empty();
 
         for (let i = 0; i < trashCollection.length; i++) {
@@ -120,6 +124,47 @@ class Trash extends ModalDlg {
     this.trashCb = function () {
       this.showDlg();
     };
+  }
+
+  doRestoreAsync(trashCollection, plot) {
+    return new Promise((resolve, reject) => {
+      try {
+        trashCollection = this.doRestore(trashCollection, plot);
+        resolve(trashCollection);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  doRestore(trashCollection, plot) {
+    const self = this;
+    const entries = self.selector("trashTable").find("INPUT");
+    let modifiedCollection = [];
+    for (let i = 0; i < entries.length; i++) {
+      if (!entries[i].checked) {
+        modifiedCollection.push(trashCollection[i]);
+      } else {
+        let existCurve = plot.findPlotItem(trashCollection[i].title());
+        if (existCurve) {
+          if (
+            confirm(
+              `The plot already has a plot item with a title "${trashCollection[i].title()}".\n\nReplace the plot item in the plot.`,
+            )
+          ) {
+            existCurve.detach();
+          } else {
+            modifiedCollection.push(trashCollection[i]);
+            continue;
+          }
+        }
+        //console.log(existCurve);
+        trashCollection[i].attach(plot);
+      }
+    }
+    //plot.autoRefresh();
+    trashCollection = modifiedCollection;
+    return trashCollection;
   }
 
   initializeDialog() {

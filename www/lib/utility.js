@@ -315,11 +315,13 @@ class Utility {
     }
 
     if (Utility.progressWaitOnCount > 0) {
-      $("html").addClass("wait");
+      document.body.classList.add("wait-cursor-active");
+      // $("html").addClass("wait");
       // $("html").addClass("is-loading");
     }
     if (Utility.progressWaitOnCount == 0) {
-      $("html").removeClass("wait");
+      document.body.classList.remove("wait-cursor-active");
+      // $("html").removeClass("wait");
       // $("html").removeClass("is-loading");
     }
   }

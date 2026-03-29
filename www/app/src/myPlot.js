@@ -4227,31 +4227,14 @@ class MyPlot extends Plot {
         //disable: true,
         img: Static.imagePath + "trashAll.png",
         fun: function () {
-          //console.log(770);
-          //console.log(el.children());
-          // const listItem = document.querySelector(
-          //   'li[title="Permanently remove all items"]',
-          // ).children[0];
-          // listItem.classList.add("wait");
-
-          // const parent = listItem.parentElement;
-          // parent.classList.add("wait");
-          // el.contextMenu("close");
-          // el.focus();
           Utility.progressWait2(true);
-          // $("body").addClass("wait");
-          (async () => {
-            try {
-              await self.removeAll();
-              // parent.classList.remove("wait");
-              Utility.progressWait2(false);
-              // listItem.classList.remove("wait");
-            } catch (e) {
-              // listItem.classList.remove("wait");
-            }
-          })();
-          // el.contextMenu("close");
-          // /console.log(456);
+          setTimeout(function () {
+            el.contextMenu("close");
+            // $("body").click();
+            self.removeAll();
+            Utility.progressWait2(false);
+          }, 5);
+
           // Utility.progressWait2(false);
 
           // L.forEach(function (curve) {
@@ -5157,7 +5140,18 @@ class MyPlot extends Plot {
     ////////////////////////////////////////////////////
   }
 
-  async removeAll() {
+  removeAllAsync() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.removeAll();
+        resolve();
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  removeAll() {
     const self = this;
     var L = self
       .itemList(PlotItem.RttiValues.Rtti_PlotCurve)
@@ -5177,21 +5171,9 @@ class MyPlot extends Plot {
       );
     });
 
-    // let count = L.length;
-    // if (count > 0) {
-    //   Utility.progressWait2(true);
-    // }
     L.forEach(function (curve) {
       self.trashDlg.trash(curve);
-      // curve.detach();
-      // curve.delete();
-      // count--;
-      // if (count == 0) {
-      //   Utility.progressWait2(false);
-      //   console.log(771);
-      // }
     });
-    // Utility.progressWait2(false);
   }
 
   isAxisSwappable(unswap) {
