@@ -17,7 +17,7 @@ class Trash extends ModalDlg {
     this.addRow(['<div class="col-sm-12">No items found.</div>'], "noTrash");
     this.addRow(
       [
-        '<div class="col-sm-12"><div style="overflow:auto"><table id="trashTable"></table></div></div>',
+        '<div class="col-sm-12"><div style="max-height: 200px; overflow-y: auto;"><table id="trashTable"></table></div></div>',
       ],
       "trash",
     );
@@ -117,6 +117,7 @@ class Trash extends ModalDlg {
             self.selector("selectAll").show();
           });
       }
+      // self.setModalMaxHeight();
     };
 
     this.trash = function (plotItem) {
@@ -183,4 +184,16 @@ class Trash extends ModalDlg {
   initializeDialog() {
     this.initDlg();
   }
+
+  // setModalMaxHeight() {
+  //   const self = this;
+  //   const modalElement = self.selector("trashTable")[0];
+  //   // 1. Calculate available height (viewport minus padding)
+  //   const viewportHeight = window.innerHeight;
+  //   const maxHeight = viewportHeight * 0.5; // 90% of viewport
+
+  //   // 2. Set the max-height property
+  //   modalElement.style.maxHeight = maxHeight + "px";
+  //   modalElement.style.overflowY = "auto"; // Ensure scrollability
+  // }
 }
