@@ -7767,10 +7767,20 @@ class Utility {
 
       //console.log(result);
       //result = exponentOnKeyword(result); //handle this before //parametizeKeywordArg()
-      result = Utility.parametizeKeywordArg(result);
-      result = result.replaceAll("#", "^(-1)"); //why?
-
-      result = exponentOnKeyword(result);
+      if (result.indexOf("=") == -1) {
+        result = Utility.parametizeKeywordArg(result);
+        result = result.replaceAll("#", "^(-1)"); //why?
+        result = exponentOnKeyword(result);
+      } else {
+        const arr = result.split("=");
+        arr[0] = Utility.parametizeKeywordArg(arr[0]);
+        arr[0] = arr[0].replaceAll("#", "^(-1)"); //why?
+        arr[0] = exponentOnKeyword(arr[0]);
+        arr[1] = Utility.parametizeKeywordArg(arr[1]);
+        arr[1] = arr[1].replaceAll("#", "^(-1)"); //why?
+        arr[1] = exponentOnKeyword(arr[1]);
+        result = `${arr[0]}=${arr[1]}`;
+      }
 
       index = result.indexOf("log");
       if (index !== -1) {
