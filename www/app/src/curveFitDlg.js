@@ -43,15 +43,15 @@ class MCurveFitDlg extends ModalDlg {
       for (let i = 0; i < observations.length; i++) {
         let resid = Utility.adjustForDecimalPlaces(
           observations[i][1] - predictions[i][1],
-          curve.plot().axisPrecision(curve.yAxis())
+          curve.plot().axisPrecision(curve.yAxis()),
         );
         result.push(
           parseFloat(
             Utility.toPrecision(
               resid,
-              curve.plot().axisPrecision(curve.yAxis())
-            )
-          )
+              curve.plot().axisPrecision(curve.yAxis()),
+            ),
+          ),
         );
       }
       return result;
@@ -136,6 +136,7 @@ class MCurveFitDlg extends ModalDlg {
      */
 
     this.curveFitDlgInit = function () {
+      // Static.curveFitting = false;
       if (!m_curve || m_curve.rtti !== PlotItem.RttiValues.Rtti_PlotCurve)
         return;
 
@@ -188,7 +189,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-2"><input id="origin" type="checkbox"/></div>',
       ],
       null,
-      "cont_origin"
+      "cont_origin",
     );
 
     this.addRow(
@@ -198,7 +199,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div>Precision: <input id="curveFitDlg_precision" type="number" min="1" max="100" value="2" /></div>',
       ],
       null,
-      "cont_order"
+      "cont_order",
     );
 
     this.addRow(
@@ -207,7 +208,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-4"><input id="tolerance" type="number" style="width:100%" value="10.0" min="0.0" max="200.0"/></div>',
       ],
       null,
-      "cont_tolerance"
+      "cont_tolerance",
     );
 
     this.addRow(
@@ -216,7 +217,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-4"><input id="chunksize" type="number" style="width:100%" value="0" min="0" /></div>',
       ],
       null,
-      "cont_chunksize"
+      "cont_chunksize",
     );
 
     this.addRow(
@@ -225,7 +226,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-2"><input id="curveFitDlg_retain" type="checkbox"/></div>',
       ],
       null,
-      "cont_retain"
+      "cont_retain",
     );
 
     this.addRow(
@@ -234,7 +235,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-2"><input id="curveFitDlg_generate" type="checkbox" checked/></div>',
       ],
       null,
-      "cont_generate"
+      "cont_generate",
     );
 
     this.addRow(
@@ -243,7 +244,7 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-6"><input id="curveFitDlg_name" type="text" style="width:100%"/></div>',
       ],
       null,
-      "attributes1"
+      "attributes1",
     );
 
     this.addRow(
@@ -252,10 +253,10 @@ class MCurveFitDlg extends ModalDlg {
         '<div class="col-sm-2"><input id="curveFitDlg_color" type="color"/></div>',
       ],
       null,
-      "attributes2"
+      "attributes2",
     );
 
-    this.cb = async function () {
+    this.cb = function () {
       if (m_retain) {
         var title = m_name;
         if (m_plot.findPlotCurve(title)) {
@@ -302,8 +303,8 @@ class MCurveFitDlg extends ModalDlg {
             samps.push(
               new Misc.Point(
                 xMap.transform(samp[i].x),
-                yMap.transform(samp[i].y)
-              )
+                yMap.transform(samp[i].y),
+              ),
             );
           }
           samps = splineCurveFitter.fitCurve(samps);
@@ -313,8 +314,8 @@ class MCurveFitDlg extends ModalDlg {
             _samps.push(
               new Misc.Point(
                 xMap.invTransform(samps[i].x),
-                yMap.invTransform(samps[i].y)
-              )
+                yMap.invTransform(samps[i].y),
+              ),
             );
           }
           curve.setSamples(_samps);
@@ -340,8 +341,8 @@ class MCurveFitDlg extends ModalDlg {
             samps.push(
               new Misc.Point(
                 xMap.transform(samp[i].x),
-                yMap.transform(samp[i].y)
-              )
+                yMap.transform(samp[i].y),
+              ),
             );
           }
           samps = weedingCurveFitter.fitCurve(samps);
@@ -351,8 +352,8 @@ class MCurveFitDlg extends ModalDlg {
             _samps.push(
               new Misc.Point(
                 xMap.invTransform(samps[i].x),
-                yMap.invTransform(samps[i].y)
-              )
+                yMap.invTransform(samps[i].y),
+              ),
             );
           }
           curve.setSamples(_samps);
@@ -372,7 +373,7 @@ class MCurveFitDlg extends ModalDlg {
           m_type,
           parseInt(m_order),
           m_origin,
-          m_option
+          m_option,
         );
         //var regr = regress()//CurveFitDlg.curve, parseInt(CurveFitDlg.type))
         var rc = m_curve.data().boundingRect();
@@ -431,7 +432,7 @@ class MCurveFitDlg extends ModalDlg {
         curve.residuals = regr.residuals;
         curve.setSamples(s);
       }
-      //curve.attach(self.plot);//attach before detach
+      curve.attach(m_plot); //attach before detach
       if (m_retain) {
         curve.setTitle(title);
       } else {
@@ -444,7 +445,7 @@ class MCurveFitDlg extends ModalDlg {
                       if(m_generate)
                          curve.setCurveFitter(null);
                  } */
-      curve.attach(m_plot);
+      // curve.attach(m_plot);
       m_plot.setAutoReplot(doReplot);
       m_plot.autoRefresh();
       //self.close();
@@ -452,6 +453,7 @@ class MCurveFitDlg extends ModalDlg {
     };
 
     this.addHandler("ok", "click", function () {
+      // Static.curveFitting = true;
       m_type = self.selector("curveFitDlg_type").val();
       m_retain = self.selector("curveFitDlg_retain")[0].checked;
       m_generate = self.selector("curveFitDlg_generate")[0].checked;
@@ -465,6 +467,7 @@ class MCurveFitDlg extends ModalDlg {
       m_tolerance = self.selector("tolerance").val();
       m_chunksize = self.selector("chunksize").val();
       self.cb();
+      // Static.curveFitting = true;
     });
 
     this.addHandler("curveFitDlg_type", "change", function () {

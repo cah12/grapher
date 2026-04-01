@@ -9,7 +9,7 @@ class CurvePropertiesPane extends PropertiesPane {
     self.setHeader(
       plot.leftSidebar.gridItem(0).headerElement,
       "Curve Properties",
-      true
+      true,
     );
 
     var curveSelectProp = this.addProperty({
@@ -430,6 +430,11 @@ class CurvePropertiesPane extends PropertiesPane {
     });
 
     Static.bind("itemAttached", function (e, plotItem, on) {
+      // if (Static.curveFitting === true) {
+      //   return;
+      // }
+      // const tb = plot.tbar;
+      // const cPropChecked = tb.isButtonChecked(tb.cProp);
       if (
         plotItem.rtti == PlotItem.RttiValues.Rtti_PlotCurve ||
         plotItem.rtti == PlotItem.RttiValues.Rtti_PlotSpectroCurve ||
@@ -437,7 +442,9 @@ class CurvePropertiesPane extends PropertiesPane {
       ) {
         if (on) {
           //attached
-          //plot.leftSidebar.showGridItem(0, true);
+          // if (cPropChecked) {
+          //   plot.leftSidebar.showGridItem(0, true);
+          // }
           colorMap[0].selectedIndex = 0;
         } else {
           //detached
@@ -451,7 +458,9 @@ class CurvePropertiesPane extends PropertiesPane {
 						$("#curvePropertyHead").hide();
 						$("#plotPropertyDiv").css("height", "92%"); */
             //self.showPropertiesPane(false);
+            // if (!Static.curveFitting) {
             plot.leftSidebar.showGridItem(0, false);
+            // /}
           }
           if (!plot.hasPlotCurve()) {
             //disableCurveDependentCntrls(true)
@@ -462,6 +471,7 @@ class CurvePropertiesPane extends PropertiesPane {
         initDlg(plot.findPlotCurve(curveSelectProp.val()));
         //}
       }
+      // tb.setButtonCheck(tb.cProp, cPropChecked);
     });
 
     plot.leftSidebar.showGridItem(0, false);
@@ -499,7 +509,7 @@ class CurvePropertiesPane extends PropertiesPane {
 
     function legendAttributes() {
       plot.curveAttributeDlg.curveAttributeCb(
-        plot.findPlotCurve(curveSelectProp.val())
+        plot.findPlotCurve(curveSelectProp.val()),
       );
     }
 
@@ -530,7 +540,7 @@ class CurvePropertiesPane extends PropertiesPane {
       if (!curve.testDisplayMode(PlotSpectrogram.DisplayMode.ContourMode))
         visible = "Hidden";
       contoursElement.html(
-        visible + ", planes:" + curve.contourLevels().length
+        visible + ", planes:" + curve.contourLevels().length,
       );
     }
 
@@ -752,7 +762,7 @@ class CurvePropertiesPane extends PropertiesPane {
       initDlg(curve);
     });
     var curveSymbolPenColorElement = this.getElementValueDataAttribute(
-      "curveSymbolPenColor"
+      "curveSymbolPenColor",
     );
     function curveSymbolPenColor(color) {
       let curve = plot.findPlotCurve(curveSelectProp.val());
@@ -768,7 +778,7 @@ class CurvePropertiesPane extends PropertiesPane {
       curve.plot().updateLegend(curve);
     }
     var curveSymbolPenWidthElement = this.getElementValueDataAttribute(
-      "curveSymbolPenWidth"
+      "curveSymbolPenWidth",
     );
     function curveSymbolPenWidth(selectIndex) {
       let curve = plot.findPlotCurve(curveSelectProp.val());
@@ -776,7 +786,7 @@ class CurvePropertiesPane extends PropertiesPane {
       self.setSymbolIcon();
     }
     var curveSymbolBrushColorElement = this.getElementValueDataAttribute(
-      "curveSymbolBrushColor"
+      "curveSymbolBrushColor",
     );
     function curveSymbolBrushColor(color) {
       let curve = plot.findPlotCurve(curveSelectProp.val());
@@ -871,7 +881,7 @@ class CurvePropertiesPane extends PropertiesPane {
     };
     this.spanElem3 = null;
     var curveFillBrushColorElement = this.getElementValueDataAttribute(
-      "curveFillBrushColor"
+      "curveFillBrushColor",
     );
     var curveFillBrushColorElementParent = curveFillBrushColorElement.parent();
     this.setBrushIcon = function () {
@@ -991,11 +1001,11 @@ class CurvePropertiesPane extends PropertiesPane {
 
         var on = curve.testDisplayMode(PlotSpectrogram.DisplayMode.ImageMode);
         showSpectrogramElement[0].checked = curve.testDisplayMode(
-          PlotSpectrogram.DisplayMode.ImageMode
+          PlotSpectrogram.DisplayMode.ImageMode,
         );
         alphaElement.val(curve.alpha());
         showContoursElement[0].checked = curve.testDisplayMode(
-          PlotSpectrogram.DisplayMode.ContourMode
+          PlotSpectrogram.DisplayMode.ContourMode,
         );
         numberOfPlanesElement.val(curve.contourLevels().length);
         setSpectrogramTd(curve);
@@ -1040,17 +1050,17 @@ class CurvePropertiesPane extends PropertiesPane {
       if (curve.rtti === PlotItem.RttiValues.Rtti_PlotCurve) {
         curvePenColorElement.val(Utility.colorNameToHex(curve.pen().color));
         curvePenStyleElement[0].selectedIndex = curvePenStyles.indexOf(
-          curve.pen().style
+          curve.pen().style,
         );
         curvePenWidthElement[0].selectedIndex = curve.pen().width - 1;
         if (curve.symbol()) {
           curveSymbolPenColorElement.val(
-            Utility.colorNameToHex(curve.symbol().pen().color)
+            Utility.colorNameToHex(curve.symbol().pen().color),
           );
           curveSymbolPenWidthElement[0].selectedIndex =
             curve.symbol().pen().width - 1;
           curveSymbolBrushColorElement.val(
-            Utility.colorNameToHex(curve.symbol().brush().color)
+            Utility.colorNameToHex(curve.symbol().brush().color),
           );
           var index = -1;
           var style = curve.symbol().style();
@@ -1059,7 +1069,7 @@ class CurvePropertiesPane extends PropertiesPane {
           curveSymbolStyleElement[0].selectedIndex = index;
           //console.log(curve.symbol().size())
           curveSymbolSizeElement[0].selectedIndex = symbolSizes.indexOf(
-            curve.symbol().size().height
+            curve.symbol().size().height,
           );
         } else {
           curveSymbolPenColorElement.val(Utility.colorNameToHex("black"));

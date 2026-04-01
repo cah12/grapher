@@ -533,6 +533,8 @@ Static.piecewise = false;
 
 Static.AxisInYX = false;
 
+// Static.curveFitting = false;
+
 ////////////https://simplegrapher.onrender.com///////////////
 Static.imagePath = "../static/images/"; //for SimpleGrapher in python
 Static.grapherHelp = "../static/"; //for SimpleGrapher in python

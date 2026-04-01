@@ -165,7 +165,7 @@ class MToolBar extends ToolBar {
       let s = Static.keywords.toString();
       s = s.replaceAll(",", ", ");
       Utility.alert(
-        `The <b>${Static.keywords.length}</b> words listed below are reserved for internal use by this application.\n<b>Do not</b> try to redefine any of the reserved words:\n\n${s}`
+        `The <b>${Static.keywords.length}</b> words listed below are reserved for internal use by this application.\n<b>Do not</b> try to redefine any of the reserved words:\n\n${s}`,
       );
     }
 
@@ -261,6 +261,7 @@ class MToolBar extends ToolBar {
       tooltip: "Show/Hide curve properties pane",
       disabled: true,
     });
+    self.cProp = cProp;
 
     const plotContainerSelector = $(".plotContainer");
     let plotContainerWidth = parseFloat(plotContainerSelector.css("width"));
@@ -277,6 +278,9 @@ class MToolBar extends ToolBar {
     });
 
     Static.bind("showGridItem", function (e, m_anchorPosition, gridIndex, on) {
+      // if (Static.curveFitting) {
+      //   return;
+      // }
       if (m_anchorPosition == "left") {
         //if(!on){
         if (gridIndex == 0) self.setButtonCheck(cProp, on);
@@ -824,6 +828,7 @@ class MToolBar extends ToolBar {
         }
         if (!_plot.hasVisibleCurveSpectrocurveOrSpectrogram()) {
           //_plot.tbar.setDropdownItemCheck("View", 10, false);
+          self.setButtonCheck(cProp, false);
           self.disable(sBar);
           _plot.tbar.hideDropdownItem("View", 10);
           if (_plot.rightSidebar && _plot.rightSidebar.isSideBarVisible()) {
@@ -831,7 +836,7 @@ class MToolBar extends ToolBar {
             Utility.alert(
               "Ooops!! Nothing to watch.",
               null,
-              "Nothing_to_watch"
+              "Nothing_to_watch",
             );
             _plot.rightSidebar.showSidebar(false);
             _plot.sidebar.setSidebarReDisplay(true);
@@ -906,7 +911,7 @@ class MToolBar extends ToolBar {
           )
             self.enable(sBar);
           self.enable(cProp);
-          self.setButtonCheck(cProp, false);
+          // self.setButtonCheck(cProp, false);
         } else {
           //detached
           if (
