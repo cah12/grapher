@@ -920,7 +920,7 @@ class MToolBar extends ToolBar {
               0 &&
             _plot.itemList(PlotItem.RttiValues.Rtti_PlotSpectrogram).length == 0
           ) {
-            self.disable(cProp);
+            // self.disable(cProp);
             self.setButtonCheck(cProp, false);
           }
           if (
