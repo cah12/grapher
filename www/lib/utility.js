@@ -1031,12 +1031,17 @@ class Utility {
       let curve = null;
       if (
         curveData.fn ||
+        curveData.numerical_fallbackFn ||
         (curveData.functionDlgData &&
           curveData.functionDlgData.parametricFnX &&
           curveData.functionDlgData.parametricFnY)
       ) {
         curve = await plot.functionDlgCb(curveData.functionDlgData);
         //curve = await plot.functionDlgCb(curveData);
+        if (curveData.functionDlgData.numerical_fallbackFn) {
+          Utility.progressWait2(false);
+          return;
+        }
         curve.setTitle(curveData.title);
         curve.parametricLowerX = curveData.functionDlgData.parametricLowerX;
         curve.parametricUpperX = curveData.functionDlgData.parametricUpperX;
@@ -1110,11 +1115,16 @@ class Utility {
     let d = {};
     d.rtti = PlotItem.RttiValues.Rtti_PlotCurve;
     d.title = curve.title();
+    d.numerical_fallbackFn = curve.numerical_fallbackFn;
 
     // parametricFnX: "0"
     // parametricFnY: "250"
-    const fn = curve.fn;
-    if (curve.fn || (curve.parametricFnX && curve.parametricFnY)) {
+    // const fn = curve.fn;
+    if (
+      curve.fn ||
+      curve.numerical_fallbackFn ||
+      (curve.parametricFnX && curve.parametricFnY)
+    ) {
       d.functionDlgData = curve.functionDlgData;
       d.functionDlgData.parametricFnX = curve.parametricFnX;
       d.functionDlgData.parametricFnY = curve.parametricFnY;
@@ -1125,6 +1135,7 @@ class Utility {
       d.functionDlgData.parametricUpperX = curve.parametricUpperX;
 
       d.functionDlgData.parametric_variable = curve.parametric_variable;
+      d.functionDlgData.numerical_fallbackFn = curve.numerical_fallbackFn;
     } else {
       d.samples = curve.data().samples();
     }

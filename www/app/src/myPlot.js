@@ -439,6 +439,8 @@ class MyPlot extends Plot {
 
     function setFunctionDlgData(functionDlgData) {
       if (functionDlgData.rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
+        self._functionDlg.numerical_fallbackFn =
+          functionDlgData.numerical_fallbackFn;
         self._functionDlg.coeffs = functionDlgData.coeffs;
         self._functionDlg.expandedFn = functionDlgData.expandedFn;
         self._functionDlg.legendAttributes = functionDlgData.legendAttributes;

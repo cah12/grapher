@@ -413,6 +413,10 @@ class MFile {
             //Deal with Rtti_PlotCurve
             if (obj[i].rtti == PlotItem.RttiValues.Rtti_PlotCurve) {
               let curve = await Utility.pltPlotCurveData(_plot, obj[i]);
+              if (!curve) {
+                //This happens for numerical_fallbackFn curves.
+                continue;
+              }
               curve.attach(_plot);
             }
 
