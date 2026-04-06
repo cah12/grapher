@@ -4777,6 +4777,7 @@ class PlotPropertiesPane extends PropertiesPane {
       } else if (expontsLegend === "true") {
         decimal_Exponts_Legend.prop("checked", true);
       }
+      decimal_Exponts_Legend.trigger("change");
 
       const showTooltip = localStorage.getItem("showTooltipLegend");
       //console.log(showTooltip);
@@ -4785,6 +4786,7 @@ class PlotPropertiesPane extends PropertiesPane {
       } else if (showTooltip === "true") {
         show_Tooltip_Legend.prop("checked", true);
       }
+      show_Tooltip_Legend.trigger("change");
     };
 
     this.savePlotPropertiesSettings = function () {
