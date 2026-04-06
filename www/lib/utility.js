@@ -1040,7 +1040,7 @@ class Utility {
         //curve = await plot.functionDlgCb(curveData);
         if (curveData.functionDlgData.numerical_fallbackFn) {
           Utility.progressWait2(false);
-          return;
+          // return;
         }
         curve.setTitle(curveData.title);
         curve.parametricLowerX = curveData.functionDlgData.parametricLowerX;

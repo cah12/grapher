@@ -1623,7 +1623,7 @@ class MyPlot extends Plot {
               }
               self.setAutoReplot(autoReplot);
               self.replot();
-              return;
+              return newCurve;
             } else {
               // if (samples && samples.length) {//discontinuity
               const res = await self.doNumerical(self._functionDlg);
@@ -1647,10 +1647,15 @@ class MyPlot extends Plot {
               }
               newCurve.setSamples(_samples);
               newCurve.large_range_span = res.large_range_span;
-              newCurve.attach(self);
+
               self.setAutoReplot(autoReplot);
-              self.replot();
-              return;
+              if (!functionDlgData) {
+                newCurve.attach(self);
+                self.replot();
+              }
+              // self.setAutoReplot(autoReplot);
+              // self.replot();
+              return newCurve;
               // }
             }
           } catch (error) {
