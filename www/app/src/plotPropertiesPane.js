@@ -831,8 +831,8 @@ class PlotPropertiesPane extends PropertiesPane {
       parentId: "graphSettings",
     });
     var plotingType = this.addProperty({
-      name: "Ploting Type",
-      title: "Set the ploting type and behavior.",
+      name: "Plotting Type",
+      title: "Set the plotting type and behavior.",
       id: "plotingType",
       parentId: "drawingSettings",
       type: "select",
@@ -4710,6 +4710,12 @@ class PlotPropertiesPane extends PropertiesPane {
     //self.hide("upperLimit");
 
     this.setPlotPropertiesSettings = function () {
+      const plotting_type_index = localStorage.getItem("PlottingTypeIndex");
+      if (plotting_type_index) {
+        plotingType[0].selectedIndex = plotting_type_index;
+        plotingType.trigger("change");
+      }
+
       const bottom_decimalPlaces_val = localStorage.getItem(
         "DecimalPlacesBottomAxis",
       );
@@ -4782,6 +4788,8 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.savePlotPropertiesSettings = function () {
+      localStorage.setItem("PlottingTypeIndex", plotingType[0].selectedIndex);
+
       localStorage.setItem(
         "DecimalPlacesBottomAxis",
         bottom_decimalPlaces.val(),
@@ -4802,6 +4810,8 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.restoreDefaults = function () {
+      localStorage.setItem("PlottingTypeIndex", 0);
+
       localStorage.setItem("DecimalPlacesBottomAxis", 4);
       localStorage.setItem("DecimalPlacesTopAxis", 4);
       localStorage.setItem("DecimalPlacesLeftAxis", 4);
