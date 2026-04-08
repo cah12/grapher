@@ -1609,6 +1609,17 @@ class MyPlot extends Plot {
             if (Static.piecewise) {
               const res = await self.doNumerical(self._functionDlg);
               samples = res.branches;
+              if (!samples || !samples.length) {
+                const mf = $("#fnDlg_function")[0];
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+                    fn,
+                    decimalPlacesX,
+                  )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`,
+                );
+                return null;
+              }
 
               for (let i = 0; i < samples.length; i++) {
                 if (i > 0) {
@@ -1628,6 +1639,17 @@ class MyPlot extends Plot {
               // if (samples && samples.length) {//discontinuity
               const res = await self.doNumerical(self._functionDlg);
               samples = res.branches;
+              if (!samples || !samples.length) {
+                const mf = $("#fnDlg_function")[0];
+                Utility.displayErrorMessage(
+                  mf,
+                  `Unable to derive samples for "${Utility.adjustExpForDecimalPlaces(
+                    fn,
+                    decimalPlacesX,
+                  )}. (1) Check the function for the square-root of a negative. (2) Check the limits for possible divide-by-zero. (3) Check that values in the domain and range are within [1e-300, 1e+300] and does cause an invalid input such as log or ln of 0 or a negative number. (4) Check that the syntax for "inverse" is correct. (5) Adding paranthesis to the argument of "${ikws}" may resolve the problem.`,
+                );
+                return null;
+              }
               const dummySamples = [new Misc.Point(0, 0)];
               newCurve = addCurve(title, dummySamples, false, fn);
               newCurve.numerical_piecewise = false;
