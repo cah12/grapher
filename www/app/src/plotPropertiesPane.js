@@ -4710,6 +4710,20 @@ class PlotPropertiesPane extends PropertiesPane {
     //self.hide("upperLimit");
 
     this.setPlotPropertiesSettings = function () {
+      const mode = localStorage.getItem("mathMode");
+      if (mode) {
+        if (Static.math_mode != mode) {
+          //Static.math_mode = mode;
+          let radioButtons = document.getElementsByName("math_mode");
+          for (let i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].value === mode) {
+              radioButtons[i].checked = true; // Select the radio button with value 'myValue'
+              $(radioButtons[i]).trigger("change");
+            }
+          }
+        }
+      }
+
       const plotting_type_index = localStorage.getItem("PlottingTypeIndex");
       if (plotting_type_index) {
         plotingType[0].selectedIndex = plotting_type_index;
@@ -4790,6 +4804,8 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.savePlotPropertiesSettings = function () {
+      localStorage.setItem("mathMode", Static.math_mode);
+
       localStorage.setItem("PlottingTypeIndex", plotingType[0].selectedIndex);
 
       localStorage.setItem(
@@ -4812,6 +4828,8 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.restoreDefaults = function () {
+      localStorage.setItem("mathMode", "deg");
+
       localStorage.setItem("PlottingTypeIndex", 0);
 
       localStorage.setItem("DecimalPlacesBottomAxis", 4);
