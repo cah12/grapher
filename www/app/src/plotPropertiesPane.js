@@ -4710,6 +4710,18 @@ class PlotPropertiesPane extends PropertiesPane {
     //self.hide("upperLimit");
 
     this.setPlotPropertiesSettings = function () {
+      const lowerLimit = localStorage.getItem("fnDlg_lowerLimit");
+      if (lowerLimit) {
+        let lmt = document.getElementById("fnDlg_lowerLimit");
+        lmt.value = lowerLimit;
+      }
+
+      const upperLimit = localStorage.getItem("fnDlg_upperLimit");
+      if (upperLimit) {
+        let lmt = document.getElementById("fnDlg_upperLimit");
+        lmt.value = upperLimit;
+      }
+
       const mode = localStorage.getItem("mathMode");
       if (mode) {
         if (Static.math_mode != mode) {
@@ -4804,6 +4816,16 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.savePlotPropertiesSettings = function () {
+      localStorage.setItem(
+        "fnDlg_lowerLimit",
+        document.getElementById("fnDlg_lowerLimit").value,
+      );
+
+      localStorage.setItem(
+        "fnDlg_upperLimit",
+        document.getElementById("fnDlg_upperLimit").value,
+      );
+
       localStorage.setItem("mathMode", Static.math_mode);
 
       localStorage.setItem("PlottingTypeIndex", plotingType[0].selectedIndex);
@@ -4828,6 +4850,10 @@ class PlotPropertiesPane extends PropertiesPane {
     };
 
     this.restoreDefaults = function () {
+      localStorage.setItem("fnDlg_lowerLimit", -10);
+
+      localStorage.setItem("fnDlg_upperLimit", 10);
+
       localStorage.setItem("mathMode", "deg");
 
       localStorage.setItem("PlottingTypeIndex", 0);
