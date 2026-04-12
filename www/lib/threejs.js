@@ -310,7 +310,7 @@ class ThreeDgrid {
           color: "#636363",
           //clippingPlanes: clipPlanes,
           //clipIntersection: true,
-        })
+        }),
       );
 
       // console.log(self.lines);
@@ -330,7 +330,7 @@ class ThreeDgrid {
           color: self.color,
           //clippingPlanes: clipPlanes,
           //clipIntersection: true,
-        })
+        }),
       );
 
       // console.log(self.lines);
@@ -350,7 +350,7 @@ class ThreeDgrid {
           color: self.color,
           clippingPlanes: clipPlanes,
           //clipIntersection: true,
-        })
+        }),
       );
 
       // console.log(self.lines);
@@ -379,7 +379,7 @@ class ThreeDgrid {
       1,
       -1, // canvas.height / -2,
       0.01,
-      200
+      200,
     );
     //camera.position.z = 1;
     camera.position.set(0.5, 0.5, 1);
