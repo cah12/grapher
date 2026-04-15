@@ -18,7 +18,7 @@ Static.mToPolylineFiltered = function (xMap, yMap, series, from, to, round) {
   //points.push(new Misc.Point(Math.round(xMap.transform(sample0.x)), Math.round(yMap.transform(sample0.y))));
   points[0] = new Misc.Point(
     Math.round(xMap.transform(sample0.x)),
-    Math.round(yMap.transform(sample0.y))
+    Math.round(yMap.transform(sample0.y)),
   );
 
   var pos = 0;
@@ -29,7 +29,7 @@ Static.mToPolylineFiltered = function (xMap, yMap, series, from, to, round) {
       //p = { x:Math.round( xMap.transform( sample.x ) ), y:Math.round( yMap.transform( sample.y ) ) };
       p = new Misc.Point(
         Math.round(xMap.transform(sample.x)),
-        Math.round(yMap.transform(sample.y))
+        Math.round(yMap.transform(sample.y)),
       );
     //            p = { x: xMap.transform( sample.x ), y: yMap.transform( sample.y )  };
     else p = new Misc.Point(xMap.transform(sample.x), yMap.transform(sample.y));
@@ -54,12 +54,13 @@ Static.mToPoints = function (
   series,
   from,
   to,
-  round
+  round,
 ) {
   //Polygon polyline( to - from + 1 );
   var points = [];
 
   var numPoints = 0;
+  let threshold = -1;
 
   if (
     boundingRect.left() <= boundingRect.right() &&
@@ -103,6 +104,22 @@ Static.mToPoints = function (
       var sample = series.sample(i);
 
       var x = xMap.transform(sample.x) - 1; //minus 1 why
+      //Added out of desperation, because of a bug that I can't find. It seems to be related to the fact that the last point is often mapped to the same position as the second last point, which causes problems with the line drawing. This is a hacky solution, but it seems to work for now.
+      if (numPoints > 4) {
+        if (threshold < 0) {
+          const second_last_point_x = points[points.length - 2].x;
+          const third_last_point_x = points[points.length - 3].x;
+          threshold = Math.abs(third_last_point_x - second_last_point_x) * 10;
+        }
+        const first_point_x = points[0].x;
+
+        if (
+          /* first_point_x === last_point_x && */
+          Math.abs(x - points[points.length - 1].x) > threshold
+        ) {
+          continue;
+        }
+      }
       // if (x < 0) x = 0;
       var y = yMap.transform(sample.y) - 1; //minus 1 why
       // if (y < 0) y = 0;
@@ -116,6 +133,15 @@ Static.mToPoints = function (
       }
 
       numPoints++;
+    }
+  }
+
+  // //if the last point makes no sense, we can remove it.Added out of desperation, because of a bug that I can't find. It seems to be related to the fact that the last point is often mapped to the same position as the second last point, which causes problems with the line drawing. This is a hacky solution, but it seems to work for now.
+  if (numPoints > 4) {
+    const first_point_x = points[0].x;
+    const second_point_x = points[1].x;
+    if (Math.abs(second_point_x - first_point_x) > threshold) {
+      points.shift();
     }
   }
 
@@ -236,7 +262,7 @@ class PointMapper {
             series,
             from,
             to,
-            true
+            true,
           );
         } else {
           polyline = Static.mToPolylineFiltered(
@@ -245,7 +271,7 @@ class PointMapper {
             series,
             from,
             to,
-            false
+            false,
           );
         }
       } else {
@@ -258,7 +284,7 @@ class PointMapper {
             series,
             from,
             to,
-            true
+            true,
           );
         } else {
           polyline = Static.mToPoints(
@@ -269,7 +295,7 @@ class PointMapper {
             series,
             from,
             to,
-            false
+            false,
           );
           //alert(polyline)
         }
@@ -312,7 +338,7 @@ class PointMapper {
               yMap,
               series,
               from,
-              to
+              to,
             );
           } else {
             // without a bounding rectangle all we can
@@ -325,7 +351,7 @@ class PointMapper {
               series,
               from,
               to,
-              true
+              true,
             );
           }
         } else {
@@ -338,7 +364,7 @@ class PointMapper {
             series,
             from,
             to,
-            false
+            false,
           );
         }
       } else {
@@ -350,7 +376,7 @@ class PointMapper {
             series,
             from,
             to,
-            true
+            true,
           );
         } else {
           points = Static.mToPoints(
@@ -360,7 +386,7 @@ class PointMapper {
             series,
             from,
             to,
-            false
+            false,
           );
         }
       }
@@ -389,5 +415,5 @@ class PointMapper {
  */
 Enumerator.enum(
   "TransformationFlag { RoundPoints = 0x01 , WeedOutPoints = 0x02}",
-  PointMapper
+  PointMapper,
 );
