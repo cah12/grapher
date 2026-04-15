@@ -105,21 +105,13 @@ Static.mToPoints = function (
 
       var x = xMap.transform(sample.x) - 1; //minus 1 why
       //Added out of desperation, because of a bug that I can't find. It seems to be related to the fact that the last point is often mapped to the same position as the second last point, which causes problems with the line drawing. This is a hacky solution, but it seems to work for now.
-      if (numPoints > 4) {
-        if (threshold < 0) {
-          const second_last_point_x = points[points.length - 2].x;
-          const third_last_point_x = points[points.length - 3].x;
-          threshold = Math.abs(third_last_point_x - second_last_point_x) * 10;
-        }
-        // const first_point_x = points[0].x;
-
-        // if (
-        //   /* first_point_x === last_point_x && */
-        //   Math.abs(x - points[points.length - 1].x) > threshold
-        // ) {
-        //   continue;
-        // }
-      }
+      // if (numPoints > 4) {
+      //   if (threshold < 0) {
+      //     const second_last_point_x = points[points.length - 2].x;
+      //     const third_last_point_x = points[points.length - 3].x;
+      //     threshold = Math.abs(third_last_point_x - second_last_point_x) * 10;
+      //   }
+      // }
       // if (x < 0) x = 0;
       var y = yMap.transform(sample.y) - 1; //minus 1 why
       // if (y < 0) y = 0;
@@ -137,18 +129,18 @@ Static.mToPoints = function (
   }
 
   // //if the last point makes no sense, we can remove it.Added out of desperation, because of a bug that I can't find. It seems to be related to the fact that the last point is often mapped to the same position as the second last point, which causes problems with the line drawing. This is a hacky solution, but it seems to work for now.
-  if (numPoints > 4) {
-    const first_point_x = points[0].x;
-    const second_point_x = points[1].x;
-    if (Math.abs(second_point_x - first_point_x) > threshold) {
-      points.shift();
-    }
-    const last_point_x = points[points.length - 1].x;
-    const second_last_point_x = points[points.length - 2].x;
-    if (Math.abs(last_point_x - second_last_point_x) > threshold) {
-      points.pop();
-    }
-  }
+  // if (numPoints > 4) {
+  //   const first_point_x = points[0].x;
+  //   const second_point_x = points[1].x;
+  //   if (Math.abs(second_point_x - first_point_x) > threshold) {
+  //     points.shift();
+  //   }
+  //   const last_point_x = points[points.length - 1].x;
+  //   const second_last_point_x = points[points.length - 2].x;
+  //   if (Math.abs(last_point_x - second_last_point_x) > threshold) {
+  //     points.pop();
+  //   }
+  // }
 
   return points;
 };
