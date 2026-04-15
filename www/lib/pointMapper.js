@@ -111,14 +111,14 @@ Static.mToPoints = function (
           const third_last_point_x = points[points.length - 3].x;
           threshold = Math.abs(third_last_point_x - second_last_point_x) * 10;
         }
-        const first_point_x = points[0].x;
+        // const first_point_x = points[0].x;
 
-        if (
-          /* first_point_x === last_point_x && */
-          Math.abs(x - points[points.length - 1].x) > threshold
-        ) {
-          continue;
-        }
+        // if (
+        //   /* first_point_x === last_point_x && */
+        //   Math.abs(x - points[points.length - 1].x) > threshold
+        // ) {
+        //   continue;
+        // }
       }
       // if (x < 0) x = 0;
       var y = yMap.transform(sample.y) - 1; //minus 1 why
@@ -142,6 +142,11 @@ Static.mToPoints = function (
     const second_point_x = points[1].x;
     if (Math.abs(second_point_x - first_point_x) > threshold) {
       points.shift();
+    }
+    const last_point_x = points[points.length - 1].x;
+    const second_last_point_x = points[points.length - 2].x;
+    if (Math.abs(last_point_x - second_last_point_x) > threshold) {
+      points.pop();
     }
   }
 
